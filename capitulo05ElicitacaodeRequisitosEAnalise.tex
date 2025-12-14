@@ -1,0 +1,280 @@
+\chapter{Elicitação de Requisitos e Análise}
+\label{cap:05}
+
+Parte principal do texto, que contém a exposição ordenada e pormenorizada do assunto. Divide-se em seções e subseções, que variam em função da abordagem do tema e do método.
+
+
+ 
+\section{Requisitos do Usuário}
+
+Texto da justificativa
+
+\section{Requisitos do Sistema}
+Fazer uma pequena definição de requisitos do sistema para introduzir a seção (informar a fonte). Assim, esta seção apresenta os requisitos identificados nesse trabalho. 
+
+
+\subsection{Requisitos Funcionais}
+Fazer uma pequena definição de requisitos funcionais para introduzir essa seção. Informar quais os atores identificados nessa etapa do desenvolvimento, como o parágrafo a seguir. Terminar o parágrafo informando em qual tabela  os requisitos funcionais identificados estão apresentados, mas ou menos como no parágrafo a seguir. 
+
+De acordo com \citeauthorandyear{braga2008algoritmos}, Requisitos Funcionais são .....  
+Os atores que interagem com o sistema são: administrador, cliente e fornecedor. Os requisitos funcionais identificados para este sistema estão apresentados na Tabela~\ref{tab:reqFuncionais}
+
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Requisitos Funcionais}
+	\begin{tabular}{ c | p{11.5cm} | c}
+		\hline
+		\textbf{Código} & \textbf{Descrição} & \textbf{Ator}\\ \hline
+	RF01 & O sistema deve permitir que o usuário realize cadastro, login, logout e edição de informações do perfil. & Usuário \\ \hline
+	RF02 & O sistema deve permitir que o usuário personalize sua conta, incluindo troca de foto, nome e descrição. & Usuário \\ \hline
+	RF03 & O sistema deve permitir a criação, edição e exclusão de coleções personalizadas (livros, filmes, séries e outras). & Usuário \\ \hline
+	RF04 & O sistema deve permitir que cada coleção possua configurações próprias, como nome, descrição, ícone e layout associado. & Usuário \\ \hline
+	RF05 & O sistema deve permitir o cadastro de itens dentro de cada coleção, com atributos como nome, autor, capa, notas e campos personalizados. & Usuário \\ \hline
+	RF06 & O sistema deve exibir uma ficha individual de cada item, com todos os campos definidos pelo usuário no layout selecionado. & Sistema \\ \hline
+	RF07 & O sistema deve permitir a criação de um ou mais layouts personalizados através de um editor de widgets (texto, imagem, notas, ratings etc). & Usuário \\ \hline
+	RF08 & O sistema deve permitir associar layouts a coleções, facilitando a criação rápida de novos itens. & Usuário \\ \hline
+	RF09 & O sistema deve permitir que cada item tenha pequenas modificações no layout herdado da coleção. & Usuário \\ \hline
+	RF10 & O sistema deve permitir a criação de subcoleções dentro de uma coleção principal (ex.: “Lidos”, “Para assistir”, “Favoritos”). & Usuário \\ \hline
+	RF11 & O sistema deve permitir mover itens entre subcoleções ou entre subcoleções e a coleção principal. & Usuário \\ \hline
+	RF12 & O sistema deve permitir visualizar todos os itens da coleção em modo “geral” ou filtrados por subcoleção. & Usuário \\ \hline
+	RF13 & O sistema deve permitir a personalização global da interface, incluindo escolha de cores, subcores, paletas personalizadas e estilos. & Usuário \\ \hline
+	RF14 & O sistema deve permitir ao usuário alterar fontes, tamanhos, espaçamentos e aparência geral do site. & Usuário \\ \hline
+	RF15 & O sistema deve permitir adicionar amigos, aceitar solicitações e visualizar a lista de amizades. & Usuário \\ \hline
+	RF16 & O sistema deve permitir seguir coleções específicas de amigos para acompanhar suas atualizações. & Usuário \\ \hline
+	RF17 & O sistema deve exibir notificações ou feed com atualizações recentes das coleções seguidas (adição, alteração ou remoção de itens). & Sistema \\ \hline
+	RF18 & O sistema deve permitir que o usuário visualize as coleções e itens públicos de seus amigos. & Usuário \\ \hline
+	RF19 & O sistema deve permitir a configuração de privacidade para coleções (pública, privada ou somente amigos). & Usuário \\ \hline
+	RF20 & O sistema deve exibir todas as coleções do usuário em uma tela dedicada, com navegação para suas subcoleções e itens. & Sistema \\ \hline
+
+
+	\end{tabular}
+	\\ \vspace{0.2cm}
+	\textbf{Fonte:} Elaborada pelo autor
+	\label{tab:reqFuncionais}
+\end{table}
+\FloatBarrier
+
+
+\subsection{Requisitos Não-Funcionais}
+Requisitos não-funcionais descrevem características de qualidade, restrições e padrões que o sistema deve atender. Segundo \citeauthorandyear{somerville2011engenharia}, estes requisitos tratam de aspectos como desempenho, usabilidade, segurança e confiabilidade.
+Assim, esta seção apresenta os requisitos não-funcionais identificados neste trabalho, consolidados na Tabela~\ref{tab:reqNaoFuncionais}
+
+
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Requisitos Não-Funcionais}
+	\begin{tabular}{ c | p{11.5cm} }
+		\hline
+		\textbf{Código} & \textbf{Descrição} \\ \hline
+	RNF01 & A interface deve ser intuitiva, facilitando o uso do editor de layout e das funcionalidades de personalização visual. \\ \hline
+	RNF02 & O sistema deve carregar coleções, subcoleções e itens em até 3 segundos sob condições normais de uso. \\ \hline
+	RNF03 & O sistema deve criptografar senhas e proteger informações pessoais dos usuários de acordo com boas práticas de segurança. \\ \hline
+	RNF04 & O sistema deve oferecer compatibilidade com navegadores modernos e dispositivos móveis, mantendo responsividade. \\ \hline
+	RNF05 & O sistema deve permitir que o usuário personalize temas, cores, subcores e fontes sem comprometer o funcionamento das telas. \\ \hline
+	RNF06 & A movimentação de itens entre subcoleções deve ocorrer com no máximo dois comandos e sem atraso perceptível. \\ \hline
+	RNF07 & O editor de layout deve refletir alterações de widgets em tempo real, sem travamentos ou recarregamentos completos da página. \\ \hline
+	RNF08 & O sistema deve manter alta disponibilidade para que atualizações de amigos e sincronização de dados ocorram continuamente. \\ \hline
+	RNF09 & O sistema deve adotar padrões de acessibilidade, como contraste adequado, textos legíveis e navegação clara. \\ \hline
+	RNF10 & O sistema deve armazenar dados em servidor seguro e garantir integridade das coleções criadas pelo usuário. \\ \hline
+	\end{tabular}
+	\\ \vspace{0.2cm}
+	\textbf{Fonte:} Elaborada pelo autor
+	\label{tab:reqNaoFuncionais}
+\end{table}
+\FloatBarrier
+
+
+\subsection{Restrições, Suposições e Dependências}
+Esta seção apresenta os fatores que podem limitar decisões de desenvolvimento ou influenciar diretamente a implementação dos requisitos definidos.
+
+\begin{itemize}
+\item O sistema depende de conexão com a internet para sincronizar dados e exibir atualizações de amigos.
+\item O desempenho do editor de layout está condicionado à capacidade do dispositivo do usuário.
+\item A troca de dados entre usuários exige um servidor ativo e funcional.
+\item A expansão das funcionalidades sociais depende da adoção do sistema por múltiplos usuários.
+\end{itemize}
+
+
+\subsection{Requisitos Adiados}
+Alguns requisitos foram identificados durante a elicitação, porém não serão implementados nesta primeira versão do sistema. Eles poderão ser considerados em iterações futuras.
+
+\begin{itemize}
+\item Implementação de chat privado entre usuários.
+\item Recomendações automáticas baseadas nas coleções dos amigos.
+\item Exportação de coleções em PDF ou outros formatos.
+\item Mecanismos avançados de descoberta pública (explorar, ranking, tendências).
+\end{itemize}
+
+
+\section{Casos de Uso}
+Forneça uma breve definição de casos de uso (com referência da fonte) e informe que os casos de uso identificados neste trabalho estão aqui apresentados.
+
+
+\subsection{Diagrama de Casos de Uso}
+O diagrama de casos de uso elaborado neste trabalho descreve as principais interações do usuário com a plataforma personalizável para criação e compartilhamento de coleções digitais , representando ações como a captura de imagens, a visualização dos objetos detectados e a interação com as informações fornecidas pelo sistema. Essas interações são essenciais para garantir que o aplicativo atenda às necessidades dos usuários, proporcionando uma experiência eficaz e acessível. O diagrama de casos de uso elaborado neste trabalho está apresentado na Figura~\ref{fig:diagCasosDeUso}.
+
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Diagrama de Casos de Uso}
+	%scale redimensiona a figura.
+	%1.5 = 150% do tamanho original
+	%1 = 100% do tamanho original
+	%0.20 = 20% do tamanho original
+	\includegraphics[scale=1.0]{imagens/DiagramadeCasosdeUso.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:diagCasosDeUso}
+\end{figure}
+\FloatBarrier
+
+\subsection{Especificação dos Casos de Uso}
+Uma especificação de caso de uso fornece detalhe textual para um caso de uso. Uma estrutura de tópicos de amostra de uma especificação de caso de uso é fornecida. É possível reutilizar e modificar a estrutura de tópicos conforme necessário em um documento de especificação de caso de uso. A Tabela~\ref{tab:especCasosDeUso} apresenta um modelo para especificação de casos de uso (extraído de \href{https://www.ibm.com/docs/pt-br/elm/6.0?topic=cases-use-case-specification-outline}{IBM-Especificação de Casos de Uso}).
+
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Modelo para Especificação de Casos de Uso}
+	\begin{tabular}{ c | p{11.5cm} }
+		\hline
+		\textbf{Item} & \textbf{Descrição} \\ \hline
+		Nome do Caso de Uso & 
+		Declara o nome do caso de uso. Geralmente, o nome expressa o objetivo ou resultado observável do caso de uso, como "Sacar Dinheiro" no caso de um caixa eletrônico. \\ \hline
+		Descrição Resumida & Descreve a função e o objetivo do caso de uso.   \\ \hline
+		Fluxo de Eventos & Apresenta o fluxo básico e os fluxos alternativos. O fluxo de eventos descreve o comportamento do sistema; ele não descreve como o sistema funciona, os detalhes da apresentação ou os detalhes da interface com o usuário. Se forem trocadas informações, o caso de uso deverá ser específico sobre o que será transmitido de um lado para outro. Por exemplo, em vez de descrever uma ação como "o agente insere informações do cliente", indique que "o agente insere o nome e o endereço do cliente".  \\ \hline
+		Fluxo Básico & Descreve o comportamento principal ideal do sistema.  \\ \hline
+		Fluxos Alternativos & Descreve exceções ou desvios do fluxo básico, como o comportamento do sistema quando o agente insere um ID de usuário incorreto e a autenticação do usuário falha.  \\ \hline
+		Requisitos Especiais & Requisitos não-funcionais que são específicos para um caso de uso mas que não são especificados no texto do fluxo do caso de uso de eventos. Exemplos de requisitos especiais incluem estes fatores: requisitos legais e regulamentares; padrões de aplicativo; atributos de qualidade do sistema, incluindo usabilidade, confiabilidade, desempenho e capacidade de suporte; sistemas operacionais e ambientes; requisitos de compatibilidade e restrições de design.  \\ \hline
+		Condições Prévias & Um estado do sistema que deve estar presente antes de um caso de uso ser iniciado.  \\ \hline
+		Pós-Condições & Uma lista de estados possíveis para o sistema imediatamente após a conclusão de um caso de uso.  \\ \hline
+		Pontos de Extensão & Um ponto no fluxo de eventos do caso de uso em que outro caso de uso é referenciado.  \\ \hline
+	\end{tabular}
+	\\ \vspace{0.2cm}
+	\textbf{Fonte:} Extraído de \href{https://www.ibm.com/docs/pt-br/elm/6.0?topic=cases-use-case-specification-outline}{IBM-Especificação de Casos de Uso}
+	\label{tab:especCasosDeUso}
+\end{table}
+\FloatBarrier
+
+Elaborar as especificações para cada caso de uso, quando for necessário, como por exemplo: A especificação do caso de uso Finalizar Compra é
+
+
+
+\begin{table}
+\begin{tabular}{ | p{15cm} | }
+	\hline
+	\textbf{Caso de Uso}            \\
+	Finalizar Comprar 	            \\	\hline
+	\textbf{Referências}            \\
+	RF02             	            \\	\hline
+	\textbf{Descrição Geral}        \\
+	O caso de uso inicia-se quando o cliente deseja efetuar compra dos produtos que estão inseridos no carrinho de compras.   \\	\hline
+	\textbf{Atores}                 \\
+	Cliente                         \\	\hline
+	\textbf{Pré-Condições}          \\
+	Cliente logado no sistema, produtos já inseridos no carrinho de compras.
+		                            \\	\hline
+	\textbf{Garantia de Sucesso (Pós-Condições}             \\
+	Pedido fechado, compra efetuada, sistema aguardando confirmação de pagamento.
+		                            \\	\hline
+	\textbf{Requisitos Especiais}   \\
+		                            \\	\hline
+	\textbf{Fluxo Básico}           
+    \begin{enumerate}
+        \item Cliente deseja finalizar compra, sistema solicita que informe a forma de pagamento e de entrega;
+        \item Cliente deseja efetuar pagamento em forma de cartão de crédito/débito;
+        \item Sistema solicita informações do cartão do cliente;
+        \item Sistema faz validação das informações;
+        \item Sistema gera o número do pedido;
+        \item Compra finalizada com sucesso.
+    \end{enumerate}
+		                          \\	\hline
+	\textbf{Fluxo Alternativo}      
+    \renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}}
+    \renewcommand{\labelenumiii}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}}
+    \renewcommand{\labelenumiv}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}.\arabic{enumiv}}
+
+    \begin{enumerate}
+        \item Cliente deseja efetuar pagamento através de boleto bancário
+        \begin{enumerate}
+            \item Sistema gera boleto para o cliente;
+            \item Retorne ao passo 5.
+        \end{enumerate}
+    \end{enumerate}		
+	\\	\hline
+\end{tabular}
+\end{table}
+
+
+
+\section{Modelo de Domínio}
+Fazer uma pequena definição de modelo de domínio para introduzir essa seção. Terminar o parágrafo informando qual figura apresenta o modelo de domínio. Elabore o diagrama de classes somente com os atributos, para auxiliar no entendimento do domínio da aplicação, conforme Figura~\ref{fig:modeloDeDominio}.
+
+De acordo com \citeauthorandyear{braga2008algoritmos}, o modelo de domínio é .....  . A Figura~\ref{fig:modeloDeDominio} apresenta o modelo de domínio desenvolvido neste trabalho.
+
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Modelo de Domínio}
+	%scale redimensiona a figura.
+	%1.5 = 150% do tamanho original
+	%1 = 100% do tamanho original
+	%0.20 = 20% do tamanho original
+	\includegraphics[scale=1.0]{imagens/ModelodeDominio.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:modeloDeDominio}
+\end{figure}
+\FloatBarrier
+
+\section{Diagrama de Objetos}
+Fazer uma pequena definição de diagrama de objetos para introduzir essa seção. Terminar o parágrafo informando qual figura apresenta o diagrama de objetos. Elabore o diagrama de objetos para cada classe identificada no modelo de domínio.
+
+
+\section{Diagrama de Classes de Análise}
+Fazer uma pequena definição de diagrama de classes para introduzir essa seção. Terminar o parágrafo informando qual figura apresenta o diagrama de classes. É uma evolução do modelo de domínio, elabore o diagrama de classes com os atributos e métodos.
+
+
+\section{Diagrama de Atividades}
+Um diagrama de atividade ilustra a natureza dinâmica de um sistema pela modelagem do fluxo de controle de atividade à atividade. Uma atividade representa uma operação em alguma classe no sistema que resulta em uma mudança no estado do sistema.
+
+Tipicamente, diagramas de atividades são usados para modelar fluxos de processos, processos de negócios ou operações internas. o diagrama de atividades é similar a uma máquina de estados, mas tem um propósito diferente, o qual envolve capturar ações e seus resultados em termos de mudanças do estado do objeto.
+
+O diagrama de atividades é representado por um gráfico de atividades que mostram o fluxo de uma atividade para outra. Esse fluxo é mostrado através de transições, que são setas direcionadas, mostrando o caminho entre os estados de atividade (ação).
+
+A Figura~\ref{fig:diagramaDeAtividades} mostra o diagrama de atividades para a operação averiguarCredito na classe Pedido da Virtual LTDA. Note que a atividade “Preparar Mensagem de Credito” define o que fazer, mas não como fazer (RIBEIRO, 2021).
+
+Um diagrama de atividades é normalmente composto pelos seguintes elementos: atividades (ações), estados de atividade (ação), transição, fluxo de objeto, estado inicial, estado final, branching, sincronização, raias.
+
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Diagrama de Atividades}
+	%scale redimensiona a figura.
+	%1.5 = 150% do tamanho original
+	%1 = 100% do tamanho original
+	%0.20 = 20% do tamanho original
+	\includegraphics[scale=1.0]{imagens/DiagramadeAtividades.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:diagramaDeAtividades}
+\end{figure}
+\FloatBarrier
+
+
+\section{Diagrama de Estados}
+Fazer uma introdução mais ou menos como o parágrafo a seguir.
+Um diagrama de estados mostra os possíveis estados de um objeto e as transações responsáveis pelas suas mudanças de estado, conforme exemplo apresentado na Figura~\ref{fig:diagramaDeEstados}.
+
+
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Diagrama de Estados}
+	%scale redimensiona a figura.
+	%1.5 = 150% do tamanho original
+	%1 = 100% do tamanho original
+	%0.20 = 20% do tamanho original
+	\includegraphics[scale=1.0]{imagens/DiagramadeEstados.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:diagramaDeEstados}
+\end{figure}
+\FloatBarrier

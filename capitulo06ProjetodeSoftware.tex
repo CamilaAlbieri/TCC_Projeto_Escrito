@@ -1,0 +1,233 @@
+\chapter{Projeto de Software}
+\label{cap:06}
+
+Parte principal do texto, que contém a exposição ordenada e pormenorizada do assunto. Divide-se em seções e subseções, que variam em função da abordagem do tema e do método.
+ 
+\section{Projeto de Interface}
+Apresentar o protótipo das interfaces do sistema. Podem ser construídas utilizando qualquer ferramenta. Apresente os padrões utilizados.
+
+\section{Projeto de Dados}
+Informar nesta seção qual o Banco de Dados a ser utilizado, qual a IDE utilizada para manipulação do Banco de Dados, assim como descrever quais os tipos de dados aceitos no Banco de Dados.
+
+\subsection{Mapeamento Objeto-Relacional}
+Uma vez que foi elaborada uma modelagem orientada a objetos, utilizando o diagrama de classes UML, e o banco de dados a ser utilizado é relacional, deve-se identificar as relações. Assim, a partir dos requisitos e do modelo de domínio enumerar as relações que devem formar o banco de dados.
+
+Regras para realizar o mapeamento: (Helen, colocar as regras aqui para que os alunos escrevam)
+
+\begin{itemize}
+	\item Item 1;
+	\item Item 2;
+	\item Item n.
+\end{itemize}
+
+
+\subsection{Estrutura das Tabelas no Banco de Dados}
+Explicar qual o padrão adotado para o nome dos objetos de banco de dados, como por nome da chave primária, chave estrangeira, das constraints e das chaves únicas. Por exemplo: foi convencionado que o nome dos objetos devem obedecer o que está definido na Tabela~\ref{tab:convencaoObjBD}.
+
+
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Convenção para Nome dos Objetos no Banco de Dados}
+	\begin{tabular}{ c | p{11.5cm} }
+		\hline
+		\textbf{Objeto} & \textbf{Padrão Adotado} \\ \hline
+		Chave Primária & NomeDaTabela\_PK \\ \hline
+		Chave Estrangeira & NomeDaTabela\_NomeDaTabelaEstrangeira\_FK\_nn, onde nn é a sequência de ocorrência do par NomeDaTabela e NomeDaTabelaEstrangeira   \\ \hline
+		Check & NomeDaTabela\_CK\_nn, onde nn é a sequência de checks da tabela  \\ \hline
+		Chave Única & NomeDaTabela\_UK\_nn, onde nn é a sequência de chave única da tabela  \\ \hline
+	\end{tabular}
+	\\ \vspace{0.2cm}
+	\textbf{Fonte:} Elaborada pelo autor
+	\label{tab:convencaoObjBD}
+\end{table}
+\FloatBarrier
+
+Para melhor compreensão, as tabelas do banco de dados propostas neste trabalho estão consolidadas na Tabela~\ref{tab:tabelasIdentificadas}, as quais estão individualmente detalhadas.
+
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Tabelas Identificadas neste Trabalho}
+	\begin{tabular}{ c | p{11.5cm} }
+		\hline
+		\textbf{Tabela do Banco de Dados} & \textbf{Tabela no Documento} \\ \hline
+		Estado & Tabela~\ref{tab:tabelaEstado} \\ \hline
+		Cidade & Tabela~\ref{tab:tabelaCidade} \\ \hline
+		NomeDaTabelann & Tabela~\ref{tab:tabelaNN} \\ \hline
+	\end{tabular}
+	\\ \vspace{0.2cm}
+	\textbf{Fonte:} Elaborada pelo autor
+	\label{tab:tabelasIdentificadas}
+\end{table}
+\FloatBarrier
+
+Preencher o quadro a seguir para cada uma das relações identificadas no item Mapeamento OO-Relacional, que deve refletir as características das tabelas a serem criadas no banco de dados. Para melhor compreensão sobre qual a estrutura física das tabelas, seguem dois exemplos: a Tabela 6 é um exemplo da estrutura de dados Estado e a Tabela 6 é um exemplo da estrutura de dados Cidade.
+
+
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Estado}
+	\begin{tabular}{ c | c | c | c | c | c | c | c }
+		\hline
+		\textbf{Campo}          & \textbf{Tipo de Dado}     & 
+		\textbf{Obrigatório?}   & \textbf{Chave Primária?}  &
+		\textbf{Tabela}         & \textbf{Campo}            & 
+		\textbf{Grupo}          & \textbf{Ordem}\\ \hline
+		\textbf{id}             & \textbf{Number}           & 
+		\textbf{X}              & \textbf{X}                &
+		\textbf{}               & \textbf{}                 & 
+		\textbf{}               & \textbf{} \\ \hline
+		\textbf{nome}           & \textbf{Varchar2(100)}    & 
+		\textbf{X}              & \textbf{}                 &
+		\textbf{}               & \textbf{}                 & 
+		\textbf{1}              & \textbf{1} \\ \hline
+		\textbf{sigla}          & \textbf{Varchar2(2)}      & 
+		\textbf{X}              & \textbf{}                 &
+		\textbf{}               & \textbf{}                 & 
+		\textbf{2}              & \textbf{1} \\ \hline
+	\end{tabular}
+	\\ \vspace{0.2cm}
+	\textbf{Fonte:} Elaborada pelo autor
+	\label{tab:tabelaEstado}
+\end{table}
+\FloatBarrier
+
+\textcolor{red}{INSTRUÇÃO:
+Grupo é a chave única que você deseja criar (UK\_01, UK\_02)
+Ordem é a sequência dos campos que devem compor a chave única, quando existir mais de um campo na sua chave única}
+
+
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Cidade}
+	\begin{tabular}{ c | c | c | c | c | c | c | c }
+		\hline
+		\textbf{Campo}          & \textbf{Tipo de Dado}     & 
+		\textbf{Obrigatório?}   & \textbf{Chave Primária?}  &
+		\textbf{Tabela}         & \textbf{Campo}            & 
+		\textbf{Grupo}          & \textbf{Ordem}\\ \hline
+		\textbf{id}             & \textbf{Number}           & 
+		\textbf{X}              & \textbf{X}                &
+		\textbf{}               & \textbf{}                 & 
+		\textbf{}               & \textbf{} \\ \hline
+		\textbf{nome}           & \textbf{Varchar2(200)}    & 
+		\textbf{X}              & \textbf{}                 &
+		\textbf{}               & \textbf{}                 & 
+		\textbf{1}              & \textbf{1} \\ \hline
+		\textbf{idEstado}       & \textbf{Number}           & 
+		\textbf{X}              & \textbf{}                 &
+		\textbf{Estado}         & \textbf{id}               & 
+		\textbf{1}              & \textbf{1} \\ \hline
+		\textbf{latitude}       & \textbf{Number}           & 
+		\textbf{X}              & \textbf{}                 &
+		\textbf{}               & \textbf{}                 & 
+		\textbf{2}              & \textbf{1} \\ \hline
+		\textbf{longitude}      & \textbf{Number}           & 
+		\textbf{X}              & \textbf{}                 &
+		\textbf{}               & \textbf{}                 & 
+		\textbf{2}              & \textbf{2} \\ \hline
+	\end{tabular}
+	\\ \vspace{0.2cm}
+	\textbf{Fonte:} Elaborada pelo autor
+	\label{tab:tabelaCidade}
+\end{table}
+\FloatBarrier
+
+
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{NomeDaTabelaNN}
+	\begin{tabular}{ c | c | c | c | c | c | c | c }
+		\hline
+		\textbf{Campo}          & \textbf{Tipo de Dado}     & 
+		\textbf{Obrigatório?}   & \textbf{Chave Primária?}  &
+		\textbf{Tabela}         & \textbf{Campo}            & 
+		\textbf{Grupo}          & \textbf{Ordem}\\ \hline
+		\textbf{}               & \textbf{}                 & 
+		\textbf{}               & \textbf{}                 &
+		\textbf{}               & \textbf{}                 & 
+		\textbf{}               & \textbf{} \\ \hline
+		\textbf{}               & \textbf{}                 & 
+		\textbf{}               & \textbf{}                 &
+		\textbf{}               & \textbf{}                 & 
+		\textbf{}               & \textbf{} \\ \hline
+		\textbf{}               & \textbf{}                 &
+		\textbf{}               & \textbf{}                 &
+		\textbf{}               & \textbf{}                 & 
+		\textbf{}               & \textbf{} \\ \hline
+	\end{tabular}
+	\\ \vspace{0.2cm}
+	\textbf{Fonte:} Elaborada pelo autor
+	\label{tab:tabelaNN}
+\end{table}
+\FloatBarrier
+
+
+\subsection{Diagrama de Pacotes}
+Escreva aqui.
+
+
+\subsection{Diagrama de Classes de Projeto}
+Apresentar as classes de projeto identificadas. Alguns materiais para leitura extra sobre classes de projeto podem ser lidos em:
+\url{http://www.ic.uff.br/~anselmo/cursos/ProjSoft/apresentacoes/Projeto%20detalhado%20-%20Classes.pdf}
+\url{https://edisciplinas.usp.br/pluginfile.php/383727/mod_resource/content/2/Aula07_DiagramaDeClasse.pdf}
+\url{http://www.dsc.ufcg.edu.br/~jacques/cursos/apoo/html/proj1/proj8.htm}
+
+
+
+\section{Projeto Procedimental}
+Projetar Software é o processo de aplicar várias técnicas e princípios com o propósito de se definir um dispositivo, processo ou sistema, com detalhes suficientes para permitir sua realização física (Taylor-59). 
+
+O Projeto de software é o núcleo técnico da Engenharia de Software. É a única maneira de se traduzir "com precisão", os requisitos do usuário para um produto ou sistema acabado. Meta: Traduzir requisitos numa representação de software (Portella).
+
+
+\subsection{Diagrama de Sequência}
+Os diagramas de sequência modelam as interações entre objetos em um único caso de uso e ilustram como as diferentes partes de um sistema interagem entre si para realizar uma função e a ordem em que as interações ocorrem quando um caso de uso é executado  (Creately, s.d.), conforme apresentado na Figura~\ref{fig:diagramaDeSequencia}.
+
+
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Diagrama de Sequência}
+	%scale redimensiona a figura.
+	%1.5 = 150% do tamanho original
+	%1 = 100% do tamanho original
+	%0.20 = 20% do tamanho original
+	\includegraphics[scale=1.0]{imagens/DiagramadeSequencia.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:diagramaDeSequencia}
+\end{figure}
+\FloatBarrier
+
+
+\subsection{Diagrama de Atividades}
+Havendo necessidade de detalhamento de algum procedimento, este pode ser apresentado na forma de um diagrama de atividades o qual deve ser inserido nessa seção. Podem ser elaborados quantos diagramas de atividades se fizerem necessários.
+
+
+\subsection{Diagrama de Estados}
+Sendo necessária a elaboração do diagrama de estados na fase de projeto, os novos diagramas devem ser apresentados nessa seção.
+
+
+\section{Projeto Arquitetural}
+O projeto arquitetural precede a etapa de construção da obra. O projeto arquitetural determina as partes de uma construção e como estas devem interagir. A arquitetura garante a unidade da obra, ou seja, a consistência entre as suas partes (Vergilio).
+
+Ver algumas definições em (Silva), sendo que um exemplo está apresentado na Figura~\ref{fig:projetoArquitetural}.
+
+
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Diferentes Detalhamentos dos Serviços Relacionados ao Cliente}
+	%scale redimensiona a figura.
+	%1.5 = 150% do tamanho original
+	%1 = 100% do tamanho original
+	%0.20 = 20% do tamanho original
+	\includegraphics[scale=1.0]{imagens/ProjetoArquitetural.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:projetoArquitetural}
+\end{figure}
+\FloatBarrier

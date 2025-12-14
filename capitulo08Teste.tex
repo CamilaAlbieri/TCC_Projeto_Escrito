@@ -1,0 +1,78 @@
+\chapter{Teste}
+\label{cap:08}
+
+Descrever nesse capítulo quais e como foram os testes realizados. Os testes podem ser apresentados na forma de casos de teste. Um caso de teste consiste em conjunto de detalhes necessários para se realizar um teste de software.
+
+A seguir encontra-se um modelo para especificação de um caso de teste (CEDRO, 2021):
+
+\begin{center}
+\begin{tabular}{ | p{15cm} | } 
+    \hline
+    \textbf{Título} \\
+    O título do caso de teste deverá ser sucinto, simples e autoexplicativo com informações para que o Analista de Teste saiba a validação a qual o teste se propõe. Exemplos:
+    \begin{itemize}
+        \item Validar upload de arquivo;
+        \item Validar cadastro de usuário com perfil administrador;
+        \item Validar envio de ordem de compra.
+    \end{itemize}\\[-0.5em] % <--- AJUSTADO AQUI
+    \hline
+    
+    \textbf{Objetivo} \\
+    O objetivo do caso de teste é descrever o que será executado, fornecendo uma visão geral do teste que será realizado. Exemplos:
+    \begin{itemize}
+        \item Verificar se realiza o upload do arquivo com as extensões permitidas;
+        \item Verificar se o cadastro é efetivado após preencher as informações corretamente;
+        \item Verificar se a ordem de compra é enviada informando o ativo, quantidade e preço.
+    \end{itemize}\\[-0.5em] % <--- AJUSTADO AQUI
+    \hline
+    
+    \textbf{Pré-Condição} \\
+    São condições necessárias para que o caso de teste consiga ser executado. Evitar que não tenha alguma informação necessária (Exemplo: solicitar a edição de um usuário em específico e na pré-condição não informar que o usuário deve estar cadastrado). Exemplos:
+    \begin{itemize}
+        \item Usuário cadastrado e autenticado no sistema;
+        \item Ordem de compra enviada e executada;
+        \item Usuário com perfil Administrador.
+    \end{itemize}\\[-0.5em] % <--- AJUSTADO AQUI
+    \hline 
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{ | p{15cm} | } 
+    \hline
+    \textbf{Passos} \\
+    Os passos são necessários para descrever todas as ações que o analista deve seguir durante a execução para chegar ao resultado esperado. Devendo iniciar com um verbo infinitivo (acessar, preencher, clicar, verificar) ou imperativo (acesse, preencha, clique, verifique). Exemplos:
+    \begin{itemize}
+        \item Acessar a tela Negociação > Boleta;
+        \item Clicar no botão “Entrar”;
+        \item Verificar se a edição foi salva no banco de dados;
+        \item Preencher os campos do cadastro.
+    \end{itemize}\\[-0.5em] % <--- AJUSTADO AQUI
+    \hline 
+    \textbf{Resultados Esperados} \\
+    Descrever o comportamento esperado do sistema após executar os passos detalhados. Informar os verbos no presente (valida, apresenta, recupera, retorna). Evitar frases como “O sistema \textbf{deve} retornar a mensagem…”, prefira usar “O sistema retorna a mensagem…” para não deixar nenhuma dúvida do resultado esperado. Exemplos:
+    \begin{itemize}
+        \item Sistema apresenta a tela de edição com os campos preenchidos.;
+        \item A ordem é enviada e executada com o preço informado;
+        \item O cadastro é salvo no banco de dados.
+    \end{itemize}\\[-0.5em] % <--- AJUSTADO AQUI
+    \hline 
+\end{tabular}
+\end{center}
+
+Os casos de teste podem ser especificados usando uma ferramenta de software. Caso este seja o caso, esta seção deve apresentar qual a ferramenta e foi utilizada no desenvolvimento deste trabalho. A Figura~\ref{fig:exemploDeCasoDeTeste} apresenta um exemplo de caso de teste especificado usando a ferramenta Testlink.
+
+
+\FloatBarrier
+\begin{figure}[!htbp]
+    \centering
+    \caption{Exemplo de Caso de Teste Elaborado na Ferramenta Testlink}
+    %scale redimensiona a figura.
+    %1.5 = 150% do tamanho original
+    %1 = 100% do tamanho original
+    %0.20 = 20% do tamanho original
+    \includegraphics[scale=1.0]{imagens/ExcemplodeCasodeTeste.png}
+    \\\textbf{Fonte:} Elaborada pelo autor
+    \label{fig:exemploDeCasoDeTeste}
+\end{figure}
+\FloatBarrier
