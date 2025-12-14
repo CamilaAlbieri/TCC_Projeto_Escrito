@@ -13,28 +13,24 @@
 % Data: 27/11/2020
 
 \documentclass[
-	% -- opções da classe memoir --
-	12pt,				% tamanho da fonte
-	openany,			% openright = capítulos começam em pág ímpar (insere página vazia caso preciso)
-	oneside,			% twoside para impressão em verso e anverso. Oposto a oneside
-	a4paper,			% tamanho do papel. 
-	%normalfigtabnum,
-	%pnumromarab,
-	% -- opções da classe abntex2 --
-	chapter=TITLE,		% títulos de capítulos convertidos em letras maiúsculas
-	%section=TITLE,		% títulos de seções convertidos em letras maiúsculas
-	%subsection=TITLE,	% títulos de subseções convertidos em letras maiúsculas
-	%subsubsection=TITLE,% títulos de subsubseções convertidos em letras maiúsculas
-	% -- opções do pacote babel --
-	english,			% idioma adicional para hifenização
-	french,				% idioma adicional para hifenização
-	spanish,			% idioma adicional para hifenização
-	brazilian,				% o último idioma é o principal do documento
+    % -- opções da classe memoir --
+    12pt,               % tamanho da fonte
+    openany,            % openright = capítulos começam em pág ímpar (insere página vazia caso preciso)
+    oneside,            % twoside para impressão em verso e anverso. Oposto a oneside
+    a4paper,            % tamanho do papel. 
+    %normalfigtabnum,
+    %pnumromarab,
+    % -- opções da classe abntex2 --
+    chapter=TITLE,      % títulos de capítulos convertidos em letras maiúsculas
+    %section=TITLE,     % títulos de seções convertidos em letras maiúsculas
+    %subsection=TITLE,  % títulos de subseções convertidos em letras maiúsculas
+    %subsubsection=TITLE,% títulos de subsubseções convertidos em letras maiúsculas
+    % -- opções do pacote babel --
+    english,            % idioma adicional para hifenização
+    french,             % idioma adicional para hifenização
+    spanish,            % idioma adicional para hifenização
+    brazilian,          % o último idioma é o principal do documento (ALTERADO DE BRAZIL PARA BRAZILIAN)
 ]{abntex2}
-
-
-
-
 
 
 % ---------------------------------------------------------------------------------
@@ -44,14 +40,14 @@
 % ---
 % Pacotes básicos 
 % ---
-\usepackage{lmodern}			% Usa a fonte Latin Modern			
-\usepackage[T1]{fontenc}		% Selecao de codigos de fonte.
-\usepackage[utf8]{inputenc}		% Codificacao do documento (conversão automática dos acentos)
-\usepackage{lastpage}			% Usado pela Ficha catalográfica
-\usepackage{indentfirst}		% Indenta o primeiro parágrafo de cada seção.
-\usepackage{xcolor,colortbl}	% Controle das cores
-\usepackage{graphicx}			% Inclusão de gráficos
-\usepackage{microtype} 			% para melhorias de justificação
+\usepackage{lmodern}            % Usa a fonte Latin Modern          
+\usepackage[T1]{fontenc}        % Selecao de codigos de fonte.
+\usepackage[utf8]{inputenc}     % Codificacao do documento (conversão automática dos acentos)
+\usepackage{lastpage}           % Usado pela Ficha catalográfica
+\usepackage{indentfirst}        % Indenta o primeiro parágrafo de cada seção.
+\usepackage{xcolor,colortbl}    % Controle das cores
+\usepackage{graphicx}           % Inclusão de gráficos
+\usepackage{microtype}          % para melhorias de justificação
 \usepackage{hyperref}
 \usepackage{subfig}
 \usepackage{epigraph}
@@ -75,18 +71,18 @@
 % ---
 % Pacotes adicionais, usados apenas no âmbito do Modelo Canônico do abnteX2
 % ---
-\usepackage{lipsum}				% para geração de dummy text
+\usepackage{lipsum}             % para geração de dummy text
 % ---
 
 % ---
 % Pacotes de citações
 % ---
-\usepackage[brazilian,hyperpageref]{backref}	 % Paginas com as citações na bibl
+\usepackage[brazilian,hyperpageref]{backref}     % Paginas com as citações na bibl
 \usepackage[alf,abnt-emphasize=bf]{abntex2cite}  % Citações padrão ABNT
 
 
 % ---------------------------------------------------------------------------------
-%                          CONFIGURAÇÕES DOS PACOTES
+%                           CONFIGURAÇÕES DOS PACOTES
 % ---------------------------------------------------------------------------------
 
 % ---
@@ -99,20 +95,20 @@
 
 %\begin{comment}
 % ---
-% Configurações do pacote backrefhttps://pt.overleaf.com/project/5fc07bbbe9cc069c0e55a0d1
+% Configurações do pacote backref
 % Usado sem a opção hyperpageref de backref
 \renewcommand{\backrefpagesname}{Citado na(s) página(s):~}
 % Texto padrão antes do número das páginas
 \renewcommand{\backref}{}
 % Define os textos da citação
 \renewcommand*{\backrefalt}[4]{
-	\ifcase #1 %
-	Nenhuma citação no texto.%
-	\or
-	Citado na página #2.%
-	\else
-	Citado #1 vezes nas páginas #2.%
-	\fi}%
+    \ifcase #1 %
+    Nenhuma citação no texto.%
+    \or
+    Citado na página #2.%
+    \else
+    Citado #1 vezes nas páginas #2.%
+    \fi}%
 % --- das
 %\end{comment}
 
@@ -123,19 +119,19 @@
 \definecolor{corPalavraChave}{RGB}{0,0,230}
 
 \lstset{
-	numbers=left,
-	stepnumber=1,
-	firstnumber=1,
-	numberstyle=\footnotesize,
-	extendedchars=true,
-	breaklines=true,
-	lineskip=0pt,
-	frame=tb,
-	basicstyle=\ttfamily\footnotesize,
-	showstringspaces=false,
-	stringstyle=\color{corString},
-	commentstyle=\color{corComentario},
-	keywordstyle=\color{corPalavraChave}
+    numbers=left,
+    stepnumber=1,
+    firstnumber=1,
+    numberstyle=\footnotesize,
+    extendedchars=true,
+    breaklines=true,
+    lineskip=0pt,
+    frame=tb,
+    basicstyle=\ttfamily\footnotesize,
+    showstringspaces=false,
+    stringstyle=\color{corString},
+    commentstyle=\color{corComentario},
+    keywordstyle=\color{corPalavraChave}
 }
 
 \newcolumntype{Y}{>{\centering\arraybackslash}X}
@@ -175,8 +171,7 @@
 %\curso{Especialização em Desenvolvimento de Aplicações para Dispositivos Móveis}
 %\grau{Especialista em Desenvolvimento de Aplicações para Dispositivos Móveis}
 
-\titulo{Plataforma Personalizável para Criação e Compartilhamento de Coleções Digitais
-}
+\titulo{Plataforma Personalizável para Criação e Compartilhamento de Coleções Digitais}
 
 % caso não haja subtítulo, comente a linha abaixo
 %\subtitulo{subtítulo (se houver)}
@@ -195,9 +190,9 @@
 \ano{2025}
 
 \instituicao{%
-	Instituto Federal de Educação, Ciência e Tecnologia de São Paulo
-	\par
-	Câmpus Birigui
+    Instituto Federal de Educação, Ciência e Tecnologia de São Paulo
+    \par
+    Câmpus Birigui
 }
 
 \preambulo{\imprimirtipotrabalho\ apresentado ao Instituto Federal de Educação, Ciência e Tecnologia de São Paulo, como requisito parcial para conclusão do curso de \imprimircurso.
@@ -217,18 +212,18 @@
 % informações do PDF
 \makeatletter
 \hypersetup{
-	%pagebackref=true,
-	pdftitle={\@title}, 
-	pdfauthor={\@author},
-	pdfsubject={\imprimirpreambulo},
-	pdfcreator={Nome Completo},
-	pdfkeywords={Palavra chave 1}{Palavra chave 2}{Palavra chave 3}{Palavra chave n}, 
-	colorlinks=true,       		% false: boxed links; true: colored links
-	linkcolor=black,          	% color of internal links
-	citecolor=black,       		% color of links to bibliography
-	filecolor=black,      		% color of file links
-	urlcolor=black,
-	bookmarksdepth=4
+    %pagebackref=true,
+    pdftitle={\@title}, 
+    pdfauthor={\@author},
+    pdfsubject={\imprimirpreambulo},
+    pdfcreator={Nome Completo},
+    pdfkeywords={Palavra chave 1}{Palavra chave 2}{Palavra chave 3}{Palavra chave n}, 
+    colorlinks=true,            % false: boxed links; true: colored links
+    linkcolor=black,            % color of internal links
+    citecolor=black,            % color of links to bibliography
+    filecolor=black,            % color of file links
+    urlcolor=black,
+    bookmarksdepth=4
 }
 \makeatother
 % --- 
@@ -287,10 +282,10 @@
 %                                   INÍCIO DO DOCUMENTO
 % ---------------------------------------------------------------------------------
 \begin{document}
-	
+    
 % Seleciona o idioma do documento (conforme pacotes do babel)
 %\selectlanguage{english}
-\selectlanguage{brazil}
+\selectlanguage{brazilian} % <--- ALTERADO DE BRAZIL PARA BRAZILIAN
 
 % Retira espaço extra obsoleto entre as frases.
 \frenchspacing 
@@ -305,7 +300,7 @@
 % Capa
 % ---
 %\imprimircapa
-\input{pre01Capa}
+\input{elementos-pre/pre01Capa}
 % ---
 
 % ---
@@ -313,44 +308,44 @@
 % (o * indica que haverá a ficha bibliográfica)
 % ---
 %\imprimirfolhaderosto*
-\input{pre02FolhaDeRosto}
+\input{elementos-pre/pre02FolhaDeRosto}
 % ---
 
 % ---
 % Inserir a ficha catalográfica
 % ---
-\input{pre03FichaCatalografica}
+\input{elementos-pre/pre03FichaCatalografica}
 
 % ---
 % Inserir a ERRATA
 % ---
-\input{pre12Errata}
+\input{elementos-pre/pre12Errata}
 
 % ---
 % Inserir folha de aprovação
 % ---
-\input{pre04FolhaDeAprovacao}
+\input{elementos-pre/pre04FolhaDeAprovacao}
 
 % ---
 % Dedicatória
 % ---
-\input{pre05Dedicatoria}
+\input{elementos-pre/pre05Dedicatoria}
 
 % ---
 % Agradecimentos
 % ---
-\input{pre06Agradecimentos}
+\input{elementos-pre/pre06Agradecimentos}
 
 % ---
 % Epígrafe
 % ---
-\input{pre07Epigrafe}
+\input{elementos-pre/pre07Epigrafe}
 
 % ---
 % Resumos
 % ---
-\input{pre08Resumo}
-\input{pre09Abstract}
+\input{elementos-pre/pre08Resumo}
+\input{elementos-pre/pre09Abstract}
 
 % ---
 % inserir lista de ilustrações
@@ -379,13 +374,13 @@
 % ---
 % inserir lista de abreviaturas e siglas
 % ---
-\input{pre10ListaSiglas}
+\input{elementos-pre/pre10ListaSiglas}
 % ---
 
 % ---
 % inserir lista de símbolos
 % ---
-\input{pre11ListaSimbolos}
+\input{elementos-pre/pre11ListaSimbolos}
 % ---
 
 % ---
@@ -406,23 +401,20 @@
 % ---------------------------------------------------------------------------------
 \textual
 
-\input{capitulo01Introducao}
-\input{capitulo02RevisaoLiteratura}
-\input{capitulo03Metodologia}
-\input{capitulo04DescricaoGeraldoProduto}
-\input{capitulo05ElicitacaodeRequisitosEAnalise}
-\input{capitulo06ProjetodeSoftware}
-\input{capitulo07Implementacao}
-\input{capitulo08Teste}
-\input{capitulo09Implantacao}
-\input{capitulo10ResultadosDiscussao}
-\input{capitulo11TrabalhosRelacionados}
-\input{capitulo12Conclusoes}
-\input{capitulo13Cronograma}
-
-
-
-
+% ATUALIZADO PARA A PASTA capitulos/
+\input{capitulos/capitulo01Introducao}
+\input{capitulos/capitulo02RevisaoLiteratura}
+\input{capitulos/capitulo03Metodologia}
+\input{capitulos/capitulo04DescricaoGeraldoProduto}
+\input{capitulos/capitulo05ElicitacaodeRequisitosEAnalise}
+\input{capitulos/capitulo06ProjetodeSoftware}
+\input{capitulos/capitulo07Implementacao}
+\input{capitulos/capitulo08Teste}
+\input{capitulos/capitulo09Implantacao}
+\input{capitulos/capitulo10ResultadosDiscussao}
+\input{capitulos/capitulo11TrabalhosRelacionados}
+\input{capitulos/capitulo12Conclusoes}
+\input{capitulos/capitulo13Cronograma}
 
 
 % ---------------------------------------------------------------------------------
@@ -434,6 +426,7 @@
 % ----------------------------------------------------------
 % Referências bibliográficas
 % ----------------------------------------------------------
+% Mantido na raiz por enquanto. Se mover o arquivo .bib, altere aqui.
 \bibliography{referencias}
 
 
@@ -449,13 +442,15 @@
 % ----------------------------------------------------------
 % Apêndices
 % ----------------------------------------------------------
-\input{pos01Apendices}
+% ATUALIZADO PARA A PASTA elementos-pos/
+\input{elementos-pos/pos01Apendices}
 
 
 % ----------------------------------------------------------
 % Anexos
 % ----------------------------------------------------------
-\input{pos02Anexos}
+% ATUALIZADO PARA A PASTA elementos-pos/
+\input{elementos-pos/pos02Anexos}
 
 
 %---------------------------------------------------------------------

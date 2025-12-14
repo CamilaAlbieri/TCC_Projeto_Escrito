@@ -1,0 +1,26 @@
+# Ignorar arquivos temporários de compilação LaTeX
+*.aux
+*.bbl
+*.blg
+*.brf
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.synctex.gz
+*.toc
+*.xdv
+*.idx
+*.ilg
+*.ind
+*.loq
+
+# Ignorar a pasta de build (se você configurou a saída para lá)
+build/
+
+# Ignorar arquivos de sistema e do editor
+.vscode/
+.DS_Store
+Thumbs.db
