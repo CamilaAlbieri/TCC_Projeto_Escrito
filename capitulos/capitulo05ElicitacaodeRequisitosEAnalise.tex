@@ -108,173 +108,298 @@ Alguns requisitos foram identificados durante a elicitação, porém não serão
 \end{itemize}
 
 
-\section{Casos de Uso}
-Forneça uma breve definição de casos de uso (com referência da fonte) e informe que os casos de uso identificados neste trabalho estão aqui apresentados.
+% \section{Casos de Uso}
+% Forneça uma breve definição de casos de uso (com referência da fonte) e informe que os casos de uso identificados neste trabalho estão aqui apresentados.
 
 
-\subsection{Diagrama de Casos de Uso}
-O diagrama de casos de uso elaborado neste trabalho descreve as principais interações do usuário com a plataforma personalizável para criação e compartilhamento de coleções digitais , representando ações como a captura de imagens, a visualização dos objetos detectados e a interação com as informações fornecidas pelo sistema. Essas interações são essenciais para garantir que o aplicativo atenda às necessidades dos usuários, proporcionando uma experiência eficaz e acessível. O diagrama de casos de uso elaborado neste trabalho está apresentado na Figura~\ref{fig:diagCasosDeUso}.
+% \subsection{Diagrama de Casos de Uso}
+% O diagrama de casos de uso elaborado neste trabalho descreve as principais interações do usuário com a plataforma personalizável para criação e compartilhamento de coleções digitais , representando ações como a captura de imagens, a visualização dos objetos detectados e a interação com as informações fornecidas pelo sistema. Essas interações são essenciais para garantir que o aplicativo atenda às necessidades dos usuários, proporcionando uma experiência eficaz e acessível. O diagrama de casos de uso elaborado neste trabalho está apresentado na Figura~\ref{fig:diagCasosDeUso}.
 
-\FloatBarrier
-\begin{figure}[!htbp]
-	\centering
-	\caption{Diagrama de Casos de Uso}
-	%scale redimensiona a figura.
-	%1.5 = 150% do tamanho original
-	%1 = 100% do tamanho original
-	%0.20 = 20% do tamanho original
-	\includegraphics[scale=1.0]{imagens/DiagramadeCasosdeUso.png}
-	\\\textbf{Fonte:} Elaborada pelo autor
-	\label{fig:diagCasosDeUso}
-\end{figure}
-\FloatBarrier
+% \FloatBarrier
+% \begin{figure}[!htbp]
+% 	\centering
+% 	\caption{Diagrama de Casos de Uso}
+% 	%scale redimensiona a figura.
+% 	%1.5 = 150% do tamanho original
+% 	%1 = 100% do tamanho original
+% 	%0.20 = 20% do tamanho original
+% 	\includegraphics[scale=1.0]{imagens/DiagramadeCasosdeUso.png}
+% 	\\\textbf{Fonte:} Elaborada pelo autor
+% 	\label{fig:diagCasosDeUso}
+% \end{figure}
+% \FloatBarrier
 
-\subsection{Especificação dos Casos de Uso}
-Uma especificação de caso de uso fornece detalhe textual para um caso de uso. Uma estrutura de tópicos de amostra de uma especificação de caso de uso é fornecida. É possível reutilizar e modificar a estrutura de tópicos conforme necessário em um documento de especificação de caso de uso. A Tabela~\ref{tab:especCasosDeUso} apresenta um modelo para especificação de casos de uso (extraído de \href{https://www.ibm.com/docs/pt-br/elm/6.0?topic=cases-use-case-specification-outline}{IBM-Especificação de Casos de Uso}).
+% \subsection{Especificação dos Casos de Uso}
+% Uma especificação de caso de uso fornece a descrição textual detalhada do comportamento do sistema a partir da perspectiva do usuário, permitindo compreender como as funcionalidades são executadas e quais resultados são esperados. As especificações apresentam os fluxos principais, fluxos alternativos, condições prévias e pós-condições associadas a cada interação.
 
-\FloatBarrier
-\begin{table}[!htbp]
-\centering
-\caption{Modelo para Especificação de Casos de Uso}
-	\begin{tabular}{ c | p{11.5cm} }
-		\hline
-		\textbf{Item} & \textbf{Descrição} \\ \hline
-		Nome do Caso de Uso & 
-		Declara o nome do caso de uso. Geralmente, o nome expressa o objetivo ou resultado observável do caso de uso, como "Sacar Dinheiro" no caso de um caixa eletrônico. \\ \hline
-		Descrição Resumida & Descreve a função e o objetivo do caso de uso.   \\ \hline
-		Fluxo de Eventos & Apresenta o fluxo básico e os fluxos alternativos. O fluxo de eventos descreve o comportamento do sistema; ele não descreve como o sistema funciona, os detalhes da apresentação ou os detalhes da interface com o usuário. Se forem trocadas informações, o caso de uso deverá ser específico sobre o que será transmitido de um lado para outro. Por exemplo, em vez de descrever uma ação como "o agente insere informações do cliente", indique que "o agente insere o nome e o endereço do cliente".  \\ \hline
-		Fluxo Básico & Descreve o comportamento principal ideal do sistema.  \\ \hline
-		Fluxos Alternativos & Descreve exceções ou desvios do fluxo básico, como o comportamento do sistema quando o agente insere um ID de usuário incorreto e a autenticação do usuário falha.  \\ \hline
-		Requisitos Especiais & Requisitos não-funcionais que são específicos para um caso de uso mas que não são especificados no texto do fluxo do caso de uso de eventos. Exemplos de requisitos especiais incluem estes fatores: requisitos legais e regulamentares; padrões de aplicativo; atributos de qualidade do sistema, incluindo usabilidade, confiabilidade, desempenho e capacidade de suporte; sistemas operacionais e ambientes; requisitos de compatibilidade e restrições de design.  \\ \hline
-		Condições Prévias & Um estado do sistema que deve estar presente antes de um caso de uso ser iniciado.  \\ \hline
-		Pós-Condições & Uma lista de estados possíveis para o sistema imediatamente após a conclusão de um caso de uso.  \\ \hline
-		Pontos de Extensão & Um ponto no fluxo de eventos do caso de uso em que outro caso de uso é referenciado.  \\ \hline
-	\end{tabular}
-	\\ \vspace{0.2cm}
-	\textbf{Fonte:} Extraído de \href{https://www.ibm.com/docs/pt-br/elm/6.0?topic=cases-use-case-specification-outline}{IBM-Especificação de Casos de Uso}
-	\label{tab:especCasosDeUso}
-\end{table}
-\FloatBarrier
+% Neste trabalho, as especificações textuais foram elaboradas apenas para os casos de uso principais, uma vez que os demais representam variações, detalhamentos ou funcionalidades incluídas nos fluxos básicos. O modelo adotado para a especificação dos casos de uso é apresentado na Tabela~\ref{tab:especCasosDeUso}, adaptado da IBM.
 
-Elaborar as especificações para cada caso de uso, quando for necessário, como por exemplo: A especificação do caso de uso Finalizar Compra é
+% \FloatBarrier
+% \begin{table}[!htbp]
+% \centering
+% \caption{Modelo para Especificação de Casos de Uso}
+% 	\begin{tabular}{ c | p{11.5cm} }
+% 		\hline
+% 		\textbf{Item} & \textbf{Descrição} \\ \hline
+% 		Nome do Caso de Uso & 
+% 		Declara o nome do caso de uso. Geralmente, o nome expressa o objetivo ou resultado observável do caso de uso, como "Sacar Dinheiro" no caso de um caixa eletrônico. \\ \hline
+% 		Descrição Resumida & Descreve a função e o objetivo do caso de uso.   \\ \hline
+% 		Fluxo de Eventos & Apresenta o fluxo básico e os fluxos alternativos. O fluxo de eventos descreve o comportamento do sistema; ele não descreve como o sistema funciona, os detalhes da apresentação ou os detalhes da interface com o usuário. Se forem trocadas informações, o caso de uso deverá ser específico sobre o que será transmitido de um lado para outro. Por exemplo, em vez de descrever uma ação como "o agente insere informações do cliente", indique que "o agente insere o nome e o endereço do cliente".  \\ \hline
+% 		Fluxo Básico & Descreve o comportamento principal ideal do sistema.  \\ \hline
+% 		Fluxos Alternativos & Descreve exceções ou desvios do fluxo básico, como o comportamento do sistema quando o agente insere um ID de usuário incorreto e a autenticação do usuário falha.  \\ \hline
+% 		Requisitos Especiais & Requisitos não-funcionais que são específicos para um caso de uso mas que não são especificados no texto do fluxo do caso de uso de eventos. Exemplos de requisitos especiais incluem estes fatores: requisitos legais e regulamentares; padrões de aplicativo; atributos de qualidade do sistema, incluindo usabilidade, confiabilidade, desempenho e capacidade de suporte; sistemas operacionais e ambientes; requisitos de compatibilidade e restrições de design.  \\ \hline
+% 		Condições Prévias & Um estado do sistema que deve estar presente antes de um caso de uso ser iniciado.  \\ \hline
+% 		Pós-Condições & Uma lista de estados possíveis para o sistema imediatamente após a conclusão de um caso de uso.  \\ \hline
+% 		Pontos de Extensão & Um ponto no fluxo de eventos do caso de uso em que outro caso de uso é referenciado.  \\ \hline
+% 	\end{tabular}
+% 	\\ \vspace{0.2cm}
+% 	\textbf{Fonte:} Extraído de \href{https://www.ibm.com/docs/pt-br/elm/6.0?topic=cases-use-case-specification-outline}{IBM-Especificação de Casos de Uso}
+% 	\label{tab:especCasosDeUso}
+% \end{table}
+% \FloatBarrier
 
-
-
-\begin{table}
-\begin{tabular}{ | p{15cm} | }
-	\hline
-	\textbf{Caso de Uso}            \\
-	Finalizar Comprar 	            \\	\hline
-	\textbf{Referências}            \\
-	RF02             	            \\	\hline
-	\textbf{Descrição Geral}        \\
-	O caso de uso inicia-se quando o cliente deseja efetuar compra dos produtos que estão inseridos no carrinho de compras.   \\	\hline
-	\textbf{Atores}                 \\
-	Cliente                         \\	\hline
-	\textbf{Pré-Condições}          \\
-	Cliente logado no sistema, produtos já inseridos no carrinho de compras.
-		                            \\	\hline
-	\textbf{Garantia de Sucesso (Pós-Condições}             \\
-	Pedido fechado, compra efetuada, sistema aguardando confirmação de pagamento.
-		                            \\	\hline
-	\textbf{Requisitos Especiais}   \\
-		                            \\	\hline
-	\textbf{Fluxo Básico}           
-    \begin{enumerate}
-        \item Cliente deseja finalizar compra, sistema solicita que informe a forma de pagamento e de entrega;
-        \item Cliente deseja efetuar pagamento em forma de cartão de crédito/débito;
-        \item Sistema solicita informações do cartão do cliente;
-        \item Sistema faz validação das informações;
-        \item Sistema gera o número do pedido;
-        \item Compra finalizada com sucesso.
-    \end{enumerate}
-		                          \\	\hline
-	\textbf{Fluxo Alternativo}      
-    \renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}}
-    \renewcommand{\labelenumiii}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}}
-    \renewcommand{\labelenumiv}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}.\arabic{enumiv}}
-
-    \begin{enumerate}
-        \item Cliente deseja efetuar pagamento através de boleto bancário
-        \begin{enumerate}
-            \item Sistema gera boleto para o cliente;
-            \item Retorne ao passo 5.
-        \end{enumerate}
-    \end{enumerate}		
-	\\	\hline
-\end{tabular}
-\end{table}
+% Elaborar as especificações para cada caso de uso, quando for necessário, como por exemplo: A especificação do caso de uso Finalizar Compra é
 
 
 
-\section{Modelo de Domínio}
-Fazer uma pequena definição de modelo de domínio para introduzir essa seção. Terminar o parágrafo informando qual figura apresenta o modelo de domínio. Elabore o diagrama de classes somente com os atributos, para auxiliar no entendimento do domínio da aplicação, conforme Figura~\ref{fig:modeloDeDominio}.
+% \begin{table}
+% \begin{tabular}{ | p{15cm} | }
+% 	\hline
+% 	\textbf{Caso de Uso}            \\
+% 	Finalizar Comprar 	            \\	\hline
+% 	\textbf{Referências}            \\
+% 	RF02             	            \\	\hline
+% 	\textbf{Descrição Geral}        \\
+% 	O caso de uso inicia-se quando o cliente deseja efetuar compra dos produtos que estão inseridos no carrinho de compras.   \\	\hline
+% 	\textbf{Atores}                 \\
+% 	Cliente                         \\	\hline
+% 	\textbf{Pré-Condições}          \\
+% 	Cliente logado no sistema, produtos já inseridos no carrinho de compras.
+% 		                            \\	\hline
+% 	\textbf{Garantia de Sucesso (Pós-Condições}             \\
+% 	Pedido fechado, compra efetuada, sistema aguardando confirmação de pagamento.
+% 		                            \\	\hline
+% 	\textbf{Requisitos Especiais}   \\
+% 		                            \\	\hline
+% 	\textbf{Fluxo Básico}           
+%     \begin{enumerate}
+%         \item Cliente deseja finalizar compra, sistema solicita que informe a forma de pagamento e de entrega;
+%         \item Cliente deseja efetuar pagamento em forma de cartão de crédito/débito;
+%         \item Sistema solicita informações do cartão do cliente;
+%         \item Sistema faz validação das informações;
+%         \item Sistema gera o número do pedido;
+%         \item Compra finalizada com sucesso.
+%     \end{enumerate}
+% 		                          \\	\hline
+% 	\textbf{Fluxo Alternativo}      
+%     \renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}}
+%     \renewcommand{\labelenumiii}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}}
+%     \renewcommand{\labelenumiv}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}.\arabic{enumiv}}
 
-De acordo com \citeauthorandyear{braga2008algoritmos}, o modelo de domínio é .....  . A Figura~\ref{fig:modeloDeDominio} apresenta o modelo de domínio desenvolvido neste trabalho.
+%     \begin{enumerate}
+%         \item Cliente deseja efetuar pagamento através de boleto bancário
+%         \begin{enumerate}
+%             \item Sistema gera boleto para o cliente;
+%             \item Retorne ao passo 5.
+%         \end{enumerate}
+%     \end{enumerate}		
+% 	\\	\hline
+% \end{tabular}
+% \end{table}
 
-\FloatBarrier
-\begin{figure}[!htbp]
-	\centering
-	\caption{Modelo de Domínio}
-	%scale redimensiona a figura.
-	%1.5 = 150% do tamanho original
-	%1 = 100% do tamanho original
-	%0.20 = 20% do tamanho original
-	\includegraphics[scale=1.0]{imagens/ModelodeDominio.png}
-	\\\textbf{Fonte:} Elaborada pelo autor
-	\label{fig:modeloDeDominio}
-\end{figure}
-\FloatBarrier
+% \begin{table}
+% \begin{tabular}{ | p{15cm} | }
+% 	\hline
+% 	\textbf{Caso de Uso} \\
+% 	Criar Conta \\ \hline
+% 	\textbf{Referências} \\
+% 	RF01 \\ \hline
+% 	\textbf{Descrição Geral} \\
+% 	Permite que um novo usuário crie uma conta na plataforma para acessar as funcionalidades do sistema. \\ \hline
+% 	\textbf{Atores} \\
+% 	Usuário \\ \hline
+% 	\textbf{Pré-Condições} \\
+% 	Usuário não possuir conta cadastrada no sistema. \\ \hline
+% 	\textbf{Garantia de Sucesso (Pós-Condições)} \\
+% 	Conta criada com sucesso e usuário apto a realizar login. \\ \hline
+% 	\textbf{Requisitos Especiais} \\
+% 	Validação de campos obrigatórios e unicidade de e-mail. \\ \hline
+% 	\textbf{Fluxo Básico}
+% 	\begin{enumerate}
+% 	\item Usuário acessa a tela de cadastro;
+% 	\item Sistema solicita dados básicos (nome, e-mail e senha);
+% 	\item Usuário informa os dados;
+% 	\item Sistema valida as informações;
+% 	\item Conta é criada com sucesso.
+% 	\end{enumerate}
+% 	\\ \hline
+% 	\textbf{Fluxo Alternativo}
+% 	\begin{enumerate}
+% 	\item Dados inválidos ou e-mail já cadastrado;
+% 	\item Sistema informa erro e solicita correção.
+% 	\end{enumerate}
+% 	\\ \hline
+% \end{tabular}
+% \end{table}
 
-\section{Diagrama de Objetos}
-Fazer uma pequena definição de diagrama de objetos para introduzir essa seção. Terminar o parágrafo informando qual figura apresenta o diagrama de objetos. Elabore o diagrama de objetos para cada classe identificada no modelo de domínio.
+% \begin{table}
+% \begin{tabular}{ | p{15cm} | }
+% \hline
+% \textbf{Caso de Uso} \\
+% Criar Coleção \\ \hline
+% \textbf{Referências} \\
+% RF02 \\ \hline
+% \textbf{Descrição Geral} \\
+% Permite que o usuário crie uma nova coleção personalizada para organizar seus itens. \\ \hline
+% \textbf{Atores} \\
+% Usuário \\ \hline
+% \textbf{Pré-Condições} \\
+% Usuário autenticado no sistema. \\ \hline
+% \textbf{Garantia de Sucesso (Pós-Condições)} \\
+% Coleção criada e disponível na lista de coleções do usuário. \\ \hline
+% \textbf{Requisitos Especiais} \\
+% Suporte à personalização visual da coleção. \\ \hline
+% \textbf{Fluxo Básico}
+% \begin{enumerate}
+% \item Usuário seleciona a opção criar coleção;
+% \item Sistema solicita nome e tipo da coleção;
+% \item Usuário informa os dados;
+% \item Sistema cria a coleção.
+% \end{enumerate}
+% \\ \hline
+% \end{tabular}
+% \end{table}
 
 
-\section{Diagrama de Classes de Análise}
-Fazer uma pequena definição de diagrama de classes para introduzir essa seção. Terminar o parágrafo informando qual figura apresenta o diagrama de classes. É uma evolução do modelo de domínio, elabore o diagrama de classes com os atributos e métodos.
+% \begin{table}
+% \begin{tabular}{ | p{15cm} | }
+% \hline
+% \textbf{Caso de Uso} \\
+% Adicionar Item à Coleção \\ \hline
+% \textbf{Referências} \\
+% RF03 \\ \hline
+% \textbf{Descrição Geral} \\
+% Permite que o usuário adicione um novo item a uma coleção existente, associando uma ficha descritiva ao item. \\ \hline
+% \textbf{Atores} \\
+% Usuário \\ \hline
+% \textbf{Pré-Condições} \\
+% Usuário autenticado e coleção previamente criada. \\ \hline
+% \textbf{Garantia de Sucesso (Pós-Condições)} \\
+% Item adicionado à coleção com ficha associada. \\ \hline
+% \textbf{Requisitos Especiais} \\
+% Suporte a diferentes tipos de campos conforme a coleção. \\ \hline
+% \textbf{Fluxo Básico}
+% \begin{enumerate}
+% \item Usuário seleciona uma coleção;
+% \item Usuário escolhe a opção adicionar item;
+% \item Sistema executa o caso de uso \textit{Criar Ficha do Item};
+% \item Item é salvo na coleção.
+% \end{enumerate}
+% \\ \hline
+% \textbf{Pontos de Extensão} \\
+% Criar Ficha do Item (include) \\ \hline
+% \end{tabular}
+% \end{table}
 
 
-\section{Diagrama de Atividades}
-Um diagrama de atividade ilustra a natureza dinâmica de um sistema pela modelagem do fluxo de controle de atividade à atividade. Uma atividade representa uma operação em alguma classe no sistema que resulta em uma mudança no estado do sistema.
-
-Tipicamente, diagramas de atividades são usados para modelar fluxos de processos, processos de negócios ou operações internas. o diagrama de atividades é similar a uma máquina de estados, mas tem um propósito diferente, o qual envolve capturar ações e seus resultados em termos de mudanças do estado do objeto.
-
-O diagrama de atividades é representado por um gráfico de atividades que mostram o fluxo de uma atividade para outra. Esse fluxo é mostrado através de transições, que são setas direcionadas, mostrando o caminho entre os estados de atividade (ação).
-
-A Figura~\ref{fig:diagramaDeAtividades} mostra o diagrama de atividades para a operação averiguarCredito na classe Pedido da Virtual LTDA. Note que a atividade “Preparar Mensagem de Credito” define o que fazer, mas não como fazer (RIBEIRO, 2021).
-
-Um diagrama de atividades é normalmente composto pelos seguintes elementos: atividades (ações), estados de atividade (ação), transição, fluxo de objeto, estado inicial, estado final, branching, sincronização, raias.
-
-\FloatBarrier
-\begin{figure}[!htbp]
-	\centering
-	\caption{Diagrama de Atividades}
-	%scale redimensiona a figura.
-	%1.5 = 150% do tamanho original
-	%1 = 100% do tamanho original
-	%0.20 = 20% do tamanho original
-	\includegraphics[scale=1.0]{imagens/DiagramadeAtividades.png}
-	\\\textbf{Fonte:} Elaborada pelo autor
-	\label{fig:diagramaDeAtividades}
-\end{figure}
-\FloatBarrier
-
-
-\section{Diagrama de Estados}
-Fazer uma introdução mais ou menos como o parágrafo a seguir.
-Um diagrama de estados mostra os possíveis estados de um objeto e as transações responsáveis pelas suas mudanças de estado, conforme exemplo apresentado na Figura~\ref{fig:diagramaDeEstados}.
+% \begin{table}
+% \begin{tabular}{ | p{15cm} | }
+% \hline
+% \textbf{Caso de Uso} \\
+% Criar Ficha do Item \\ \hline
+% \textbf{Referências} \\
+% RF04 \\ \hline
+% \textbf{Descrição Geral} \\
+% Permite que o usuário crie e personalize a ficha descritiva de um item da coleção. \\ \hline
+% \textbf{Atores} \\
+% Usuário \\ \hline
+% \textbf{Pré-Condições} \\
+% Usuário autenticado e item em processo de criação. \\ \hline
+% \textbf{Garantia de Sucesso (Pós-Condições)} \\
+% Ficha criada e associada ao item. \\ \hline
+% \textbf{Requisitos Especiais} \\
+% Campos dinâmicos e personalizáveis. \\ \hline
+% \textbf{Fluxo Básico}
+% \begin{enumerate}
+% \item Sistema apresenta campos configuráveis;
+% \item Usuário preenche as informações;
+% \item Usuário confirma a criação;
+% \item Sistema salva a ficha.
+% \end{enumerate}
+% \\ \hline
+% \end{tabular}
+% \end{table}
 
 
-\FloatBarrier
-\begin{figure}[!htbp]
-	\centering
-	\caption{Diagrama de Estados}
-	%scale redimensiona a figura.
-	%1.5 = 150% do tamanho original
-	%1 = 100% do tamanho original
-	%0.20 = 20% do tamanho original
-	\includegraphics[scale=1.0]{imagens/DiagramadeEstados.png}
-	\\\textbf{Fonte:} Elaborada pelo autor
-	\label{fig:diagramaDeEstados}
-\end{figure}
-\FloatBarrier
+
+% \section{Modelo de Domínio}
+% Fazer uma pequena definição de modelo de domínio para introduzir essa seção. Terminar o parágrafo informando qual figura apresenta o modelo de domínio. Elabore o diagrama de classes somente com os atributos, para auxiliar no entendimento do domínio da aplicação, conforme Figura~\ref{fig:modeloDeDominio}.
+
+% De acordo com \citeauthorandyear{braga2008algoritmos}, o modelo de domínio é .....  . A Figura~\ref{fig:modeloDeDominio} apresenta o modelo de domínio desenvolvido neste trabalho.
+
+% \FloatBarrier
+% \begin{figure}[!htbp]
+% 	\centering
+% 	\caption{Modelo de Domínio}
+% 	%scale redimensiona a figura.
+% 	%1.5 = 150% do tamanho original
+% 	%1 = 100% do tamanho original
+% 	%0.20 = 20% do tamanho original
+% 	\includegraphics[scale=1.0]{imagens/ModelodeDominio.png}
+% 	\\\textbf{Fonte:} Elaborada pelo autor
+% 	\label{fig:modeloDeDominio}
+% \end{figure}
+% \FloatBarrier
+
+% \section{Diagrama de Objetos}
+% Fazer uma pequena definição de diagrama de objetos para introduzir essa seção. Terminar o parágrafo informando qual figura apresenta o diagrama de objetos. Elabore o diagrama de objetos para cada classe identificada no modelo de domínio.
+
+
+% \section{Diagrama de Classes de Análise}
+% Fazer uma pequena definição de diagrama de classes para introduzir essa seção. Terminar o parágrafo informando qual figura apresenta o diagrama de classes. É uma evolução do modelo de domínio, elabore o diagrama de classes com os atributos e métodos.
+
+
+% \section{Diagrama de Atividades}
+% Um diagrama de atividade ilustra a natureza dinâmica de um sistema pela modelagem do fluxo de controle de atividade à atividade. Uma atividade representa uma operação em alguma classe no sistema que resulta em uma mudança no estado do sistema.
+
+% Tipicamente, diagramas de atividades são usados para modelar fluxos de processos, processos de negócios ou operações internas. o diagrama de atividades é similar a uma máquina de estados, mas tem um propósito diferente, o qual envolve capturar ações e seus resultados em termos de mudanças do estado do objeto.
+
+% O diagrama de atividades é representado por um gráfico de atividades que mostram o fluxo de uma atividade para outra. Esse fluxo é mostrado através de transições, que são setas direcionadas, mostrando o caminho entre os estados de atividade (ação).
+
+% A Figura~\ref{fig:diagramaDeAtividades} mostra o diagrama de atividades para a operação averiguarCredito na classe Pedido da Virtual LTDA. Note que a atividade “Preparar Mensagem de Credito” define o que fazer, mas não como fazer (RIBEIRO, 2021).
+
+% Um diagrama de atividades é normalmente composto pelos seguintes elementos: atividades (ações), estados de atividade (ação), transição, fluxo de objeto, estado inicial, estado final, branching, sincronização, raias.
+
+% \FloatBarrier
+% \begin{figure}[!htbp]
+% 	\centering
+% 	\caption{Diagrama de Atividades}
+% 	%scale redimensiona a figura.
+% 	%1.5 = 150% do tamanho original
+% 	%1 = 100% do tamanho original
+% 	%0.20 = 20% do tamanho original
+% 	\includegraphics[scale=1.0]{imagens/DiagramadeAtividades.png}
+% 	\\\textbf{Fonte:} Elaborada pelo autor
+% 	\label{fig:diagramaDeAtividades}
+% \end{figure}
+% \FloatBarrier
+
+
+% \section{Diagrama de Estados}
+% Fazer uma introdução mais ou menos como o parágrafo a seguir.
+% Um diagrama de estados mostra os possíveis estados de um objeto e as transações responsáveis pelas suas mudanças de estado, conforme exemplo apresentado na Figura~\ref{fig:diagramaDeEstados}.
+
+
+% \FloatBarrier
+% \begin{figure}[!htbp]
+% 	\centering
+% 	\caption{Diagrama de Estados}
+% 	%scale redimensiona a figura.
+% 	%1.5 = 150% do tamanho original
+% 	%1 = 100% do tamanho original
+% 	%0.20 = 20% do tamanho original
+% 	\includegraphics[scale=1.0]{imagens/DiagramadeEstados.png}
+% 	\\\textbf{Fonte:} Elaborada pelo autor
+% 	\label{fig:diagramaDeEstados}
+% \end{figure}
+% \FloatBarrier
