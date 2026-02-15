@@ -225,248 +225,480 @@ Neste trabalho, as especificações textuais foram elaboradas apenas para os cas
 \end{table}
 \FloatBarrier
 
-Elaborar as especificações para cada caso de uso, quando for necessário, como por exemplo: A especificação do caso de uso Finalizar Compra é
+A seguir, são apresentadas as especificações detalhadas dos casos de uso principais identificados no sistema, incluindo seus fluxos básicos, alternativos e demais informações pertinentes.
 
+\subsubsection{Especificação do Caso de Uso: Criar Coleção}
 
-
-\begin{table}
-\begin{tabular}{ | p{15cm} | }
-	\hline
-	\textbf{Caso de Uso}            \\
-	Finalizar Comprar 	            \\	\hline
-	\textbf{Referências}            \\
-	RF02             	            \\	\hline
-	\textbf{Descrição Geral}        \\
-	O caso de uso inicia-se quando o cliente deseja efetuar compra dos produtos que estão inseridos no carrinho de compras.   \\	\hline
-	\textbf{Atores}                 \\
-	Cliente                         \\	\hline
-	\textbf{Pré-Condições}          \\
-	Cliente logado no sistema, produtos já inseridos no carrinho de compras.
-		                            \\	\hline
-	\textbf{Garantia de Sucesso (Pós-Condições}             \\
-	Pedido fechado, compra efetuada, sistema aguardando confirmação de pagamento.
-		                            \\	\hline
-	\textbf{Requisitos Especiais}   \\
-		                            \\	\hline
-	\textbf{Fluxo Básico}           
-    \begin{enumerate}
-        \item Cliente deseja finalizar compra, sistema solicita que informe a forma de pagamento e de entrega;
-        \item Cliente deseja efetuar pagamento em forma de cartão de crédito/débito;
-        \item Sistema solicita informações do cartão do cliente;
-        \item Sistema faz validação das informações;
-        \item Sistema gera o número do pedido;
-        \item Compra finalizada com sucesso.
-    \end{enumerate}
-		                          \\	\hline
-	\textbf{Fluxo Alternativo}      
-    \renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}}
-    \renewcommand{\labelenumiii}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}}
-    \renewcommand{\labelenumiv}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}.\arabic{enumiv}}
-
-    \begin{enumerate}
-        \item Cliente deseja efetuar pagamento através de boleto bancário
-        \begin{enumerate}
-            \item Sistema gera boleto para o cliente;
-            \item Retorne ao passo 5.
-        \end{enumerate}
-    \end{enumerate}		
-	\\	\hline
-\end{tabular}
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Especificação do Caso de Uso: Criar Coleção}
+	\begin{tabular}{ c | p{11.5cm} }
+		\hline
+		\textbf{Item} & \textbf{Descrição} \\ \hline
+		Nome do Caso de Uso & Criar Coleção \\ \hline
+		Descrição Resumida & Este caso de uso permite que o usuário crie uma nova coleção personalizada para organizar seus itens (livros, filmes, séries, etc.), definindo nome, descrição, ícone e configurações de privacidade. \\ \hline
+		Fluxo Básico & 
+		\textbf{FB01:} Criação de coleção
+		\begin{enumerate}
+			\item O usuário acessa a funcionalidade de gerenciamento de coleções.
+			\item O usuário seleciona a opção "Criar Coleção".
+			\item O sistema exibe o formulário de criação de coleção.
+			\item O usuário insere o nome da coleção.
+			\item O usuário insere uma descrição para a coleção (opcional).
+			\item O usuário seleciona um ícone para representar a coleção.
+			\item O usuário configura a privacidade da coleção (público, privado ou somente amigos) [E01].
+			\item O usuário confirma a criação da coleção.
+			\item O sistema valida os dados inseridos.
+			\item O sistema cria a coleção no banco de dados.
+			\item O sistema exibe mensagem de sucesso.
+			\item O sistema redireciona o usuário para o dashboard de coleções, exibindo a nova coleção criada.
+		\end{enumerate} \\ \hline
+		Fluxos Alternativos & 
+		\textbf{FA01:} Nome da coleção já existe
+		\begin{enumerate}
+			\item No passo 9 do FB01, o sistema identifica que já existe uma coleção com o mesmo nome.
+			\item O sistema exibe mensagem de erro: "Já existe uma coleção com este nome. Por favor, escolha outro nome."
+			\item O sistema retorna ao passo 4 do FB01.
+		\end{enumerate}
+		
+		\textbf{FA02:} Campos obrigatórios não preenchidos
+		\begin{enumerate}
+			\item No passo 9 do FB01, o sistema identifica que o campo nome não foi preenchido.
+			\item O sistema exibe mensagem de erro: "O nome da coleção é obrigatório."
+			\item O sistema retorna ao passo 4 do FB01.
+		\end{enumerate}
+		
+		\textbf{FA03:} Cancelamento da operação
+		\begin{enumerate}
+			\item Em qualquer momento entre os passos 4 e 8 do FB01, o usuário pode selecionar "Cancelar".
+			\item O sistema descarta as informações inseridas.
+			\item O sistema retorna ao dashboard de coleções.
+			\item O caso de uso é encerrado.
+		\end{enumerate} \\ \hline
+		Requisitos Especiais & RNF01 - A interface deve ser intuitiva, facilitando o uso das funcionalidades de personalização. RNF02 - O sistema deve criar a coleção em até 3 segundos sob condições normais. RNF04 - Compatibilidade com navegadores modernos e dispositivos móveis. \\ \hline
+		Condições Prévias & O usuário deve estar autenticado no sistema. \\ \hline
+		Pós-Condições & Uma nova coleção é criada e armazenada no banco de dados. A coleção aparece no dashboard do usuário. A coleção está disponível para associação de layouts e adição de itens. \\ \hline
+		Pontos de Extensão & E01 - Configurar Privacidade da Coleção (estende o passo 7 do FB01). \\ \hline
+	\end{tabular}
+	\\ \vspace{0.2cm}
+	\textbf{Fonte:} Elaborada pelo autor
+	\label{tab:especCriarColecao}
 \end{table}
+\FloatBarrier
 
-\begin{table}
-\begin{tabular}{ | p{15cm} | }
-	\hline
-	\textbf{Caso de Uso} \\
-	Criar Conta \\ \hline
-	\textbf{Referências} \\
-	RF01 \\ \hline
-	\textbf{Descrição Geral} \\
-	Permite que um novo usuário crie uma conta na plataforma para acessar as funcionalidades do sistema. \\ \hline
-	\textbf{Atores} \\
-	Usuário \\ \hline
-	\textbf{Pré-Condições} \\
-	Usuário não possuir conta cadastrada no sistema. \\ \hline
-	\textbf{Garantia de Sucesso (Pós-Condições)} \\
-	Conta criada com sucesso e usuário apto a realizar login. \\ \hline
-	\textbf{Requisitos Especiais} \\
-	Validação de campos obrigatórios e unicidade de e-mail. \\ \hline
-	\textbf{Fluxo Básico}
-	\begin{enumerate}
-	\item Usuário acessa a tela de cadastro;
-	\item Sistema solicita dados básicos (nome, e-mail e senha);
-	\item Usuário informa os dados;
-	\item Sistema valida as informações;
-	\item Conta é criada com sucesso.
-	\end{enumerate}
-	\\ \hline
-	\textbf{Fluxo Alternativo}
-	\begin{enumerate}
-	\item Dados inválidos ou e-mail já cadastrado;
-	\item Sistema informa erro e solicita correção.
-	\end{enumerate}
-	\\ \hline
-\end{tabular}
+\subsubsection{Especificação do Caso de Uso: Criar Item}
+
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Especificação do Caso de Uso: Criar Item}
+	\begin{tabular}{ c | p{11.5cm} }
+		\hline
+		\textbf{Item} & \textbf{Descrição} \\ \hline
+		Nome do Caso de Uso & Criar Item \\ \hline
+		Descrição Resumida & Este caso de uso permite que o usuário cadastre um novo item dentro de uma coleção específica, preenchendo atributos como nome, autor, imagem de capa, notas pessoais e campos personalizados conforme o layout associado à coleção. \\ \hline
+		Fluxo Básico & 
+		\textbf{FB01:} Criação de item
+		\begin{enumerate}
+			\item O usuário acessa uma coleção específica no dashboard.
+			\item O usuário seleciona a opção "Adicionar Item à Coleção".
+			\item O sistema verifica se existe um layout associado à coleção.
+			\item O sistema exibe o formulário de criação de item baseado no layout da coleção [E01].
+			\item O usuário insere o nome do item.
+			\item O usuário preenche os campos personalizados disponíveis no layout (autor, ano, gênero, etc.).
+			\item O usuário associa uma imagem de capa ao item (opcional) [E02].
+			\item O usuário insere notas pessoais sobre o item (opcional).
+			\item O usuário confirma a criação do item.
+			\item O sistema valida os dados inseridos.
+			\item O sistema cria o item no banco de dados e o vincula à coleção.
+			\item O sistema exibe mensagem de sucesso.
+			\item O sistema exibe a ficha completa do item criado.
+		\end{enumerate} \\ \hline
+		Fluxos Alternativos & 
+		\textbf{FA01:} Coleção sem layout associado
+		\begin{enumerate}
+			\item No passo 3 do FB01, o sistema identifica que a coleção não possui layout associado.
+			\item O sistema exibe formulário básico com campos padrão (nome, descrição, imagem).
+			\item O fluxo continua no passo 5 do FB01.
+		\end{enumerate}
+		
+		\textbf{FA02:} Nome do item já existe na coleção
+		\begin{enumerate}
+			\item No passo 10 do FB01, o sistema identifica que já existe um item com o mesmo nome na coleção.
+			\item O sistema exibe mensagem de alerta: "Já existe um item com este nome nesta coleção. Deseja criar mesmo assim?"
+			\item Se o usuário confirmar, o fluxo continua no passo 11 do FB01.
+			\item Se o usuário cancelar, o sistema retorna ao passo 5 do FB01.
+		\end{enumerate}
+		
+		\textbf{FA03:} Campos obrigatórios não preenchidos
+		\begin{enumerate}
+			\item No passo 10 do FB01, o sistema identifica que campos obrigatórios não foram preenchidos.
+			\item O sistema exibe mensagem de erro indicando os campos que precisam ser preenchidos.
+			\item O sistema retorna ao passo 5 do FB01.
+		\end{enumerate}
+		
+		\textbf{FA04:} Cancelamento da operação
+		\begin{enumerate}
+			\item Em qualquer momento entre os passos 5 e 9 do FB01, o usuário pode selecionar "Cancelar".
+			\item O sistema descarta as informações inseridas.
+			\item O sistema retorna à visualização da coleção.
+			\item O caso de uso é encerrado.
+		\end{enumerate} \\ \hline
+		Requisitos Especiais & RNF01 - A interface deve ser intuitiva. RNF02 - O sistema deve criar o item em até 3 segundos. RNF07 - Alterações devem refletir em tempo real. \\ \hline
+		Condições Prévias & O usuário deve estar autenticado no sistema. A coleção de destino deve existir. \\ \hline
+		Pós-Condições & Um novo item é criado e vinculado à coleção. O item herda o layout da coleção. A ficha individual do item é gerada automaticamente. O item aparece na visualização da coleção. \\ \hline
+		Pontos de Extensão & E01 - Criar Ficha do Item (estende o passo 4 do FB01). E02 - Associar Imagem ao Item (estende o passo 7 do FB01). \\ \hline
+	\end{tabular}
+	\\ \vspace{0.2cm}
+	\textbf{Fonte:} Elaborada pelo autor
+	\label{tab:especCriarItem}
 \end{table}
+\FloatBarrier
 
-\begin{table}
-\begin{tabular}{ | p{15cm} | }
-\hline
-\textbf{Caso de Uso} \\
-Criar Coleção \\ \hline
-\textbf{Referências} \\
-RF02 \\ \hline
-\textbf{Descrição Geral} \\
-Permite que o usuário crie uma nova coleção personalizada para organizar seus itens. \\ \hline
-\textbf{Atores} \\
-Usuário \\ \hline
-\textbf{Pré-Condições} \\
-Usuário autenticado no sistema. \\ \hline
-\textbf{Garantia de Sucesso (Pós-Condições)} \\
-Coleção criada e disponível na lista de coleções do usuário. \\ \hline
-\textbf{Requisitos Especiais} \\
-Suporte à personalização visual da coleção. \\ \hline
-\textbf{Fluxo Básico}
-\begin{enumerate}
-\item Usuário seleciona a opção criar coleção;
-\item Sistema solicita nome e tipo da coleção;
-\item Usuário informa os dados;
-\item Sistema cria a coleção.
-\end{enumerate}
-\\ \hline
-\end{tabular}
+\subsubsection{Especificação do Caso de Uso: Criar Layout Base}
+
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Especificação do Caso de Uso: Criar Layout Base}
+	\begin{tabular}{ c | p{11.5cm} }
+		\hline
+		\textbf{Item} & \textbf{Descrição} \\ \hline
+		Nome do Caso de Uso & Criar Layout Base \\ \hline
+		Descrição Resumida & Este caso de uso permite que o usuário crie um layout personalizado através de um editor de widgets, definindo quais campos e elementos visuais farão parte da estrutura de fichas de itens em suas coleções. O layout pode incluir campos de texto, imagens, avaliações, notas e outros widgets personalizáveis. \\ \hline
+		Fluxo Básico & 
+		\textbf{FB01:} Criação de layout base
+		\begin{enumerate}
+			\item O usuário acessa a área de gerenciamento de layouts.
+			\item O usuário seleciona a opção "Criar Layout Base".
+			\item O sistema exibe o editor de layout com uma área de trabalho vazia.
+			\item O usuário insere um nome para o layout.
+			\item O usuário insere uma descrição para o layout (opcional).
+			\item O usuário adiciona widgets à área de trabalho (texto, imagem, avaliação, nota, campo personalizado, etc.) [E01].
+			\item O usuário configura as propriedades de cada widget (nome do campo, tipo de dado, obrigatoriedade, etc.).
+			\item O usuário organiza visualmente os widgets na área de trabalho (posicionamento, tamanho, ordem).
+			\item O sistema exibe prévia do layout em tempo real conforme as modificações.
+			\item O usuário confirma a criação do layout.
+			\item O sistema valida a estrutura do layout.
+			\item O sistema salva o layout no banco de dados.
+			\item O sistema exibe mensagem de sucesso.
+			\item O sistema retorna à lista de layouts disponíveis, exibindo o novo layout criado.
+		\end{enumerate} \\ \hline
+		Fluxos Alternativos & 
+		\textbf{FA01:} Nome do layout já existe
+		\begin{enumerate}
+			\item No passo 11 do FB01, o sistema identifica que já existe um layout com o mesmo nome.
+			\item O sistema exibe mensagem de erro: "Já existe um layout com este nome. Por favor, escolha outro nome."
+			\item O sistema retorna ao passo 4 do FB01.
+		\end{enumerate}
+		
+		\textbf{FA02:} Layout sem widgets
+		\begin{enumerate}
+			\item No passo 11 do FB01, o sistema identifica que nenhum widget foi adicionado ao layout.
+			\item O sistema exibe mensagem de erro: "O layout deve conter pelo menos um widget."
+			\item O sistema retorna ao passo 6 do FB01.
+		\end{enumerate}
+		
+		\textbf{FA03:} Duplicação de layout existente
+		\begin{enumerate}
+			\item No passo 2 do FB01, o usuário pode optar por "Duplicar Layout Existente" [E02].
+			\item O sistema exibe a lista de layouts disponíveis.
+			\item O usuário seleciona um layout para duplicar.
+			\item O sistema carrega a estrutura do layout selecionado no editor.
+			\item O fluxo continua no passo 4 do FB01.
+		\end{enumerate}
+		
+		\textbf{FA04:} Cancelamento da operação
+		\begin{enumerate}
+			\item Em qualquer momento entre os passos 4 e 10 do FB01, o usuário pode selecionar "Cancelar".
+			\item O sistema exibe mensagem de confirmação: "Deseja descartar as alterações?"
+			\item Se o usuário confirmar, o sistema descarta as informações e retorna à lista de layouts.
+			\item Se o usuário cancelar, o sistema retorna ao editor mantendo as informações.
+		\end{enumerate} \\ \hline
+		Requisitos Especiais & RNF01 - O editor deve ser intuitivo e facilitar a personalização. RNF07 - As alterações devem refletir em tempo real na prévia, sem travamentos. RNF04 - Compatibilidade com navegadores modernos. \\ \hline
+		Condições Prévias & O usuário deve estar autenticado no sistema. \\ \hline
+		Pós-Condições & Um novo layout é criado e armazenado no banco de dados. O layout está disponível para associação a coleções. O layout aparece na lista de layouts do usuário. \\ \hline
+		Pontos de Extensão & E01 - Editar Layout Base (durante a criação, permite modificações em tempo real). E02 - Duplicar Layout Base (permite criar novo layout baseado em existente). \\ \hline
+	\end{tabular}
+	\\ \vspace{0.2cm}
+	\textbf{Fonte:} Elaborada pelo autor
+	\label{tab:especCriarLayout}
 \end{table}
+\FloatBarrier
 
+\subsubsection{Especificação do Caso de Uso: Visualizar Dashboard de Coleções}
 
-\begin{table}
-\begin{tabular}{ | p{15cm} | }
-\hline
-\textbf{Caso de Uso} \\
-Adicionar Item à Coleção \\ \hline
-\textbf{Referências} \\
-RF03 \\ \hline
-\textbf{Descrição Geral} \\
-Permite que o usuário adicione um novo item a uma coleção existente, associando uma ficha descritiva ao item. \\ \hline
-\textbf{Atores} \\
-Usuário \\ \hline
-\textbf{Pré-Condições} \\
-Usuário autenticado e coleção previamente criada. \\ \hline
-\textbf{Garantia de Sucesso (Pós-Condições)} \\
-Item adicionado à coleção com ficha associada. \\ \hline
-\textbf{Requisitos Especiais} \\
-Suporte a diferentes tipos de campos conforme a coleção. \\ \hline
-\textbf{Fluxo Básico}
-\begin{enumerate}
-\item Usuário seleciona uma coleção;
-\item Usuário escolhe a opção adicionar item;
-\item Sistema executa o caso de uso \textit{Criar Ficha do Item};
-\item Item é salvo na coleção.
-\end{enumerate}
-\\ \hline
-\textbf{Pontos de Extensão} \\
-Criar Ficha do Item (include) \\ \hline
-\end{tabular}
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Especificação do Caso de Uso: Visualizar Dashboard de Coleções}
+	\begin{tabular}{ c | p{11.5cm} }
+		\hline
+		\textbf{Item} & \textbf{Descrição} \\ \hline
+		Nome do Caso de Uso & Visualizar Dashboard de Coleções \\ \hline
+		Descrição Resumida & Este caso de uso permite que o usuário visualize todas as suas coleções em uma tela dedicada, com informações resumidas de cada coleção, incluindo nome, ícone, número de itens e acesso rápido às subcoleções. O dashboard serve como ponto central de navegação entre as coleções do usuário. \\ \hline
+		Fluxo Básico & 
+		\textbf{FB01:} Visualização do dashboard
+		\begin{enumerate}
+			\item O usuário acessa o menu principal do sistema.
+			\item O usuário seleciona a opção "Minhas Coleções" ou equivalente.
+			\item O sistema recupera todas as coleções do usuário do banco de dados.
+			\item O sistema exibe o dashboard com cards de todas as coleções criadas.
+			\item Para cada coleção, o sistema exibe: nome, ícone, descrição resumida, número total de itens e indicador de privacidade.
+			\item O usuário pode visualizar as coleções em modo grade ou lista [E01].
+			\item O usuário pode aplicar filtros para organizar as coleções (por nome, data de criação, tipo) [E02].
+			\item O usuário pode clicar em uma coleção para acessar seus detalhes e itens.
+		\end{enumerate} \\ \hline
+		Fluxos Alternativos & 
+		\textbf{FA01:} Usuário sem coleções criadas
+		\begin{enumerate}
+			\item No passo 3 do FB01, o sistema identifica que o usuário não possui coleções criadas.
+			\item O sistema exibe mensagem informativa: "Você ainda não criou nenhuma coleção. Crie sua primeira coleção para começar!"
+			\item O sistema exibe botão destacado "Criar Nova Coleção".
+			\item Se o usuário clicar no botão, o sistema aciona o caso de uso "Criar Coleção".
+		\end{enumerate}
+		
+		\textbf{FA02:} Erro ao carregar coleções
+		\begin{enumerate}
+			\item No passo 3 do FB01, o sistema encontra erro ao recuperar as coleções do banco de dados.
+			\item O sistema exibe mensagem de erro: "Não foi possível carregar suas coleções. Por favor, tente novamente."
+			\item O sistema oferece opção para recarregar a página.
+		\end{enumerate}
+		
+		\textbf{FA03:} Navegação para subcoleções
+		\begin{enumerate}
+			\item No passo 8 do FB01, o usuário pode expandir um card de coleção para visualizar suas subcoleções.
+			\item O sistema exibe as subcoleções dentro da coleção expandida.
+			\item O usuário pode clicar em uma subcoleção para visualizar apenas os itens daquela subcoleção.
+		\end{enumerate} \\ \hline
+		Requisitos Especiais & RNF02 - O sistema deve carregar as coleções em até 3 segundos. RNF04 - O dashboard deve ser responsivo em dispositivos móveis. RNF09 - A interface deve seguir padrões de acessibilidade. \\ \hline
+		Condições Prévias & O usuário deve estar autenticado no sistema. \\ \hline
+		Pós-Condições & O usuário visualiza todas as suas coleções. O usuário pode navegar para qualquer coleção ou subcoleção. O estado de visualização (grade/lista, filtros) é mantido para futuras sessões. \\ \hline
+		Pontos de Extensão & E01 - Alternar modo de visualização (grade/lista). E02 - Filtrar Coleções (permite organizar por diferentes critérios). \\ \hline
+	\end{tabular}
+	\\ \vspace{0.2cm}
+	\textbf{Fonte:} Elaborada pelo autor
+	\label{tab:especVisualizarDashboard}
 \end{table}
+\FloatBarrier
 
+\subsubsection{Especificação do Caso de Uso: Editar Perfil}
 
-\begin{table}
-\begin{tabular}{ | p{15cm} | }
-\hline
-\textbf{Caso de Uso} \\
-Criar Ficha do Item \\ \hline
-\textbf{Referências} \\
-RF04 \\ \hline
-\textbf{Descrição Geral} \\
-Permite que o usuário crie e personalize a ficha descritiva de um item da coleção. \\ \hline
-\textbf{Atores} \\
-Usuário \\ \hline
-\textbf{Pré-Condições} \\
-Usuário autenticado e item em processo de criação. \\ \hline
-\textbf{Garantia de Sucesso (Pós-Condições)} \\
-Ficha criada e associada ao item. \\ \hline
-\textbf{Requisitos Especiais} \\
-Campos dinâmicos e personalizáveis. \\ \hline
-\textbf{Fluxo Básico}
-\begin{enumerate}
-\item Sistema apresenta campos configuráveis;
-\item Usuário preenche as informações;
-\item Usuário confirma a criação;
-\item Sistema salva a ficha.
-\end{enumerate}
-\\ \hline
-\end{tabular}
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Especificação do Caso de Uso: Editar Perfil}
+	\begin{tabular}{ c | p{11.5cm} }
+		\hline
+		\textbf{Item} & \textbf{Descrição} \\ \hline
+		Nome do Caso de Uso & Editar Perfil \\ \hline
+		Descrição Resumida & Este caso de uso permite que o usuário visualize e edite as informações de seu perfil, incluindo dados cadastrais básicos (nome, e-mail) e personalizações visuais (foto de perfil, descrição, biografia). \\ \hline
+		Fluxo Básico & 
+		\textbf{FB01:} Edição de perfil
+		\begin{enumerate}
+			\item O usuário acessa o menu de configurações ou clica em seu avatar.
+			\item O usuário seleciona a opção "Editar Perfil".
+			\item O sistema exibe o formulário de edição com as informações atuais do usuário.
+			\item O usuário modifica os campos desejados (nome de exibição, biografia, foto) [E01].
+			\item O usuário pode alterar seu e-mail (requer verificação).
+			\item O usuário pode alterar sua senha [E02].
+			\item O usuário confirma as alterações clicando em "Salvar".
+			\item O sistema valida os dados inseridos.
+			\item O sistema atualiza as informações no banco de dados.
+			\item O sistema exibe mensagem de sucesso: "Perfil atualizado com sucesso."
+			\item O sistema retorna à visualização do perfil com as informações atualizadas.
+		\end{enumerate} \\ \hline
+		Fluxos Alternativos & 
+		\textbf{FA01:} E-mail já cadastrado
+		\begin{enumerate}
+			\item No passo 8 do FB01, o sistema identifica que o novo e-mail já está cadastrado por outro usuário.
+			\item O sistema exibe mensagem de erro: "Este e-mail já está em uso. Por favor, utilize outro e-mail."
+			\item O sistema retorna ao passo 5 do FB01.
+		\end{enumerate}
+		
+		\textbf{FA02:} Formato de e-mail inválido
+		\begin{enumerate}
+			\item No passo 8 do FB01, o sistema identifica que o e-mail inserido possui formato inválido.
+			\item O sistema exibe mensagem de erro: "Por favor, insira um e-mail válido."
+			\item O sistema retorna ao passo 5 do FB01.
+		\end{enumerate}
+		
+		\textbf{FA03:} Imagem de perfil com formato não suportado
+		\begin{enumerate}
+			\item Durante o passo 4 do FB01, o usuário tenta fazer upload de imagem com formato não suportado.
+			\item O sistema exibe mensagem de erro: "Formato de imagem não suportado. Use PNG, JPG ou JPEG."
+			\item O sistema retorna ao passo 4 do FB01.
+		\end{enumerate}
+		
+		\textbf{FA04:} Imagem de perfil muito grande
+		\begin{enumerate}
+			\item Durante o passo 4 do FB01, o usuário tenta fazer upload de imagem maior que 5MB.
+			\item O sistema exibe mensagem de erro: "A imagem deve ter no máximo 5MB."
+			\item O sistema retorna ao passo 4 do FB01.
+		\end{enumerate}
+		
+		\textbf{FA05:} Cancelamento da operação
+		\begin{enumerate}
+			\item Em qualquer momento entre os passos 4 e 7 do FB01, o usuário pode selecionar "Cancelar".
+			\item O sistema exibe mensagem de confirmação se houver alterações não salvas.
+			\item Se o usuário confirmar, o sistema descarta as alterações e retorna à visualização do perfil.
+			\item Se o usuário cancelar a confirmação, retorna ao formulário de edição.
+		\end{enumerate} \\ \hline
+		Requisitos Especiais & RNF01 - A interface deve ser intuitiva. RNF02 - As alterações devem ser salvas em até 3 segundos. RNF03 - O sistema deve proteger informações pessoais. RNF04 - Compatibilidade com dispositivos móveis. \\ \hline
+		Condições Prévias & O usuário deve estar autenticado no sistema. \\ \hline
+		Pós-Condições & As informações do perfil são atualizadas no banco de dados. As alterações são refletidas em todas as áreas do sistema que exibem informações do usuário. Se o e-mail foi alterado, um e-mail de verificação é enviado. \\ \hline
+		Pontos de Extensão & E01 - Personalizar Informações (permite modificar foto, nome, descrição). E02 - Alterar senha (fluxo específico com verificação de senha atual). \\ \hline
+	\end{tabular}
+	\\ \vspace{0.2cm}
+	\textbf{Fonte:} Elaborada pelo autor
+	\label{tab:especEditarPerfil}
 \end{table}
-
-
-
-\section{Modelo de Domínio}
-Fazer uma pequena definição de modelo de domínio para introduzir essa seção. Terminar o parágrafo informando qual figura apresenta o modelo de domínio. Elabore o diagrama de classes somente com os atributos, para auxiliar no entendimento do domínio da aplicação, conforme Figura~\ref{fig:modeloDeDominio}.
-
-De acordo com \citeauthorandyear{braga2008algoritmos}, o modelo de domínio é .....  . A Figura~\ref{fig:modeloDeDominio} apresenta o modelo de domínio desenvolvido neste trabalho.
-
-\FloatBarrier
-\begin{figure}[!htbp]
-	\centering
-	\caption{Modelo de Domínio}
-	%scale redimensiona a figura.
-	%1.5 = 150% do tamanho original
-	%1 = 100% do tamanho original
-	%0.20 = 20% do tamanho original
-	\includegraphics[scale=1.0]{imagens/ModelodeDominio.png}
-	\\\textbf{Fonte:} Elaborada pelo autor
-	\label{fig:modeloDeDominio}
-\end{figure}
 \FloatBarrier
 
-\section{Diagrama de Objetos}
-Fazer uma pequena definição de diagrama de objetos para introduzir essa seção. Terminar o parágrafo informando qual figura apresenta o diagrama de objetos. Elabore o diagrama de objetos para cada classe identificada no modelo de domínio.
-
-
-\section{Diagrama de Classes de Análise}
-Fazer uma pequena definição de diagrama de classes para introduzir essa seção. Terminar o parágrafo informando qual figura apresenta o diagrama de classes. É uma evolução do modelo de domínio, elabore o diagrama de classes com os atributos e métodos.
-
-
-\section{Diagrama de Atividades}
-Um diagrama de atividade ilustra a natureza dinâmica de um sistema pela modelagem do fluxo de controle de atividade à atividade. Uma atividade representa uma operação em alguma classe no sistema que resulta em uma mudança no estado do sistema.
-
-Tipicamente, diagramas de atividades são usados para modelar fluxos de processos, processos de negócios ou operações internas. o diagrama de atividades é similar a uma máquina de estados, mas tem um propósito diferente, o qual envolve capturar ações e seus resultados em termos de mudanças do estado do objeto.
-
-O diagrama de atividades é representado por um gráfico de atividades que mostram o fluxo de uma atividade para outra. Esse fluxo é mostrado através de transições, que são setas direcionadas, mostrando o caminho entre os estados de atividade (ação).
-
-A Figura~\ref{fig:diagramaDeAtividades} mostra o diagrama de atividades para a operação averiguarCredito na classe Pedido da Virtual LTDA. Note que a atividade “Preparar Mensagem de Credito” define o que fazer, mas não como fazer (RIBEIRO, 2021).
-
-Um diagrama de atividades é normalmente composto pelos seguintes elementos: atividades (ações), estados de atividade (ação), transição, fluxo de objeto, estado inicial, estado final, branching, sincronização, raias.
+\subsubsection{Especificação do Caso de Uso: Adicionar Amigo}
 
 \FloatBarrier
-\begin{figure}[!htbp]
-	\centering
-	\caption{Diagrama de Atividades}
-	%scale redimensiona a figura.
-	%1.5 = 150% do tamanho original
-	%1 = 100% do tamanho original
-	%0.20 = 20% do tamanho original
-	\includegraphics[scale=1.0]{imagens/DiagramadeAtividades.png}
-	\\\textbf{Fonte:} Elaborada pelo autor
-	\label{fig:diagramaDeAtividades}
-\end{figure}
+\begin{table}[!htbp]
+\centering
+\caption{Especificação do Caso de Uso: Adicionar Amigo}
+\small
+	\begin{tabular}{ c | p{10cm} }
+		\hline
+		\textbf{Item} & \textbf{Descrição} \\ \hline
+		Nome do Caso de Uso & Adicionar Amigo \\ \hline
+		Descrição Resumida & Este caso de uso permite que o usuário envie solicitações de amizade para outros usuários da plataforma, possibilitando a formação de uma rede social dentro do sistema. A solicitação fica pendente até que o destinatário a aceite ou recuse. \\ \hline
+		Fluxo Básico & 
+		\textbf{FB01:} Envio de solicitação de amizade
+		\begin{enumerate}
+			\item O usuário acessa a área de busca de usuários ou área social.
+			\item O usuário insere o nome de usuário ou e-mail da pessoa que deseja adicionar.
+			\item O sistema busca usuários correspondentes no banco de dados.
+			\item O sistema exibe uma lista de resultados com nome, foto e nome de usuário.
+			\item O usuário identifica a pessoa desejada e clica em "Adicionar Amigo".
+			\item O sistema verifica se já existe uma relação de amizade ou solicitação pendente.
+			\item O sistema cria uma solicitação de amizade pendente no banco de dados.
+			\item O sistema envia notificação ao destinatário informando sobre a solicitação.
+			\item O sistema exibe mensagem de sucesso: "Solicitação de amizade enviada."
+			\item O sistema atualiza o botão para "Solicitação Pendente" no perfil do usuário destinatário.
+		\end{enumerate} \\ \hline
+		Fluxos Alternativos & 
+		\textbf{FA01:} Usuário não encontrado
+		\begin{enumerate}
+			\item No passo 3 do FB01, o sistema não encontra nenhum usuário correspondente à busca.
+			\item O sistema exibe mensagem: "Nenhum usuário encontrado com este nome."
+			\item O sistema retorna ao passo 2 do FB01.
+		\end{enumerate}
+		
+		\textbf{FA02:} Já são amigos
+		\begin{enumerate}
+			\item No passo 6 do FB01, o sistema identifica que os usuários já são amigos.
+			\item O sistema exibe mensagem: "Vocês já são amigos."
+			\item O sistema oferece opção de visualizar o perfil do amigo.
+			\item O caso de uso é encerrado.
+		\end{enumerate}
+		
+		\textbf{FA03:} Solicitação já existe
+		\begin{enumerate}
+			\item No passo 6 do FB01, o sistema identifica que já existe uma solicitação pendente.
+			\item O sistema exibe mensagem: "Você já enviou uma solicitação de amizade para este usuário."
+			\item O sistema oferece opção de cancelar a solicitação pendente.
+			\item O caso de uso é encerrado.
+		\end{enumerate}
+		
+		\textbf{FA04:} Solicitação recebida do mesmo usuário
+		\begin{enumerate}
+			\item No passo 6 do FB01, o sistema identifica que existe uma solicitação pendente enviada pelo usuário que está sendo adicionado.
+			\item O sistema exibe mensagem: "Este usuário já enviou uma solicitação de amizade para você."
+			\item O sistema oferece opção de aceitar a solicitação existente.
+			\item Se o usuário aceitar, o sistema aciona o caso de uso "Gerenciar Solicitações de Amizade".
+		\end{enumerate}
+		
+		\textbf{FA05:} Usuário bloqueado
+		\begin{enumerate}
+			\item No passo 6 do FB01, o sistema identifica que um dos usuários bloqueou o outro.
+			\item O sistema exibe mensagem genérica: "Não foi possível enviar a solicitação."
+			\item O caso de uso é encerrado.
+		\end{enumerate} \\ \hline
+		Requisitos Especiais & RNF02 - A busca e envio de solicitação devem ocorrer em até 3 segundos. RNF08 - O sistema deve enviar notificações em tempo real. RNF03 - A privacidade dos usuários deve ser respeitada. \\ \hline
+		Condições Prévias & O usuário deve estar autenticado no sistema. O usuário destinatário deve existir e ter um perfil ativo. \\ \hline
+		Pós-Condições & Uma solicitação de amizade é criada com status "pendente". O destinatário recebe notificação da solicitação. A solicitação aparece na lista de pendentes de ambos os usuários. O botão no perfil do destinatário muda para "Solicitação Pendente". \\ \hline
+		Pontos de Extensão & Nenhum ponto de extensão identificado para este caso de uso. \\ \hline
+	\end{tabular}
+	\\ \vspace{0.2cm}
+	\textbf{Fonte:} Elaborada pelo autor
+	\label{tab:especAdicionarAmigo}
+\end{table}
 \FloatBarrier
 
+% \section{Modelo de Domínio}
+% Fazer uma pequena definição de modelo de domínio para introduzir essa seção. Terminar o parágrafo informando qual figura apresenta o modelo de domínio. Elabore o diagrama de classes somente com os atributos, para auxiliar no entendimento do domínio da aplicação, conforme Figura~\ref{fig:modeloDeDominio}.
 
-\section{Diagrama de Estados}
-Fazer uma introdução mais ou menos como o parágrafo a seguir.
-Um diagrama de estados mostra os possíveis estados de um objeto e as transações responsáveis pelas suas mudanças de estado, conforme exemplo apresentado na Figura~\ref{fig:diagramaDeEstados}.
+% De acordo com \citeauthorandyear{braga2008algoritmos}, o modelo de domínio é .....  . A Figura~\ref{fig:modeloDeDominio} apresenta o modelo de domínio desenvolvido neste trabalho.
+
+% \FloatBarrier
+% \begin{figure}[!htbp]
+% 	\centering
+% 	\caption{Modelo de Domínio}
+% 	%scale redimensiona a figura.
+% 	%1.5 = 150% do tamanho original
+% 	%1 = 100% do tamanho original
+% 	%0.20 = 20% do tamanho original
+% 	\includegraphics[scale=1.0]{imagens/ModelodeDominio.png}
+% 	\\\textbf{Fonte:} Elaborada pelo autor
+% 	\label{fig:modeloDeDominio}
+% \end{figure}
+% \FloatBarrier
+
+% \section{Diagrama de Objetos}
+% Fazer uma pequena definição de diagrama de objetos para introduzir essa seção. Terminar o parágrafo informando qual figura apresenta o diagrama de objetos. Elabore o diagrama de objetos para cada classe identificada no modelo de domínio.
 
 
-\FloatBarrier
-\begin{figure}[!htbp]
-	\centering
-	\caption{Diagrama de Estados}
-	%scale redimensiona a figura.
-	%1.5 = 150% do tamanho original
-	%1 = 100% do tamanho original
-	%0.20 = 20% do tamanho original
-	\includegraphics[scale=1.0]{imagens/DiagramadeEstados.png}
-	\\\textbf{Fonte:} Elaborada pelo autor
-	\label{fig:diagramaDeEstados}
-\end{figure}
-\FloatBarrier
+% \section{Diagrama de Classes de Análise}
+% Fazer uma pequena definição de diagrama de classes para introduzir essa seção. Terminar o parágrafo informando qual figura apresenta o diagrama de classes. É uma evolução do modelo de domínio, elabore o diagrama de classes com os atributos e métodos.
+
+
+% \section{Diagrama de Atividades}
+% Um diagrama de atividade ilustra a natureza dinâmica de um sistema pela modelagem do fluxo de controle de atividade à atividade. Uma atividade representa uma operação em alguma classe no sistema que resulta em uma mudança no estado do sistema.
+
+% Tipicamente, diagramas de atividades são usados para modelar fluxos de processos, processos de negócios ou operações internas. o diagrama de atividades é similar a uma máquina de estados, mas tem um propósito diferente, o qual envolve capturar ações e seus resultados em termos de mudanças do estado do objeto.
+
+% O diagrama de atividades é representado por um gráfico de atividades que mostram o fluxo de uma atividade para outra. Esse fluxo é mostrado através de transições, que são setas direcionadas, mostrando o caminho entre os estados de atividade (ação).
+
+% A Figura~\ref{fig:diagramaDeAtividades} mostra o diagrama de atividades para a operação averiguarCredito na classe Pedido da Virtual LTDA. Note que a atividade “Preparar Mensagem de Credito” define o que fazer, mas não como fazer (RIBEIRO, 2021).
+
+% Um diagrama de atividades é normalmente composto pelos seguintes elementos: atividades (ações), estados de atividade (ação), transição, fluxo de objeto, estado inicial, estado final, branching, sincronização, raias.
+
+% \FloatBarrier
+% \begin{figure}[!htbp]
+% 	\centering
+% 	\caption{Diagrama de Atividades}
+% 	%scale redimensiona a figura.
+% 	%1.5 = 150% do tamanho original
+% 	%1 = 100% do tamanho original
+% 	%0.20 = 20% do tamanho original
+% 	\includegraphics[scale=1.0]{imagens/DiagramadeAtividades.png}
+% 	\\\textbf{Fonte:} Elaborada pelo autor
+% 	\label{fig:diagramaDeAtividades}
+% \end{figure}
+% \FloatBarrier
+
+
+% \section{Diagrama de Estados}
+% Fazer uma introdução mais ou menos como o parágrafo a seguir.
+% Um diagrama de estados mostra os possíveis estados de um objeto e as transações responsáveis pelas suas mudanças de estado, conforme exemplo apresentado na Figura~\ref{fig:diagramaDeEstados}.
+
+
+% \FloatBarrier
+% \begin{figure}[!htbp]
+% 	\centering
+% 	\caption{Diagrama de Estados}
+% 	%scale redimensiona a figura.
+% 	%1.5 = 150% do tamanho original
+% 	%1 = 100% do tamanho original
+% 	%0.20 = 20% do tamanho original
+% 	\includegraphics[scale=1.0]{imagens/DiagramadeEstados.png}
+% 	\\\textbf{Fonte:} Elaborada pelo autor
+% 	\label{fig:diagramaDeEstados}
+% \end{figure}
+% \FloatBarrier
