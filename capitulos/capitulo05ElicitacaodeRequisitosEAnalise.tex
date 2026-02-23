@@ -231,7 +231,7 @@ A seguir, são apresentadas as especificações detalhadas dos casos de uso prin
 
 \renewcommand{\arraystretch}{1.3}
 \FloatBarrier
-\begin{longtable}{ >{\raggedright}p{3.5cm} | >{\raggedright\arraybackslash}p{10.8cm} }
+\begin{longtable}{ >{\raggedright}p{2.8cm} | >{\raggedright\arraybackslash}p{10.7cm} }
 \caption{Especificação do Caso de Uso: Criar Coleção} \label{tab:especCriarColecao} \\
 \hline
 \textbf{Item} & \textbf{Descrição} \\ \hline
@@ -314,7 +314,7 @@ Pontos de Extensão & E01 - Configurar Privacidade da Coleção (estende o passo
 
 \renewcommand{\arraystretch}{1.3}
 \FloatBarrier
-\begin{longtable}{ >{\raggedright}p{3.5cm} | >{\raggedright\arraybackslash}p{10.8cm} }
+\begin{longtable}{ >{\raggedright}p{2.8cm} | >{\raggedright\arraybackslash}p{10.7cm} }
 \caption{Especificação do Caso de Uso: Criar Item} \label{tab:especCriarItem} \\
 \hline
 \textbf{Item} & \textbf{Descrição} \\ \hline
@@ -407,7 +407,7 @@ Pontos de Extensão & E01 - Criar Ficha do Item (estende o passo 4 do FB01). E02
 
 \renewcommand{\arraystretch}{1.3}
 \FloatBarrier
-\begin{longtable}{ >{\raggedright}p{3.5cm} | >{\raggedright\arraybackslash}p{10.8cm} }
+\begin{longtable}{ >{\raggedright}p{2.8cm} | >{\raggedright\arraybackslash}p{10.7cm} }
 \caption{Especificação do Caso de Uso: Criar Layout Base} \label{tab:especCriarLayout} \\
 \hline
 \textbf{Item} & \textbf{Descrição} \\ \hline
@@ -502,7 +502,7 @@ Pontos de Extensão & E01 - Editar Layout Base (durante a criação, permite mod
 
 \renewcommand{\arraystretch}{1.3}
 \FloatBarrier
-\begin{longtable}{ >{\raggedright}p{3.5cm} | >{\raggedright\arraybackslash}p{10.8cm} }
+\begin{longtable}{ >{\raggedright}p{2.8cm} | >{\raggedright\arraybackslash}p{10.7cm} }
 \caption{Especificação do Caso de Uso: Visualizar Dashboard de Coleções} \label{tab:especVisualizarDashboard} \\
 \hline
 \textbf{Item} & \textbf{Descrição} \\ \hline
@@ -581,7 +581,7 @@ Pontos de Extensão & E01 - Alternar modo de visualização (grade/lista). E02 -
 
 \renewcommand{\arraystretch}{1.3}
 \FloatBarrier
-\begin{longtable}{ >{\raggedright}p{3.5cm} | >{\raggedright\arraybackslash}p{10.8cm} }
+\begin{longtable}{ >{\raggedright}p{2.8cm} | >{\raggedright\arraybackslash}p{10.7cm} }
 \caption{Especificação do Caso de Uso: Editar Perfil} \label{tab:especEditarPerfil} \\
 \hline
 \textbf{Item} & \textbf{Descrição} \\ \hline
@@ -679,7 +679,7 @@ Pontos de Extensão & E01 - Personalizar Informações (permite modificar foto, 
 
 \renewcommand{\arraystretch}{1.3}
 \FloatBarrier
-\begin{longtable}{ >{\raggedright}p{3.5cm} | >{\raggedright\arraybackslash}p{10.8cm} }
+\begin{longtable}{ >{\raggedright}p{2.8cm} | >{\raggedright\arraybackslash}p{10.7cm} }
 \caption{Especificação do Caso de Uso: Adicionar Amigo} \label{tab:especAdicionarAmigo} \\
 \hline
 \textbf{Item} & \textbf{Descrição} \\ \hline
@@ -773,24 +773,42 @@ Pontos de Extensão & Nenhum ponto de extensão identificado para este caso de u
 \end{longtable}
 \renewcommand{\arraystretch}{1}
 \FloatBarrier
-% \section{Modelo de Domínio}
-% Fazer uma pequena definição de modelo de domínio para introduzir essa seção. Terminar o parágrafo informando qual figura apresenta o modelo de domínio. Elabore o diagrama de classes somente com os atributos, para auxiliar no entendimento do domínio da aplicação, conforme Figura~\ref{fig:modeloDeDominio}.
 
-% De acordo com \citeauthorandyear{braga2008algoritmos}, o modelo de domínio é .....  . A Figura~\ref{fig:modeloDeDominio} apresenta o modelo de domínio desenvolvido neste trabalho.
 
-% \FloatBarrier
-% \begin{figure}[!htbp]
-% 	\centering
-% 	\caption{Modelo de Domínio}
-% 	%scale redimensiona a figura.
-% 	%1.5 = 150% do tamanho original
-% 	%1 = 100% do tamanho original
-% 	%0.20 = 20% do tamanho original
-% 	\includegraphics[scale=1.0]{imagens/ModelodeDominio.png}
-% 	\\\textbf{Fonte:} Elaborada pelo autor
-% 	\label{fig:modeloDeDominio}
-% \end{figure}
-% \FloatBarrier
+
+\section{Modelo de Domínio}
+De acordo com \citeauthorandyear{Larman2007}, o modelo de domínio 
+é uma representação visual das classes conceituais ou objetos do mundo real 
+em um domínio de interesse, ilustrando conceitos significativos, atributos 
+e associações entre eles. A Figura~\ref{fig:modeloDeDominio} apresenta o 
+modelo de domínio desenvolvido neste trabalho.
+
+\FloatBarrier
+\newgeometry{
+    top=3cm,
+    bottom=0cm,
+    left=0.2cm,
+    right=0.2cm
+}
+
+\begin{landscape}
+\begin{figure}[p]
+    \centering
+    \caption{Modelo de Domínio}
+
+    \includegraphics[
+        width=\textheight,
+        height=\textwidth,
+        keepaspectratio
+    ]{imagens/ModeloDominio.png}
+
+    \textbf{Fonte:} Elaborada pelo autor
+    \label{fig:modeloDeDominio}
+\end{figure}
+\end{landscape}
+
+\restoregeometry
+\FloatBarrier
 
 % \section{Diagrama de Objetos}
 % Fazer uma pequena definição de diagrama de objetos para introduzir essa seção. Terminar o parágrafo informando qual figura apresenta o diagrama de objetos. Elabore o diagrama de objetos para cada classe identificada no modelo de domínio.
