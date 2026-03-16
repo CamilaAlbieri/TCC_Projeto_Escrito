@@ -28,6 +28,737 @@ Os atores que interagem com o sistema são: \textbf{Usuário}, que representa a 
  e o \textbf{Sistema}, que atua de forma autônoma em funcionalidades como exibição de fichas de itens, notificações e organização visual das coleções.
 Os requisitos funcionais identificados para este sistema estão apresentados na Tabela~\ref{tab:reqFuncionais}.
 
+\renewcommand{\arraystretch}{1.3}
+\FloatBarrier
+\begin{longtable}{|p{1.1cm}|p{2.0cm}|p{7.5cm}|p{1.5cm}|p{1.6cm}|p{1.3cm}|}
+\caption{Requisitos Funcionais do Sistema} \label{tab:reqFuncionais} \\
+\hline
+\textbf{Código} & \textbf{Grupo} & \textbf{Descrição} &
+\textbf{Prioridade} & \textbf{Operação} & \textbf{Ator} \\ \hline
+\endfirsthead
+
+\multicolumn{6}{c}{\tablename\ \thetable\ -- Continuação da página anterior} \\
+\hline
+\textbf{Código} & \textbf{Grupo} & \textbf{Descrição} &
+\textbf{Prioridade} & \textbf{Operação} & \textbf{Ator} \\ \hline
+\endhead
+
+\hline \multicolumn{6}{r}{Continua na próxima página} \\
+\endfoot
+
+\hline
+\multicolumn{6}{l}{\textbf{Fonte:} Elaborada pelo autor} \\
+\endlastfoot
+
+% ───────────────────────────────────────────
+RF-01 & Acesso ao Sistema &
+\textbf{Ação:} Cadastrar
+
+\textbf{Objeto:} Usuário
+
+\textbf{Atributos:} nome (100 caracteres), email (150
+caracteres), senha (mínimo 8 caracteres), foto de perfil
+(JPEG/PNG, máx. 5 MB), descrição (500 caracteres).
+
+\textbf{Exemplos:} Usuária preenche nome `Camila Albieri
+Mattos', email `camilamattos.mila@gmail.com', senha
+`Camila@2024' e conclui o cadastro com sucesso.
+
+Usuário tenta cadastrar com o email
+`camilamattos.mila@gmail.com', que já existe e recebe
+mensagem de erro informando que o email já está em uso.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+\item Nome, email e senha são obrigatórios; foto de perfil
+e descrição são opcionais.
+\item O email deve estar em formato válido
+(ex.: usuario@dominio.com).
+\item Não podem ser registrados dois ou mais usuários com
+o mesmo email.
+\item A senha deve ter no mínimo 8 caracteres.
+\item A senha deve ser armazenada de forma criptografada.
+\end{enumerate}
+& Essencial & Entrada & Usuário \\ \hline
+
+% ───────────────────────────────────────────
+RF-02 & Acesso ao Sistema &
+\textbf{Ação:} Autenticar (login e logout)
+
+\textbf{Objeto:} Usuário
+
+\textbf{Atributos:} email (150 caracteres), senha (mínimo
+8 caracteres), token de sessão (gerado automaticamente
+pelo sistema).
+
+\textbf{Exemplos:} Usuária informa
+`camilamattos.mila@gmail.com' e `Camila@2024', o sistema
+valida as credenciais e concede acesso à área restrita.
+
+Usuário informa email não cadastrado e recebe a mensagem
+`Credenciais de login inválidas'.
+
+Usuário clica em `Sair' e tem sua sessão encerrada
+imediatamente, sendo redirecionado para a tela de login.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+\item Email e senha são obrigatórios para realizar o login.
+\item O sistema deve verificar se o email está cadastrado
+e se a senha confere com o hash armazenado.
+\item Não conferindo, o sistema deve exibir `Credenciais
+de login inválidas' sem especificar qual campo está errado.
+\item O token de sessão deve expirar após 30 minutos de
+inatividade.
+\item O logout deve encerrar imediatamente a sessão ativa
+e invalidar o token.
+\end{enumerate}
+& Essencial & Processamento & Usuário \\ \hline
+
+% ───────────────────────────────────────────
+RF-03 & Conta de Usuário &
+\textbf{Ação:} Editar
+
+\textbf{Objeto:} Perfil do usuário
+
+\textbf{Atributos:} nome de exibição (100 caracteres),
+email (150 caracteres), senha atual (para confirmação),
+nova senha (mínimo 8 caracteres), foto de perfil
+(JPEG/PNG, máx. 5 MB), descrição/bio (500 caracteres).
+
+\textbf{Exemplos:} Usuário acessa `Editar Perfil`, altera
+o nome de exibição para `Cami Mattos`, adiciona bio
+`Leitora e colecionadora de histórias' e salva as
+alterações.
+
+Usuário tenta alterar a senha informando a senha atual
+incorreta e recebe mensagem `Senha atual inválida`.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+\item O nome de exibição deve ter entre 3 e 100 caracteres
+e é obrigatório.
+\item Para alterar a senha, o usuário deve confirmar a
+senha atual antes de definir a nova.
+\item A foto de perfil deve estar em formato JPEG ou PNG
+com tamanho máximo de 5 MB.
+\item A descrição/bio é opcional e pode ser deixada em
+branco.
+\item Alterações só têm efeito após o usuário salvar
+explicitamente.
+\end{enumerate}
+& Importante & Entrada & Usuário \\ \hline
+
+% ───────────────────────────────────────────
+RF-04 & Gestão de Colecoes &
+\textbf{Ação:} Cadastrar, editar e excluir
+
+\textbf{Objeto:} Coleção personalizada
+
+\textbf{Atributos:} nome (100 caracteres), tipo/categoria
+(livros, filmes, series, jogos, musicas, personalizado),
+ícone (emoji Unicode ou imagem JPEG/PNG, máx. 2 MB),
+descrição (300 caracteres), layout associado (referência
+a um layout existente do usuário), data de criação
+(gerada automaticamente).
+
+\textbf{Exemplos:} Usuária Camila cria a coleção `Meus
+Livros' do tipo `Livros', com ícone personalizado,
+descrição `Todos os livros que já li' e layout
+`Card de Livro'.
+
+Camila edita o nome para `Livros Lidos 2024' e troca o
+layout associado.
+
+Camila exclui a coleção `Filmes Antigos' e confirma a
+exclusão permanente no diálogo de confirmação.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+\item O nome da coleção é obrigatório; ícone, descrição e
+layout associado são opcionais.
+\item Não podem existir duas coleções com o mesmo nome
+para o mesmo usuário.
+\item O tipo da coleção determina os campos padrão
+disponíveis para os itens.
+\item O layout associado pode ser alterado ou removido a
+qualquer momento sem modificar os dados dos itens já
+cadastrados.
+\item A exclusão deve exibir diálogo de confirmação
+alertando que todos os itens e subcoleções associadas
+serão removidos permanentemente.
+\item A data de criação é gerada automaticamente pelo
+sistema e não pode ser editada.
+\end{enumerate}
+& Essencial & Entrada & Usuário \\ \hline
+
+% ───────────────────────────────────────────
+RF-05 & Itens de Colecao &
+\textbf{Ação:} Cadastrar, editar e excluir
+
+\textbf{Objeto:} Item dentro de uma coleção
+
+\textbf{Atributos:} nome (200 caracteres), widgets
+preenchíveis herdados do template da coleção (Imagem,
+Texto, Classificação, Lista, Data, GIF, Formas, Elementos
+Gráficos, Input Field, Icon), widgets adicionados
+individualmente ao item (override), data de criação
+(gerada automaticamente).
+
+\textbf{Exemplos:} Camila cria o item `Duna' na coleção
+`Livros' que usa o template `Card de Livro'; o item abre
+com os widgets já estruturados e Camila adiciona as informações 
+de cada widget do Template associado: Imagem para a capa, Input
+Field para o autor `Frank Herbert', Data de inicio
+`01/01/2024' e fim `20/01/2024', Classificação com 5
+estrelas, Lista de gêneros `Ficção Cientifica, Aventura'
+e Texto para a nota `Obra-prima do gênero'.
+
+Camila também decide adicionar individualmente um widget de GIF
+e um Input Field extra `Personagem Favorito: Paul
+Atreides', sem afetar o template nem os demais itens.
+
+Posteriormente edita a classificação de 5 para 4 estrelas
+e, por fim, exclui o item `Duna -- Rascunho' confirmando
+no diálogo de confirmação.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+\item O nome do item é obrigatório; todos os demais campos
+são opcionais.
+\item Ao ser criado, o item herda automaticamente a
+estrutura de widgets do template associado à coleção como
+ponto de partida.
+\item O usuário pode adicionar, remover ou reposicionar
+widgets individualmente no item sem afetar o template nem
+os demais itens.
+\item Não podem existir dois itens com o mesmo nome dentro
+da mesma colecao.
+\item Imagens enviadas devem estar em formato JPEG ou PNG
+com tamanho máximo de 5 MB por arquivo.
+\item A exclusao deve exibir diálogo de confirmação
+informando que a ação é irreversível.
+\item A data de criação é gerada automaticamente e não
+pode ser editada pelo usuário.
+\end{enumerate}
+& Essencial & Entrada & Usuário \\ \hline
+
+% ───────────────────────────────────────────
+RF-06 & Ficha de Item &
+\textbf{Ação:} Exibir em modo leitura
+
+\textbf{Objeto:} Ficha individual de item
+
+\textbf{Atributos:} widgets preenchidos do item (conforme
+layout individual), widgets vazios (exibidos com indicação
+visual), data de criação do item, modo de acesso (dono --
+com opções de editar e excluir; visitante -- somente
+leitura).
+
+\textbf{Exemplos:} Camila acessa a ficha do item `Duna'
+e visualiza todos os widgets preenchidos com os botoes
+de editar e excluir disponíveis.
+
+Um amigo visita a coleção pública `Livros' de Camila,
+abre a ficha do item `Duna' e visualiza os mesmos
+widgets, porém sem nenhuma opção de edição disponível.
+
+Widget não preenchidos não são exibidos para visitantes.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+\item A ficha exibe todos os widgets do layout individual
+do item, preenchidos ou não.
+\item Widgets não preenchidos devem ser ocultados para visitantes, 
+mas exibidos para o dono do item com indicação visual de que estão vazios.
+\item Para o dono do item, a ficha deve oferecer acesso
+direto às ações de editar e excluir.
+\item Para visitantes, a ficha é estritamente somente
+leitura, sem nenhuma opção de edição visível.
+\item A ficha deve respeitar o tema visual configurado
+pelo dono da coleção.
+\end{enumerate}
+& Essencial & Saída & Sistema \\ \hline
+
+% ───────────────────────────────────────────
+RF-07 & Editor de Layout &
+\textbf{Ação:} Criar e gerenciar
+
+\textbf{Objeto:} Layout personalizado (template)
+
+\textbf{Atributos:} nome do layout (100 caracteres),
+widgets disponíveis (Imagem, Texto, Classificação, Lista,
+Data, GIF, Formas, Elementos Gráficos, Input Field, Icon,
+Templates), posição e tamanho de cada widget na área de
+edição.
+
+\textbf{Exemplos:} Camila cria o layout `Card de Livro'
+com widget de Imagem para capa, Input Field para autor,
+Classificação de 1 a 5 estrelas, dois campos de Data
+(início e fim de leitura) e área de Texto para notas.
+
+Camila reposiciona o widget de Classificação via
+drag-and-drop e visualiza o resultado em tempo real na
+previa.
+
+Camila exclui o layout `Card Antigo' que não estava
+associado a nenhuma coleção.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+\item O nome do layout é obrigatório e deve ser único por
+usuário.
+\item Pelo menos um widget deve ser adicionado para que
+o layout possa ser salvo.
+\item Widgets podem ser reposicionados e redimensionados
+via arrastar e soltar (drag-and-drop).
+\item Alterações devem ser refletidas em tempo real na
+prévia do editor, sem recarregar a página.
+\item O usuário pode excluir um layout somente se ele não
+estiver associado a nenhuma coleção ativa.
+\end{enumerate}
+& Importante & Entrada & Usuário \\ \hline
+
+% ───────────────────────────────────────────
+RF-08 & Editor de Layout &
+\textbf{Ação:} Associar
+
+\textbf{Objeto:} Layout (template) a uma coleção
+
+\textbf{Atributos:} coleção de destino (existente e
+pertencente ao usuário), layout selecionado (existente e
+pertencente ao usuário).
+
+\textbf{Exemplos:} Camila associa o layout `Card de Livro'
+à coleção `Minha Biblioteca'; ao cadastrar novo item, os
+widgets do layout são exibidos automaticamente como base.
+Camila troca o layout da coleção `Series' de `Card
+Simples' para `Card Completo'; os itens já existentes
+não são alterados.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+\item Um layout só pode ser associado a uma coleção
+existente e pertencente ao mesmo usuário.
+\item Uma coleção pode ter apenas um layout padrão ativo
+por vez.
+\item A troca de layout não altera os dados nem os layouts
+individuais dos itens já cadastrados.
+\item O usuário pode remover a associação de layout de uma
+coleção a qualquer momento.
+\item Ao associar um layout, o sistema deve exibir prévia
+de como os novos itens serão criados.
+\end{enumerate}
+& Importante & Entrada & Usuário \\ \hline
+
+% ───────────────────────────────────────────
+RF-09 & Editor de Layout &
+\textbf{Ação:} Modificar individualmente
+
+\textbf{Objeto:} Layout herdado em um item específico
+
+\textbf{Atributos:} widgets herdados do template da
+coleção (base de partida), widgets adicionados pelo
+usuário no item (override), widgets removidos pelo
+usuário no item (override), widgets reposicionados ou
+redimensionados no item (override).
+
+\textbf{Exemplos:} Camila cria o item `Harry Potter e a
+Pedra Filosofal' na coleção `Livros'; o item abre com o
+template base; Camila adiciona widget extra de Input
+Field `Data de Inicio de Leitura' apenas nesse item.
+
+Camila remove o widget de GIF de um item específico pois
+não se aplica, sem afetar o template nem os outros itens.
+
+Camila restaura o layout original do template descartando
+todas as modificações individuais do item.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+\item Todo item criado em uma coleção herda
+automaticamente o template associado a ela como ponto
+de partida.
+\item O usuário pode adicionar, remover ou reposicionar
+widgets no item sem afetar o template da coleção nem os
+demais itens.
+\item O template base deve ser exibido como referência
+visual durante a edição individual do item.
+\item O usuário pode restaurar o layout original do
+template a qualquer momento, descartando todas as
+modificações individuais do item.
+\item As modificações individuais são exclusivas do item;
+nenhuma alteração feita no item reflete no template.
+\end{enumerate}
+& Desejável & Entrada & Usuário \\ \hline
+
+% ───────────────────────────────────────────
+RF-10 & Subcolecoes &
+\textbf{Ação:} Cadastrar, editar e excluir
+
+\textbf{Objeto:} Subcoleção dentro de uma coleção
+principal
+
+\textbf{Atributos:} nome (100 caracteres), coleção pai
+(referência obrigatória), ícone (emoji Unicode, opcional),
+contagem de itens (calculada automaticamente).
+
+\textbf{Exemplos:} Dentro da coleção `Livros', Camila
+cria as subcoleções `Lidos', `Para Ler' e `Favoritos'.
+Camila renomeia a subcoleção `Para Ler' para `Lista de
+Desejos'.
+Camila exclui a subcoleção `Abandonados'; os itens
+retornam à coleção principal sem classificação.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+\item O nome da subcoleção é obrigatório.
+\item Não podem existir duas subcoleções com o mesmo nome
+dentro da mesma coleção pai.
+\item Subcoleções não podem conter outras subcoleções
+(apenas um nível de profundidade permitido).
+\item A exclusao de uma subcolecao não exclui os itens;
+eles permanecem na colecao principal sem classificação.
+\item A contagem de itens de cada subcolecao é calculada
+e exibida automaticamente pelo sistema.
+\end{enumerate}
+& Importante & Entrada & Usuário \\ \hline
+
+% ───────────────────────────────────────────
+RF-11 & Subcolecoes &
+\textbf{Ação:} Mover
+
+\textbf{Objeto:} Item entre subcolecoes ou entre
+subcolecao e colecao principal
+
+\textbf{Atributos:} item de origem (nome, colecao e
+subcolecao atual), destino (subcolecao existente ou
+colecao principal).
+
+\textbf{Exemplos:} Camila arrasta "A Metamorfose" da
+subcolecao "Para Ler" para "Lidos"; o item some da
+origem e aparece no destino imediatamente.
+Camila move "O Hobbit" da subcolecao "Fantasia" para a
+colecao principal, removendo sua classificação.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+\item Um item pode pertencer a apenas uma subcolecao por
+vez.
+\item A movimentação deve ser concluída com no máximo
+dois comandos (ex.: arrastar e soltar, ou selecionar e
+confirmar destino).
+\item A movimentação não altera nenhum dado do item,
+apenas sua classificação.
+\item A operação deve ser reversível via ação de desfazer
+(Ctrl+Z ou botão equivalente).
+\item A contagem de itens das subcolecoes de origem e
+destino deve ser atualizada imediatamente.
+\end{enumerate}
+& Importante & Entrada & Usuário \\ \hline
+
+% ───────────────────────────────────────────
+RF-12 & Visualizacao &
+\textbf{Ação:} Visualizar
+
+\textbf{Objeto:} Itens de uma colecao
+
+\textbf{Atributos:} modo de exibição (geral / por
+subcolecao), criterios de ordenação (nome A--Z, nome
+Z--A, data de criação, avaliação), criterios de filtro
+(subcolecao, tags, campos personalizados).
+
+\textbf{Exemplos:} Camila abre a colecao "Livros" em modo
+"geral" e visualiza todos os 42 itens ordenados por data
+de criação.
+Camila filtra pela subcolecao "Lidos" e ordena por
+avaliação decrescente, vendo apenas os livros já lidos
+do melhor ao pior avaliado.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+\item O modo "geral" deve exibir todos os itens da
+colecao, independentemente da subcolecao.
+\item O filtro por subcolecao deve exibir somente os
+itens pertencentes à subcolecao selecionada.
+\item A ordenação padrão é por data de criação, do mais
+recente ao mais antigo.
+\item Itens sem subcolecao devem ser identificados
+visualmente como "Sem classificação" no modo geral.
+\item Os filtros e ordenações aplicados devem ser mantidos
+durante a navegação na mesma colecao.
+\end{enumerate}
+& Essencial & Saída & Usuário \\ \hline
+
+% ───────────────────────────────────────────
+RF-13 & Personalizacao Visual &
+\textbf{Ação:} Personalizar globalmente
+
+\textbf{Objeto:} Interface do sistema
+
+\textbf{Atributos:} cor primária (hex), subcores (até 4
+valores hex), paletas predefinidas (lista do sistema),
+paletas personalizadas (nome de até 50 caracteres),
+estilo global (claro / escuro / automatico conforme
+sistema operacional).
+
+\textbf{Exemplos:} Camila seleciona a paleta predefinida
+"Outono" com tons terrosos e estilo escuro; toda a
+interface é atualizada em tempo real.
+Camila cria a paleta personalizada "Meu Rosa" com cor
+primária \#E91E8C, aplica e salva no perfil.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+\item O tema selecionado deve ser aplicado globalmente a
+todas as telas do sistema de forma imediata.
+\item Paletas predefinidas não podem ser editadas
+diretamente; devem ser duplicadas antes de modificadas.
+\item O contraste deve respeitar os padrões mínimos WCAG
+2.1 nível AA (mínimo 4,5:1 para texto normal).
+\item O sistema deve alertar o usuário caso a combinação
+escolhida não atinja o contraste mínimo de acessibilidade.
+\item As configurações de tema devem ser salvas no perfil
+e persistidas entre sessões e dispositivos.
+\end{enumerate}
+& Desejável & Entrada & Usuário \\ \hline
+
+% ───────────────────────────────────────────
+RF-14 & Personalizacao Visual &
+\textbf{Ação:} Alterar
+
+\textbf{Objeto:} Tipografia e aparência textual global
+
+\textbf{Atributos:} família de fonte (lista predefinida
+com no mínimo 5 opcoes), tamanho base em px (mínimo
+12 px, máximo 24 px), espaco entre linhas (1.0 a 2.0),
+espaco entre letras.
+
+\textbf{Exemplos:} Camila altera a fonte para "Georgia",
+tamanho base para 16 px e espaco de linha para 1.6; a
+previa reflete as mudanças antes da confirmação.
+Camila tenta definir tamanho base como 10 px e recebe
+mensagem indicando que o valor mínimo é 12 px.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+\item As fontes disponíveis devem incluir ao menos cinco
+opcoes tipográficas distintas
+(ex.: serif, sans-serif, monospace).
+\item O tamanho mínimo para a fonte base é 12 px e o
+máximo é 24 px.
+\item As alterações devem ser exibidas em área de previa
+antes de o usuário confirmar a aplicação.
+\item As configurações de tipografia devem ser aplicadas
+globalmente e persistidas entre sessões.
+\item O sistema deve bloquear combinações extremas que
+comprometam a legibilidade mínima.
+\end{enumerate}
+& Desejável & Entrada & Usuário \\ \hline
+
+% ───────────────────────────────────────────
+RF-15 & Social &
+\textbf{Ação:} Adicionar, aceitar e visualizar
+
+\textbf{Objeto:} Amizade entre usuários
+
+\textbf{Atributos:} usuário solicitante (nome e email),
+usuário receptor (nome e email), status da solicitação
+(pendente / aceita / recusada), data da solicitação.
+
+\textbf{Exemplos:} Camila busca "João Silva" pelo nome e
+envia solicitação de amizade; João aceita e ambos aparecem
+mutuamente na lista de amigos.
+Camila recusa a solicitação de um usuário desconhecido;
+ele não consegue reenviar por 30 dias.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+\item Não é possível enviar solicitação de amizade para
+si mesmo.
+\item Uma solicitação pendente não pode ser reenviada
+enquanto aguarda resposta.
+\item Após recusa, novo envio só é permitido após
+intervalo mínimo de 30 dias.
+\item A lista de amigos exibe apenas amizades com status
+"aceita".
+\item O usuário pode desfazer uma amizade aceita a
+qualquer momento, removendo o vínculo para ambos os
+lados.
+\end{enumerate}
+& Importante & Entrada & Usuário \\ \hline
+
+% ───────────────────────────────────────────
+RF-16 & Social &
+\textbf{Ação:} Seguir
+
+\textbf{Objeto:} Colecao específica de um amigo
+
+\textbf{Atributos:} colecao seguida (pública ou "somente
+amigos"), usuário seguidor, data de inicio do
+acompanhamento.
+
+\textbf{Exemplos:} Camila visita o perfil de "João Silva",
+vê a colecao pública "Series Assistidas" e clica em
+"Seguir"; as atualizações passam a aparecer no feed de
+Camila.
+Camila tenta seguir a colecao privada de um amigo e não
+encontra a opcao disponível.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+\item Apenas colecoes de usuários com vínculo de amizade
+confirmada podem ser seguidas.
+\item Somente colecoes com privacidade "pública" ou
+"somente amigos" estão disponíveis para seguir.
+\item Colecoes "privadas" não aparecem para outros
+usuários, nem mesmo para amigos.
+\item O usuário pode deixar de seguir uma colecao a
+qualquer momento, sem restrições.
+\item Se a privacidade de uma colecao seguida for
+alterada para "privada", o acompanhamento deve ser
+encerrado automaticamente.
+\end{enumerate}
+& Importante & Entrada & Usuário \\ \hline
+
+% ───────────────────────────────────────────
+RF-17 & Social &
+\textbf{Ação:} Exibir
+
+\textbf{Objeto:} Feed de atualizações das colecoes
+seguidas
+
+\textbf{Atributos:} tipo de evento (adicao / edicao /
+remocao de item), nome do item afetado, nome da colecao
+afetada, nome do usuário autor da ação, data e hora do
+evento.
+
+\textbf{Exemplos:} Feed de Camila exibe "Joao adicionou
+Oppenheimer à colecao Filmes Assistidos -- há 2 horas".
+Feed exibe "Ana removeu A Casa do Dragao da colecao
+Series -- há 5 minutos".
+Camila rola o feed e carrega eventos mais antigos
+progressivamente.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+\item O feed deve exibir apenas eventos de colecoes que
+o usuário segue ativamente.
+\item Os eventos devem ser ordenados cronologicamente,
+do mais recente ao mais antigo.
+\item O feed deve ser atualizado automaticamente em tempo
+real, sem necessidade de recarregar a página.
+\item Se a privacidade de uma colecao for alterada para
+"privada", os eventos anteriores dessa colecao não devem
+mais ser exibidos.
+\item O feed deve suportar carregamento progressivo
+(paginação) para históricos longos.
+\end{enumerate}
+& Essencial & Saída & Sistema \\ \hline
+
+% ───────────────────────────────────────────
+RF-18 & Social &
+\textbf{Ação:} Visualizar
+
+\textbf{Objeto:} Colecoes e itens públicos de amigos
+
+\textbf{Atributos:} perfil do amigo (nome, foto, bio),
+colecoes acessíveis (públicas ou "somente amigos"), itens
+listados dentro de cada colecao visível.
+
+\textbf{Exemplos:} Camila visita o perfil de "João Silva"
+e visualiza a colecao pública "Meus Filmes" com todos os
+seus 30 itens cadastrados.
+Camila não encontra a colecao "Diário Pessoal" de João,
+pois ela é privada.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+\item Apenas colecoes com privacidade "pública" ou
+"somente amigos" são exibidas no perfil visitado.
+\item Colecoes "privadas" não devem ser listadas nem
+acessíveis, mesmo que o amigo compartilhe um link direto.
+\item A navegação nas colecoes de outros usuários é
+somente leitura; não é possível editar ou excluir dados.
+\item Itens de colecoes privadas não devem ser acessíveis
+por nenhum meio externo ao dono.
+\end{enumerate}
+& Importante & Saída & Usuário \\ \hline
+
+% ───────────────────────────────────────────
+RF-19 & Privacidade &
+\textbf{Ação:} Configurar
+
+\textbf{Objeto:} Nível de privacidade de uma colecao
+
+\textbf{Atributos:} nível de privacidade (pública --
+qualquer usuário cadastrado; somente amigos -- apenas
+usuários na lista de amizades; privada -- somente o
+dono).
+
+\textbf{Exemplos:} Camila define "Diário de Leituras"
+como privada; "Livros Favoritos" como pública; "Series
+2024" como somente amigos.
+Camila altera a colecao "Livros" de "pública" para
+"privada"; todos os seguidores perdem o acesso
+automaticamente.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+\item O nível de privacidade padrão ao criar uma colecao
+é "privada".
+\item A configuração de privacidade pode ser alterada
+pelo usuário a qualquer momento.
+\item Colecoes "públicas" são acessíveis para qualquer
+usuário cadastrado no sistema.
+\item Colecoes "somente amigos" são visíveis apenas para
+usuários na lista de amizades confirmadas do dono.
+\item Colecoes "privadas" são visíveis exclusivamente ao
+próprio dono, sem excecoes.
+\item Ao tornar uma colecao privada, todos os
+acompanhamentos ativos devem ser encerrados
+imediatamente.
+\end{enumerate}
+& Essencial & Entrada & Usuário \\ \hline
+
+% ───────────────────────────────────────────
+RF-20 & Navegacao &
+\textbf{Ação:} Exibir
+
+\textbf{Objeto:} Tela principal de colecoes do usuário
+
+\textbf{Atributos:} lista de colecoes do usuário
+autenticado (nome, icone, contagem total de itens,
+contagem por subcolecao), atalhos de navegação para
+subcolecoes e itens individuais.
+
+\textbf{Exemplos:} Ao fazer login, Camila vê na tela
+inicial os cartoes "Livros (42)", "Filmes (18)" e
+"Series (7)"; ao clicar em "Livros", visualiza as
+subcolecoes "Lidos (30)", "Para Ler (10)" e
+"Favoritos (2)".
+Camila, em seu primeiro acesso, vê mensagem de
+boas-vindas e botão "Criar primeira colecao".
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+\item A tela deve exibir todas as colecoes do usuário
+autenticado em uma única tela dedicada.
+\item Cada colecao deve exibir nome, icone e contagem
+total de itens.
+\item A navegação até subcolecoes e itens deve ser
+acessível com no máximo dois cliques ou toques.
+\item A tela deve ser totalmente responsiva e funcional
+em dispositivos móveis a partir de 320 px de largura.
+\item Usuários sem colecoes devem ver mensagem de
+boas-vindas com atalho para criação da primeira colecao.
+\end{enumerate}
+& Essencial & Saída & Sistema \\ \hline
+
+\end{longtable}
+\renewcommand{\arraystretch}{1}
+\FloatBarrier
+
 \FloatBarrier
 \begin{table}[!htbp]
 \centering
@@ -70,6 +801,8 @@ Segundo \citeauthorandyear{Sommerville2011}, os requisitos não funcionais são 
 Logo, não dizem respeito diretamente às funcionalidades fornecidas pelo sistema, mas sim às suas propriedades e restrições de qualidade.
 \citeauthorandyear{Pressman2016}, dizem que esses requisitos especificam atributos como desempenho, usabilidade, segurança, confiabilidade e portabilidade, sendo fundamentais para garantir que o sistema atenda aos padrões de qualidade esperados.
 Assim, esta seção apresenta os requisitos não-funcionais identificados neste trabalho, consolidados na Tabela~\ref{tab:reqNaoFuncionais}
+
+
 
 \FloatBarrier
 \begin{table}[!htbp]
