@@ -1,0 +1,185 @@
+\chapter{Materiais e métodos}
+\label{cap:03}
+De acordo com a natureza e os objetivos do presente trabalho, foram adotadas as seguintes metodologias de pesquisa para
+embasar o desenvolvimento do sistema especialista educacional proposto.
+
+\subsection{Bibliográfica}
+Durante o desenvolvimento deste trabalho, aplica-se a metodologia bibliográfica, por meio da qual foi realizada
+a análise de materiais já publicados. Para isso, fez-se necessária a avaliação e fundamentação sobre os conteúdos
+consultados podendo eles ser "de livros, periódicos, documentos, textos,
+mapas, fotos, manuscritos e, até mesmo, de material
+disponibilizado na internet etc" \cite{fontelles2009}.
+
+Em primeira instância, a pesquisa foi conduzida com a definição dos temas e objetivos necessários, com o intuido de identificar
+os assuntos que sustentam a narrativa do trabalho, esclarecendo quais pontos são úteis e relevantes para a pesquisa. Os temas
+centrais investigados foram: Problemas de Satisfação de Restrições (CSP), algoritmos de propagração de restrições,
+sistemas especialistas, inteligência artificial explicável (XAI), sistemas tutores inteligentes e arquitetura de software
+orientada a serviços. Além disso, foi necessário delimitar um período para a seleção das fontes, priorizando materiais mais
+recentes, sem desconsiderar obras clássicas e fundamentais para o domínio, como os trabalhos de \textcite{Clancey1983},
+\textcite{Mackworth1977} e \textcite{Russell2010}, dada a relevância teórica permanente de tais referências.
+
+Após essa etapa inicial, foram selecionadas como principais bases de busca o Google Scholar e o Portal de Periódicos da CAPES,
+acessado por meio do sistema CAFe (Comunidade Acadêmica Federada), em razão de sua vasta cobertura de artigos científicos,
+livros, teses, dissertações e demais produções acadêmicas indexadas. Foram também realizadas buscas direcionadas em portais de
+conferências e periódicos especializados em inteligência artificial, engenharia de \textit{software} e sistemas de informação.
+
+Dado o volume de resultados retornados, realizou-se uma triagem dos materiais recuperados por meio da leitura de resumos.
+Os materiais considerados relevantes foram incluídos, nos casos de dúvidas quando à permanência, procedeu-se a uma leitura
+mais minuciosa. Após a seleção, foi realizada uma análise detalhada dos materiais e a síntese das informações coletadas.
+
+Por fim, todas as pesquisas e extrações de informações foram revisadas, de modo a evitar erros e má interpretação. A revisão foi
+conduzida em duas etapas, com releitura do material, da síntese e da extração de informação, resultando em ajustes quando
+necessário e garantindo a qualidade e a precisão das informações utilizadas ao longo do trabalho.
+
+\subsection{Aplicada}
+A pesquisa aplicada orienta o desenvolvimento prático de compatibilidade, cujo produto é um sistema especialista educacional
+para validação de compatibilidade de \textit{hardware}. Segundo \textcite{gerhardt2009}, a pesquisa aplicada tem como objetivo
+gerar conhecimento para aplicação prática e dirigidos à solução de problemas específicos. Neste contexto, os fundamentos
+teóricos levantados pela pesquisa bibliográfica, notadamente o formalismo de CSP, o algoritmo AC-3 e os princípios de
+sistemas especialistas com \textit{explanation facility}, foram diretamente empregados na concepção e implementação do
+sistema proposto.
+
+Essa abordagem permitiu que as decisões arquiteturais e de projeto fossem fundamentadas em evidências da literatura, como a
+adoção da arquitetura em três camadas \cite{Fowler2002}, o estilo REST para comunicação entre camadas \cite{Fielding2000}
+e o algoritmo AC-3 como motor de inferência \cite{Mackworth1977}, garantindo o alinhamento entre os resultados práticos
+obtidos e o referencial teórico consolidade.
+
+\section{Materiais}
+\label{sec:materiais}
+
+\subsection{Equipamentos}
+Para a realização do desenvolvimento, codificação e testes do sistema, foi utilizado um computador com processaor Ryzen 7 5700X, 32GB de
+memória RAM, placa de vídeo AMD Radeon RX 7600 e sistema operacional Windows 11. Esses recursos foram suficientes para executar o ambiente de
+desenvolvimento, o servidor de aplicação, o sistema de gerenciador de banco de dados e os navegadores necessários para a validação da
+interface.
+
+\subsection{Softwares}
+Para o desenvolvimento do sistema foram utilizadas ferramentas de \textit{software} selecionadas com base em sua adequaçãoi técnica ao
+projeto, disponibilidade gratuita ou de código aberto e familiaridade prévida do desenvolvedor.
+
+\section{Ferramentas Utilizadas}
+
+\subsection{Visual Studio Code}
+O Visual Studio Code (VS Code) é um editor de código-fonte desenvolvido pela Microsoft, disponível gratuitamente para sistemas
+operacionais Windows, Linux e MacOS. Por meio de extensões, a ferramenta agrega funcionalidades como depuração, controle de versão,
+terminal integrado e suporte a diversas linguagens de programação, aproximando-se de um ambiente de desenvolvimento integrado (IDE).
+
+No presente trabalho, o VS Code foi utilizado como ambiente principal de desenvolvimento, tanto para codificação do \textit{backend}
+e do \textit{frontend} quanto para a edição e compilação do documento LaTeX deste trabalho, por meio da extensão LaTeX Workshop.
+A escolha pela ferramento deve-se à sua leveza, à vesta disponibilidade de extensões relevantes para o ecossistema adotado
+e ao conhecimento prévio do desenvolvedor.
+
+\subsection{Node.js e NestJS}
+O Node.js é um ambiente de execução JavaScript de código aberto e multiplataforma, construído sobre o motor V8 do Google Chrome,
+que permite a execução de código JavaScript no lado do servidor, sendo amplamante empregado no desenvolvimento de aplicações \textit{web}
+escaláveis e de alta performance. O NestJS é um \textit{framework} para desenvolvimento de aplicações server-side organizada em módulos, \textit{controller}
+e \textit{services}. Essa estrutura favorece a separação de responsabilidades e a manutenibilidade do código, alinhando-se diretamente
+aos princípios da arquitetura em camadas descrito por \textcite{Fowler2002}.
+
+No contexto do sistema proposto, o Node.js com NestJS compõe a camada de lógica de negócio, sendo o responsável por receber as requisições
+da interface, executar o algoritmo AC-3 sobre o grafo de restrições de \textit{hardware} e retornar ao cliente os resultados da validação
+acompanhados das justificativas educativas correspondentes.
+
+\subsection{PostgreSQL e Docker}
+O PostgreSQL é um banco de dados relacional de código aberto, com suporte a transações, multiplataforma e amplamente utilizado em aplicações
+\textit{web} de diferentes escalas. A escolha por esse sistema deve-se à sua robustez, à sua conformidade com o padrão SQL e à facilidade
+de integração com ecossistemas Node.js.
+
+No sistema proposto, o PostgreSQL é utilizado para armazenar a base de conhecimento do sistema especialista: os modelos de componentes de
+\textit{hardware}, sua especificações técnicas e as regras de compatibilidade que compõe o conjunto de restrições do CSP. Essas informações
+são consultadas pela camada de lógica de negócio a cada execução do algoritmo AC-3.
+
+O provisionamento do banco de dados foi realizado por meio do Docker, uma plataforma de código aberto para criação e execução de contêineres
+de \textit{software}. A utilização do Docker permite que o ambiente do banco de dados seja definido de forma declarativa e reproduzível,
+garantindo consistência entre os ambientes de desenvolvimento e produção sem a necessidade de instalação direta do PostgreSQL no sistema operacional.
+
+\subsection{DBeaver}
+O DBeaver é uma ferramenta de administração de banco de dados de código aberto e multiplataforma, compatível com diversos sistemas gerenciadores,
+incluindo o PostgreSQL. A ferramente oferece uma interface visual para a execução de consultas SQL, navegação entre tabelas, modelagem de dados e
+exportação de resultados.
+
+No presentr trabalho, o DBeaver foi utilizado para o auxílio na administração e manipulação do banco de dados durante
+o desenvolvimento, permitindo a inspeção e validação dos dados cadastrados na base de conhecimento do sistema especialista.
+
+\subsection{Next.js}
+O Next.js é um \textit{framework} de código aberto para o desenvolvimento de aplicações \textit{web} contruído sobre o React, desenvolvido
+e mantido pela Vercel. O \textit{framework} oferece recursos como renderização híbrida, roteamente baseado em sistemas de arquivos e
+suporte nativo a APIs, facilitando o desenvolvimento de aplicações \textit{web} com uma única base de código.
+
+No presente trabalho, o Next.js foi utilizado para o desenvolvimento da camada de apresentação do sistema, implementada como um interface
+no formato \textit{wizard} que guia o usuário, passo a passo, na seleção dos componentes de \textit{hardware}. A escolha do Next.js
+deve-se à sua capacidade e integrar a interface e as chamadas à camada de lógica de negócio em um único projeto, além de atualizar
+dinamicamente os componentes exibidos na tela em resposta ao resultado das validações retornadas pelo motor de inferência.
+
+\subsection{Figma}
+O Figma é uma ferramenta de \textit{design} de interface baseada em nuvem, acessada por meio de navegadore \textit{web}, que permite
+a criação de protótipos e \textit{layouts} de forma colaborativa em tempo real, durante o processo de criação é possível fazer uso
+de diferente modelos e ter uma visibilidade geral do projeto.
+
+No presente trabalho, o Figma foi utilizado para o desenvolvimento dos protótipos das interfaces do sistema, permitindo planejar e validar
+o \textit{layout} da interface \textit{wizard} antes da sua implementação na camada de apresentação. A escolha pela ferramente deve-se
+à sua disponibilidade gratuita para uso acadêmico e ao conhecimento prévio do desenvolvedor.
+
+\subsection{Astah Community}
+O Astah Community é uma ferramenta de modelam UML desenvolvida pela empresa japonesa Change Vision, que possibilida a criação de diagramas
+de casos de uso, de classes, de sequência, de domínio e de atividades, entre outros. A ferramento disponibiliza uma versão gratuita voltada
+ao uso acadêmico.
+
+No presente trabalho, o Astah Community foi utilizado para a elaboração dos diagramas UML, que compõe as etapas de análise
+e projeto de \textit{software}, incluindo o diagrama de casos de uso, de domínio, de classes e de sequência (por enquanto).
+
+\subsection{Teste?}
+
+\section{Métodos de Desenvolvimento}
+
+\subsection{Modelagem do Problema como CSP}
+A etapa central do método de desenvolvimento consistiu na formalização do problema de compatibilidade de \textit{hardware}
+como um Problema de Satisfação de Restrições (CSP). Conforme descrito por \textcite{Russell2010}, um CSP é caracterizado
+por uma tripla $(X, D, C)$, na qual $X$ representa o conjunto de variáveis, $D$ os respectivos domínios e $C$ o conjunto
+de restrições.
+
+No sistema proposto, cada categoria de componente de \textit{hardware} foi mapeada a uma variável do CSP, cujo domínio é
+composto pelos modelos comercialmente disponíveis cadastrados na base de conhecimento. As restrições foram identificadas a partir
+das especificações técinas oficientes dos fabricantes e formalizadas como restrições binárias entre pares de variáveis.
+
+\subsection{Implementação do Algoritmo AC-3}
+O motor de inferência do sistema foi implementado com base no algoritmo AC-3 (\textit{Arc Consistency Algorithm 3}),
+proposto por \textcite{Mackworth1977}. A implementação seguiu a estrutura algorítmica descrita por \textcite{Russell2010},
+uma fila de arcos é inicializada com todos os pares de variáveis relacionadas por restrições binárias, para cada arco retirado
+da fila, o algoritmo verifica se todos os valores do domínio da variável de origem possuem suporte no domínio da variável de destino,
+valores sem suporte são removidos do domínio e, a cada remoção, os arcos afetados são reinseridos na fila para propagação.
+
+No contexto do sistema proposto, o AC-3 é invocado a cada seleção de componente realizada pelo usuário na interface. O estado
+atual das seleções é enviado à camada de lógica de negócio, implmentada com NestJS, que executa a propagação de restrições e
+retorna ao cliente os domínios atualizados, juntamente com as justificativas técnicas referentes a cada valor removido.
+Essa abordagem garante que a validação ocorra de forma incremental e em tempo real, tornando viável a execução sobre catálogos
+de tamanho realista sem ocorrer explosão combinatória, o que aconteceria no caso de validação por força bruta.
+
+\subsection{Implementação das Justificativas Educativas}
+Para cada restrição violada pelo AC-3, o sistema aciona um módulo de geração de justificativas, responsável por formular,
+em linguagem natural, a explicação técnica correspondente à incompatibilidade identificada. Esse módulo implementa o conceito de
+\textit{explanation facility} descrito por \textcite{Clancey1983}, que distingue um sistema especialista de um mecanismo de filtragem
+simples pela sua capacidade de articular a cadeia de regras e restrições que levou a uma determinada conclusão.
+
+As justificativas foram estruturadas de forma a identificar explicitamente qual restrição foi violada, quais componentes envolvidos
+e qual o princípio técnico subjacente à incompatibilidade. Por exemplo, ao detectar a seleção simultânea de um processador com
+plataforma AM5 e um módulo de memória DDR4, o sistema exibe ao usuário a seguinte justificativa: \textit{"Este módulo de memória é
+  incompatível: a placa-mãe compatível com o processador selecionado suporta exclusivamente DDR5, e este módulo utiliza o padrão DDR4"}.
+Dessa forma, cada bloqueio é transformado em uma oportunidade de aprendizagem sobre as restrições físicas que regem a montagem de
+computadores.
+
+\subsection{Processo de Desenvolvimento de Software}
+O desenvolvimento do sistema seguiu uma abordagem iterativa e incremental, na qual as funcionalidades foram implmentadas e validadas
+em etapas sucessivas. Em cada iteração, foram realizadas as atividades de análise de requisitos, projeto, implementação e teste, permitindo
+a identificação e correção precoce de inconsistências entre os requisitos especificados e o comportamento do sistema.
+
+A organização das tarefas foi realizada por meio de uma ferramente de gerenciamento de projetos, com atividades distribuídas conforme seu estado
+de desenvolvimento: a fazer, em desenvolvimento, em teste, concluído e adiado. Essa estrutura permitiu o acompanhamento contínuo do progresso
+do projeto e a priorização das atividades ao longo do ciclo de desenvolvimento.
+
+\subsection{Estratégia de Testes}
+
+% A metodologia especifica como os objetivos estabelecidos serão alcançados. As partes constitutivas da metodologia: a amostragem e as formas de coleta, de organização e de análise dos dados.
+
+% Deem uma lida no link abaixo para ter uma ideia do que colocar. Conversar com o orientador para definição da metodologia.
+% \url{https://blog.mettzer.com/metodologia-cientifica/amp/#O_QUE_E_METODOLOGIA_CIENTIFICA}
