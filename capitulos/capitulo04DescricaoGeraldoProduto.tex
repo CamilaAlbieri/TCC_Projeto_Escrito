@@ -1,6 +1,45 @@
 \chapter{Descrição Geral do Produto}
 \label{cap:04}
 
-Faça uma breve apresentação, visão geral do produto a ser desenvolvido.
+Este capítulo apresenta uma visão panorâmica da plataforma proposta, descrevendo seu propósito, os perfis de usuários atendidos e as fronteiras que delimitam o escopo do desenvolvimento. A descrição aqui contida serve como base para o detalhamento técnico e a especificação de requisitos apresentados nos capítulos subsequentes.
 
-\citeauthorandyear{braga2008algoritmos};
+\section{Perspectiva do Produto}
+
+O produto consiste em uma plataforma web de gerenciamento e catalogação de acervos pessoais. O sistema surge como uma solução para o problema da rigidez em softwares de inventário tradicionais, que geralmente oferecem campos fixos que não se adaptam adequadamente a diferentes tipos de itens.
+
+A perspectiva central do produto é a \textbf{flexibilidade estrutural}. Através de uma arquitetura baseada em componentes dinâmicos (\textit{widgets}), o usuário deixa de ser apenas um consumidor de formulários prontos para se tornar o arquiteto de sua própria organização. 
+O sistema permite que colecionadores de diferentes nichos (como livros, moedas ou jogos) utilizem a mesma plataforma, mas com experiências de preenchimento e visualização completamente distintas e adequadas a cada domínio.
+
+\section{Funções do Produto}
+
+As funcionalidades do sistema estão organizadas em quatro eixos principais que sustentam a proposta de valor da plataforma:
+
+\begin{itemize}
+    \item \textbf{Organização Multinível:} Estruturação lógica dos dados em \textbf{Categorias} (agrupadores temáticos), \textbf{Coleções} (subdivisões onde os itens residem) e \textbf{Itens} (a unidade individual de conteúdo).
+    \item \textbf{Customização Estrutural (Editor de Layout):} Motor que permite criar e editar modelos (\textit{templates}) visuais. O usuário pode adicionar, reposicionar e redimensionar \textit{widgets} como campos de texto, classificações, imagens, datas e listas.
+    \item \textbf{Interação Social:} Funcionalidades que permitem adicionar amigos, seguir categorias públicas de outros usuários e visualizar atualizações de acervos em um \textit{feed} cronológico.
+    \item \textbf{Personalização Visual Global:} Controle sobre a estética da interface, permitindo a alteração de temas (claro e escuro), paletas de cores e fontes, garantindo que o ambiente digital reflita o estilo do colecionador.
+\end{itemize}
+
+\section{Características dos Usuários}
+
+O produto foi concebido para atender a dois perfis principais de interação, identificados durante a fase de concepção:
+
+\begin{enumerate}
+    \item \textbf{Usuário Organizador (Casual):} Utiliza a plataforma para manter listas simples de seus pertences. Prefere utilizar os \textit{layouts} padrão fornecidos pelo sistema ou herdados de categorias, focando na velocidade e praticidade do cadastro.
+    \item \textbf{Usuário Curador (Entusiasta):} Possui um envolvimento profundo com seus acervos. Este perfil dedica tempo ao \textbf{Editor de Layout} para criar fichas técnicas detalhadas e esteticamente personalizadas, buscando uma experiência de catalogação profissional.
+\end{enumerate}
+
+\section{Restrições Gerais}
+
+O desenvolvimento e a operação do sistema estão condicionados aos seguintes fatores limitadores:
+
+\begin{itemize}
+    \item \textbf{Conectividade:} Por se tratar de uma aplicação \textit{SaaS (Software as a Service)}, o acesso aos dados e às funcionalidades sociais exige conexão estável com a internet.
+    \item \textbf{Compatibilidade de Interface:} O sistema é otimizado para navegadores modernos que suportam tecnologias de renderização dinâmica. Embora seja responsivo, a experiência avançada do \textbf{Editor de Layout} é otimizada para dispositivos de médio e grande porte, como \textit{tablets} e \textit{desktops}.
+    \item \textbf{Escopo de Mídia:} O armazenamento de arquivos (imagens e GIFs) está sujeito a limites de tamanho definidos para garantir a performance de carregamento e a viabilidade da infraestrutura do servidor.
+\end{itemize}
+
+\section{Diferenciais do Produto}
+
+Diferente de planilhas eletrônicas ou aplicativos de listas estáticas, o grande diferencial desta plataforma é o \textbf{acoplamento entre dado e forma}. Enquanto outras ferramentas tratam o registro de um item como uma simples linha em uma tabela, este produto trata cada item como uma experiência visual única. O usuário define não apenas \textit{o que} guardar, mas \textit{como} aquela informação deve ser apresentada, proporcionando uma ferramenta de curadoria que evolui junto com a coleção.

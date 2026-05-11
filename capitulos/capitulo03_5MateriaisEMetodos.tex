@@ -105,7 +105,7 @@ O levantamento partiu da análise crítica de limitações observadas em platafo
 
 A partir dos requisitos elicitados, procedeu-se à modelagem conceitual do sistema, etapa na qual as entidades do mundo real relevantes ao domínio são representadas, juntamente com seus atributos e relações. Tomou-se como base a proposta de \cite{Larman2007}, para quem o modelo de domínio é uma ferramenta visual que evidencia os conceitos significativos antes de qualquer decisão de implementação.
 
-Diante da quantidade de entidades identificadas, adotou-se a organização do diagrama em cinco pacotes conceituais --- Usuário, Coleções, Editor de Layout, Interação Social, Notificação e Aparência. Esse agrupamento, além de reduzir a sobrecarga visual do diagrama, evidencia a separação de responsabilidades que seria posteriormente materializada na estrutura modular do \textit{backend} implementado com NestJS.
+Diante da quantidade de entidades identificadas, adotou-se a organização do diagrama em seis pacotes conceituais --- Usuário, Coleções, Editor de Layout, Interação Social, Notificação e Aparência. Esse agrupamento, além de reduzir a sobrecarga visual do diagrama, evidencia a separação de responsabilidades que seria posteriormente materializada na estrutura modular do \textit{backend} implementado com NestJS.
 
 \subsection{Definição arquitetural}
 
@@ -127,8 +127,9 @@ A escolha pela ordem \textit{backend}-para-\textit{frontend} decorre do fato de 
 
 \subsection{Gestão do projeto}
 
-O acompanhamento das atividades ao longo do desenvolvimento foi feito por meio de uma ferramenta de gestão de tarefas baseada em quadros \textit{kanban}, com colunas representando os estados do fluxo de trabalho: a fazer, em desenvolvimento, em teste, concluído e adiado. Essa visualização facilitou tanto o planejamento das iterações quanto a percepção do progresso geral do projeto.
+O acompanhamento das atividades ao longo do desenvolvimento foi realizado por meio da ferramenta ClickUp, utilizando um modelo de organização baseado em quadros Kanban. As tarefas foram distribuídas em colunas que representam os estados do fluxo de trabalho, como: a fazer, em desenvolvimento, em teste, concluído e adiado, permitindo uma visualização clara do progresso das atividades.
 
+Além disso, o planejamento do projeto foi estruturado em ciclos quinzenais, nos quais as tarefas eram definidas, priorizadas e acompanhadas ao longo de cada período. Essa abordagem possibilitou melhor controle do tempo, organização das entregas e adaptação contínua às necessidades do projeto.
 
 \subsection{Estratégia de Testes}
 

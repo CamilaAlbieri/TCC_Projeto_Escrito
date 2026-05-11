@@ -1,233 +1,422 @@
 \chapter{Projeto de Software}
 \label{cap:06}
 
-Parte principal do texto, que contém a exposição ordenada e pormenorizada do assunto. Divide-se em seções e subseções, que variam em função da abordagem do tema e do método.
- 
+Este capítulo apresenta a arquitetura técnica e as especificações de projeto que fundamentam o sistema de gerenciamento de coleções. Nele, detalham-se as interfaces, a modelagem de dados e as regras de persistência utilizadas no desenvolvimento da aplicação.
+
 \section{Projeto de Interface}
-Apresentar o protótipo das interfaces do sistema. Podem ser construídas utilizando qualquer ferramenta. Apresente os padrões utilizados.
+As interfaces do sistema foram desenvolvidas com foco na usabilidade e flexibilidade, permitindo que o usuário personalize a visualização de seus itens. Os protótipos de alta fidelidade foram construídos na ferramenta \textbf{Figma}, seguindo os princípios de \textit{Atomic Design} para a criação de componentes reutilizáveis. O sistema adota um padrão visual responsivo, garantindo que a experiência de organização seja consistente tanto em plataformas \textit{desktop} quanto em dispositivos móveis.
 
 \section{Projeto de Dados}
-Informar nesta seção qual o Banco de Dados a ser utilizado, qual a IDE utilizada para manipulação do Banco de Dados, assim como descrever quais os tipos de dados aceitos no Banco de Dados.
+A persistência de informações utiliza o Sistema Gerenciador de Banco de Dados (SGBD) \textbf{PostgreSQL 16}, executado em ambiente isolado através de \textbf{Docker}. A manipulação e administração dos dados são realizadas via IDE \textbf{DBeaver}.
 
-\subsection{Mapeamento Objeto-Relacional}
-Uma vez que foi elaborada uma modelagem orientada a objetos, utilizando o diagrama de classes UML, e o banco de dados a ser utilizado é relacional, deve-se identificar as relações. Assim, a partir dos requisitos e do modelo de domínio enumerar as relações que devem formar o banco de dados.
-
-Regras para realizar o mapeamento: (Helen, colocar as regras aqui para que os alunos escrevam)
-
+O banco de dados foi estruturado para suportar tipos de dados modernos e performáticos, incluindo:
 \begin{itemize}
-	\item Item 1;
-	\item Item 2;
-	\item Item n.
+    \item \textbf{UUID (Universally Unique Identifier):} Utilizado para todas as chaves primárias e estrangeiras;
+    \item \textbf{JSONB:} Para o armazenamento eficiente de configurações dinâmicas de interface;
+    \item \textbf{Varchar/Text:} Para cadeias de caracteres variáveis;
+    \item \textbf{Timestamp:} Para o registro cronológico de eventos e criações.
 \end{itemize}
 
+\subsection{Mapeamento Objeto-Relacional}
+O mapeamento entre o modelo de domínio (TypeScript) e o modelo relacional (PostgreSQL) é gerenciado pelo \textbf{Prisma ORM}. Para garantir a integridade dos dados e a fidelidade aos requisitos, adotaram-se as seguintes regras de mapeamento:
+
+\begin{itemize}
+    \item \textbf{Nomenclatura:} As entidades em \textit{camelCase} no código são mapeadas para tabelas em \textit{snake\_case} no banco de dados através da diretiva \texttt{@@map};
+    \item \textbf{Chaves Primárias:} Todos os modelos possuem um identificador único do tipo UUID gerado automaticamente;
+    \item \textbf{Relações 1:N:} Implementadas via chaves estrangeiras (\textit{foreign keys}) obrigatórias;
+    \item \textbf{Relações 1:1:} Utilizadas para configurações de perfil, garantindo a exclusividade da relação através de índices únicos;
+    \item \textbf{Relações Reflexivas:} As interações sociais (amizades) são mapeadas como relações nomeadas para distinguir os papéis de remetente e destinatário.
+\end{itemize}
 
 \subsection{Estrutura das Tabelas no Banco de Dados}
-Explicar qual o padrão adotado para o nome dos objetos de banco de dados, como por nome da chave primária, chave estrangeira, das constraints e das chaves únicas. Por exemplo: foi convencionado que o nome dos objetos devem obedecer o que está definido na Tabela~\ref{tab:convencaoObjBD}.
+\label{sec:estrutura_tabelas}
 
+Nesta seção, descreve-se o padrão adotado para a nomenclatura dos objetos do banco de dados, incluindo chaves primárias, chaves estrangeiras e índices únicos. A padronização visa garantir a manutenibilidade do sistema e a integridade referencial. Foi convencionado que os nomes dos objetos devem obedecer aos padrões definidos na Tabela~\ref{tab:convencaoObjBD}.
 
 \FloatBarrier
 \begin{table}[!htbp]
 \centering
 \caption{Convenção para Nome dos Objetos no Banco de Dados}
-	\begin{tabular}{ c | p{11.5cm} }
-		\hline
-		\textbf{Objeto} & \textbf{Padrão Adotado} \\ \hline
-		Chave Primária & NomeDaTabela\_PK \\ \hline
-		Chave Estrangeira & NomeDaTabela\_NomeDaTabelaEstrangeira\_FK\_nn, onde nn é a sequência de ocorrência do par NomeDaTabela e NomeDaTabelaEstrangeira   \\ \hline
-		Check & NomeDaTabela\_CK\_nn, onde nn é a sequência de checks da tabela  \\ \hline
-		Chave Única & NomeDaTabela\_UK\_nn, onde nn é a sequência de chave única da tabela  \\ \hline
-	\end{tabular}
-	\\ \vspace{0.2cm}
-	\textbf{Fonte:} Elaborada pelo autor
-	\label{tab:convencaoObjBD}
+    \begin{tabularx}{\textwidth}{ | c | X | }
+        \hline
+        \textbf{Objeto} & \textbf{Padrão Adotado} \\ \hline
+        Chave Primária & NomeDaTabela\_pkey \\ \hline
+        Chave Estrangeira & NomeDaTabela\_NomeDoCampo\_fkey \\ \hline
+        Chave Única (Unique) & NomeDaTabela\_NomeDoCampo\_key \\ \hline
+        Índices & NomeDaTabela\_NomeDoCampo\_idx \\ \hline
+    \end{tabularx}
+    \\ \vspace{0.2cm}
+    \textbf{Fonte:} Elaborada pelo autor
+    \label{tab:convencaoObjBD}
 \end{table}
 \FloatBarrier
 
-Para melhor compreensão, as tabelas do banco de dados propostas neste trabalho estão consolidadas na Tabela~\ref{tab:tabelasIdentificadas}, as quais estão individualmente detalhadas.
+Para melhor compreensão da arquitetura de dados, as 12 tabelas propostas neste 
+trabalho estão consolidadas na Tabela~\ref{tab:tabelasIdentificadas}, que serve como 
+índice para o detalhamento físico apresentado na subseção seguinte.
 
 \FloatBarrier
 \begin{table}[!htbp]
 \centering
 \caption{Tabelas Identificadas neste Trabalho}
-	\begin{tabular}{ c | p{11.5cm} }
-		\hline
-		\textbf{Tabela do Banco de Dados} & \textbf{Tabela no Documento} \\ \hline
-		Estado & Tabela~\ref{tab:tabelaEstado} \\ \hline
-		Cidade & Tabela~\ref{tab:tabelaCidade} \\ \hline
-		NomeDaTabelann & Tabela~\ref{tab:tabelaNN} \\ \hline
-	\end{tabular}
-	\\ \vspace{0.2cm}
-	\textbf{Fonte:} Elaborada pelo autor
-	\label{tab:tabelasIdentificadas}
+    \begin{tabularx}{\textwidth}{ | l | X | }
+        \hline
+        \textbf{Tabela do Banco de Dados} & \textbf{Referência no Documento} \\ \hline
+        users & Tabela~\ref{tab:tabelaUserDetalhado} \\ \hline
+        visual\_configs & Tabela~\ref{tab:tabelaVisualConfigDetalhado} \\ \hline
+        categories & Tabela~\ref{tab:tabelaCategoryDetalhado} \\ \hline
+        layouts & Tabela~\ref{tab:tabelaLayoutDetalhado} \\ \hline
+        collections & Tabela~\ref{tab:tabelaCollectionDetalhado} \\ \hline
+        widgets & Tabela~\ref{tab:tabelaWidgetDetalhado} \\ \hline
+        items & Tabela~\ref{tab:tabelaItemDetalhado} \\ \hline
+        item\_widgets & Tabela~\ref{tab:tabelaItemWidgetDetalhado} \\ \hline
+        notifications & Tabela~\ref{tab:tabelaNotificationDetalhado} \\ \hline
+        event\_logs & Tabela~\ref{tab:tabelaEventLogDetalhado} \\ \hline
+        friendships & Tabela~\ref{tab:tabelaFriendshipDetalhado} \\ \hline
+        collection\_follows & Tabela~\ref{tab:tabelaFollowCollectionDetalhado} \\ \hline
+    \end{tabularx}
+    \vspace{0.2cm}
+    \textbf{Fonte:} Elaborada pelo autor
+    \label{tab:tabelasIdentificadas}
 \end{table}
 \FloatBarrier
 
-Preencher o quadro a seguir para cada uma das relações identificadas no item Mapeamento OO-Relacional, que deve refletir as características das tabelas a serem criadas no banco de dados. Para melhor compreensão sobre qual a estrutura física das tabelas, seguem dois exemplos: a Tabela 6 é um exemplo da estrutura de dados Estado e a Tabela 6 é um exemplo da estrutura de dados Cidade.
+\subsubsection{Detalhamento da Estrutura das Tabelas}
 
+Nesta subseção, apresenta-se o detalhamento físico das 12 tabelas que compõem o banco de dados do sistema,
+especificando tipos de dados, chaves e restrições. Para a leitura das tabelas de detalhamento, 
+foram adotadas as seguintes convenções de cabeçalho:
+
+\begin{itemize}
+    \item \textbf{Campo:} Nome técnico do atributo mapeado na tabela do banco de dados;
+    \item \textbf{Tipo:} Tipo de dado nativo do PostgreSQL (ex: UUID, Varchar, JSONB, Enum);
+    \item \textbf{Obr.?:} Indica se o campo é de preenchimento obrigatório (X) ou opcional;
+    \item \textbf{PK?:} Indica se o campo compõe a Chave Primária (\textit{Primary Key}) da tabela;
+    \item \textbf{Tab.:} Em caso de Chave Estrangeira (\textit{Foreign Key}), indica a tabela de referência;
+    \item \textbf{Cmp.:} Indica o campo específico de referência na tabela estrangeira;
+    \item \textbf{Grp.:} Identifica o grupo de Chave Única (\textit{Unique Key}) ao qual o campo pertence (ex: UK\_01);
+    \item \textbf{Ord.:} Define a sequência do campo dentro de uma composição de chave única ou índice.
+\end{itemize}
+
+
+% 1. USERS
+\FloatBarrier
+\begin{table}[!htbp]
+    \centering
+    \caption{Usuário (users)}
+    \label{tab:tabelaUserDetalhado}
+    \footnotesize
+    \begin{tabularx}{\textwidth}{|X|c|c|c|c|c|c|c|}
+        \hline
+        \textbf{Campo} & \textbf{Tipo} & \textbf{Obr.?} & \textbf{PK?} & \textbf{Tab.} & \textbf{Cmp.} & \textbf{Grp.} & \textbf{Ord.} \\ \hline
+        id\_user & UUID & X & X & & & & \\ \hline
+        name & Varch. & X & & & & & \\ \hline
+        email & Varch. & X & & & & UK\_01 & 1 \\ \hline
+        password & Varch. & X & & & & & \\ \hline
+    \end{tabularx}
+
+    \vspace{0.2cm}
+    {\footnotesize \textbf{Fonte:} Elaborada pelo autor}
+\end{table}
+
+
+% 2. VISUAL_CONFIGS
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Configuração Visual (visual\_configs)}
+\footnotesize
+\begin{tabularx}{\textwidth}{ | X | c | c | c | c | c | c | c | }
+    \hline
+    \textbf{Campo} & \textbf{Tipo} & \textbf{Obr.?} & \textbf{PK?} & \textbf{Tab.} & \textbf{Cmp.} & \textbf{Grp.} & \textbf{Ord.}\\ \hline
+    id\_visual\_config & UUID & X & X &  &  &  &  \\ \hline
+    palette\_name & Varch. & X &  &  &  &  &  \\ \hline
+    primary\_color & Varch. & X &  &  &  &  &  \\ \hline
+    subcolors & JSONB & X &  &  &  &  &  \\ \hline
+    system\_theme & Enum & X &  &  &  &  &  \\ \hline
+    font\_family & Varch. & X &  &  &  &  &  \\ \hline
+    user\_id & UUID & X &  & users & id\_user & UK\_01 & 1 \\ \hline
+\end{tabularx}
+\vspace{0.1cm} \\ \textbf{Fonte:} Elaborada pelo autor
+\label{tab:tabelaVisualConfigDetalhado}
+\end{table}
+
+% 3. CATEGORIES
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Categoria (categories)}
+\footnotesize
+\begin{tabularx}{\textwidth}{ | X | c | c | c | c | c | c | c | }
+    \hline
+    \textbf{Campo} & \textbf{Tipo} & \textbf{Obr.?} & \textbf{PK?} & \textbf{Tab.} & \textbf{Cmp.} & \textbf{Grp.} & \textbf{Ord.}\\ \hline
+    id\_category & UUID & X & X &  &  &  &  \\ \hline
+    name & Varch. & X &  &  &  &  &  \\ \hline
+    privacy & Enum & X &  &  &  &  &  \\ \hline
+    user\_id & UUID & X &  & users & id\_user &  &  \\ \hline
+\end{tabularx}
+\vspace{0.1cm} \\ \textbf{Fonte:} Elaborada pelo autor
+\label{tab:tabelaCategoryDetalhado}
+\end{table}
+
+% 4. LAYOUTS
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Layout Customizado (layouts)}
+\footnotesize
+\begin{tabularx}{\textwidth}{ | X | c | c | c | c | c | c | c | }
+    \hline
+    \textbf{Campo} & \textbf{Tipo} & \textbf{Obr.?} & \textbf{PK?} & \textbf{Tab.} & \textbf{Cmp.} & \textbf{Grp.} & \textbf{Ord.}\\ \hline
+    id\_layout & UUID & X & X &  &  &  &  \\ \hline
+    name & Varch. & X &  &  &  &  &  \\ \hline
+    user\_id & UUID & X &  & users & id\_user &  &  \\ \hline
+\end{tabularx}
+\vspace{0.1cm} \\ \textbf{Fonte:} Elaborada pelo autor
+\label{tab:tabelaLayoutDetalhado}
+\end{table}
+
+% 5. COLLECTIONS
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Coleção (collections)}
+\footnotesize
+\begin{tabularx}{\textwidth}{ | X | c | c | c | c | c | c | c | }
+    \hline
+    \textbf{Campo} & \textbf{Tipo} & \textbf{Obr.?} & \textbf{PK?} & \textbf{Tab.} & \textbf{Cmp.} & \textbf{Grp.} & \textbf{Ord.}\\ \hline
+    id\_collection & UUID & X & X &  &  &  &  \\ \hline
+    name & Varch. & X &  &  &  &  &  \\ \hline
+    category\_id & UUID & X &  & categories & id\_cat. &  &  \\ \hline
+    layout\_id & UUID &  &  & layouts & id\_lay. &  &  \\ \hline
+\end{tabularx}
+\vspace{0.1cm} \\ \textbf{Fonte:} Elaborada pelo autor
+\label{tab:tabelaCollectionDetalhado}
+\end{table}
+
+% 6. WIDGETS
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Widget do Layout (widgets)}
+\footnotesize
+\begin{tabularx}{\textwidth}{ | X | c | c | c | c | c | c | c | }
+    \hline
+    \textbf{Campo} & \textbf{Tipo} & \textbf{Obr.?} & \textbf{PK?} & \textbf{Tab.} & \textbf{Cmp.} & \textbf{Grp.} & \textbf{Ord.}\\ \hline
+    id\_widget & UUID & X & X &  &  &  &  \\ \hline
+    type & Enum & X &  &  &  &  &  \\ \hline
+    position & Int & X &  &  &  &  &  \\ \hline
+    layout\_id & UUID & X &  & layouts & id\_layout &  &  \\ \hline
+\end{tabularx}
+\vspace{0.1cm} \\ \textbf{Fonte:} Elaborada pelo autor
+\label{tab:tabelaWidgetDetalhado}
+\end{table}
+
+% 7. ITEMS
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Item da Coleção (items)}
+\footnotesize
+\begin{tabularx}{\textwidth}{ | X | c | c | c | c | c | c | c | }
+    \hline
+    \textbf{Campo} & \textbf{Tipo} & \textbf{Obr.?} & \textbf{PK?} & \textbf{Tab.} & \textbf{Cmp.} & \textbf{Grp.} & \textbf{Ord.}\\ \hline
+    id\_item & UUID & X & X &  &  &  &  \\ \hline
+    name & Varch. & X &  &  &  &  &  \\ \hline
+    collection\_id & UUID & X &  & collections & id\_coll. &  &  \\ \hline
+    layout\_id & UUID &  &  & layouts & id\_layout &  &  \\ \hline
+\end{tabularx}
+\vspace{0.1cm} \\ \textbf{Fonte:} Elaborada pelo autor
+\label{tab:tabelaItemDetalhado}
+\end{table}
+
+% 8. ITEM_WIDGETS
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Valores dos Widgets (item\_widgets)}
+\footnotesize
+\begin{tabularx}{\textwidth}{ | X | c | c | c | c | c | c | c | }
+    \hline
+    \textbf{Campo} & \textbf{Tipo} & \textbf{Obr.?} & \textbf{PK?} & \textbf{Tab.} & \textbf{Cmp.} & \textbf{Grp.} & \textbf{Ord.}\\ \hline
+    id\_item\_widget & UUID & X & X &  &  &  &  \\ \hline
+    widget\_value & Text & X &  &  &  &  &  \\ \hline
+    item\_id & UUID & X &  & items & id\_item &  &  \\ \hline
+    widget\_id & UUID & X &  & widgets & id\_widget &  &  \\ \hline
+\end{tabularx}
+\vspace{0.1cm} \\ \textbf{Fonte:} Elaborada pelo autor
+\label{tab:tabelaItemWidgetDetalhado}
+\end{table}
+
+% 9. NOTIFICATIONS
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Notificações (notifications)}
+\footnotesize
+\begin{tabularx}{\textwidth}{ | X | c | c | c | c | c | c | c | }
+    \hline
+    \textbf{Campo} & \textbf{Tipo} & \textbf{Obr.?} & \textbf{PK?} & \textbf{Tab.} & \textbf{Cmp.} & \textbf{Grp.} & \textbf{Ord.}\\ \hline
+    id\_notification & UUID & X & X &  &  &  &  \\ \hline
+    message & Text & X &  &  &  &  &  \\ \hline
+    is\_read & Bool & X &  &  &  &  &  \\ \hline
+    user\_id & UUID & X &  & users & id\_user &  &  \\ \hline
+\end{tabularx}
+\vspace{0.1cm} \\ \textbf{Fonte:} Elaborada pelo autor
+\label{tab:tabelaNotificationDetalhado}
+\end{table}
+
+% 10. EVENT_LOGS
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Log de Eventos (event\_logs)}
+\footnotesize
+\begin{tabularx}{\textwidth}{ | X | c | c | c | c | c | c | c | }
+    \hline
+    \textbf{Campo} & \textbf{Tipo} & \textbf{Obr.?} & \textbf{PK?} & \textbf{Tab.} & \textbf{Cmp.} & \textbf{Grp.} & \textbf{Ord.}\\ \hline
+    id\_event\_log & UUID & X & X &  &  &  &  \\ \hline
+    event\_type & Enum & X &  &  &  &  &  \\ \hline
+    description & Text &  &  &  &  &  &  \\ \hline
+    created\_at & Time. & X &  &  &  &  &  \\ \hline
+\end{tabularx}
+\vspace{0.1cm} \\ \textbf{Fonte:} Elaborada pelo autor
+\label{tab:tabelaEventLogDetalhado}
+\end{table}
+
+% 11. FRIENDSHIPS
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Relacionamentos (friendships)}
+\footnotesize
+\begin{tabularx}{\textwidth}{ | X | c | c | c | c | c | c | c | }
+    \hline
+    \textbf{Campo} & \textbf{Tipo} & \textbf{Obr.?} & \textbf{PK?} & \textbf{Tab.} & \textbf{Cmp.} & \textbf{Grp.} & \textbf{Ord.}\\ \hline
+    id\_friendship & UUID & X & X &  &  &  &  \\ \hline
+    status & Enum & X &  &  &  &  &  \\ \hline
+    sender\_id & UUID & X &  & users & id\_user &  &  \\ \hline
+    receiver\_id & UUID & X &  & users & id\_user &  &  \\ \hline
+\end{tabularx}
+\vspace{0.1cm} \\ \textbf{Fonte:} Elaborada pelo autor
+\label{tab:tabelaFriendshipDetalhado}
+\end{table}
+
+% 12. COLLECTION_FOLLOWS
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Seguidores de Coleção (collection\_follows)}
+\footnotesize
+\begin{tabularx}{\textwidth}{ | X | c | c | c | c | c | c | c | }
+    \hline
+    \textbf{Campo} & \textbf{Tipo} & \textbf{Obr.?} & \textbf{PK?} & \textbf{Tab.} & \textbf{Cmp.} & \textbf{Grp.} & \textbf{Ord.}\\ \hline
+    id\_follow & UUID & X & X &  &  &  &  \\ \hline
+    user\_id & UUID & X &  & users & id\_user &  &  \\ \hline
+    collection\_id & UUID & X &  & collections & id\_coll. &  &  \\ \hline
+\end{tabularx}
+\vspace{0.1cm} \\ \textbf{Fonte:} Elaborada pelo autor
+\label{tab:tabelaFollowCollectionDetalhado}
+\end{table}
+
+\subsubsection{Detalhamento Físico das Tabelas}
 
 \FloatBarrier
 \begin{table}[!htbp]
 \centering
-\caption{Estado}
-	\begin{tabular}{ c | c | c | c | c | c | c | c }
-		\hline
-		\textbf{Campo}          & \textbf{Tipo de Dado}     & 
-		\textbf{Obrigatório?}   & \textbf{Chave Primária?}  &
-		\textbf{Tabela}         & \textbf{Campo}            & 
-		\textbf{Grupo}          & \textbf{Ordem}\\ \hline
-		\textbf{id}             & \textbf{Number}           & 
-		\textbf{X}              & \textbf{X}                &
-		\textbf{}               & \textbf{}                 & 
-		\textbf{}               & \textbf{} \\ \hline
-		\textbf{nome}           & \textbf{Varchar2(100)}    & 
-		\textbf{X}              & \textbf{}                 &
-		\textbf{}               & \textbf{}                 & 
-		\textbf{1}              & \textbf{1} \\ \hline
-		\textbf{sigla}          & \textbf{Varchar2(2)}      & 
-		\textbf{X}              & \textbf{}                 &
-		\textbf{}               & \textbf{}                 & 
-		\textbf{2}              & \textbf{1} \\ \hline
-	\end{tabular}
-	\\ \vspace{0.2cm}
-	\textbf{Fonte:} Elaborada pelo autor
-	\label{tab:tabelaEstado}
+\caption{Usuário (users)}
+\footnotesize
+    \begin{tabularx}{\textwidth}{ | X | c | c | c | c | c | c | c | }
+        \hline
+        \textbf{Campo} & \textbf{Tipo} & \textbf{Obr.?} & \textbf{PK?} & \textbf{Tab.} & \textbf{Cmp.} & \textbf{Grp.} & \textbf{Ord.}\\ \hline
+        id\_user & UUID & X & X & & & & \\ \hline
+        name & Varch. & X & & & & & \\ \hline
+        email & Varch. & X & & & & UK\_01 & 1 \\ \hline
+    \end{tabularx}
+    \\ \vspace{0.2cm}
+    \textbf{Fonte:} Elaborada pelo autor
+    \label{tab:tabelaUserDetalhado}
 \end{table}
 \FloatBarrier
-
-\textcolor{red}{INSTRUÇÃO:
-Grupo é a chave única que você deseja criar (UK\_01, UK\_02)
-Ordem é a sequência dos campos que devem compor a chave única, quando existir mais de um campo na sua chave única}
-
 
 \FloatBarrier
 \begin{table}[!htbp]
 \centering
-\caption{Cidade}
-	\begin{tabular}{ c | c | c | c | c | c | c | c }
-		\hline
-		\textbf{Campo}          & \textbf{Tipo de Dado}     & 
-		\textbf{Obrigatório?}   & \textbf{Chave Primária?}  &
-		\textbf{Tabela}         & \textbf{Campo}            & 
-		\textbf{Grupo}          & \textbf{Ordem}\\ \hline
-		\textbf{id}             & \textbf{Number}           & 
-		\textbf{X}              & \textbf{X}                &
-		\textbf{}               & \textbf{}                 & 
-		\textbf{}               & \textbf{} \\ \hline
-		\textbf{nome}           & \textbf{Varchar2(200)}    & 
-		\textbf{X}              & \textbf{}                 &
-		\textbf{}               & \textbf{}                 & 
-		\textbf{1}              & \textbf{1} \\ \hline
-		\textbf{idEstado}       & \textbf{Number}           & 
-		\textbf{X}              & \textbf{}                 &
-		\textbf{Estado}         & \textbf{id}               & 
-		\textbf{1}              & \textbf{1} \\ \hline
-		\textbf{latitude}       & \textbf{Number}           & 
-		\textbf{X}              & \textbf{}                 &
-		\textbf{}               & \textbf{}                 & 
-		\textbf{2}              & \textbf{1} \\ \hline
-		\textbf{longitude}      & \textbf{Number}           & 
-		\textbf{X}              & \textbf{}                 &
-		\textbf{}               & \textbf{}                 & 
-		\textbf{2}              & \textbf{2} \\ \hline
-	\end{tabular}
-	\\ \vspace{0.2cm}
-	\textbf{Fonte:} Elaborada pelo autor
-	\label{tab:tabelaCidade}
+\caption{Configuração Visual (visual\_configs)}
+\footnotesize
+    \begin{tabularx}{\textwidth}{ | X | c | c | c | c | c | c | c | }
+        \hline
+        \textbf{Campo} & \textbf{Tipo} & \textbf{Obr.?} & \textbf{PK?} & \textbf{Tab.} & \textbf{Cmp.} & \textbf{Grp.} & \textbf{Ord.}\\ \hline
+        id\_visual\_config & UUID & X & X & & & & \\ \hline
+        palette\_name & Varch. & X & & & & & \\ \hline
+        user\_id & UUID & X & & users & id\_user & UK\_01 & 1 \\ \hline
+    \end{tabularx}
+    \\ \vspace{0.2cm}
+    \textbf{Fonte:} Elaborada pelo autor
+    \label{tab:tabelaVisualConfigDetalhado}
 \end{table}
 \FloatBarrier
+% \subsection{Diagrama de Pacotes}
+% Escreva aqui.
 
 
-\FloatBarrier
-\begin{table}[!htbp]
-\centering
-\caption{NomeDaTabelaNN}
-	\begin{tabular}{ c | c | c | c | c | c | c | c }
-		\hline
-		\textbf{Campo}          & \textbf{Tipo de Dado}     & 
-		\textbf{Obrigatório?}   & \textbf{Chave Primária?}  &
-		\textbf{Tabela}         & \textbf{Campo}            & 
-		\textbf{Grupo}          & \textbf{Ordem}\\ \hline
-		\textbf{}               & \textbf{}                 & 
-		\textbf{}               & \textbf{}                 &
-		\textbf{}               & \textbf{}                 & 
-		\textbf{}               & \textbf{} \\ \hline
-		\textbf{}               & \textbf{}                 & 
-		\textbf{}               & \textbf{}                 &
-		\textbf{}               & \textbf{}                 & 
-		\textbf{}               & \textbf{} \\ \hline
-		\textbf{}               & \textbf{}                 &
-		\textbf{}               & \textbf{}                 &
-		\textbf{}               & \textbf{}                 & 
-		\textbf{}               & \textbf{} \\ \hline
-	\end{tabular}
-	\\ \vspace{0.2cm}
-	\textbf{Fonte:} Elaborada pelo autor
-	\label{tab:tabelaNN}
-\end{table}
-\FloatBarrier
-
-
-\subsection{Diagrama de Pacotes}
-Escreva aqui.
-
-
-\subsection{Diagrama de Classes de Projeto}
-Apresentar as classes de projeto identificadas. Alguns materiais para leitura extra sobre classes de projeto podem ser lidos em:
-\url{http://www.ic.uff.br/~anselmo/cursos/ProjSoft/apresentacoes/Projeto%20detalhado%20-%20Classes.pdf}
-\url{https://edisciplinas.usp.br/pluginfile.php/383727/mod_resource/content/2/Aula07_DiagramaDeClasse.pdf}
-\url{http://www.dsc.ufcg.edu.br/~jacques/cursos/apoo/html/proj1/proj8.htm}
+% \subsection{Diagrama de Classes de Projeto}
+% Apresentar as classes de projeto identificadas. Alguns materiais para leitura extra sobre classes de projeto podem ser lidos em:
+% \url{http://www.ic.uff.br/~anselmo/cursos/ProjSoft/apresentacoes/Projeto%20detalhado%20-%20Classes.pdf}
+% \url{https://edisciplinas.usp.br/pluginfile.php/383727/mod_resource/content/2/Aula07_DiagramaDeClasse.pdf}
+% \url{http://www.dsc.ufcg.edu.br/~jacques/cursos/apoo/html/proj1/proj8.htm}
 
 
 
-\section{Projeto Procedimental}
-Projetar Software é o processo de aplicar várias técnicas e princípios com o propósito de se definir um dispositivo, processo ou sistema, com detalhes suficientes para permitir sua realização física (Taylor-59). 
+% \section{Projeto Procedimental}
+% Projetar Software é o processo de aplicar várias técnicas e princípios com o propósito de se definir um dispositivo, processo ou sistema, com detalhes suficientes para permitir sua realização física (Taylor-59). 
 
-O Projeto de software é o núcleo técnico da Engenharia de Software. É a única maneira de se traduzir "com precisão", os requisitos do usuário para um produto ou sistema acabado. Meta: Traduzir requisitos numa representação de software (Portella).
-
-
-\subsection{Diagrama de Sequência}
-Os diagramas de sequência modelam as interações entre objetos em um único caso de uso e ilustram como as diferentes partes de um sistema interagem entre si para realizar uma função e a ordem em que as interações ocorrem quando um caso de uso é executado  (Creately, s.d.), conforme apresentado na Figura~\ref{fig:diagramaDeSequencia}.
+% O Projeto de software é o núcleo técnico da Engenharia de Software. É a única maneira de se traduzir "com precisão", os requisitos do usuário para um produto ou sistema acabado. Meta: Traduzir requisitos numa representação de software (Portella).
 
 
-\FloatBarrier
-\begin{figure}[!htbp]
-	\centering
-	\caption{Diagrama de Sequência}
-	%scale redimensiona a figura.
-	%1.5 = 150% do tamanho original
-	%1 = 100% do tamanho original
-	%0.20 = 20% do tamanho original
-	\includegraphics[scale=1.0]{imagens/DiagramadeSequencia.png}
-	\\\textbf{Fonte:} Elaborada pelo autor
-	\label{fig:diagramaDeSequencia}
-\end{figure}
-\FloatBarrier
+% \subsection{Diagrama de Sequência}
+% Os diagramas de sequência modelam as interações entre objetos em um único caso de uso e ilustram como as diferentes partes de um sistema interagem entre si para realizar uma função e a ordem em que as interações ocorrem quando um caso de uso é executado  (Creately, s.d.), conforme apresentado na Figura~\ref{fig:diagramaDeSequencia}.
 
 
-\subsection{Diagrama de Atividades}
-Havendo necessidade de detalhamento de algum procedimento, este pode ser apresentado na forma de um diagrama de atividades o qual deve ser inserido nessa seção. Podem ser elaborados quantos diagramas de atividades se fizerem necessários.
+% \FloatBarrier
+% \begin{figure}[!htbp]
+% 	\centering
+% 	\caption{Diagrama de Sequência}
+% 	%scale redimensiona a figura.
+% 	%1.5 = 150% do tamanho original
+% 	%1 = 100% do tamanho original
+% 	%0.20 = 20% do tamanho original
+% 	\includegraphics[scale=1.0]{imagens/DiagramadeSequencia.png}
+% 	\\\textbf{Fonte:} Elaborada pelo autor
+% 	\label{fig:diagramaDeSequencia}
+% \end{figure}
+% \FloatBarrier
 
 
-\subsection{Diagrama de Estados}
-Sendo necessária a elaboração do diagrama de estados na fase de projeto, os novos diagramas devem ser apresentados nessa seção.
+% \subsection{Diagrama de Atividades}
+% Havendo necessidade de detalhamento de algum procedimento, este pode ser apresentado na forma de um diagrama de atividades o qual deve ser inserido nessa seção. Podem ser elaborados quantos diagramas de atividades se fizerem necessários.
 
 
-\section{Projeto Arquitetural}
-O projeto arquitetural precede a etapa de construção da obra. O projeto arquitetural determina as partes de uma construção e como estas devem interagir. A arquitetura garante a unidade da obra, ou seja, a consistência entre as suas partes (Vergilio).
-
-Ver algumas definições em (Silva), sendo que um exemplo está apresentado na Figura~\ref{fig:projetoArquitetural}.
+% \subsection{Diagrama de Estados}
+% Sendo necessária a elaboração do diagrama de estados na fase de projeto, os novos diagramas devem ser apresentados nessa seção.
 
 
-\FloatBarrier
-\begin{figure}[!htbp]
-	\centering
-	\caption{Diferentes Detalhamentos dos Serviços Relacionados ao Cliente}
-	%scale redimensiona a figura.
-	%1.5 = 150% do tamanho original
-	%1 = 100% do tamanho original
-	%0.20 = 20% do tamanho original
-	\includegraphics[scale=1.0]{imagens/ProjetoArquitetural.png}
-	\\\textbf{Fonte:} Elaborada pelo autor
-	\label{fig:projetoArquitetural}
-\end{figure}
-\FloatBarrier
+% \section{Projeto Arquitetural}
+% O projeto arquitetural precede a etapa de construção da obra. O projeto arquitetural determina as partes de uma construção e como estas devem interagir. A arquitetura garante a unidade da obra, ou seja, a consistência entre as suas partes (Vergilio).
+
+% Ver algumas definições em (Silva), sendo que um exemplo está apresentado na Figura~\ref{fig:projetoArquitetural}.
+
+
+% \FloatBarrier
+% \begin{figure}[!htbp]
+% 	\centering
+% 	\caption{Diferentes Detalhamentos dos Serviços Relacionados ao Cliente}
+% 	%scale redimensiona a figura.
+% 	%1.5 = 150% do tamanho original
+% 	%1 = 100% do tamanho original
+% 	%0.20 = 20% do tamanho original
+% 	\includegraphics[scale=1.0]{imagens/ProjetoArquitetural.png}
+% 	\\\textbf{Fonte:} Elaborada pelo autor
+% 	\label{fig:projetoArquitetural}
+% \end{figure}
+% \FloatBarrier

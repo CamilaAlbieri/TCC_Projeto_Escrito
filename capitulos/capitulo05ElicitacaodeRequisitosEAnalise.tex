@@ -14,11 +14,93 @@ Este capítulo apresenta os requisitos identificados para o sistema proposto, or
 
 Requisitos de usuário são declarações, em linguagem natural com diagramas, dos serviços que o sistema deverá fornecer aos seus usuários e das restrições com as quais ele deve operar \cite{Sommerville2011}. \citeauthorandyear{pressman2016} destacam que um documento de requisitos de sistema precisa ser claro, consistente e completo, pois servirá de referência para desenvolvedores, gerentes de projeto e engenheiros de testes ao longo de todo o ciclo de vida do software.
 
-No contexto deste projeto, os requisitos do usuário foram identificados com base nas necessidades de organização e personalização de coleções pessoais. O sistema proposto visa oferecer uma plataforma em que o usuário possa organizar seu acervo em três níveis hierárquicos: \textbf{categorias} (agrupadores temáticos de alto nível, como ``Livros'' ou ``Filmes''), \textbf{coleções} (subdivisões de uma categoria, como ``Lidos'' ou ``Para Ler'') e \textbf{itens} (as unidades individuais de conteúdo, como o livro ``Duna'' ou o filme ``Oppenheimer''). Essa estrutura em camadas permite que o usuário categorize seu acervo de forma progressiva, do geral ao específico.
+Antes de apresentar os requisitos propriamente dito, é importante compreender quatro conceitos centrais que estruturam a forma como os dados do sistema se relacionam: \textbf{Widget}, \textbf{Layout}, \textbf{Item} e \textbf{ItemWidget}. Esses elementos operam em conjunto para oferecer ao usuário a experiência de personalização que caracteriza a plataforma.
 
-Além da organização, o sistema oferece liberdade de personalização por meio de \textbf{layouts} e \textbf{widgets}: o usuário pode criar templates próprios para as fichas de seus itens, definindo quais campos existem (como imagem, texto, classificação, data, entre outros), bem como sua posição e tamanho. Esses layouts podem ser associados tanto a categorias quanto a coleções, e cada item pode ainda receber ajustes individuais, resultando em fichas que refletem as preferências e o estilo de cada usuário.
+No contexto deste projeto, os requisitos do usuário foram identificados com base nas necessidades de organização e personalização de coleções pessoais. Uma analogia útil é a de um \textbf{formulário e suas respostas preenchidas}. O \textit{Layout} funciona como um formulário em branco, definindo quais campos existem, sua posição visual e seu tamanho. Os \textit{Widgets} correspondem aos campos propriamente ditos, como uma caixa de texto, um seletor de estrelas para classificação, um campo para imagem, entre outros. Um \textit{Item} representa uma resposta preenchida desse formulário, associada a um conteúdo específico do acervo do usuário, como um livro ou filme. Por fim, o \textit{ItemWidget} é a entidade que armazena, para cada item, o valor que o usuário forneceu em cada campo --- isto é, a ponte entre a estrutura do formulário (Layout e Widgets) e os dados efetivamente informados pelo usuário (Item).
 
-Por fim, funcionalidades sociais --- como adicionar amigos, seguir categorias públicas e acompanhar atualizações por meio de um feed --- foram identificadas como necessidades relevantes para promover a interação e o engajamento na plataforma.
+Em termos práticos, considere um exemplo concreto. Suponha que a usuária crie um Layout chamado \textit{``Card de Livro''} contendo quatro widgets: 
+um de \textit{Imagem} para a capa, um \textit{Input Field} para o autor, um widget de \textit{Classificação} de um a cinco estrelas e uma área de \textit{Texto} para notas pessoais. Cada widget possui posição e tamanho próprios dentro da área de edição do layout. Ao cadastrar o item \textit{``Duna''}, o sistema gera automaticamente os registros de ItemWidget correspondentes: para o widget \textit{Imagem}, armazena o arquivo da capa; para o widget \textit{Input Field}, armazena o texto \textit{``Frank Herbert''}; para o widget \textit{Classificação}, o valor \textit{5}; e para o widget \textit{Texto}, a nota \textit{``Obra-prima do gênero''}. Desse modo, o Layout e seus Widgets permanecem inalterados e podem ser reutilizados por centenas de itens, enquanto cada item mantém seus próprios valores por meio dos registros de ItemWidget.
+
+Essa separação traz três benefícios diretos para o projeto: 
+
+(i) permite que o usuário reutilize o mesmo layout para múltiplos itens sem duplicação de estrutura; 
+
+(ii) viabiliza que cada item preserve valores distintos, respeitando a individualidade de cada obra cadastrada; e 
+
+(iii) permite modificações individuais em um item específico --- por exemplo, adicionar um widget extra apenas a um único livro --- sem afetar o layout original nem os demais itens (RF-12).
+
+O Quadro~\ref{quad:glossario_dominio} apresenta, de forma resumida, a definição de cada um desses quatro elementos centrais.
+
+\begin{quadro}[h!]
+\caption{Conceitos centrais do modelo de domínio}
+\label{quad:glossario_dominio}
+\begin{tabular}{|p{3.5cm}|p{11.5cm}|}
+\hline
+\textbf{Conceito} & \textbf{Descrição} \\ \hline
+Widget & Componente visual reutilizável utilizado para compor layouts, como campos de texto, imagens, classificações, datas, listas, ícones, entre outros. Cada widget possui um tipo, uma posição e um tamanho definidos dentro do layout ao qual pertence. \\ \hline
+Layout & Estrutura personalizada que define quais widgets compõem a ficha de um item e como eles se organizam visualmente. Funciona como um \textit{template} reutilizável, podendo ser associado a uma categoria (como padrão) ou a uma coleção (sobrescrevendo o padrão da categoria). \\ \hline
+Item & Unidade individual de conteúdo cadastrada pelo usuário (por exemplo, um livro, filme ou jogo específico). Todo item pertence a uma coleção e herda, por padrão, o layout aplicável àquela coleção. \\ \hline
+ItemWidget & Entidade de associação que armazena o valor preenchido pelo usuário para cada widget de um item específico. Representa o vínculo entre um item e os widgets do layout aplicável, guardando as informações concretas inseridas (como o nome do autor em um \textit{Input Field}, a nota atribuída em um widget de \textit{Classificação}, ou o conteúdo digitado em um widget de \textit{Texto}). \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+
+\subsection{Organização em Pacotes}
+\label{subsec:pacotes_dominio}
+
+Devido à quantidade de classes conceituais envolvidas, o modelo de domínio foi organizado em cinco pacotes, de modo a agrupar entidades que compartilham propósito semântico e reduzir a complexidade visual do diagrama. Essa segmentação segue a recomendação de \cite{Larman2007}, segundo o qual o agrupamento de classes em pacotes facilita a leitura do modelo, evidencia suas fronteiras conceituais e favorece o raciocínio modular sobre o sistema. Os pacotes adotados neste trabalho são:
+
+\begin{itemize}[nosep,leftmargin=1.5em,topsep=4pt,partopsep=0pt,
+               parsep=2pt,itemsep=4pt]
+
+  \item \textbf{Usuário} --- concentra a entidade central da plataforma,
+  responsável pelos dados de identificação e pelo vínculo com todas as demais
+  entidades do sistema. Foi isolada em um pacote próprio por atuar como ponto
+  de referência para os demais agrupamentos.
+
+  \item \textbf{Coleções} --- reúne as entidades que compõem a estrutura de
+  organização do acervo em três níveis hierárquicos: Categoria, Coleção e
+  Item. Inclui também a entidade associativa ItemWidget e a enumeração de
+  privacidade. Representa o núcleo de domínio da aplicação, pois é nele que
+  o usuário efetivamente cadastra e organiza seu conteúdo.
+
+  \item \textbf{Editor de Layout} --- agrupa as entidades responsáveis pela
+  personalização visual das fichas de itens, incluindo Layout, Widget e a
+  enumeração de tipos de widget. É este pacote que sustenta o diferencial de
+  customização da plataforma.
+
+  \item \textbf{Interação Social} --- concentra as entidades ligadas aos
+  vínculos entre usuários, como as solicitações de amizade (Amizade e
+  StatusAmizade) e o acompanhamento de categorias de outros usuários
+  (Seguir Coleção).
+
+  \item \textbf{Notificações} --- reúne as entidades responsáveis pelo
+  registro e pela exibição de eventos relevantes ao usuário: a própria
+  entidade Notificação, a enumeração TipoNotificacao, a entidade
+  AtualizaçãoEvento e a enumeração TipoEvento. A separação deste pacote
+  em relação ao de Interação Social reflete a distinção entre o vínculo
+  social em si e o mecanismo de comunicação dessas ocorrências ao usuário,
+  além de isolar a lógica de geração e exibição de notificações para
+  facilitar futuras extensões do sistema.
+
+  \item \textbf{Aparência} --- reúne as entidades que definem a configuração
+  visual global da interface, como paletas de cores, tipografia e seleção de
+  tema claro ou escuro.
+
+\end{itemize}
+
+Essa organização reflete a separação de responsabilidades identificada durante
+a elicitação de requisitos: as classes do pacote \textit{Coleções} sustentam
+os requisitos funcionais de gestão de conteúdo (RF-04 a RF-09); as do pacote
+\textit{Editor de Layout} suportam os requisitos de personalização estrutural
+(RF-10 a RF-12); as do pacote \textit{Aparência} viabilizam a personalização
+visual global (RF-13 e RF-14); as do pacote \textit{Interação Social} dão
+suporte às funcionalidades de rede entre usuários (RF-15 e RF-16); e as do
+pacote \textit{Notificações} sustentam o mecanismo de comunicação de eventos
+do sistema ao usuário (RF-17 e RF-21).
+A Figura~\ref{fig:ModeloDominio} apresenta o modelo de domínio desenvolvido neste trabalho, evidenciando a organização em pacotes descrita acima, bem como as 
+principais classes conceituais do sistema e as associações que estabelecem entre si.
+
 
 
 \section{Requisitos do Sistema}
@@ -36,7 +118,8 @@ Os atores que interagem com o sistema são: \textbf{Usuário}, que representa a 
 
 Para padronizar a especificação dos requisitos, adotou-se o verbo \textbf{gerenciar} como forma genérica de representar operações do tipo CRUD (cadastrar, editar e excluir), sempre que aplicável. Essa padronização reduz a repetição textual e torna a descrição dos requisitos mais objetiva.
 
-Os requisitos funcionais estão organizados em grupos e apresentados de forma sequencial, seguindo uma ordem lógica de dependência entre funcionalidades: iniciam pelos requisitos de acesso ao sistema (cadastro, autenticação e gerenciamento de perfil), prosseguem com a estrutura central do sistema (categorias, coleções, itens e suas fichas), seguem com o editor de layouts e widgets, avançam para a personalização visual global, para as funcionalidades sociais (amizade, acompanhamento de categorias e feed) e culminam com a tela principal e o gerenciamento de notificações. As Tabelas~\ref{quad:descricao_campos} a~\ref{quad:grupos} apresentam a definição dos campos e das classificações utilizadas na especificação, e os requisitos funcionais identificados para este sistema estão apresentados nos Quadros~\ref{quad:rf01} a~\ref{quad:rf21}.
+Os requisitos funcionais estão organizados em grupos e apresentados de forma sequencial, seguindo uma ordem lógica de dependência entre funcionalidades: iniciam pelos requisitos de acesso ao sistema (cadastro, autenticação e gerenciamento de perfil), prosseguem com a estrutura central do sistema (categorias, coleções, itens e suas fichas), seguem com o editor de layouts e widgets, avançam para a personalização visual global, para as funcionalidades sociais (amizade, acompanhamento de categorias e feed) e culminam com a tela principal e o gerenciamento de notificações. 
+Os quadros~\ref{quad:descricao_campos} a~\ref{quad:atores} apresentam a definição dos campos e das classificações utilizadas na especificação, e os requisitos funcionais identificados para este sistema estão apresentados nos Quadros~\ref{quad:rf01} a~\ref{quad:rf21}.
 
 
 
@@ -127,7 +210,7 @@ Sistema & Responsável por execuções automáticas e processamento de dados. \\
 \begin{tabular}{|p{3.2cm}|p{11.8cm}|}
 \hline
 \textbf{Código}      & RF-01 \\ \hline
-\textbf{Grupo}       & Acesso ao Sistema \\ \hline
+\textbf{Grupo}       & Conta de Usuário \\ \hline
 \textbf{Descrição}   &
 \textbf{Ação:} Cadastrar
 
@@ -240,7 +323,7 @@ Usuário altera o e-mail para `cami.mattos@gmail.com'; o sistema envia um link d
 \textbf{Código}      & RF-04 \\ \hline
 \textbf{Grupo}       & Gestão de Categorias \\ \hline
 \textbf{Descrição}   &
-\textbf{Ação:} Cadastrar, editar e excluir
+\textbf{Ação:} Gerenciar
 
 \textbf{Objeto:} Categoria (agrupador temático de alto nível que reúne coleções relacionadas)
 
@@ -277,7 +360,7 @@ Camila exclui a categoria `Jogos Antigos' e confirma a exclusão permanente no d
 \textbf{Código}      & RF-05 \\ \hline
 \textbf{Grupo}       & Gestão de Coleções \\ \hline
 \textbf{Descrição}   &
-\textbf{Ação:} Cadastrar, editar e excluir
+\textbf{Ação:} Gerenciar
 
 \textbf{Objeto:} Coleção (subdivisão de uma categoria onde os itens são efetivamente cadastrados)
 
@@ -317,7 +400,7 @@ Camila exclui a coleção `Abandonados', que contém 5 itens; o sistema pergunta
 \textbf{Código}      & RF-06 \\ \hline
 \textbf{Grupo}       & Itens \\ \hline
 \textbf{Descrição}   &
-\textbf{Ação:} Cadastrar, editar e excluir
+\textbf{Ação:} Gerenciar
 
 \textbf{Objeto:} Item dentro de uma coleção
 
@@ -461,7 +544,7 @@ Camila visualiza a coleção `Favoritos' usando o mesmo filtro; o sistema manté
 \textbf{Código}      & RF-10 \\ \hline
 \textbf{Grupo}       & Editor de Layout \\ \hline
 \textbf{Descrição}   &
-\textbf{Ação:} Cadastrar, editar, duplicar e excluir
+\textbf{Ação:} Gerenciar e duplicar
 
 \textbf{Objeto:} Layout personalizado (template)
 
@@ -2448,92 +2531,10 @@ Pontos de Extensão & E01 - Seguir Categoria (estende o passo 8 do FB01, conform
 
 De acordo com \cite{Larman2007}, o modelo de domínio é uma representação visual das classes conceituais ou objetos do mundo real em um domínio de interesse, ilustrando conceitos significativos, atributos e associações entre eles.
 
-Antes de apresentar o modelo propriamente dito, é importante compreender quatro conceitos centrais que estruturam a forma como os dados do sistema se relacionam: \textbf{Widget}, \textbf{Layout}, \textbf{Item} e \textbf{ItemWidget}. Esses elementos operam em conjunto para oferecer ao usuário a experiência de personalização que caracteriza a plataforma.
 
-Uma analogia útil é a de um \textbf{formulário e suas respostas preenchidas}. O \textit{Layout} funciona como um formulário em branco, definindo quais campos existem, sua posição visual e seu tamanho. Os \textit{Widgets} correspondem aos campos propriamente ditos, como uma caixa de texto, um seletor de estrelas para classificação, um campo para imagem, entre outros. Um \textit{Item} representa uma resposta preenchida desse formulário, associada a um conteúdo específico do acervo do usuário, como um livro ou filme. Por fim, o \textit{ItemWidget} é a entidade que armazena, para cada item, o valor que o usuário forneceu em cada campo --- isto é, a ponte entre a estrutura do formulário (Layout e Widgets) e os dados efetivamente informados pelo usuário (Item).
-
-Em termos práticos, considere um exemplo concreto. Suponha que a usuária crie um Layout chamado \textit{``Card de Livro''} contendo quatro widgets: 
-um de \textit{Imagem} para a capa, um \textit{Input Field} para o autor, um widget de \textit{Classificação} de um a cinco estrelas e uma área de \textit{Texto} para notas pessoais. Cada widget possui posição e tamanho próprios dentro da área de edição do layout. Ao cadastrar o item \textit{``Duna''}, o sistema gera automaticamente os registros de ItemWidget correspondentes: para o widget \textit{Imagem}, armazena o arquivo da capa; para o widget \textit{Input Field}, armazena o texto \textit{``Frank Herbert''}; para o widget \textit{Classificação}, o valor \textit{5}; e para o widget \textit{Texto}, a nota \textit{``Obra-prima do gênero''}. Desse modo, o Layout e seus Widgets permanecem inalterados e podem ser reutilizados por centenas de itens, enquanto cada item mantém seus próprios valores por meio dos registros de ItemWidget.
-
-Essa separação traz três benefícios diretos para o projeto: 
-
-(i) permite que o usuário reutilize o mesmo layout para múltiplos itens sem duplicação de estrutura; 
-
-(ii) viabiliza que cada item preserve valores distintos, respeitando a individualidade de cada obra cadastrada; e 
-
-(iii) permite modificações individuais em um item específico --- por exemplo, adicionar um widget extra apenas a um único livro --- sem afetar o layout original nem os demais itens (RF-12).
-
-O Quadro~\ref{quad:glossario_dominio} apresenta, de forma resumida, a definição de cada um desses quatro elementos centrais.
-
-\begin{quadro}[h!]
-\caption{Conceitos centrais do modelo de domínio}
-\label{quad:glossario_dominio}
-\begin{tabular}{|p{3.5cm}|p{11.5cm}|}
-\hline
-\textbf{Conceito} & \textbf{Descrição} \\ \hline
-Widget & Componente visual reutilizável utilizado para compor layouts, como campos de texto, imagens, classificações, datas, listas, ícones, entre outros. Cada widget possui um tipo, uma posição e um tamanho definidos dentro do layout ao qual pertence. \\ \hline
-Layout & Estrutura personalizada que define quais widgets compõem a ficha de um item e como eles se organizam visualmente. Funciona como um \textit{template} reutilizável, podendo ser associado a uma categoria (como padrão) ou a uma coleção (sobrescrevendo o padrão da categoria). \\ \hline
-Item & Unidade individual de conteúdo cadastrada pelo usuário (por exemplo, um livro, filme ou jogo específico). Todo item pertence a uma coleção e herda, por padrão, o layout aplicável àquela coleção. \\ \hline
-ItemWidget & Entidade de associação que armazena o valor preenchido pelo usuário para cada widget de um item específico. Representa o vínculo entre um item e os widgets do layout aplicável, guardando as informações concretas inseridas (como o nome do autor em um \textit{Input Field}, a nota atribuída em um widget de \textit{Classificação}, ou o conteúdo digitado em um widget de \textit{Texto}). \\ \hline
-\end{tabular}
-\fonte{Elaborada pelo autor}
-\end{quadro}
-
-\subsection{Organização em Pacotes}
-\label{subsec:pacotes_dominio}
-
-Devido à quantidade de classes conceituais envolvidas, o modelo de domínio foi organizado em cinco pacotes, de modo a agrupar entidades que compartilham propósito semântico e reduzir a complexidade visual do diagrama. Essa segmentação segue a recomendação de \cite{Larman2007}, segundo o qual o agrupamento de classes em pacotes facilita a leitura do modelo, evidencia suas fronteiras conceituais e favorece o raciocínio modular sobre o sistema. Os pacotes adotados neste trabalho são:
-
-\begin{itemize}[nosep,leftmargin=1.5em,topsep=4pt,partopsep=0pt,
-               parsep=2pt,itemsep=4pt]
-
-  \item \textbf{Usuário} --- concentra a entidade central da plataforma,
-  responsável pelos dados de identificação e pelo vínculo com todas as demais
-  entidades do sistema. Foi isolada em um pacote próprio por atuar como ponto
-  de referência para os demais agrupamentos.
-
-  \item \textbf{Coleções} --- reúne as entidades que compõem a estrutura de
-  organização do acervo em três níveis hierárquicos: Categoria, Coleção e
-  Item. Inclui também a entidade associativa ItemWidget e a enumeração de
-  privacidade. Representa o núcleo de domínio da aplicação, pois é nele que
-  o usuário efetivamente cadastra e organiza seu conteúdo.
-
-  \item \textbf{Editor de Layout} --- agrupa as entidades responsáveis pela
-  personalização visual das fichas de itens, incluindo Layout, Widget e a
-  enumeração de tipos de widget. É este pacote que sustenta o diferencial de
-  customização da plataforma.
-
-  \item \textbf{Interação Social} --- concentra as entidades ligadas aos
-  vínculos entre usuários, como as solicitações de amizade (Amizade e
-  StatusAmizade) e o acompanhamento de categorias de outros usuários
-  (Seguir Coleção).
-
-  \item \textbf{Notificações} --- reúne as entidades responsáveis pelo
-  registro e pela exibição de eventos relevantes ao usuário: a própria
-  entidade Notificação, a enumeração TipoNotificacao, a entidade
-  AtualizaçãoEvento e a enumeração TipoEvento. A separação deste pacote
-  em relação ao de Interação Social reflete a distinção entre o vínculo
-  social em si e o mecanismo de comunicação dessas ocorrências ao usuário,
-  além de isolar a lógica de geração e exibição de notificações para
-  facilitar futuras extensões do sistema.
-
-  \item \textbf{Aparência} --- reúne as entidades que definem a configuração
-  visual global da interface, como paletas de cores, tipografia e seleção de
-  tema claro ou escuro.
-
-\end{itemize}
-
-Essa organização reflete a separação de responsabilidades identificada durante
-a elicitação de requisitos: as classes do pacote \textit{Coleções} sustentam
-os requisitos funcionais de gestão de conteúdo (RF-04 a RF-09); as do pacote
-\textit{Editor de Layout} suportam os requisitos de personalização estrutural
-(RF-10 a RF-12); as do pacote \textit{Aparência} viabilizam a personalização
-visual global (RF-13 e RF-14); as do pacote \textit{Interação Social} dão
-suporte às funcionalidades de rede entre usuários (RF-15 e RF-16); e as do
-pacote \textit{Notificações} sustentam o mecanismo de comunicação de eventos
-do sistema ao usuário (RF-17 e RF-21).
-A Figura~\ref{fig:ModeloDominio} apresenta o modelo de domínio desenvolvido neste trabalho, evidenciando a organização em pacotes descrita acima, bem como as 
+A Figura~\ref{fig:ModeloDominio} apresenta o modelo de domínio desenvolvido para o escopo deste trabalho, evidenciando a organização em pacotes descrito no projeto, bem como as 
 principais classes conceituais do sistema e as associações que estabelecem entre si.
+
 
 
 \FloatBarrier
