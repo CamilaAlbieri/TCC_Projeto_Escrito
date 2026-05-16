@@ -48,7 +48,9 @@ ItemWidget & Entidade de associação que armazena o valor preenchido pelo usuá
 \subsection{Organização em Pacotes}
 \label{subsec:pacotes_dominio}
 
-Devido à quantidade de classes conceituais envolvidas, o modelo de domínio foi organizado em cinco pacotes, de modo a agrupar entidades que compartilham propósito semântico e reduzir a complexidade visual do diagrama. Essa segmentação segue a recomendação de \cite{Larman2007}, segundo o qual o agrupamento de classes em pacotes facilita a leitura do modelo, evidencia suas fronteiras conceituais e favorece o raciocínio modular sobre o sistema. Os pacotes adotados neste trabalho são:
+Devido à quantidade de classes conceituais envolvidas, o modelo de domínio foi organizado em cinco pacotes, de modo a agrupar entidades que compartilham propósito semântico e 
+reduzir a complexidade visual do diagrama. Essa segmentação segue a recomendação de \cite{Larman2007}, segundo o qual o agrupamento de classes em pacotes facilita a leitura do modelo, 
+evidencia suas fronteiras conceituais e favorece o raciocínio modular sobre o sistema. Os pacotes adotados neste trabalho são:
 
 \begin{itemize}[nosep,leftmargin=1.5em,topsep=4pt,partopsep=0pt,
                parsep=2pt,itemsep=4pt]
@@ -71,7 +73,7 @@ Devido à quantidade de classes conceituais envolvidas, o modelo de domínio foi
 
   \item \textbf{Interação Social} --- concentra as entidades ligadas aos
   vínculos entre usuários, como as solicitações de amizade (Amizade e
-  StatusAmizade) e o acompanhamento de categorias de outros usuários
+  StatusAmizade) e o acompanhamento de coleções de outros usuários
   (Seguir Coleção).
 
   \item \textbf{Notificações} --- reúne as entidades responsáveis pelo
@@ -351,44 +353,8 @@ Camila exclui a categoria `Jogos Antigos' e confirma a exclusão permanente no d
 \end{quadro}
 
 % ═══════════════════════════════════════════════════════════════
-\FloatBarrier
-\begin{quadro}[h!]
-\caption{RF-05 -- Gerenciar Coleção}
-\label{quad:rf05}
-\begin{tabular}{|p{3.2cm}|p{11.8cm}|}
-\hline
-\textbf{Código}      & RF-05 \\ \hline
-\textbf{Grupo}       & Gestão de Coleções \\ \hline
-\textbf{Descrição}   &
-\textbf{Ação:} Gerenciar
-
-\textbf{Objeto:} Coleção (subdivisão de uma categoria onde os itens são efetivamente cadastrados)
-
-\textbf{Atributos:} nome (100 caracteres), categoria pai (referência obrigatória), ícone (emoji Unicode, opcional), descrição (300 caracteres, opcional), layout próprio (referência opcional a um layout; quando presente, sobrescreve o layout padrão da categoria), contagem de itens (calculada automaticamente), data de criação (gerada automaticamente).
-
-\textbf{Exemplos:} Dentro da categoria `Livros', Camila cria as coleções `Lidos', `Para Ler' e `Favoritos' usando o layout padrão herdado da categoria.
-Camila cria a coleção `Mangás' dentro da categoria `Livros' e associa um layout próprio `Card de Mangá', diferente do padrão.
-Camila renomeia a coleção `Para Ler' para `Lista de Desejos'.
-Camila exclui a coleção `Abandonados', que contém 5 itens; o sistema pergunta se deseja `Excluir tudo' ou `Mover os itens para outra coleção'.
-
-\textbf{Restrições:}
-\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
-  \item O nome da coleção é obrigatório; ícone, descrição e layout próprio são opcionais.
-  \item Toda coleção deve pertencer a uma categoria existente (RF-04) do mesmo usuário.
-  \item Não podem existir duas coleções com o mesmo nome dentro da mesma categoria.
-  \item Coleções não podem conter outras coleções (estrutura limitada a dois níveis: categoria → coleção).
-  \item Quando a coleção define layout próprio, ele sobrescreve o layout padrão da categoria para todos os itens dessa coleção (RF-11).
-  \item Ao excluir uma coleção que contenha itens, o sistema deve exibir diálogo oferecendo duas opções: (a) excluir permanentemente a coleção e todos os itens, ou (b) mover os itens para outra coleção da mesma categoria antes de excluir.
-  \item A opção `mover' do diálogo de exclusão só é apresentada se houver outra coleção disponível na mesma categoria.
-  \item A contagem de itens é calculada e exibida automaticamente pelo sistema.
-  \item A data de criação é gerada automaticamente e não pode ser editada.
-\end{enumerate} \\ \hline
-\textbf{Prioridade}  & Essencial \\ \hline
 \textbf{Operação}    & Entrada \\ \hline
-\textbf{Ator}        & Usuário \\ \hline
-\end{tabular}
-\fonte{Elaborada pelo autor}
-\end{quadro}
+
 
 % ═══════════════════════════════════════════════════════════════
 \FloatBarrier
@@ -751,7 +717,7 @@ Camila recusa a solicitação de um usuário desconhecido; o status é atualizad
 % ═══════════════════════════════════════════════════════════════
 \FloatBarrier
 \begin{quadro}[h!]
-\caption{RF-16 -- Seguir Categoria de Amigo}
+\caption{RF-16 -- Seguir Coleção de Amigo}
 \label{quad:rf16}
 \begin{tabular}{|p{3.2cm}|p{11.8cm}|}
 \hline
@@ -760,21 +726,22 @@ Camila recusa a solicitação de um usuário desconhecido; o status é atualizad
 \textbf{Descrição}   &
 \textbf{Ação:} Seguir
 
-\textbf{Objeto:} Categoria específica de um amigo
+\textbf{Objeto:} Coleção específica de um amigo
 
-\textbf{Atributos:} categoria seguida (com privacidade pública ou `somente amigos'), usuário seguidor, data de início do acompanhamento.
+\textbf{Atributos:} coleção seguida (com privacidade pública ou `somente amigos'), categoria pai da coleção (referência), usuário seguidor, data de início do acompanhamento.
 
-\textbf{Exemplos:} Camila visita o perfil de `João Silva', vê a categoria pública `Séries' e clica em `Seguir'; as atualizações de todas as coleções dessa categoria passam a aparecer no feed de Camila.
-Camila tenta seguir uma categoria privada de um amigo e não encontra a opção disponível.
+\textbf{Exemplos:} Camila visita o perfil de `João Silva', vê a coleção pública `Filmes Assistidos' (dentro da categoria `Filmes') e clica em `Seguir'; as atualizações dessa coleção passam a aparecer no feed de Camila, mas as demais coleções da categoria `Filmes' (como `Quero Ver') não, a menos que sejam seguidas individualmente.
+Camila segue também a coleção `Séries Concluídas' do mesmo amigo, na categoria `Séries'; ambas passam a alimentar seu feed de forma independente.
+Camila tenta seguir uma coleção privada de um amigo e não encontra a opção disponível, pois a coleção sequer aparece no perfil do amigo.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
-  \item Apenas categorias de usuários com vínculo de amizade confirmada podem ser seguidas.
-  \item Somente categorias com privacidade `pública' ou `somente amigos' estão disponíveis para seguir (RF-19).
-  \item Categorias `privadas' não aparecem para outros usuários, nem mesmo para amigos.
-  \item Ao seguir uma categoria, o usuário acompanha automaticamente todas as coleções pertencentes a ela.
-  \item O usuário pode deixar de seguir uma categoria a qualquer momento, sem restrições.
-  \item Se a privacidade de uma categoria seguida for alterada para `privada', o acompanhamento deve ser encerrado automaticamente.
+  \item Apenas coleções de usuários com vínculo de amizade confirmada podem ser seguidas.
+  \item Somente coleções com privacidade `pública' ou `somente amigos' estão disponíveis para seguir (RF-19).
+  \item Coleções `privadas' não aparecem para outros usuários, nem mesmo para amigos.
+  \item O acompanhamento ocorre no nível da coleção: o usuário pode seguir múltiplas coleções da mesma categoria, de forma independente, sem que isso implique seguir as demais.
+  \item O usuário pode deixar de seguir uma coleção a qualquer momento, sem restrições.
+  \item Se a privacidade de uma coleção seguida for alterada para `privada', o acompanhamento dessa coleção deve ser encerrado automaticamente.
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Importante \\ \hline
 \textbf{Operação}    & Entrada \\ \hline
@@ -795,20 +762,21 @@ Camila tenta seguir uma categoria privada de um amigo e não encontra a opção 
 \textbf{Descrição}   &
 \textbf{Ação:} Exibir
 
-\textbf{Objeto:} Feed de atualizações das categorias seguidas
+\textbf{Objeto:} Feed de atualizações das coleções seguidas
 
-\textbf{Atributos:} tipo de evento (adição / edição / remoção de item; criação / exclusão de coleção), nome do item afetado (quando aplicável), nome da coleção afetada, nome da categoria afetada, nome do usuário autor da ação, data e hora do evento.
+\textbf{Atributos:} tipo de evento (adição, edição ou remoção de item em coleção seguida), nome do item afetado, nome da coleção seguida, nome da categoria pai, nome do usuário autor da ação, data e hora do evento.
 
 \textbf{Exemplos:} Feed de Camila exibe `João adicionou Oppenheimer na coleção Filmes Assistidos (categoria Filmes) -- há 2 horas'.
-Feed exibe `Ana criou a coleção Dramas na categoria Séries -- há 5 minutos'.
+Feed exibe `Ana avaliou o item Breaking Bad na coleção Séries Concluídas -- há 5 minutos'.
 Camila rola o feed e carrega eventos mais antigos progressivamente.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
-  \item O feed deve exibir apenas eventos de categorias que o usuário segue ativamente (RF-16).
+  \item O feed deve exibir apenas eventos de coleções que o usuário segue ativamente (RF-16).
   \item Os eventos devem ser ordenados cronologicamente, do mais recente ao mais antigo.
   \item O feed deve ser atualizado automaticamente em tempo real, sem necessidade de recarregar a página.
-  \item Se a privacidade de uma categoria for alterada para `privada', os eventos anteriores dessa categoria não devem mais ser exibidos.
+  \item Se a privacidade de uma coleção seguida for alterada para `privada', os eventos anteriores dessa coleção não devem mais ser exibidos, e o acompanhamento é encerrado automaticamente (RF-16).
+  \item Eventos de criação ou exclusão de coleção em si não são exibidos no feed; a descoberta de novas coleções de amigos ocorre por meio da visita ao perfil do amigo (RF-18).
   \item O feed deve suportar carregamento progressivo (paginação) para históricos longos.
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Essencial \\ \hline
@@ -830,58 +798,25 @@ Camila rola o feed e carrega eventos mais antigos progressivamente.
 \textbf{Descrição}   &
 \textbf{Ação:} Visualizar
 
-\textbf{Objeto:} Categorias, coleções e itens públicos de amigos
+\textbf{Objeto:} Categorias, coleções públicas (ou de amigos) e itens de amigos
 
-\textbf{Atributos:} perfil do amigo (nome, foto, bio), categorias acessíveis (públicas ou `somente amigos'), coleções pertencentes a cada categoria visível, itens pertencentes a cada coleção.
+\textbf{Atributos:} perfil do amigo (nome, foto, bio), coleções acessíveis (com privacidade `pública' ou `somente amigos'), categorias agrupadoras dessas coleções, itens pertencentes a cada coleção visível.
 
-\textbf{Exemplos:} Camila visita o perfil de `João Silva' e visualiza a categoria pública `Filmes' com suas coleções `Assistidos', `Favoritos' e `Quero Ver'; dentro de cada coleção vê os itens cadastrados.
-Camila não encontra a categoria `Diário Pessoal' de João, pois ela é privada.
+\textbf{Exemplos:} Camila visita o perfil de `João Silva' e visualiza, agrupadas pelas respectivas categorias, as coleções públicas e somente para amigos de João -- por exemplo, `Filmes / Assistidos' (pública), `Filmes / Favoritos' (somente amigos) e `Séries / Concluídas' (pública); dentro de cada coleção, vê os itens cadastrados.
+Camila não encontra a coleção `Diário Pessoal' de João (categoria `Diários'), pois ela é privada; como é a única coleção da categoria, a categoria `Diários' inteira não aparece para Camila.
+A categoria `Jogos' de João aparece para Camila apenas com as coleções não-privadas; coleções privadas dessa mesma categoria continuam ocultas.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
-  \item Apenas categorias com privacidade `pública' ou `somente amigos' são exibidas no perfil visitado.
-  \item Todas as coleções e itens dentro de uma categoria visível são acessíveis ao visitante; não há privacidade individual por coleção ou item.
-  \item Categorias `privadas' e tudo dentro delas não devem ser listados nem acessíveis, mesmo que o amigo compartilhe um link direto.
+  \item Apenas coleções com privacidade `pública' ou `somente amigos' são exibidas no perfil visitado, respeitando o vínculo de amizade entre os usuários (coleções `somente amigos' só aparecem para amigos confirmados).
+  \item Coleções `privadas' e seus itens não devem ser listados nem acessíveis, mesmo que o amigo compartilhe um link direto.
+  \item Categorias servem apenas como agrupadores visuais no perfil visitado e não possuem privacidade própria.
+  \item Categorias que, para o visitante, não tenham nenhuma coleção visível devem ser ocultadas integralmente do perfil, de modo que o visitante não tenha conhecimento de sua existência.
+  \item Todos os itens dentro de uma coleção visível são acessíveis ao visitante; não há privacidade individual por item.
   \item A navegação nas categorias, coleções e itens de outros usuários é somente leitura; não é possível editar ou excluir dados.
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Importante \\ \hline
 \textbf{Operação}    & Saída \\ \hline
-\textbf{Ator}        & Usuário \\ \hline
-\end{tabular}
-\fonte{Elaborada pelo autor}
-\end{quadro}
-
-% ═══════════════════════════════════════════════════════════════
-\FloatBarrier
-\begin{quadro}[h!]
-\caption{RF-19 -- Gerenciar Privacidade de Categoria}
-\label{quad:rf19}
-\begin{tabular}{|p{3.2cm}|p{11.8cm}|}
-\hline
-\textbf{Código}      & RF-19 \\ \hline
-\textbf{Grupo}       & Privacidade \\ \hline
-\textbf{Descrição}   &
-\textbf{Ação:} Configurar
-
-\textbf{Objeto:} Nível de privacidade de uma categoria
-
-\textbf{Atributos:} nível de privacidade (pública -- qualquer usuário cadastrado; somente amigos -- apenas usuários na lista de amizades; privada -- somente o dono).
-
-\textbf{Exemplos:} Camila define `Diário de Leituras' como privada; `Livros Favoritos' como pública; `Séries 2024' como somente amigos.
-Camila altera a categoria `Livros' de `pública' para `privada'; todos os seguidores perdem o acesso automaticamente e todas as coleções e itens vinculados deixam de ser visíveis.
-
-\textbf{Restrições:}
-\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
-  \item A privacidade é configurada no nível da categoria e se aplica automaticamente a todas as suas coleções e itens.
-  \item O nível de privacidade padrão ao criar uma categoria é `privada'.
-  \item A configuração de privacidade pode ser alterada pelo usuário a qualquer momento.
-  \item Categorias `públicas' são acessíveis para qualquer usuário cadastrado no sistema.
-  \item Categorias `somente amigos' são visíveis apenas para usuários na lista de amizades confirmadas do dono.
-  \item Categorias `privadas' são visíveis exclusivamente ao próprio dono, sem exceções.
-  \item Ao tornar uma categoria privada, todos os acompanhamentos ativos (RF-16) devem ser encerrados imediatamente.
-\end{enumerate} \\ \hline
-\textbf{Prioridade}  & Essencial \\ \hline
-\textbf{Operação}    & Entrada \\ \hline
 \textbf{Ator}        & Usuário \\ \hline
 \end{tabular}
 \fonte{Elaborada pelo autor}
@@ -901,10 +836,10 @@ Camila altera a categoria `Livros' de `pública' para `privada'; todos os seguid
 
 \textbf{Objeto:} Tela principal (dashboard) de categorias do usuário
 
-\textbf{Atributos:} lista de categorias do usuário autenticado (nome, ícone, contagem total de coleções, contagem total de itens somados entre todas as coleções, indicador de privacidade), modo de exibição (grade ou lista), critérios de ordenação (nome A--Z, nome Z--A, data de criação crescente, data de criação decrescente), critérios de filtro (tipo/tema da categoria, nível de privacidade), atalhos de navegação para coleções e itens.
+\textbf{Atributos:} lista de categorias do usuário autenticado (nome, ícone, contagem total de coleções, contagem total de itens somados entre todas as coleções), resumo de privacidade das coleções da categoria (ex.: ``3 públicas, 1 amigos, 2 privadas''), modo de exibição (grade ou lista), critérios de ordenação (nome A--Z, nome Z--A, data de criação crescente, data de criação decrescente), critérios de filtro (tipo/tema da categoria), atalhos de navegação para coleções e itens.
 
-\textbf{Exemplos:} Ao fazer login, Camila vê na tela inicial os cartões `Livros (3 coleções, 42 itens)', `Filmes (2 coleções, 18 itens)' e `Séries (1 coleção, 7 itens)' em modo grade.
-Camila clica em `Livros' e visualiza as coleções `Lidos (30)', `Para Ler (10)' e `Favoritos (2)', podendo navegar para os itens de cada uma.
+\textbf{Exemplos:} Ao fazer login, Camila vê na tela inicial os cartões `Livros (2 coleções, 20 itens)', `Filmes (2 coleções, 30 itens)' e `Cafés (1 coleção, 7 itens)' em modo grade, cada um exibindo um resumo das privacidades das coleções que contém.
+Camila clica em `Livros' e visualiza as coleções `Lidos (20, pública)', `Para Ler (30, somente amigos)' e `Diário (2, privada)', podendo navegar para os itens de cada uma.
 Camila alterna para o modo lista e ordena as categorias por data de criação decrescente; a preferência é mantida na próxima sessão.
 Camila aplica filtro por tipo `Livros' e visualiza apenas as categorias desse tema.
 Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão `Criar primeira categoria'.
@@ -912,7 +847,52 @@ Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão `Criar prim
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
   \item A tela deve exibir todas as categorias do usuário autenticado em uma única tela dedicada.
-  \item Cada categoria deve exibir nome, ícone, contagem de coleções, contagem total de itens e indicador de privacidade.
+  \item Cada categoria deve exibir nome, ícone, contagem de coleções, contagem total de itens e resumo de privacidade das coleções que contém.
+  \item A categoria em si não possui nível de privacidade; o resumo apresentado é uma contagem das privacidades de suas coleções (RF-19).
+  \item O indicador individual de privacidade aparece no card de cada coleção dentro da categoria, e não no card da categoria.
+  \item A navegação até as coleções de uma categoria deve ser acessível com um único clique ou toque; a navegação até um item, com no máximo três.
+  \item Usuários sem categorias devem ver mensagem de boas-vindas com atalho para criação da primeira categoria.
+  \item Ao acessar uma categoria vazia (sem coleções), o sistema deve exibir mensagem informativa e atalho para criação da primeira coleção.
+  \item O usuário deve poder alternar entre os modos de visualização `grade' e `lista' a qualquer momento.
+  \item O modo de visualização padrão é `grade'; a escolha do usuário deve ser persistida entre sessões.
+  \item O usuário deve poder ordenar as categorias por pelo menos quatro critérios: nome crescente, nome decrescente, data de criação crescente e data de criação decrescente.
+  \item A ordenação padrão é por data de criação decrescente (mais recentes primeiro).
+  \item Os filtros e a ordenação aplicados devem ser persistidos entre sessões do mesmo usuário.
+\end{enumerate} \\ \hline
+\textbf{Prioridade}  & Essencial \\ \hline
+\textbf{Operação}    & Saída \\ \hline
+\textbf{Ator}        & Sistema \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+
+
+% ═══════════════════════════════════════════════════════════════
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{RF-20 -- Exibir Tela Principal de Categorias}
+\label{quad:rf20}
+\begin{tabular}{|p{3.2cm}|p{11.8cm}|}
+\hline
+\textbf{Código}      & RF-20 \\ \hline
+\textbf{Grupo}       & Navegação \\ \hline
+\textbf{Descrição}   &
+\textbf{Ação:} Exibir
+
+\textbf{Objeto:} Tela principal (dashboard) de categorias do usuário
+
+\textbf{Atributos:} lista de categorias do usuário autenticado (nome, ícone, contagem total de coleções, contagem total de itens somados entre todas as coleções, indicador de privacidade), modo de exibição (grade ou lista), critérios de ordenação (nome A--Z, nome Z--A, data de criação crescente, data de criação decrescente), critérios de filtro (tipo/tema da categoria, nível de privacidade), atalhos de navegação para coleções e itens.
+
+\textbf{Exemplos:} Ao fazer login, Camila vê na tela inicial os cartões `Livros (2 coleções, 20 itens)', `Filmes (2 coleções, 30 itens)' e `Cafés (1 coleção, 7 itens)' em modo grade.
+Camila clica em `Livros' e visualiza as coleções `Lidos (20)', `Para Ler (30)' e `Diário (2)', podendo navegar para os itens de cada uma.
+Camila alterna para o modo lista e ordena as categorias por data de criação decrescente; a preferência é mantida na próxima sessão.
+Camila aplica filtro por tipo `Livros' e visualiza apenas as categorias desse tema.
+Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão `Criar primeira categoria'.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item A tela deve exibir todas as categorias do usuário autenticado em uma única tela dedicada.
+  \item Cada categoria deve exibir nome, ícone, contagem de coleções, contagem total de itens.
   \item A navegação até as coleções de uma categoria deve ser acessível com um único clique ou toque; a navegação até um item, com no máximo três.
   \item A tela deve ser totalmente responsiva e funcional em dispositivos móveis a partir de 320 px de largura.
   \item Usuários sem categorias devem ver mensagem de boas-vindas com atalho para criação da primeira categoria.
@@ -945,7 +925,7 @@ Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão `Criar prim
 
 \textbf{Objeto:} Notificações do sistema
 
-\textbf{Atributos:} tipo de notificação (solicitação de amizade recebida, solicitação de amizade aceita, solicitação de amizade recusada, atualização em categoria seguida, verificação de e-mail), usuário destinatário, usuário autor (quando aplicável), mensagem (texto descritivo gerado pelo sistema), data e hora de geração, status (não lida / lida), canal de entrega (in-app, sempre; e-mail, apenas para verificação de e-mail).
+\textbf{Atributos:} tipo de notificação (solicitação de amizade recebida, solicitação de amizade aceita, solicitação de amizade recusada, atualização em coleção seguida, verificação de e-mail), usuário destinatário, usuário autor (quando aplicável), mensagem (texto descritivo gerado pelo sistema), data e hora de geração, status (não lida / lida), canal de entrega (in-app, sempre; e-mail, apenas para verificação de e-mail).
 
 \textbf{Exemplos:} João envia solicitação de amizade para Camila; o sistema gera notificação in-app para Camila com o texto `João Silva (joao\#1203) enviou uma solicitação de amizade' e exibe indicador visual de notificação não lida.
 Camila aceita a solicitação; o sistema gera notificação in-app para João com o texto `Camila Mattos aceitou sua solicitação de amizade'.
@@ -958,7 +938,7 @@ Camila altera o e-mail cadastrado; o sistema envia notificação via e-mail com 
   \item As notificações devem ser ordenadas cronologicamente, da mais recente à mais antiga.
   \item O usuário pode marcar uma notificação como lida, marcar todas como lidas ou remover notificações individuais.
   \item Notificações de verificação de e-mail (RF-03) devem ser enviadas também pelo canal de e-mail, contendo link único e com prazo de expiração.
-  \item Notificações referentes a categorias cuja privacidade tenha sido alterada para `privada' devem ser ocultadas automaticamente do destinatário.
+  \item Notificações referentes a coleções cuja privacidade tenha sido alterada para `privada' devem ser ocultadas automaticamente do destinatário.
   \item As notificações in-app devem ser atualizadas em tempo real, sem necessidade de recarregar a página.
   \item Notificações lidas devem ser mantidas por no mínimo 30 dias antes de qualquer limpeza automática.
 \end{enumerate} \\ \hline
@@ -968,7 +948,7 @@ Camila altera o e-mail cadastrado; o sistema envia notificação via e-mail com 
 \end{tabular}
 \fonte{Elaborada pelo autor}
 \end{quadro}
-\FloatBarrier
+
 
 
 \subsection{Requisitos Não-Funcionais}
@@ -1594,7 +1574,7 @@ Pontos de Extensão & Nenhum ponto de extensão identificado para este caso de u
 
 Nome do Caso de Uso & Criar Categoria \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário crie uma nova categoria (agrupador temático de alto nível) para organizar coleções e itens relacionados a um tema, como livros, filmes, séries ou jogos. A categoria é criada vazia e servirá como container para coleções que serão criadas posteriormente (RF-04 e RF-19). \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário crie uma nova categoria (agrupador temático de alto nível) para organizar coleções e itens relacionados a um tema, como livros, filmes, séries ou jogos. A categoria é criada vazia e servirá como container para coleções que serão criadas posteriormente. A categoria não possui nível de privacidade próprio; a privacidade é configurada individualmente em cada coleção (RF-04 e RF-19). \\ \hline
 
 Fluxo Básico & \mbox{}
 \textbf{FB01:} Criação de categoria
@@ -1608,7 +1588,6 @@ Fluxo Básico & \mbox{}
 	\item O usuário insere uma descrição para a categoria (opcional).
 	\item O usuário seleciona o tipo/tema (opcional).
 	\item O usuário associa um layout padrão à categoria (opcional) [E01].
-	\item O usuário configura a privacidade da categoria (pública, somente amigos ou privada) [E02].
 	\item O usuário confirma a criação da categoria.
 	\item O sistema valida os dados inseridos.
 	\item O sistema cria a categoria vazia no banco de dados.
@@ -1621,7 +1600,7 @@ Fluxos Alternativos & \mbox{}
 \textbf{FA01:} Nome da categoria já existe
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item No passo 11 do FB01, o sistema identifica que já existe uma categoria com o mesmo nome para o usuário.
+	\item No passo 10 do FB01, o sistema identifica que já existe uma categoria com o mesmo nome para o usuário.
 	\item O sistema exibe mensagem de erro: "Já existe uma categoria com este nome. Por favor, escolha outro nome."
 	\item O sistema retorna ao passo 4 do FB01.
 \end{enumerate}
@@ -1629,7 +1608,7 @@ Fluxos Alternativos & \mbox{}
 \textbf{FA02:} Campos obrigatórios não preenchidos
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item No passo 11 do FB01, o sistema identifica que o campo nome não foi preenchido.
+	\item No passo 10 do FB01, o sistema identifica que o campo nome não foi preenchido.
 	\item O sistema exibe mensagem de erro: "O nome da categoria é obrigatório."
 	\item O sistema retorna ao passo 4 do FB01.
 \end{enumerate}
@@ -1637,7 +1616,7 @@ Fluxos Alternativos & \mbox{}
 \textbf{FA03:} Cancelamento da operação
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item Em qualquer momento entre os passos 4 e 10 do FB01, o usuário pode selecionar "Cancelar".
+	\item Em qualquer momento entre os passos 4 e 9 do FB01, o usuário pode selecionar "Cancelar".
 	\item O sistema descarta as informações inseridas.
 	\item O sistema retorna ao dashboard de categorias.
 	\item O caso de uso é encerrado.
@@ -1648,12 +1627,13 @@ Requisitos Especiais & RNF01 - A interface deve ser intuitiva. RNF02 - O sistema
 
 Condições Prévias & O usuário deve estar autenticado no sistema. \\ \hline
 
-Pós-Condições & Uma nova categoria é criada e armazenada no banco de dados. A categoria aparece no dashboard do usuário. A categoria está pronta para receber coleções. Nenhum item pode ser cadastrado diretamente na categoria; é necessário criar ao menos uma coleção antes. \\ \hline
+Pós-Condições & Uma nova categoria é criada e armazenada no banco de dados. A categoria aparece no dashboard do usuário. A categoria está pronta para receber coleções, que terão sua própria privacidade individual (padrão privada, conforme RF-19). Nenhum item pode ser cadastrado diretamente na categoria; é necessário criar ao menos uma coleção antes. \\ \hline
 
-Pontos de Extensão & E01 - Associar Layout Padrão à Categoria (estende o passo 8 do FB01, conforme RF-11). E02 - Configurar Privacidade da Categoria (estende o passo 9 do FB01, conforme RF-19). \\
+Pontos de Extensão & E01 - Associar Layout Padrão à Categoria (estende o passo 8 do FB01, conforme RF-11). \\
 \end{longtable}
 \renewcommand{\arraystretch}{1}
 \FloatBarrier
+
 
 
 \subsubsection{Criar Coleção}
@@ -1680,7 +1660,7 @@ Pontos de Extensão & E01 - Associar Layout Padrão à Categoria (estende o pass
 
 Nome do Caso de Uso & Criar Coleção \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário crie uma nova coleção dentro de uma categoria existente. A coleção é onde os itens serão efetivamente cadastrados. A coleção pode herdar o layout padrão da categoria pai ou definir um layout próprio (RF-05 e RF-11). \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário crie uma nova coleção dentro de uma categoria existente. A coleção é onde os itens serão efetivamente cadastrados e é também a unidade onde a privacidade é configurada (pública, somente amigos ou privada). A coleção pode herdar o layout padrão da categoria pai ou definir um layout próprio (RF-05, RF-11 e RF-19). \\ \hline
 
 Fluxo Básico & \mbox{}
 \textbf{FB01:} Criação de coleção
@@ -1688,14 +1668,15 @@ Fluxo Básico & \mbox{}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
 	\item O usuário acessa uma categoria específica no dashboard.
 	\item O usuário seleciona a opção "Criar Coleção".
-	\item O sistema exibe o formulário de criação de coleção.
+	\item O sistema exibe o formulário de criação de coleção, com privacidade preenchida como "privada" por padrão.
 	\item O usuário insere o nome da coleção.
 	\item O usuário seleciona um ícone (opcional).
 	\item O usuário insere uma descrição (opcional).
 	\item O usuário opta por usar o layout padrão da categoria ou associar um layout próprio (opcional) [E01].
+	\item O usuário configura a privacidade da coleção (pública, somente amigos ou privada) [E02].
 	\item O usuário confirma a criação da coleção.
 	\item O sistema valida os dados inseridos.
-	\item O sistema cria a coleção vinculada à categoria pai.
+	\item O sistema cria a coleção vinculada à categoria pai, com a privacidade configurada.
 	\item O sistema exibe mensagem de sucesso.
 	\item O sistema redireciona para a visualização da coleção, pronta para receber itens.
 \end{enumerate}
@@ -1705,7 +1686,7 @@ Fluxos Alternativos & \mbox{}
 \textbf{FA01:} Nome da coleção já existe na categoria
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item No passo 9 do FB01, o sistema identifica que já existe uma coleção com o mesmo nome na categoria pai.
+	\item No passo 10 do FB01, o sistema identifica que já existe uma coleção com o mesmo nome na categoria pai.
 	\item O sistema exibe mensagem de erro: "Já existe uma coleção com este nome nesta categoria. Por favor, escolha outro nome."
 	\item O sistema retorna ao passo 4 do FB01.
 \end{enumerate}
@@ -1713,7 +1694,7 @@ Fluxos Alternativos & \mbox{}
 \textbf{FA02:} Campos obrigatórios não preenchidos
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item No passo 9 do FB01, o sistema identifica que o campo nome não foi preenchido.
+	\item No passo 10 do FB01, o sistema identifica que o campo nome não foi preenchido.
 	\item O sistema exibe mensagem de erro: "O nome da coleção é obrigatório."
 	\item O sistema retorna ao passo 4 do FB01.
 \end{enumerate}
@@ -1721,7 +1702,7 @@ Fluxos Alternativos & \mbox{}
 \textbf{FA03:} Cancelamento da operação
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item Em qualquer momento entre os passos 4 e 8 do FB01, o usuário pode selecionar "Cancelar".
+	\item Em qualquer momento entre os passos 4 e 9 do FB01, o usuário pode selecionar "Cancelar".
 	\item O sistema descarta as informações inseridas.
 	\item O sistema retorna à categoria pai.
 	\item O caso de uso é encerrado.
@@ -1732,9 +1713,9 @@ Requisitos Especiais & RNF01 - A interface deve ser intuitiva. RNF02 - A coleç�
 
 Condições Prévias & O usuário deve estar autenticado. A categoria pai deve existir e pertencer ao usuário. \\ \hline
 
-Pós-Condições & Uma nova coleção é criada vinculada à categoria pai. A coleção está pronta para receber itens. Se não foi definido layout próprio, a coleção herda o layout padrão da categoria. A contagem de coleções da categoria é atualizada. \\ \hline
+Pós-Condições & Uma nova coleção é criada vinculada à categoria pai, com sua privacidade individual configurada. A coleção está pronta para receber itens. Se não foi definido layout próprio, a coleção herda o layout padrão da categoria. A contagem de coleções da categoria é atualizada. Se a privacidade configurada for `pública' ou `somente amigos', a coleção poderá ser seguida por amigos (RF-16). \\ \hline
 
-Pontos de Extensão & E01 - Associar Layout Próprio à Coleção (estende o passo 7 do FB01, conforme RF-11; sobrescreve o layout padrão da categoria). \\
+Pontos de Extensão & E01 - Associar Layout Próprio à Coleção (estende o passo 7 do FB01, conforme RF-11; sobrescreve o layout padrão da categoria). E02 - Configurar Privacidade da Coleção (estende o passo 8 do FB01, conforme RF-19; padrão privada, alterável para pública ou somente amigos). \\
 \end{longtable}
 \renewcommand{\arraystretch}{1}
 \FloatBarrier
@@ -2315,37 +2296,37 @@ Pontos de Extensão & Nenhum ponto de extensão identificado para este caso de u
 
 Nome do Caso de Uso & Visualizar Feed de Atualizações \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário acompanhe em tempo real as atualizações das categorias que segue, visualizando eventos de adição, edição e remoção de itens, bem como criação ou exclusão de coleções realizados por amigos, ordenados cronologicamente do mais recente ao mais antigo (RF-17). \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário acompanhe em tempo real as atualizações das coleções que segue, visualizando eventos de adição, edição e remoção de itens realizados por amigos, ordenados cronologicamente do mais recente ao mais antigo (RF-17). \\ \hline
 
 Fluxo Básico & \mbox{}
 \textbf{FB01:} Exibição do feed
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
     \item O usuário acessa a área de feed de atualizações.
-    \item O sistema identifica todas as categorias que o usuário segue ativamente (conforme RF-16).
-    \item O sistema recupera os eventos de atualização associados a essas categorias (adição/edição/remoção de itens e criação/exclusão de coleções), ordenados do mais recente ao mais antigo.
-    \item O sistema verifica a privacidade atual de cada categoria antes de exibir seus eventos (RF-19).
-    \item O sistema exibe o feed com os eventos, contendo: nome do autor da ação, tipo de evento, nome do item afetado (quando aplicável), nome da coleção, nome da categoria e data/hora relativa do evento.
+    \item O sistema identifica todas as coleções que o usuário segue ativamente (conforme RF-16).
+    \item O sistema recupera os eventos de atualização associados a essas coleções (adição/edição/remoção de itens), ordenados do mais recente ao mais antigo.
+    \item O sistema verifica a privacidade atual de cada coleção antes de exibir seus eventos (RF-19).
+    \item O sistema exibe o feed com os eventos, contendo: nome do autor da ação, tipo de evento, nome do item afetado, nome da coleção, nome da categoria pai e data/hora relativa do evento.
     \item O feed é atualizado automaticamente em tempo real sem necessidade de recarregar a página.
     \item O usuário pode rolar o feed para carregar eventos mais antigos progressivamente (paginação).
 \end{enumerate}
 \mbox{} \\ \hline
 
 Fluxos Alternativos & \mbox{}
-\textbf{FA01:} Usuário não segue nenhuma categoria
+\textbf{FA01:} Usuário não segue nenhuma coleção
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-    \item No passo 2 do FB01, o sistema identifica que o usuário não segue nenhuma categoria.
-    \item O sistema exibe mensagem: ``Seu feed está vazio. Siga categorias de amigos para acompanhar suas atualizações.''
+    \item No passo 2 do FB01, o sistema identifica que o usuário não segue nenhuma coleção.
+    \item O sistema exibe mensagem: ``Seu feed está vazio. Siga coleções de amigos para acompanhar suas atualizações.''
     \item O sistema exibe atalho para a área de busca de amigos.
 \end{enumerate}
 
-\textbf{FA02:} Categoria seguida alterada para privada
+\textbf{FA02:} Coleção seguida alterada para privada
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-    \item No passo 4 do FB01, o sistema identifica que uma categoria anteriormente seguida foi alterada para privada.
-    \item O sistema não exibe os eventos dessa categoria, incluindo eventos anteriores à mudança de privacidade.
-    \item O sistema encerra automaticamente o acompanhamento dessa categoria.
+    \item No passo 4 do FB01, o sistema identifica que uma coleção anteriormente seguida foi alterada para privada.
+    \item O sistema não exibe os eventos dessa coleção, incluindo eventos anteriores à mudança de privacidade.
+    \item O sistema encerra automaticamente o acompanhamento dessa coleção.
     \item Os demais eventos do feed continuam sendo exibidos normalmente.
 \end{enumerate}
 
@@ -2358,11 +2339,11 @@ Fluxos Alternativos & \mbox{}
 \end{enumerate}
 \mbox{} \\ \hline
 
-Requisitos Especiais & RNF07 - O feed deve ser atualizado em tempo real sem recarregar a página. RNF02 - O carregamento inicial do feed deve ocorrer em até 3 segundos. RNF03 - Eventos de categorias privadas não devem ser exibidos em nenhuma circunstância. \\ \hline
+Requisitos Especiais & RNF07 - O feed deve ser atualizado em tempo real sem recarregar a página. RNF02 - O carregamento inicial do feed deve ocorrer em até 3 segundos. RNF03 - Eventos de coleções privadas não devem ser exibidos em nenhuma circunstância. \\ \hline
 
-Condições Prévias & O usuário deve estar autenticado. O usuário deve seguir ao menos uma categoria com privacidade pública ou somente amigos (RF-16). \\ \hline
+Condições Prévias & O usuário deve estar autenticado. O usuário deve seguir ao menos uma coleção com privacidade pública ou somente amigos (RF-16). \\ \hline
 
-Pós-Condições & O usuário visualiza os eventos recentes das categorias que segue. O feed permanece atualizado em tempo real durante a navegação. Categorias tornadas privadas são removidas do feed imediatamente. \\ \hline
+Pós-Condições & O usuário visualiza os eventos recentes das coleções que segue. O feed permanece atualizado em tempo real durante a navegação. Coleções tornadas privadas são removidas do feed imediatamente, com seu acompanhamento encerrado. \\ \hline
 
 Pontos de Extensão & Nenhum ponto de extensão identificado para este caso de uso. \\
 \end{longtable}
@@ -2470,60 +2451,62 @@ Pontos de Extensão & Nenhum ponto de extensão identificado para este caso de u
 
 Nome do Caso de Uso & Visualizar Perfil de Amigo \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário acesse o perfil público de um amigo confirmado, visualizando suas informações básicas e as categorias disponíveis conforme o nível de privacidade configurado pelo dono. A navegação nas categorias, coleções e itens do amigo é restrita ao modo somente leitura (RF-18 e RF-19). \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário acesse o perfil público de outro usuário (amigo ou não), visualizando suas informações básicas e as coleções disponíveis conforme o nível de privacidade configurado em cada uma delas. As coleções visíveis são agrupadas pelas respectivas categorias, e a navegação nas coleções e itens do usuário visitado é restrita ao modo somente leitura (RF-18 e RF-19). \\ \hline
 
 Fluxo Básico & \mbox{}
-\textbf{FB01:} Visualização do perfil de amigo
+\textbf{FB01:} Visualização do perfil
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-    \item O usuário acessa a lista de amigos ou realiza busca pelo nome do amigo.
-    \item O usuário seleciona o amigo desejado.
-    \item O sistema recupera as informações públicas do perfil do amigo (nome, foto, biografia).
-    \item O sistema recupera as categorias do amigo com privacidade ``pública'' ou ``somente amigos''.
-    \item O sistema exibe o perfil do amigo com suas informações e as categorias acessíveis.
-    \item Categorias com privacidade ``privada'' não são listadas nem mencionadas.
-    \item O usuário navega pelas categorias visíveis e, dentro delas, pelas coleções e itens, em modo somente leitura.
-    \item O usuário pode optar por seguir uma categoria visível [E01].
+    \item O usuário acessa a lista de amigos ou realiza busca pelo nome do usuário desejado.
+    \item O usuário seleciona o perfil desejado.
+    \item O sistema recupera as informações públicas do perfil (nome, foto, biografia).
+    \item O sistema recupera as coleções do usuário visitado com privacidade ``pública'' ou ``somente amigos'' (esta última apenas quando há vínculo de amizade confirmada), agrupando-as pelas respectivas categorias.
+    \item O sistema exibe o perfil com suas informações e as coleções acessíveis, agrupadas por categoria.
+    \item Coleções com privacidade ``privada'' não são listadas nem mencionadas. Categorias que, para esse visitante, não tenham nenhuma coleção visível também são ocultadas integralmente.
+    \item O usuário navega pelas coleções visíveis e pelos itens contidos nelas, em modo somente leitura.
+    \item O usuário pode optar por seguir uma coleção visível [E01].
 \end{enumerate}
 \mbox{} \\ \hline
 
 Fluxos Alternativos & \mbox{}
-\textbf{FA01:} Amigo sem categorias acessíveis
+\textbf{FA01:} Perfil sem coleções acessíveis
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-    \item No passo 4 do FB01, o sistema identifica que todas as categorias do amigo são privadas ou que ele não possui categorias.
-    \item O sistema exibe o perfil básico do amigo com a mensagem: ``Este usuário não possui categorias públicas no momento.''
-    \item O caso de uso continua sem exibir categorias.
+    \item No passo 4 do FB01, o sistema identifica que todas as coleções do usuário visitado são privadas ou que ele não possui coleções acessíveis ao visitante.
+    \item O sistema exibe o perfil básico do usuário visitado com a mensagem: ``Este usuário não possui coleções públicas no momento.''
+    \item O caso de uso continua sem exibir coleções ou categorias.
 \end{enumerate}
 
-\textbf{FA02:} Tentativa de acesso a categoria privada por link direto
+\textbf{FA02:} Tentativa de acesso a coleção privada por link direto
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-    \item O usuário tenta acessar uma categoria privada de um amigo por meio de link direto.
-    \item O sistema verifica a privacidade da categoria.
-    \item O sistema exibe mensagem: ``Esta categoria não está disponível.''
-    \item O sistema não exibe nenhum dado da categoria, nem mesmo o nome.
+    \item O usuário tenta acessar uma coleção privada de outro usuário por meio de link direto.
+    \item O sistema verifica a privacidade da coleção.
+    \item O sistema exibe mensagem: ``Esta coleção não está disponível.''
+    \item O sistema não exibe nenhum dado da coleção, nem mesmo o nome.
 \end{enumerate}
 
 \textbf{FA03:} Usuário acessado não é amigo confirmado
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
     \item No passo 3 do FB01, o sistema identifica que não existe vínculo de amizade confirmado entre os usuários.
-    \item O sistema exibe apenas as categorias com privacidade ``pública'' do perfil visitado.
-    \item Categorias com privacidade ``somente amigos'' não são exibidas.
+    \item O sistema exibe apenas as coleções com privacidade ``pública'' do perfil visitado, agrupadas pelas respectivas categorias.
+    \item Coleções com privacidade ``somente amigos'' não são exibidas.
+    \item Categorias sem nenhuma coleção pública visível são ocultadas integralmente.
 \end{enumerate}
 \mbox{} \\ \hline
 
-Requisitos Especiais & RNF03 - A privacidade das categorias deve ser respeitada rigorosamente em toda a navegação. RNF02 - O perfil deve ser carregado em até 3 segundos. RNF04 - A visualização deve ser responsiva em dispositivos móveis. \\ \hline
+Requisitos Especiais & RNF03 - A privacidade das coleções deve ser respeitada rigorosamente em toda a navegação. RNF02 - O perfil deve ser carregado em até 3 segundos. RNF04 - A visualização deve ser responsiva em dispositivos móveis. \\ \hline
 
 Condições Prévias & O usuário deve estar autenticado. O usuário visitado deve existir na plataforma. \\ \hline
 
-Pós-Condições & O usuário visualiza o perfil e as categorias acessíveis do amigo. Nenhuma alteração é feita nos dados do amigo. O usuário pode iniciar o fluxo de seguir uma categoria a partir desta tela. \\ \hline
+Pós-Condições & O usuário visualiza o perfil e as coleções acessíveis do usuário visitado, agrupadas por categoria. Nenhuma alteração é feita nos dados do usuário visitado. O usuário pode iniciar o fluxo de seguir uma coleção a partir desta tela. \\ \hline
 
-Pontos de Extensão & E01 - Seguir Categoria (estende o passo 8 do FB01, conforme RF-16 — permite ao usuário acompanhar uma categoria pública ou somente amigos a partir do perfil visitado). \\
+Pontos de Extensão & E01 - Seguir Coleção (estende o passo 8 do FB01, conforme RF-16 -- permite ao usuário acompanhar uma coleção pública ou somente amigos a partir do perfil visitado). \\
 \end{longtable}
 \renewcommand{\arraystretch}{1}
 \FloatBarrier
+
 
 
 
