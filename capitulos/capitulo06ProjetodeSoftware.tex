@@ -29,7 +29,7 @@ O mapeamento entre o modelo de domínio (TypeScript) e o modelo relacional (Post
     \item \textbf{Tipos Físicos:} Os atributos do tipo \texttt{String} no Prisma são explicitamente mapeados para os tipos físicos \texttt{VARCHAR(n)} ou \texttt{TEXT} no PostgreSQL através das diretivas \texttt{@db.VarChar(n)} e \texttt{@db.Text}, conforme o tamanho esperado do conteúdo;
     \item \textbf{Chaves Primárias:} Todos os modelos possuem um identificador único do tipo UUID gerado automaticamente;
     \item \textbf{Relações 1:N:} Implementadas via chaves estrangeiras (\textit{foreign keys}) obrigatórias, com integridade referencial garantida por regras de \textit{cascade} ou \textit{set null} conforme a semântica da relação;
-    \item \textbf{Relações N:N:} Implementadas via tabelas associativas (como \texttt{item\_widgets} e \texttt{collection\_follows}), protegidas por chaves únicas compostas que impedem a duplicação de pares;
+    \item \textbf{Relações N:N:} Implementadas via tabelas associativas (como \texttt{element\_values} e \texttt{collection\_follows}), protegidas por chaves únicas compostas que impedem a duplicação de pares;
     \item \textbf{Relações Reflexivas:} As interações sociais (amizades) são mapeadas como relações nomeadas para distinguir os papéis de remetente e destinatário, com chave única composta sobre os identificadores envolvidos;
     \item \textbf{Índices:} Foram criados índices secundários sobre as chaves estrangeiras de maior frequência de consulta, visando a otimização das operações de leitura.
 \end{itemize}
@@ -71,9 +71,9 @@ Para melhor compreensão da arquitetura de dados, as 12 tabelas propostas neste 
         categories & Tabela~\ref{tab:tabelaCategoryDetalhado} \\ \hline
         layouts & Tabela~\ref{tab:tabelaLayoutDetalhado} \\ \hline
         collections & Tabela~\ref{tab:tabelaCollectionDetalhado} \\ \hline
-        widgets & Tabela~\ref{tab:tabelaWidgetDetalhado} \\ \hline
+        elements & Tabela~\ref{tab:tabelaElementDetalhado} \\ \hline
         items & Tabela~\ref{tab:tabelaItemDetalhado} \\ \hline
-        item\_widgets & Tabela~\ref{tab:tabelaItemWidgetDetalhado} \\ \hline
+        element\_values & Tabela~\ref{tab:tabelaValorElementoDetalhado} \\ \hline
         notifications & Tabela~\ref{tab:tabelaNotificationDetalhado} \\ \hline
         event\_logs & Tabela~\ref{tab:tabelaEventLogDetalhado} \\ \hline
         friendships & Tabela~\ref{tab:tabelaFriendshipDetalhado} \\ \hline
@@ -163,7 +163,6 @@ Nesta subseção, apresenta-se o detalhamento físico das 12 tabelas que compõe
     id\_category & UUID & X & X &  &  &  &  \\ \hline
     name & Varch.(150) & X &  &  &  & UK\_01 & 1 \\ \hline
     description & Text &  &  &  &  &  &  \\ \hline
-    privacy & Enum & X &  &  &  &  &  \\ \hline
     icon & Varch.(100) &  &  &  &  &  &  \\ \hline
     created\_at & Time. & X &  &  &  &  &  \\ \hline
     user\_id & UUID & X &  & users & id\_user & UK\_01 & 2 \\ \hline
@@ -203,6 +202,7 @@ Nesta subseção, apresenta-se o detalhamento físico das 12 tabelas que compõe
     id\_collection & UUID & X & X &  &  &  &  \\ \hline
     name & Varch.(150) & X &  &  &  &  &  \\ \hline
     description & Text &  &  &  &  &  &  \\ \hline
+    privacy & Enum & X &  &  &  &  &  \\ \hline
     category\_id & UUID & X &  & categories & id\_cat. &  &  \\ \hline
     layout\_id & UUID &  &  & layouts & id\_lay. &  &  \\ \hline
 \end{tabularx}
@@ -210,26 +210,33 @@ Nesta subseção, apresenta-se o detalhamento físico das 12 tabelas que compõe
 \label{tab:tabelaCollectionDetalhado}
 \end{table}
 
-% 6. WIDGETS
+% 6. ELEMENTS
 \FloatBarrier
 \begin{table}[!htbp]
 \centering
-\caption{Widget do Layout (widgets)}
+\caption{Elemento do Layout (elements)}
 \footnotesize
 \begin{tabularx}{\textwidth}{ | X | c | c | c | c | c | c | c | }
     \hline
     \textbf{Campo} & \textbf{Tipo} & \textbf{Obr.?} & \textbf{PK?} & \textbf{Tab.} & \textbf{Cmp.} & \textbf{Grp.} & \textbf{Ord.}\\ \hline
-    id\_widget & UUID & X & X &  &  &  &  \\ \hline
+    id\_element & UUID & X & X &  &  &  &  \\ \hline
     name & Varch.(100) & X &  &  &  &  &  \\ \hline
     type & Enum & X &  &  &  &  &  \\ \hline
+    content & Text &  &  &  &  &  &  \\ \hline
     pos\_x & Int & X &  &  &  &  &  \\ \hline
     pos\_y & Int & X &  &  &  &  &  \\ \hline
     width & Varch.(20) & X &  &  &  &  &  \\ \hline
     height & Varch.(20) & X &  &  &  &  &  \\ \hline
+    font\_family & Varch.(100) &  &  &  &  &  &  \\ \hline
+    font\_size & Float &  &  &  &  &  &  \\ \hline
+    font\_weight & Varch.(20) &  &  &  &  &  &  \\ \hline
+    text\_align & Varch.(20) &  &  &  &  &  &  \\ \hline
+    color & Varch.(9) &  &  &  &  &  &  \\ \hline
+    background\_color & Varch.(9) &  &  &  &  &  &  \\ \hline
     layout\_id & UUID & X &  & layouts & id\_layout &  &  \\ \hline
 \end{tabularx}
 \vspace{0.1cm} \\ \textbf{Fonte:} Elaborada pelo autor
-\label{tab:tabelaWidgetDetalhado}
+\label{tab:tabelaElementDetalhado}
 \end{table}
 
 % 7. ITEMS
@@ -254,26 +261,26 @@ Nesta subseção, apresenta-se o detalhamento físico das 12 tabelas que compõe
 \label{tab:tabelaItemDetalhado}
 \end{table}
 
-% 8. ITEM_WIDGETS
+% 8. ELEMENT_VALUES
 \FloatBarrier
 \begin{table}[!htbp]
 \centering
-\caption{Valores dos Widgets (item\_widgets)}
+\caption{Valores dos Elementos (element\_values)}
 \footnotesize
 \begin{tabularx}{\textwidth}{ | X | c | c | c | c | c | c | c | }
     \hline
     \textbf{Campo} & \textbf{Tipo} & \textbf{Obr.?} & \textbf{PK?} & \textbf{Tab.} & \textbf{Cmp.} & \textbf{Grp.} & \textbf{Ord.}\\ \hline
-    id\_item\_widget & UUID & X & X &  &  &  &  \\ \hline
-    widget\_value & Text & X &  &  &  &  &  \\ \hline
+    id\_element\_value & UUID & X & X &  &  &  &  \\ \hline
+    value & Text & X &  &  &  &  &  \\ \hline
     pos\_x & Int &  &  &  &  &  &  \\ \hline
     pos\_y & Int &  &  &  &  &  &  \\ \hline
     width & Varch.(20) &  &  &  &  &  &  \\ \hline
     height & Varch.(20) &  &  &  &  &  &  \\ \hline
     item\_id & UUID & X &  & items & id\_item & UK\_01 & 1 \\ \hline
-    widget\_id & UUID & X &  & widgets & id\_widget & UK\_01 & 2 \\ \hline
+    element\_id & UUID & X &  & elements & id\_element & UK\_01 & 2 \\ \hline
 \end{tabularx}
 \vspace{0.1cm} \\ \textbf{Fonte:} Elaborada pelo autor
-\label{tab:tabelaItemWidgetDetalhado}
+\label{tab:tabelaValorElementoDetalhado}
 \end{table}
 
 % 9. NOTIFICATIONS

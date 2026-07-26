@@ -59,13 +59,13 @@ Neste trabalho, a ferramenta concentrou três frentes distintas de uso: a ediç�
 
 O ecossistema Node.js consiste em um ambiente de execução JavaScript construído sobre o motor V8 do Chrome, que habilita a execução desta linguagem fora do navegador, particularmente em contextos de servidor. Por cima dele, o NestJS oferece um \textit{framework} opinativo inspirado em conceitos do Angular, organizando a aplicação em módulos coesos compostos por \textit{controllers}, \textit{providers} e \textit{services}. Essa organização modular alinha-se aos preceitos de separação de responsabilidades defendidos por \cite{Fowler2002}.
 
-No sistema proposto, essa dupla compõe a camada responsável pela lógica de negócio. Suas principais atribuições incluem a autenticação de usuários e emissão de \textit{tokens} de sessão, o processamento das operações sobre categorias, coleções, itens e seus respectivos \textit{widgets} preenchidos, a aplicação das regras de privacidade configuradas pelos usuários, o gerenciamento dos vínculos sociais (amizades e acompanhamentos) e o disparo de notificações decorrentes dessas interações.
+No sistema proposto, essa dupla compõe a camada responsável pela lógica de negócio. Suas principais atribuições incluem a autenticação de usuários e emissão de \textit{tokens} de sessão, o processamento das operações sobre categorias, coleções, itens, layouts e elementos visuais, a aplicação das regras de privacidade configuradas no nível das coleções, o gerenciamento dos vínculos sociais (amizades e acompanhamentos) e o disparo de notificações decorrentes dessas interações.
 
 \subsection{PostgreSQL e Docker}
 
 O PostgreSQL é um sistema gerenciador de banco de dados relacional maduro, de código aberto, reconhecido por sua fidelidade ao padrão SQL e por seu suporte robusto a transações. Sua integração com aplicações Node.js é bem consolidada no mercado, o que pesou em sua escolha como camada de persistência deste projeto.
 
-A modelagem do banco espelha a organização do modelo de domínio, contemplando as entidades de usuários, categorias, coleções, itens, \textit{layouts} e \textit{widgets}, bem como a tabela associativa \textit{ItemWidget}, que armazena os valores preenchidos pelo usuário para cada \textit{widget} de cada item. Estruturas relacionadas à dimensão social (solicitações de amizade, acompanhamento de categorias, eventos de atualização e notificações) e às preferências visuais globais também residem nessa camada.
+A modelagem do banco espelha a organização do modelo de domínio, contemplando as entidades de usuários, categorias, coleções, itens, \textit{layouts} e elementos, bem como estruturas para armazenar os valores e ajustes visuais aplicáveis às fichas dos itens. Estruturas relacionadas à dimensão social (solicitações de amizade, acompanhamento de coleções, eventos de atualização e notificações) e às preferências visuais globais também residem nessa camada.
 
 A instalação do PostgreSQL foi realizada por meio do Docker, plataforma que abstrai o processo de provisionamento da instância em um contêiner isolado. Essa decisão trouxe dois benefícios imediatos: a reprodutibilidade do ambiente entre máquinas distintas e a facilidade de resetar a base durante os ciclos de teste, sem comprometer o sistema operacional hospedeiro.
 
@@ -73,13 +73,13 @@ A instalação do PostgreSQL foi realizada por meio do Docker, plataforma que ab
 
 O DBeaver é um cliente gráfico multiplataforma voltado à administração de bancos de dados relacionais, compatível com os principais SGBDs disponíveis no mercado, entre eles o PostgreSQL. Por meio de sua interface visual, a ferramenta permite inspecionar estruturas, executar consultas SQL diretamente no banco e exportar resultados em diferentes formatos.
 
-Ao longo do desenvolvimento, o DBeaver complementou o fluxo de trabalho ao oferecer uma alternativa visual ao terminal interativo do PostgreSQL. Foi particularmente útil para verificar a integridade das associações entre entidades --- por exemplo, confirmar que um item armazenava corretamente seus \textit{widgets} preenchidos e estava vinculado à coleção e à categoria corretas --- e para explorar os dados inseridos durante as sessões de teste manual.
+Ao longo do desenvolvimento, o DBeaver complementou o fluxo de trabalho ao oferecer uma alternativa visual ao terminal interativo do PostgreSQL. Foi particularmente útil para verificar a integridade das associações entre entidades --- por exemplo, confirmar que um item estava vinculado à coleção correta e utilizava os elementos definidos pelo layout aplicável --- e para explorar os dados inseridos durante as sessões de teste manual.
 
 \subsection{Next.js}
 
 O Next.js é um \textit{framework} mantido pela Vercel, construído sobre a biblioteca React, que estende as capacidades desta última ao oferecer roteamento baseado em arquivos, renderização no servidor, geração estática e rotas de API em uma mesma base de código. Esses recursos simplificam a construção de aplicações \textit{web} modernas ao reduzir a quantidade de configuração manual necessária.
 
-A camada de apresentação deste projeto foi inteiramente construída com Next.js. As telas contemplam o cadastro e autenticação de usuários, o \textit{dashboard} que lista as categorias do usuário, a navegação entre categorias, coleções e itens, o editor visual de \textit{layouts} (com funcionalidade de \textit{drag-and-drop} de \textit{widgets}), a exibição e edição de fichas individuais de itens, o painel de personalização visual global, as telas de interações sociais e o \textit{feed} de atualizações. A renderização dinâmica das fichas --- que varia conforme os \textit{widgets} configurados em cada \textit{layout} --- é um dos pontos em que as capacidades de composição do React foram mais intensamente exploradas.
+A camada de apresentação deste projeto foi inteiramente construída com Next.js. As telas contemplam o cadastro e autenticação de usuários, o \textit{dashboard} que lista as categorias do usuário, a navegação entre categorias, coleções e itens, o editor visual de \textit{layouts} (com funcionalidade de \textit{drag-and-drop} de elementos), a exibição e edição de fichas individuais de itens, o painel de personalização visual global, as telas de interações sociais e o \textit{feed} de atualizações. A renderização dinâmica das fichas --- que varia conforme os elementos configurados em cada \textit{layout} --- é um dos pontos em que as capacidades de composição do React foram mais intensamente exploradas.
 
 \subsection{Figma}
 
@@ -91,7 +91,7 @@ No presente trabalho, o Figma foi utilizado na fase de concepção visual da pla
 
 O Astah Community, desenvolvido pela empresa japonesa Change Vision, é uma ferramenta voltada à modelagem UML que disponibiliza, em sua versão gratuita para uso acadêmico, recursos para a construção dos principais tipos de diagrama previstos pelo padrão.
 
-Sua utilização neste trabalho concentrou-se na produção dos artefatos de análise e projeto: o diagrama de casos de uso, que formaliza as interações dos atores com o sistema; o modelo de domínio, que evidencia as classes conceituais e suas associações; e os diagramas de classes derivados. A organização dos diagramas em pacotes, facilitada pelo Astah, foi especialmente útil para representar visualmente os cinco agrupamentos conceituais do modelo de domínio deste projeto (Usuário, Coleções, Editor de Layout, Interação Social e Aparência).
+Sua utilização neste trabalho concentrou-se na produção dos artefatos de análise e projeto: o diagrama de casos de uso, que formaliza as interações dos atores com o sistema; o modelo de domínio, que evidencia as classes conceituais e suas associações; e os diagramas de classes derivados. A organização dos diagramas em pacotes, facilitada pelo Astah, foi especialmente útil para representar visualmente os seis agrupamentos conceituais do modelo de domínio deste projeto (Usuário, Coleções, Editor de Layout, Interação Social, Notificações e Aparência).
 
 \section{Métodos de Desenvolvimento}
 

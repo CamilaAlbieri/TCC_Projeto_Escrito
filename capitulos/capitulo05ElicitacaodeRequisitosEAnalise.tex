@@ -1,10 +1,14 @@
 \chapter{Elicitação de Requisitos e Análise}
 \label{cap:05}
-A engenharia de requisitos é uma etapa fundamental no processo de desenvolvimento de software, sendo responsável por definir o que o sistema deve fazer e sob quais restrições ele deve operar \cite{Valente2020}. 
-Segundo \cite{Sommerville2011}, essa disciplina engloba as atividades de descoberta, análise, documentação e validação dos requisitos, constituindo a base sobre a qual todo o projeto será construído.
-\cite{pressman2016} complementam essa visão ao afirmar que a engenharia de requisitos envolve a coleta de informações sobre o sistema a ser desenvolvido, a análise do problema e a descrição, classificação e priorização dos requisitos identificados.
+A engenharia de requisitos é uma etapa fundamental no processo de desenvolvimento de software, sendo responsável por definir o que o sistema deve fazer 
+e sob quais restrições ele deve operar \cite{Valente2020}. 
+Segundo \cite{Sommerville2011}, essa disciplina engloba as atividades de descoberta, análise, documentação e validação dos requisitos, constituindo a base 
+sobre a qual todo o projeto será construído.
+\cite{pressman2016} complementam essa visão ao afirmar que a engenharia de requisitos envolve a coleta de informações sobre o sistema a ser desenvolvido, 
+a análise do problema e a descrição, classificação e priorização dos requisitos identificados.
 
-O processo de elicitação de requisitos, também chamado de levantamento ou descoberta de requisitos, consiste em reunir informações junto aos stakeholders para compreender suas necessidades e expectativas em relação ao sistema \cite{Sommerville2011}.
+O processo de elicitação de requisitos, também chamado de levantamento ou descoberta de requisitos, consiste em reunir informações junto aos stakeholders 
+para compreender suas necessidades e expectativas em relação ao sistema \cite{Sommerville2011}.
 Diversas técnicas podem ser empregadas nessa etapa, como entrevistas, questionários, workshops, prototipação e análise de cenários de uso \cite{Valente2020}
 
 Este capítulo apresenta os requisitos identificados para o sistema proposto, organizados em requisitos do usuário e requisitos do sistema, sendo estes últimos subdivididos em requisitos funcionais e não funcionais.
@@ -12,14 +16,31 @@ Este capítulo apresenta os requisitos identificados para o sistema proposto, or
 
 \section{Requisitos do Usuário}
 
-Requisitos de usuário são declarações, em linguagem natural com diagramas, dos serviços que o sistema deverá fornecer aos seus usuários e das restrições com as quais ele deve operar \cite{Sommerville2011}. \citeauthorandyear{pressman2016} destacam que um documento de requisitos de sistema precisa ser claro, consistente e completo, pois servirá de referência para desenvolvedores, gerentes de projeto e engenheiros de testes ao longo de todo o ciclo de vida do software.
+Requisitos de usuário são declarações, em linguagem natural com diagramas, dos serviços que o sistema deverá fornecer aos seus usuários e das restrições 
+com as quais ele deve operar \cite{Sommerville2011}. \citeauthorandyear{pressman2016} destacam que um documento de requisitos de sistema precisa ser claro, 
+consistente e completo, pois servirá de referência para desenvolvedores, gerentes de projeto e engenheiros de testes ao longo de todo o ciclo de vida do software.
 
-Antes de apresentar os requisitos propriamente dito, é importante compreender quatro conceitos centrais que estruturam a forma como os dados do sistema se relacionam: \textbf{Widget}, \textbf{Layout}, \textbf{Item} e \textbf{ItemWidget}. Esses elementos operam em conjunto para oferecer ao usuário a experiência de personalização que caracteriza a plataforma.
+Antes de apresentar os requisitos propriamente ditos, é importante compreender três conceitos centrais que estruturam a forma como os dados do sistema se 
+relacionam: \textbf{Element}, \textbf{Layout} e \textbf{Item}. Para facilitar o entendimento, vale partir de uma ferramenta já conhecida: 
+editores visuais como o \textit{Canva}. Neles, o usuário monta uma tela arrastando elementos --- caixas de texto, imagens, formas, ícones --- e ajustando livremente 
+a posição e o tamanho de cada um. A plataforma proposta segue essa mesma ideia, mas com um diferencial: a tela montada não é uma arte isolada, e sim um 
+\textbf{modelo} que pode ser reaproveitado por dezenas ou centenas de itens de uma coleção, cada um com seus próprios dados.
 
-No contexto deste projeto, os requisitos do usuário foram identificados com base nas necessidades de organização e personalização de coleções pessoais. Uma analogia útil é a de um \textbf{formulário e suas respostas preenchidas}. O \textit{Layout} funciona como um formulário em branco, definindo quais campos existem, sua posição visual e seu tamanho. Os \textit{Widgets} correspondem aos campos propriamente ditos, como uma caixa de texto, um seletor de estrelas para classificação, um campo para imagem, entre outros. Um \textit{Item} representa uma resposta preenchida desse formulário, associada a um conteúdo específico do acervo do usuário, como um livro ou filme. Por fim, o \textit{ItemWidget} é a entidade que armazena, para cada item, o valor que o usuário forneceu em cada campo --- isto é, a ponte entre a estrutura do formulário (Layout e Widgets) e os dados efetivamente informados pelo usuário (Item).
+A partir dessa analogia, os conceitos podem ser entendidos assim: o \textbf{Element} é cada peça que o usuário arrasta para a tela 
+(uma caixa de texto, uma imagem, uma classificação por estrelas); o \textbf{ElementType} é o conjunto fixo de tipos de elemento disponíveis no editor; o \textbf{Layout} é a tela montada, isto é, o conjunto de elementos (\textit{Elements})
+ organizados visualmente, funcionando como um \textit{modelo} reutilizável; e o \textbf{Item} é uma unidade concreta do acervo do usuário que adota esse modelo
+  (por exemplo, o livro ``Duna''). O conteúdo exibido pode estar diretamente nos elementos textuais, como em ``Autor:'' ou ``Autor: Frank Herbert'', e o usuário pode separar rótulos e valores criando elementos independentes quando desejar.
 
-Em termos práticos, considere um exemplo concreto. Suponha que a usuária crie um Layout chamado \textit{``Card de Livro''} contendo quatro widgets: 
-um de \textit{Imagem} para a capa, um \textit{Input Field} para o autor, um widget de \textit{Classificação} de um a cinco estrelas e uma área de \textit{Texto} para notas pessoais. Cada widget possui posição e tamanho próprios dentro da área de edição do layout. Ao cadastrar o item \textit{``Duna''}, o sistema gera automaticamente os registros de ItemWidget correspondentes: para o widget \textit{Imagem}, armazena o arquivo da capa; para o widget \textit{Input Field}, armazena o texto \textit{``Frank Herbert''}; para o widget \textit{Classificação}, o valor \textit{5}; e para o widget \textit{Texto}, a nota \textit{``Obra-prima do gênero''}. Desse modo, o Layout e seus Widgets permanecem inalterados e podem ser reutilizados por centenas de itens, enquanto cada item mantém seus próprios valores por meio dos registros de ItemWidget.
+Uma analogia complementar, mais próxima da estrutura de dados, é a de um \textbf{formulário visual reutilizável}. O \textit{Layout} funciona como 
+um formulário em branco, definindo quais elementos existem, sua posição e seu tamanho; os elementos são os campos ou objetos visuais em si; e o \textit{Item} é a unidade que utiliza esse modelo dentro de uma coleção. Quando necessário, um item pode receber uma versão visual própria por meio de \textit{override}, sem alterar o layout da coleção nem os demais itens.
+
+Em termos práticos, considere um exemplo concreto. Suponha que o usuário crie um Layout chamado \textit{``Card de Livro''} contendo quatro elementos: 
+um de \textit{Imagem} para a capa, um \textit{campo de texto} para o autor, um elemento de \textit{Classificação} de um a cinco estrelas e uma área de \textit{Texto} 
+para notas pessoais. Cada elemento possui posição e tamanho próprios dentro da área de edição do layout. Ao cadastrar o item \textit{``Duna''}, o sistema gera 
+os elementos visuais correspondentes para preenchimento e leitura: para o elemento \textit{Imagem}, a capa; para o \textit{campo de texto}, 
+o autor \textit{``Frank Herbert''}; para o elemento \textit{Classificação}, o valor \textit{5}; e para o elemento \textit{Texto}, a nota 
+\textit{``Obra-prima do gênero''}. Desse modo, o Layout e seus elementos permanecem reutilizáveis por diferentes itens da coleção, enquanto cada 
+ item preserva sua própria ficha visual.
 
 Essa separação traz três benefícios diretos para o projeto: 
 
@@ -27,9 +48,9 @@ Essa separação traz três benefícios diretos para o projeto:
 
 (ii) viabiliza que cada item preserve valores distintos, respeitando a individualidade de cada obra cadastrada; e 
 
-(iii) permite modificações individuais em um item específico --- por exemplo, adicionar um widget extra apenas a um único livro --- sem afetar o layout original nem os demais itens (RF-12).
+(iii) permite modificações individuais em um item específico --- por exemplo, adicionar um elemento extra apenas a um único livro --- sem afetar o layout original nem os demais itens (RF-17).
 
-O Quadro~\ref{quad:glossario_dominio} apresenta, de forma resumida, a definição de cada um desses quatro elementos centrais.
+O Quadro~\ref{quad:glossario_dominio} apresenta, de forma resumida, a definição desses conceitos centrais.
 
 \begin{quadro}[h!]
 \caption{Conceitos centrais do modelo de domínio}
@@ -37,18 +58,30 @@ O Quadro~\ref{quad:glossario_dominio} apresenta, de forma resumida, a definiçã
 \begin{tabular}{|p{3.5cm}|p{11.5cm}|}
 \hline
 \textbf{Conceito} & \textbf{Descrição} \\ \hline
-Widget & Componente visual reutilizável utilizado para compor layouts, como campos de texto, imagens, classificações, datas, listas, ícones, entre outros. Cada widget possui um tipo, uma posição e um tamanho definidos dentro do layout ao qual pertence. \\ \hline
-Layout & Estrutura personalizada que define quais widgets compõem a ficha de um item e como eles se organizam visualmente. Funciona como um \textit{template} reutilizável, podendo ser associado a uma categoria (como padrão) ou a uma coleção (sobrescrevendo o padrão da categoria). \\ \hline
-Item & Unidade individual de conteúdo cadastrada pelo usuário (por exemplo, um livro, filme ou jogo específico). Todo item pertence a uma coleção e herda, por padrão, o layout aplicável àquela coleção. \\ \hline
-ItemWidget & Entidade de associação que armazena o valor preenchido pelo usuário para cada widget de um item específico. Representa o vínculo entre um item e os widgets do layout aplicável, guardando as informações concretas inseridas (como o nome do autor em um \textit{Input Field}, a nota atribuída em um widget de \textit{Classificação}, ou o conteúdo digitado em um widget de \textit{Texto}). \\ \hline
+Element & Componente visual reutilizável utilizado para compor layouts, como textos, imagens, classificações, datas, listas, ícones, entre outros. Cada elemento possui tipo, posição, tamanho, conteúdo opcional e propriedades visuais próprias, como fonte, tamanho da fonte, peso, alinhamento, cor e cor de fundo. \\ \hline
+ElementType & Conjunto fixo e predefinido de categorias de elemento que o usuário pode arrastar para o editor, à semelhança dos elementos básicos de ferramentas como o Canva. Compreende: texto fixo, campo de texto, imagem, gif, forma, ícone, classificação, data e lista. É representado por uma enumeração, pois constitui um conjunto estável que faz parte das capacidades do próprio editor. \\ \hline
+Layout & Estrutura personalizada que define quais elementos compõem a ficha de um item e como eles se organizam visualmente. Funciona como um \textit{template} reutilizável, associado a uma coleção; um mesmo layout pode ser reutilizado por diferentes coleções. Todos os itens de uma coleção compartilham o layout dela. \\ \hline
+Item & Unidade individual de conteúdo cadastrada pelo usuário (por exemplo, um livro, filme ou jogo específico). Todo item pertence a uma coleção e adota, por padrão, o layout associado a essa coleção, podendo receber uma versão visual própria conforme RF-17. \\ \hline
 \end{tabular}
 \fonte{Elaborada pelo autor}
 \end{quadro}
 
+Cabe esclarecer dois pontos sobre os tipos de elemento. Em primeiro lugar, o conjunto de tipos é \textbf{fixo} e definido por uma enumeração (ElementType), 
+e não um cadastro gerido em tempo de execução. Essa decisão segue o modelo de editores visuais consolidados, como o Canva, nos quais os \textit{tipos} de elemento 
+(texto, imagem, formas, entre outros) fazem parte das capacidades nativas da ferramenta, enquanto o que o usuário cria livremente são \textit{instâncias} desses tipos 
+--- isto é, quantos elementos quiser, arrastando, redimensionando e posicionando-os na tela. A eventual inclusão de um tipo inteiramente novo (por exemplo, vídeo incorporado) 
+caracteriza uma evolução do próprio editor, e não um dado a ser cadastrado pelo usuário final.
+
+Em segundo lugar, é importante distinguir os tipos \textit{texto fixo} e \textit{campo de texto}, que visualmente se assemelham, mas têm naturezas distintas. 
+O \textbf{texto fixo} é um rótulo definido uma única vez no layout e idêntico em todos os itens que o utilizam (por exemplo, o rótulo ``Autor:''). 
+Já o \textbf{campo de texto} é um espaço cujo conteúdo varia de item para item e é preenchido pelo usuário ao editar cada item (por exemplo, o valor ``Rick Riordan''). 
+Em termos de modelo, o texto fixo reside no Layout (compartilhado por todos os itens), ao passo que o valor de um campo de texto varia conforme a ficha do item. 
+É essa separação que permite reaproveitar um mesmo layout em centenas de itens, cada qual com seus próprios valores.
+
 \subsection{Organização em Pacotes}
 \label{subsec:pacotes_dominio}
 
-Devido à quantidade de classes conceituais envolvidas, o modelo de domínio foi organizado em cinco pacotes, de modo a agrupar entidades que compartilham propósito semântico e 
+Devido à quantidade de classes conceituais envolvidas, o modelo de domínio foi organizado em seis pacotes, de modo a agrupar entidades que compartilham propósito semântico e 
 reduzir a complexidade visual do diagrama. Essa segmentação segue a recomendação de \cite{Larman2007}, segundo o qual o agrupamento de classes em pacotes facilita a leitura do modelo, 
 evidencia suas fronteiras conceituais e favorece o raciocínio modular sobre o sistema. Os pacotes adotados neste trabalho são:
 
@@ -62,13 +95,15 @@ evidencia suas fronteiras conceituais e favorece o raciocínio modular sobre o s
 
   \item \textbf{Coleções} --- reúne as entidades que compõem a estrutura de
   organização do acervo em três níveis hierárquicos: Categoria, Coleção e
-  Item. Inclui também a entidade associativa ItemWidget e a enumeração de
+  Item. Inclui também a enumeração de
   privacidade. Representa o núcleo de domínio da aplicação, pois é nele que
   o usuário efetivamente cadastra e organiza seu conteúdo.
 
   \item \textbf{Editor de Layout} --- agrupa as entidades responsáveis pela
-  personalização visual das fichas de itens, incluindo Layout, Widget e a
-  enumeração de tipos de widget. É este pacote que sustenta o diferencial de
+  personalização visual das fichas de itens, incluindo Layout, Element e a
+  enumeração ElementType, que define o conjunto fixo de tipos de elemento
+  disponíveis no editor (texto fixo, campo de texto, imagem, gif, forma, ícone,
+  classificação, data e lista). É este pacote que sustenta o diferencial de
   customização da plataforma.
 
   \item \textbf{Interação Social} --- concentra as entidades ligadas aos
@@ -92,38 +127,51 @@ evidencia suas fronteiras conceituais e favorece o raciocínio modular sobre o s
 \end{itemize}
 
 Essa organização reflete a separação de responsabilidades identificada durante
-a elicitação de requisitos: as classes do pacote \textit{Coleções} sustentam
-os requisitos funcionais de gestão de conteúdo (RF-04 a RF-09); as do pacote
+a elicitação de requisitos: Os requisitos de acesso e conta de usuário
+(RF-01 a RF-05) relacionam-se à entidade central do pacote \textit{Usuário};
+as classes do pacote \textit{Coleções} sustentam
+os requisitos funcionais de gestão de conteúdo (RF-06 a RF-13); as do pacote
 \textit{Editor de Layout} suportam os requisitos de personalização estrutural
-(RF-10 a RF-12); as do pacote \textit{Aparência} viabilizam a personalização
-visual global (RF-13 e RF-14); as do pacote \textit{Interação Social} dão
-suporte às funcionalidades de rede entre usuários (RF-15 e RF-16); e as do
+(RF-14 a RF-17); as do pacote \textit{Aparência} viabilizam a personalização
+visual global (RF-18 e RF-19); as do pacote \textit{Interação Social} dão
+suporte às funcionalidades de rede entre usuários (RF-20 a RF-23); e as do
 pacote \textit{Notificações} sustentam o mecanismo de comunicação de eventos
-do sistema ao usuário (RF-17 e RF-21).
+do sistema ao usuário (RF-24). .
+
+
 A Figura~\ref{fig:ModeloDominio} apresenta o modelo de domínio desenvolvido neste trabalho, evidenciando a organização em pacotes descrita acima, bem como as 
 principais classes conceituais do sistema e as associações que estabelecem entre si.
 
 
-
 \section{Requisitos do Sistema}
 
-\citeauthorandyear{Sommerville2011} afirma que os requisitos do sistema são tradicionalmente classificados em requisitos \textbf{funcionais}, que descrevem as funcionalidades que o sistema deve oferecer, e requisitos \textbf{não funcionais}, que definem restrições de qualidade como desempenho, segurança e usabilidade. Eles constituem o núcleo da especificação do sistema, pois delimitam o escopo das funcionalidades a serem implementadas, e sua classificação permite uma organização sistemática das especificações, facilitando tanto o desenvolvimento quanto a validação do sistema.
+\citeauthorandyear{Sommerville2011} afirma que os requisitos do sistema são tradicionalmente classificados em requisitos \textbf{funcionais}, 
+que descrevem as funcionalidades que o sistema deve oferecer, e requisitos \textbf{não funcionais}, que definem restrições de qualidade como desempenho, 
+segurança e usabilidade. Eles constituem o núcleo da especificação do sistema, pois delimitam o escopo das funcionalidades a serem implementadas, 
+e sua classificação permite uma organização sistemática das especificações, facilitando tanto o desenvolvimento quanto a validação do sistema.
 
 Assim, esta seção apresenta os requisitos identificados neste trabalho, organizados nas subseções a seguir.
 
 
 \subsection{Requisitos Funcionais}
 
-Segundo \citeauthorandyear{Sommerville2011}, requisitos funcionais descrevem as funções ou serviços que o sistema deve fornecer, ou seja, o que o sistema deve fazer. Eles especificam as ações que o sistema deve ser capaz de executar em resposta a entradas específicas ou em determinadas condições.
+Segundo \citeauthorandyear{Sommerville2011}, requisitos funcionais descrevem as funções ou serviços que o sistema deve fornecer, ou seja, o que o sistema deve fazer. 
+Eles especificam as ações que o sistema deve ser capaz de executar em resposta a entradas específicas ou em determinadas condições.
 
-Os atores que interagem com o sistema são: \textbf{Usuário}, que representa a pessoa cadastrada na plataforma e responsável por criar, editar e gerenciar suas categorias, coleções, itens e interações sociais; e o \textbf{Sistema}, que atua de forma autônoma em funcionalidades como exibição de fichas de itens, envio de notificações, atualização do feed em tempo real e organização visual dos dados.
+Os atores que interagem com o sistema são: \textbf{Usuário}, que representa a pessoa cadastrada na plataforma e responsável por criar, editar e gerenciar suas categorias, 
+coleções, itens e interações sociais; e o \textbf{Sistema}, que atua de forma autônoma em funcionalidades como exibição de fichas de itens, envio de notificações, 
+atualização do feed em tempo real e organização visual dos dados.
 
-Para padronizar a especificação dos requisitos, adotou-se o verbo \textbf{gerenciar} como forma genérica de representar operações do tipo CRUD (cadastrar, editar e excluir), sempre que aplicável. Essa padronização reduz a repetição textual e torna a descrição dos requisitos mais objetiva.
+Para padronizar a especificação dos requisitos, adotou-se o verbo \textbf{gerenciar} como forma genérica de representar operações do tipo CRUD (cadastrar, editar e excluir), 
+sempre que aplicável. Essa padronização reduz a repetição textual e torna a descrição dos requisitos mais objetiva.
 
-Os requisitos funcionais estão organizados em grupos e apresentados de forma sequencial, seguindo uma ordem lógica de dependência entre funcionalidades: iniciam pelos requisitos de acesso ao sistema (cadastro, autenticação e gerenciamento de perfil), prosseguem com a estrutura central do sistema (categorias, coleções, itens e suas fichas), seguem com o editor de layouts e widgets, avançam para a personalização visual global, para as funcionalidades sociais (amizade, acompanhamento de categorias e feed) e culminam com a tela principal e o gerenciamento de notificações. 
-Os quadros~\ref{quad:descricao_campos} a~\ref{quad:atores} apresentam a definição dos campos e das classificações utilizadas na especificação, e os requisitos funcionais identificados para este sistema estão apresentados nos Quadros~\ref{quad:rf01} a~\ref{quad:rf21}.
-
-
+Os requisitos funcionais estão organizados em seis grupos, apresentados de forma sequencial e seguindo uma ordem lógica de dependência entre funcionalidades, 
+alinhada aos pacotes do modelo de domínio: iniciam pelo \textbf{Acesso ao Sistema} (cadastro, autenticação, recuperação e alteração de senha e gerenciamento de perfil); 
+prosseguem com a \textbf{Coleção}, núcleo do sistema (categorias, coleções, privacidade, itens, suas fichas e formas de visualização); seguem com o \textbf{Editor de Layout} 
+(criação de layouts, associação a coleções, compartilhamento entre usuários e personalização individual); avançam para a \textbf{Aparência} (tema, cores e tipografia globais); 
+contemplam a \textbf{Interação Social} (amizade, acompanhamento de coleções e visualização de perfis); e culminam na \textbf{Notificação}, mecanismo de comunicação de eventos ao usuário.
+Os quadros~\ref{quad:descricao_campos} a~\ref{quad:atores} apresentam a definição dos campos e das classificações utilizadas na especificação, e os requisitos funcionais 
+identificados para este sistema estão apresentados nos Quadros~\ref{quad:rf01} a~\ref{quad:rf24}.
 
 
 \begin{quadro}[h!]
@@ -133,7 +181,7 @@ Os quadros~\ref{quad:descricao_campos} a~\ref{quad:atores} apresentam a definiç
 \hline
 \textbf{Campo} & \textbf{Descrição} \\ \hline
 Código & Identificador único do requisito funcional (ex.: RF-01). \\ \hline
-Grupo & Categoria à qual o requisito pertence, organizando funcionalidades semelhantes (ex.: Acesso ao Sistema, Social, etc.). \\ \hline
+Grupo & Categoria à qual o requisito pertence, organizando funcionalidades semelhantes (ex.: Acesso ao Sistema, Coleção, etc.). \\ \hline
 Descrição & Detalhamento do requisito estruturado em ação, objeto, atributos, exemplos e restrições. \\ \hline
 Prioridade & Define o nível de importância do requisito (Essencial, Importante ou Desejável). \\ \hline
 Operação & Classifica o tipo de operação (Entrada, Processamento ou Saída). \\ \hline
@@ -148,16 +196,12 @@ Ator & Entidade responsável pela execução ou interação (Usuário ou Sistema
 \begin{tabular}{|p{5cm}|p{10cm}|}
 \hline
 \textbf{Grupo} & \textbf{Descrição} \\ \hline
-Acesso ao Sistema & Funcionalidades relacionadas à autenticação e cadastro. \\ \hline
-Conta de Usuário & Gerenciamento de dados do perfil do usuário. \\ \hline
-Editor de Layout & Criação e personalização de layouts. \\ \hline
-Gestão de Coleções & Funcionalidades de gerenciamento de coleções e subcoleções. \\ \hline
-Itens de Coleção & Manipulação dos itens pertencentes às coleções. \\ \hline
-Visualização & Exibição de coleções e itens. \\ \hline
-Personalização Visual & Alterações de aparência do sistema. \\ \hline
-Social & Interações entre usuários. \\ \hline
-Privacidade & Configuração de acesso às coleções. \\ \hline
-Navegação & Estrutura de acesso e organização das telas. \\ \hline
+Acesso ao Sistema & Cadastro, autenticação, recuperação e alteração de senha e gerenciamento do perfil do usuário. \\ \hline
+Coleção & Gerenciamento de categorias, coleções, privacidade, itens e respectivas formas de visualização. \\ \hline
+Editor de Layout & Criação, associação, compartilhamento e personalização de layouts e elementos. \\ \hline
+Aparência & Configuração visual global da interface, incluindo tema, cores e tipografia. \\ \hline
+Interação Social & Vínculos de amizade, acompanhamento de coleções e visualização de perfis de outros usuários. \\ \hline
+Notificação & Geração, exibição e gerenciamento das notificações enviadas ao usuário. \\ \hline
 \end{tabular}
 \fonte{Elaborada pelo autor}
 \end{quadro}
@@ -201,18 +245,21 @@ Sistema & Responsável por execuções automáticas e processamento de dados. \\
 \fonte{Elaborada pelo autor}
 \end{quadro}
 
-
 % ─────────────────────────────────────────────────────────────
 %  Requisitos Funcionais — uma tabela por requisito
+%  Ordem dos grupos: Acesso ao Sistema -> Coleção ->
+%  Editor de Layout -> Aparência -> Interação Social -> Notificação
 % ─────────────────────────────────────────────────────────────
+
+% ═══════════════════════════════════════════════════════════════
 \FloatBarrier
 \begin{quadro}[h!]
-\caption{RF-01 -- Gerenciar Usuário (Cadastro)}
+\caption{RF-01 -- Cadastrar Usuário}
 \label{quad:rf01}
 \begin{tabular}{|p{3.2cm}|p{11.8cm}|}
 \hline
 \textbf{Código}      & RF-01 \\ \hline
-\textbf{Grupo}       & Conta de Usuário \\ \hline
+\textbf{Grupo}       & Acesso ao Sistema \\ \hline
 \textbf{Descrição}   &
 \textbf{Ação:} Cadastrar
 
@@ -220,7 +267,7 @@ Sistema & Responsável por execuções automáticas e processamento de dados. \\
 
 \textbf{Atributos:} nome (100 caracteres), email (150 caracteres), senha (mínimo 8 caracteres), foto de perfil (JPEG/PNG, máx. 5 MB), descrição (500 caracteres), código de usuário (gerado automaticamente pelo sistema, único e imutável).
 
-\textbf{Exemplos:} Usuári preenche nome `Camila Albieri Mattos', email `camilamattos.mila@gmail.com', senha `Camila@2024' e conclui o cadastro com sucesso; o sistema gera automaticamente o código de usuário `camila\#4827'.
+\textbf{Exemplos:} Usuário preenche nome `Camila Albieri Mattos', email `camilamattos.mila@gmail.com', senha `Camila@2024' e conclui o cadastro com sucesso; o sistema gera automaticamente o código de usuário `camila\#4827'.
 Usuário tenta cadastrar com o email `camilamattos.mila@gmail.com', que já existe, e recebe mensagem de erro informando que o email já está em uso.
 
 \textbf{Restrições:}
@@ -229,9 +276,10 @@ Usuário tenta cadastrar com o email `camilamattos.mila@gmail.com', que já exis
   \item O email deve estar em formato válido (ex.: usuario@dominio.com).
   \item Não podem ser registrados dois ou mais usuários com o mesmo email.
   \item A senha deve ter no mínimo 8 caracteres.
-  \item A senha deve ser armazenada de forma criptografada.
+  \item A senha deve ser armazenada de forma criptografada (RNF-03).
   \item O código de usuário é gerado automaticamente pelo sistema no momento do cadastro, deve ser único em toda a plataforma e não pode ser alterado posteriormente.
   \item O código de usuário é o identificador público utilizado para buscas e envio de solicitações de amizade.
+  \item Ao concluir o cadastro, o sistema cria automaticamente para o usuário uma configuração de aparência padrão (tema claro, esquema neutro preto e branco), conforme RF-18.
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Essencial \\ \hline
 \textbf{Operação}    & Entrada \\ \hline
@@ -278,27 +326,98 @@ Usuário clica em `Sair' e tem sua sessão encerrada imediatamente, sendo redire
 % ═══════════════════════════════════════════════════════════════
 \FloatBarrier
 \begin{quadro}[h!]
-\caption{RF-03 -- Gerenciar Perfil do Usuário}
+\caption{RF-03 -- Alterar Senha na Área Restrita}
 \label{quad:rf03}
 \begin{tabular}{|p{3.2cm}|p{11.8cm}|}
 \hline
 \textbf{Código}      & RF-03 \\ \hline
-\textbf{Grupo}       & Conta de Usuário \\ \hline
+\textbf{Grupo}       & Acesso ao Sistema \\ \hline
+\textbf{Descrição}   &
+\textbf{Ação:} Alterar senha
+
+\textbf{Objeto:} Usuário (autenticado)
+
+\textbf{Atributos:} senha atual (para confirmação), nova senha (mínimo 8 caracteres), confirmação da nova senha.
+
+\textbf{Exemplos:} Camila, já autenticada, acessa `Configurações de Conta', informa a senha atual, define a nova senha `NovaSenha@2025', confirma e o sistema atualiza a credencial.
+Camila informa a senha atual incorreta e recebe a mensagem `Senha atual inválida'.
+Camila digita a nova senha e a confirmação divergentes e recebe aviso de que os campos não coincidem.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item Esta operação só está disponível para o usuário autenticado, dentro da área restrita.
+  \item O usuário deve informar corretamente a senha atual antes de definir a nova senha.
+  \item A nova senha deve ter no mínimo 8 caracteres e ser diferente da senha atual.
+  \item A nova senha e sua confirmação devem coincidir.
+  \item A nova senha deve ser armazenada de forma criptografada (RNF-03).
+  \item Após a alteração, as demais sessões ativas do usuário devem ser invalidadas por segurança.
+\end{enumerate} \\ \hline
+\textbf{Prioridade}  & Importante \\ \hline
+\textbf{Operação}    & Entrada \\ \hline
+\textbf{Ator}        & Usuário \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+
+% ═══════════════════════════════════════════════════════════════
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{RF-04 -- Recuperar Senha via E-mail}
+\label{quad:rf04}
+\begin{tabular}{|p{3.2cm}|p{11.8cm}|}
+\hline
+\textbf{Código}      & RF-04 \\ \hline
+\textbf{Grupo}       & Acesso ao Sistema \\ \hline
+\textbf{Descrição}   &
+\textbf{Ação:} Recuperar senha
+
+\textbf{Objeto:} Usuário (não autenticado)
+
+\textbf{Atributos:} email cadastrado, token de redefinição (gerado automaticamente, único e temporário), nova senha (mínimo 8 caracteres), confirmação da nova senha.
+
+\textbf{Exemplos:} Camila, sem estar logada, clica em `Esqueci minha senha', informa seu email e recebe uma mensagem com link de redefinição.
+Camila abre o link recebido, define a nova senha e passa a conseguir autenticar-se com a nova credencial.
+Camila tenta usar um link de redefinição expirado e recebe a mensagem de que o link não é mais válido, com opção de solicitar um novo.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item A recuperação é iniciada por usuário não autenticado, a partir da tela de login.
+  \item O sistema solicita o email cadastrado e, se ele existir, envia um link de redefinição contendo um token único e temporário (RF-24).
+  \item Por segurança, a mensagem exibida ao solicitante deve ser a mesma independentemente de o email existir ou não, para não revelar quais emails estão cadastrados.
+  \item O token de redefinição deve expirar em no máximo 24 horas e ser de uso único.
+  \item Ao acessar o link, o usuário define a nova senha e sua confirmação, que devem coincidir e ter no mínimo 8 caracteres.
+  \item A nova senha deve ser armazenada de forma criptografada (RNF-03).
+  \item Concluída a redefinição, o token é invalidado e as sessões ativas anteriores são encerradas.
+\end{enumerate} \\ \hline
+\textbf{Prioridade}  & Importante \\ \hline
+\textbf{Operação}    & Entrada \\ \hline
+\textbf{Ator}        & Usuário \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+
+% ═══════════════════════════════════════════════════════════════
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{RF-05 -- Gerenciar Perfil do Usuário}
+\label{quad:rf05}
+\begin{tabular}{|p{3.2cm}|p{11.8cm}|}
+\hline
+\textbf{Código}      & RF-05 \\ \hline
+\textbf{Grupo}       & Acesso ao Sistema \\ \hline
 \textbf{Descrição}   &
 \textbf{Ação:} Editar
 
-\textbf{Objeto:} Perfil do usuário
+\textbf{Objeto:} Usuário
 
-\textbf{Atributos:} nome de exibição (100 caracteres), email (150 caracteres), senha atual (para confirmação), nova senha (mínimo 8 caracteres), foto de perfil (JPEG/PNG, máx. 5 MB), descrição/bio (500 caracteres), token de verificação de e-mail (gerado automaticamente pelo sistema quando há alteração de e-mail).
+\textbf{Atributos:} nome de exibição (100 caracteres), email (150 caracteres), foto de perfil (JPEG/PNG, máx. 5 MB), descrição/bio (500 caracteres), token de verificação de e-mail (gerado automaticamente pelo sistema quando há alteração de e-mail).
 
 \textbf{Exemplos:} Usuário acessa `Editar Perfil', altera o nome de exibição para `Cami Mattos', adiciona bio `Leitora e colecionadora de histórias' e salva as alterações.
-Usuário tenta alterar a senha informando a senha atual incorreta e recebe mensagem `Senha atual inválida'.
 Usuário altera o e-mail para `cami.mattos@gmail.com'; o sistema envia um link de verificação ao novo endereço e mantém o e-mail antigo ativo até a confirmação.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
   \item O nome de exibição deve ter entre 3 e 100 caracteres e é obrigatório.
-  \item Para alterar a senha, o usuário deve confirmar a senha atual antes de definir a nova.
   \item A foto de perfil deve estar em formato JPEG ou PNG com tamanho máximo de 5 MB.
   \item A descrição/bio é opcional e pode ser deixada em branco.
   \item Alterações só têm efeito após o usuário salvar explicitamente.
@@ -306,6 +425,7 @@ Usuário altera o e-mail para `cami.mattos@gmail.com'; o sistema envia um link d
   \item O e-mail antigo permanece ativo até que o novo seja verificado pelo usuário.
   \item O token de verificação de e-mail deve expirar em até 24 horas após o envio.
   \item Não é permitido alterar o e-mail para um endereço já cadastrado por outro usuário.
+  \item A alteração de senha não é feita por este requisito, e sim pelo RF-03 (área restrita).
   \item O código de usuário (RF-01) não pode ser alterado por este caso de uso.
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Importante \\ \hline
@@ -318,30 +438,30 @@ Usuário altera o e-mail para `cami.mattos@gmail.com'; o sistema envia um link d
 % ═══════════════════════════════════════════════════════════════
 \FloatBarrier
 \begin{quadro}[h!]
-\caption{RF-04 -- Gerenciar Categoria}
-\label{quad:rf04}
+\caption{RF-06 -- Gerenciar Categoria}
+\label{quad:rf06}
 \begin{tabular}{|p{3.2cm}|p{11.8cm}|}
 \hline
-\textbf{Código}      & RF-04 \\ \hline
-\textbf{Grupo}       & Gestão de Categorias \\ \hline
+\textbf{Código}      & RF-06 \\ \hline
+\textbf{Grupo}       & Coleção \\ \hline
 \textbf{Descrição}   &
 \textbf{Ação:} Gerenciar
 
 \textbf{Objeto:} Categoria (agrupador temático de alto nível que reúne coleções relacionadas)
 
-\textbf{Atributos:} nome (100 caracteres), tipo/tema (livros, filmes, séries, jogos, músicas, personalizado), ícone (emoji Unicode ou imagem JPEG/PNG, máx. 2 MB), descrição (300 caracteres), layout padrão (referência opcional a um layout existente do usuário, herdado pelas coleções desta categoria), data de criação (gerada automaticamente).
+\textbf{Atributos:} nome (100 caracteres), tipo/tema (livros, filmes, séries, jogos, músicas, personalizado), ícone (emoji Unicode ou imagem JPEG/PNG, máx. 2 MB), descrição (300 caracteres), data de criação (gerada automaticamente).
 
-\textbf{Exemplos:} Usuário Camila cria a categoria `Livros' com ícone personalizado, descrição `Tudo que leio ou pretendo ler' e layout padrão `Card de Livro'; a categoria é criada vazia, pronta para receber coleções.
-Camila edita a categoria, renomeando para `Biblioteca Pessoal' e alterando o layout padrão.
+\textbf{Exemplos:} Usuário Camila cria a categoria `Livros' com ícone personalizado e descrição `Tudo que leio ou pretendo ler'; a categoria é criada vazia, pronta para receber coleções.
+Camila edita a categoria, renomeando para `Biblioteca Pessoal'.
 Camila exclui a categoria `Jogos Antigos' e confirma a exclusão permanente no diálogo de confirmação, que alerta sobre a remoção de todas as coleções e itens vinculados.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
-  \item O nome da categoria é obrigatório; ícone, descrição e layout padrão são opcionais.
+  \item O nome da categoria é obrigatório; ícone e descrição são opcionais.
   \item Não podem existir duas categorias com o mesmo nome para o mesmo usuário.
-  \item A categoria, ao ser criada, permanece vazia e não contém itens diretamente; os itens só podem ser cadastrados dentro de suas coleções (RF-05 e RF-06).
-  \item O tipo/tema da categoria determina os campos padrão sugeridos no layout.
-  \item O layout padrão pode ser alterado ou removido a qualquer momento e é herdado por todas as coleções da categoria que não definirem layout próprio (RF-11).
+  \item A categoria, ao ser criada, permanece vazia e não contém itens diretamente; os itens só podem ser cadastrados dentro de suas coleções (RF-07 e RF-09).
+  \item A categoria serve apenas como agrupador temático; a definição de layout ocorre no nível da coleção, e não no da categoria (RF-07 e RF-15).
+  \item A categoria não possui nível de privacidade próprio; a privacidade é configurada individualmente em cada coleção (RF-08).
   \item A exclusão deve exibir diálogo de confirmação alertando que todas as coleções e itens vinculados serão removidos permanentemente.
   \item A data de criação é gerada automaticamente pelo sistema e não pode ser editada.
 \end{enumerate} \\ \hline
@@ -353,35 +473,104 @@ Camila exclui a categoria `Jogos Antigos' e confirma a exclusão permanente no d
 \end{quadro}
 
 % ═══════════════════════════════════════════════════════════════
-\textbf{Operação}    & Entrada \\ \hline
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{RF-07 -- Gerenciar Coleção}
+\label{quad:rf07}
+\begin{tabular}{|p{3.2cm}|p{11.8cm}|}
+\hline
+\textbf{Código}      & RF-07 \\ \hline
+\textbf{Grupo}       & Coleção \\ \hline
+\textbf{Descrição}   &
+\textbf{Ação:} Gerenciar
 
+\textbf{Objeto:} Coleção (subdivisão estruturada que pertence a uma categoria e agrupa itens)
+
+\textbf{Atributos:} nome (100 caracteres), categoria pai (referência obrigatória), ícone (opcional), descrição (300 caracteres), layout associado (referência opcional a um layout do usuário), nível de privacidade (pública, somente amigos ou privada), data de criação (gerada automaticamente).
+
+\textbf{Exemplos:} Usuário cria a coleção `Lidos' dentro da categoria `Livros', definindo a privacidade como `pública'; a coleção passa a aceitar itens.
+Camila edita a coleção `Lidos' para associar o layout `Card de Mangá', que passa a valer para os itens dessa coleção.
+Camila exclui a coleção `Rascunhos' e confirma no diálogo a remoção de todos os itens vinculados.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item O nome e a referência à categoria pai são obrigatórios.
+  \item Não podem existir duas coleções com o mesmo nome dentro da mesma categoria para o mesmo usuário.
+  \item Toda coleção pertence a exatamente uma categoria.
+  \item Por padrão, a privacidade de uma nova coleção é `pública', podendo ser alterada conforme RF-08.
+  \item Toda coleção pode ter um layout associado, que determina os elementos exibidos e preenchíveis nos itens dessa coleção; um mesmo layout pode ser reutilizado por diferentes coleções (RF-15).
+  \item A exclusão deve exibir diálogo de confirmação alertando que todos os itens vinculados serão removidos permanentemente.
+  \item A data de criação é gerada automaticamente pelo sistema e não pode ser editada.
+\end{enumerate} \\ \hline
+\textbf{Prioridade}  & Essencial \\ \hline
+\textbf{Operação}    & Entrada \\ \hline
+\textbf{Ator}        & Usuário \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
 
 % ═══════════════════════════════════════════════════════════════
 \FloatBarrier
 \begin{quadro}[h!]
-\caption{RF-06 -- Gerenciar Item}
-\label{quad:rf06}
+\caption{RF-08 -- Gerenciar Privacidade da Coleção}
+\label{quad:rf08}
 \begin{tabular}{|p{3.2cm}|p{11.8cm}|}
 \hline
-\textbf{Código}      & RF-06 \\ \hline
-\textbf{Grupo}       & Itens \\ \hline
+\textbf{Código}      & RF-08 \\ \hline
+\textbf{Grupo}       & Coleção \\ \hline
+\textbf{Descrição}   &
+\textbf{Ação:} Configurar
+
+\textbf{Objeto:} Nível de visibilidade da coleção
+
+\textbf{Atributos:} nível de privacidade (privada, somente amigos, pública), coleção alvo (referência).
+
+\textbf{Exemplos:} Camila define a coleção `Lidos' como `pública', tornando-a visível a qualquer usuário.
+Camila altera a coleção `Diário' para `privada'; ela deixa de aparecer para qualquer outro usuário.
+Camila define `Favoritos' como `somente amigos'; apenas amigos confirmados passam a visualizá-la.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item A privacidade é configurada no nível da coleção; a categoria não possui privacidade própria (RF-06).
+  \item Coleções `privadas' são visíveis unicamente pelo proprietário.
+  \item Coleções `somente amigos' liberam visualização e acompanhamento apenas para usuários com vínculo de amizade aceito (RF-20).
+  \item Coleções `públicas' ficam acessíveis a qualquer usuário cadastrado.
+  \item Por padrão, toda coleção recém-criada nasce como `pública' (RF-07).
+  \item Se uma coleção `pública' ou `somente amigos' for alterada para `privada', o sistema deve encerrar automaticamente o acompanhamento dos seguidores e remover seus eventos do feed (RF-21 e RF-22).
+\end{enumerate} \\ \hline
+\textbf{Prioridade}  & Essencial \\ \hline
+\textbf{Operação}    & Entrada \\ \hline
+\textbf{Ator}        & Usuário \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+
+% ═══════════════════════════════════════════════════════════════
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{RF-09 -- Gerenciar Item}
+\label{quad:rf09}
+\begin{tabular}{|p{3.2cm}|p{11.8cm}|}
+\hline
+\textbf{Código}      & RF-09 \\ \hline
+\textbf{Grupo}       & Coleção \\ \hline
 \textbf{Descrição}   &
 \textbf{Ação:} Gerenciar
 
 \textbf{Objeto:} Item dentro de uma coleção
 
-\textbf{Atributos:} nome (200 caracteres), coleção pai (referência obrigatória), widgets preenchíveis herdados do layout aplicável (Imagem, Texto, Classificação, Lista, Data, GIF, Formas, Elementos Gráficos, Input Field, Icon), widgets adicionados individualmente ao item (override), data de criação (gerada automaticamente).
+\textbf{Atributos:} nome (200 caracteres), coleção pai (referência obrigatória), elementos preenchíveis herdados do layout aplicável (Texto, Campo de Texto, Imagem, GIF, Forma, Ícone, Classificação, Data e Lista), elementos adicionados individualmente ao item (\textit{override}), data de criação (gerada automaticamente).
 
-\textbf{Exemplos:} Camila cria o item `Duna' na coleção `Lidos' (dentro da categoria `Livros'); o item abre com os widgets do layout aplicável (herdado da coleção, ou da categoria se a coleção não tiver layout próprio) e Camila preenche: Imagem para a capa, Input Field para o autor `Frank Herbert', Data de início `01/01/2024' e fim `20/01/2024', Classificação com 5 estrelas, Lista de gêneros `Ficção Científica, Aventura' e Texto `Obra-prima do gênero'.
-Camila adiciona individualmente um widget de GIF e um Input Field extra `Personagem Favorito: Paul Atreides', sem afetar os demais itens nem os layouts da coleção e da categoria.
+\textbf{Exemplos:} Camila cria o item `Duna' na coleção `Lidos' (dentro da categoria `Livros'); o item abre com os elementos do layout aplicável e Camila preenche: Imagem para a capa, Campo de Texto para o autor `Frank Herbert', Data de início `01/01/2024' e fim `20/01/2024', Classificação com 5 estrelas, Lista de gêneros `Ficção Científica, Aventura' e Texto `Obra-prima do gênero'.
+Camila adiciona individualmente um elemento de GIF e um Campo de Texto extra `Personagem Favorito: Paul Atreides', sem afetar os demais itens nem os layouts da coleção e da categoria.
 Posteriormente edita a classificação de 5 para 4 estrelas e, por fim, exclui o item `Duna -- Rascunho' confirmando no diálogo de confirmação.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
   \item O nome do item é obrigatório; todos os demais campos são opcionais.
-  \item Todo item deve pertencer a uma coleção existente (RF-05); não é possível criar itens diretamente em uma categoria.
-  \item Ao ser criado, o item herda automaticamente a estrutura de widgets do layout aplicável, que é definido pela cadeia: layout próprio da coleção, se houver; caso contrário, layout padrão da categoria.
-  \item O usuário pode adicionar, remover ou reposicionar widgets individualmente no item sem afetar os layouts da coleção ou da categoria, nem os demais itens (RF-12).
+  \item Todo item deve pertencer a uma coleção existente (RF-07); não é possível criar itens diretamente em uma categoria.
+  \item Ao ser criado, o item adota automaticamente a estrutura de elementos do layout associado à sua coleção (RF-15); caso a coleção não tenha layout, o item utiliza um formulário básico com campos padrão.
+  \item O usuário pode adicionar, remover ou reposicionar elementos individualmente no item sem afetar os layouts da coleção ou da categoria, nem os demais itens (RF-17).
   \item Não podem existir dois itens com o mesmo nome dentro da mesma coleção.
   \item Imagens enviadas devem estar em formato JPEG ou PNG com tamanho máximo de 5 MB por arquivo.
   \item A exclusão deve exibir diálogo de confirmação informando que a ação é irreversível.
@@ -397,47 +586,12 @@ Posteriormente edita a classificação de 5 para 4 estrelas e, por fim, exclui o
 % ═══════════════════════════════════════════════════════════════
 \FloatBarrier
 \begin{quadro}[h!]
-\caption{RF-07 -- Exibir Ficha de Item em Modo Leitura}
-\label{quad:rf07}
+\caption{RF-10 -- Mover Item entre Coleções}
+\label{quad:rf10}
 \begin{tabular}{|p{3.2cm}|p{11.8cm}|}
 \hline
-\textbf{Código}      & RF-07 \\ \hline
-\textbf{Grupo}       & Ficha de Item \\ \hline
-\textbf{Descrição}   &
-\textbf{Ação:} Exibir em modo leitura
-
-\textbf{Objeto:} Ficha individual de item
-
-\textbf{Atributos:} widgets preenchidos do item (conforme layout individual), widgets vazios (exibidos com indicação visual), data de criação do item, modo de acesso (dono -- com opções de editar e excluir; visitante -- somente leitura).
-
-\textbf{Exemplos:} Camila acessa a ficha do item `Duna' da coleção `Lidos' e visualiza todos os widgets preenchidos com os botões de editar e excluir disponíveis.
-Um amigo visita a categoria pública `Livros' de Camila, abre a coleção `Lidos', acessa a ficha do item `Duna' e visualiza os mesmos widgets, porém sem nenhuma opção de edição.
-Widgets não preenchidos não são exibidos para visitantes.
-
-\textbf{Restrições:}
-\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
-  \item A ficha exibe todos os widgets do layout individual do item, preenchidos ou não.
-  \item Widgets não preenchidos devem ser ocultados para visitantes, mas exibidos para o dono com indicação visual de que estão vazios.
-  \item Para o dono do item, a ficha deve oferecer acesso direto às ações de editar e excluir.
-  \item Para visitantes, a ficha é estritamente somente leitura, sem nenhuma opção de edição visível.
-  \item A ficha deve respeitar o tema visual configurado pelo dono da categoria.
-\end{enumerate} \\ \hline
-\textbf{Prioridade}  & Essencial \\ \hline
-\textbf{Operação}    & Saída \\ \hline
-\textbf{Ator}        & Sistema \\ \hline
-\end{tabular}
-\fonte{Elaborada pelo autor}
-\end{quadro}
-
-% ═══════════════════════════════════════════════════════════════
-\FloatBarrier
-\begin{quadro}[h!]
-\caption{RF-08 -- Mover Item entre Coleções}
-\label{quad:rf08}
-\begin{tabular}{|p{3.2cm}|p{11.8cm}|}
-\hline
-\textbf{Código}      & RF-08 \\ \hline
-\textbf{Grupo}       & Itens \\ \hline
+\textbf{Código}      & RF-10 \\ \hline
+\textbf{Grupo}       & Coleção \\ \hline
 \textbf{Descrição}   &
 \textbf{Ação:} Mover
 
@@ -445,16 +599,16 @@ Widgets não preenchidos não são exibidos para visitantes.
 
 \textbf{Atributos:} item de origem (nome, categoria e coleção atuais), destino (coleção existente, podendo pertencer a uma categoria diferente).
 
-\textbf{Exemplos:} Camila arrasta `A Metamorfose' da coleção `Para Ler' para `Lidos', ambas na categoria `Livros'; o item some da origem e aparece no destino imediatamente.
-Camila move `O Hobbit' da coleção `Lidos' (categoria `Livros') para a coleção `Releituras Planejadas' na mesma categoria.
-Camila move um item entre categorias diferentes (ex.: de `Livros/Favoritos' para `Quadrinhos/Favoritos') e o sistema avisa que o layout aplicável pode mudar, exibindo prévia dos campos preservados.
+\textbf{Exemplos:} Camila arrasta `A Metamorfose' da coleção `Para Ler' para `Lidos', ambas na categoria `Livros'; como as duas coleções usam o mesmo layout, o item some da origem e aparece no destino imediatamente, sem mudança de estrutura.
+Camila move `O Hobbit' da coleção `Lidos' para a coleção `Releituras Planejadas'.
+Camila move um item para uma coleção que usa um layout diferente e o sistema avisa que a estrutura de elementos pode mudar, exibindo prévia dos campos preservados.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
   \item Um item pode pertencer a apenas uma coleção por vez.
   \item A movimentação deve ser concluída com no máximo três comandos (ex.: arrastar, soltar e confirmar).
-  \item Se o item for movido entre coleções da mesma categoria, todos os dados e o layout aplicável são preservados automaticamente.
-  \item Se o item for movido para uma coleção de outra categoria com layout aplicável diferente, o sistema deve exibir prévia antes da confirmação, informando quais widgets serão preservados e quais deixarão de ser exibidos (os dados não são apagados; ficam disponíveis caso o item retorne a um layout compatível).
+  \item Se a coleção de destino usa o mesmo layout da coleção de origem, todos os dados e a estrutura de elementos são preservados automaticamente.
+  \item Se a coleção de destino usa um layout diferente, o sistema deve exibir prévia antes da confirmação, informando quais elementos serão preservados e quais deixarão de ser exibidos (os dados não são apagados; ficam disponíveis caso o item retorne a um layout compatível).
   \item A operação deve ser reversível via ação de desfazer (Ctrl+Z ou botão equivalente) em até 30 segundos após a confirmação.
   \item As contagens de itens das coleções de origem e destino devem ser atualizadas imediatamente.
 \end{enumerate} \\ \hline
@@ -468,18 +622,53 @@ Camila move um item entre categorias diferentes (ex.: de `Livros/Favoritos' para
 % ═══════════════════════════════════════════════════════════════
 \FloatBarrier
 \begin{quadro}[h!]
-\caption{RF-09 -- Visualizar Itens de uma Coleção}
-\label{quad:rf09}
+\caption{RF-11 -- Exibir Ficha de Item em Modo Leitura}
+\label{quad:rf11}
 \begin{tabular}{|p{3.2cm}|p{11.8cm}|}
 \hline
-\textbf{Código}      & RF-09 \\ \hline
-\textbf{Grupo}       & Visualização \\ \hline
+\textbf{Código}      & RF-11 \\ \hline
+\textbf{Grupo}       & Coleção \\ \hline
+\textbf{Descrição}   &
+\textbf{Ação:} Exibir em modo leitura
+
+\textbf{Objeto:} Ficha individual de item
+
+\textbf{Atributos:} elementos preenchidos do item (conforme layout individual), elementos vazios (exibidos com indicação visual), data de criação do item, modo de acesso (dono -- com opções de editar e excluir; visitante -- somente leitura).
+
+\textbf{Exemplos:} Camila acessa a ficha do item `Duna' da coleção `Lidos' e visualiza todos os elementos preenchidos com os botões de editar e excluir disponíveis.
+Um amigo visita a categoria pública `Livros' de Camila, abre a coleção `Lidos', acessa a ficha do item `Duna' e visualiza os mesmos elementos, porém sem nenhuma opção de edição.
+Elementos não preenchidos não são exibidos para visitantes.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item A ficha exibe todos os elementos do layout individual do item, preenchidos ou não.
+  \item Elementos não preenchidos devem ser ocultados para visitantes, mas exibidos para o dono com indicação visual de que estão vazios.
+  \item Para o dono do item, a ficha deve oferecer acesso direto às ações de editar e excluir.
+  \item Para visitantes, a ficha é estritamente somente leitura, sem nenhuma opção de edição visível.
+  \item A ficha deve respeitar a aparência (tema e cores) configurada pelo dono (RF-18).
+\end{enumerate} \\ \hline
+\textbf{Prioridade}  & Essencial \\ \hline
+\textbf{Operação}    & Saída \\ \hline
+\textbf{Ator}        & Sistema \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+
+% ═══════════════════════════════════════════════════════════════
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{RF-12 -- Visualizar Itens de uma Coleção}
+\label{quad:rf12}
+\begin{tabular}{|p{3.2cm}|p{11.8cm}|}
+\hline
+\textbf{Código}      & RF-12 \\ \hline
+\textbf{Grupo}       & Coleção \\ \hline
 \textbf{Descrição}   &
 \textbf{Ação:} Visualizar
 
 \textbf{Objeto:} Itens de uma coleção
 
-\textbf{Atributos:} lista de itens da coleção selecionada, critérios de ordenação (nome A--Z, nome Z--A, data de criação crescente, data de criação decrescente, avaliação crescente, avaliação decrescente), critérios de filtro (tags, valores de widgets preenchidos, campos personalizados do layout aplicável).
+\textbf{Atributos:} lista de itens da coleção selecionada, critérios de ordenação (nome A--Z, nome Z--A, data de criação crescente, data de criação decrescente, avaliação crescente, avaliação decrescente), critérios de filtro (tags, valores de elementos preenchidos, campos personalizados do layout aplicável).
 
 \textbf{Exemplos:} Camila abre a coleção `Lidos' da categoria `Livros' e visualiza todos os 30 itens ordenados por data de criação decrescente.
 Camila ordena por avaliação decrescente e filtra por gênero `Ficção Científica', vendo apenas os livros desse gênero do melhor ao pior avaliado.
@@ -489,7 +678,7 @@ Camila visualiza a coleção `Favoritos' usando o mesmo filtro; o sistema manté
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
   \item A visualização deve exibir todos os itens da coleção selecionada.
   \item A ordenação padrão é por data de criação decrescente (mais recentes primeiro).
-  \item Os critérios de filtro disponíveis dependem dos widgets presentes no layout aplicável à coleção.
+  \item Os critérios de filtro disponíveis dependem dos elementos presentes no layout aplicável à coleção.
   \item A ordenação aplicada deve ser persistida por usuário e válida para todas as coleções até ser alterada.
   \item Os filtros aplicados são mantidos durante a navegação dentro da mesma coleção e reiniciados ao sair dela.
 \end{enumerate} \\ \hline
@@ -503,34 +692,78 @@ Camila visualiza a coleção `Favoritos' usando o mesmo filtro; o sistema manté
 % ═══════════════════════════════════════════════════════════════
 \FloatBarrier
 \begin{quadro}[h!]
-\caption{RF-10 -- Gerenciar Layout Personalizado}
-\label{quad:rf10}
+\caption{RF-13 -- Exibir Tela Principal de Categorias}
+\label{quad:rf13}
 \begin{tabular}{|p{3.2cm}|p{11.8cm}|}
 \hline
-\textbf{Código}      & RF-10 \\ \hline
+\textbf{Código}      & RF-13 \\ \hline
+\textbf{Grupo}       & Coleção \\ \hline
+\textbf{Descrição}   &
+\textbf{Ação:} Exibir
+
+\textbf{Objeto:} Tela principal (dashboard) de categorias do usuário
+
+\textbf{Atributos:} lista de categorias do usuário autenticado (nome, ícone, contagem total de coleções, contagem total de itens somados entre todas as coleções), resumo de privacidade das coleções da categoria (ex.: ``3 públicas, 1 amigos, 2 privadas''), modo de exibição (grade ou lista), critérios de ordenação (nome A--Z, nome Z--A, data de criação crescente, data de criação decrescente), critérios de filtro (tipo/tema da categoria), atalhos de navegação para coleções e itens.
+
+\textbf{Exemplos:} Ao fazer login, Camila vê na tela inicial os cartões `Livros (2 coleções, 20 itens)', `Filmes (2 coleções, 30 itens)' e `Cafés (1 coleção, 7 itens)' em modo grade, cada um exibindo um resumo das privacidades das coleções que contém.
+Camila clica em `Livros' e visualiza as coleções `Lidos (20, pública)', `Para Ler (30, somente amigos)' e `Diário (2, privada)', podendo navegar para os itens de cada uma.
+Camila alterna para o modo lista e ordena as categorias por data de criação decrescente; a preferência é mantida na próxima sessão.
+Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão `Criar primeira categoria'.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item A tela deve exibir todas as categorias do usuário autenticado em uma única tela dedicada.
+  \item Cada categoria deve exibir nome, ícone, contagem de coleções, contagem total de itens e resumo de privacidade das coleções que contém.
+  \item A categoria em si não possui nível de privacidade; o resumo apresentado é uma contagem das privacidades de suas coleções (RF-08).
+  \item O indicador individual de privacidade aparece no card de cada coleção dentro da categoria, e não no card da categoria.
+  \item A navegação até as coleções de uma categoria deve ser acessível com um único clique ou toque; a navegação até um item, com no máximo três.
+  \item Usuários sem categorias devem ver mensagem de boas-vindas com atalho para criação da primeira categoria.
+  \item Ao acessar uma categoria vazia (sem coleções), o sistema deve exibir mensagem informativa e atalho para criação da primeira coleção.
+  \item O usuário deve poder alternar entre os modos de visualização `grade' e `lista' a qualquer momento.
+  \item O modo de visualização padrão é `grade'; a escolha do usuário deve ser persistida entre sessões.
+  \item O usuário deve poder ordenar as categorias por pelo menos quatro critérios: nome crescente, nome decrescente, data de criação crescente e data de criação decrescente.
+  \item A ordenação padrão é por data de criação decrescente (mais recentes primeiro).
+  \item Os filtros e a ordenação aplicados devem ser persistidos entre sessões do mesmo usuário.
+\end{enumerate} \\ \hline
+\textbf{Prioridade}  & Essencial \\ \hline
+\textbf{Operação}    & Saída \\ \hline
+\textbf{Ator}        & Sistema \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+
+% ═══════════════════════════════════════════════════════════════
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{RF-14 -- Gerenciar Layout Personalizado}
+\label{quad:rf14}
+\begin{tabular}{|p{3.2cm}|p{11.8cm}|}
+\hline
+\textbf{Código}      & RF-14 \\ \hline
 \textbf{Grupo}       & Editor de Layout \\ \hline
 \textbf{Descrição}   &
 \textbf{Ação:} Gerenciar e duplicar
 
 \textbf{Objeto:} Layout personalizado (template)
 
-\textbf{Atributos:} nome do layout (100 caracteres), widgets disponíveis (Imagem, Texto, Classificação, Lista, Data, GIF, Formas, Elementos Gráficos, Input Field, Icon, Templates), posição e tamanho de cada widget na área de edição, layout de origem (referência opcional, preenchida apenas na operação de duplicação).
+\textbf{Atributos:} nome do layout (100 caracteres), elementos disponíveis (conforme os tipos fixos definidos pela enumeração ElementType: texto fixo, campo de texto, imagem, gif, forma, ícone, classificação, data e lista), posição e tamanho de cada elemento na área de edição, layout de origem (referência opcional, preenchida apenas na operação de duplicação).
 
-\textbf{Exemplos:} Camila cria o layout `Card de Livro' com widget de Imagem para capa, Input Field para autor, Classificação de 1 a 5 estrelas, dois campos de Data (início e fim de leitura) e área de Texto para notas.
-Camila reposiciona o widget de Classificação via drag-and-drop e visualiza o resultado em tempo real na prévia.
+\textbf{Exemplos:} Camila cria o layout `Card de Livro' com elemento de Imagem para capa, Campo de Texto para autor, Classificação de 1 a 5 estrelas, dois campos de Data (início e fim de leitura) e área de Texto para notas.
+Camila reposiciona o elemento de Classificação via \textit{drag-and-drop} e visualiza o resultado em tempo real na prévia.
 Camila seleciona o layout `Card de Livro' e clica em `Duplicar'; o sistema cria `Card de Livro (cópia)' com a mesma estrutura, que Camila renomeia para `Card de Livro -- Edição Especial' e ajusta sem afetar o original.
-Camila exclui o layout `Card Antigo' que não está associado a nenhuma categoria ou coleção.
+Camila exclui o layout `Card Antigo' que não está associado a nenhuma coleção.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
   \item O nome do layout é obrigatório e deve ser único por usuário.
-  \item Pelo menos um widget deve ser adicionado para que o layout possa ser salvo.
-  \item Widgets podem ser reposicionados e redimensionados via arrastar e soltar (drag-and-drop).
+  \item Pelo menos um elemento deve ser adicionado para que o layout possa ser salvo.
+  \item Os tipos de elemento disponíveis para inclusão são os definidos pela enumeração ElementType (texto fixo, campo de texto, imagem, gif, forma, ícone, classificação, data e lista), à semelhança dos elementos fixos oferecidos por editores visuais como o Canva.
+  \item Elementos podem ser reposicionados e redimensionados via arrastar e soltar (\textit{drag-and-drop}).
   \item Alterações devem ser refletidas em tempo real na prévia do editor, sem recarregar a página.
-  \item A duplicação deve copiar integralmente a estrutura de widgets (tipo, posição, tamanho e propriedades) do layout de origem.
+  \item A duplicação deve copiar integralmente a estrutura de elementos (tipo, posição, tamanho e propriedades) do layout de origem.
   \item Na duplicação, o sistema sugere automaticamente o nome original acrescido de `(cópia)', podendo ser editado antes de salvar.
   \item Alterações no layout duplicado não devem refletir no layout de origem.
-  \item O usuário pode excluir um layout somente se ele não estiver associado a nenhuma categoria ou coleção ativa (RF-11).
+  \item O usuário pode excluir um layout somente se ele não estiver associado a nenhuma coleção ativa (RF-15).
   \item A data de criação do layout duplicado é a data da operação, e não a do layout de origem.
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Importante \\ \hline
@@ -543,32 +776,33 @@ Camila exclui o layout `Card Antigo' que não está associado a nenhuma categori
 % ═══════════════════════════════════════════════════════════════
 \FloatBarrier
 \begin{quadro}[h!]
-\caption{RF-11 -- Associar Layout a Categoria ou Coleção}
-\label{quad:rf11}
+\caption{RF-15 -- Associar Layout a Coleção}
+\label{quad:rf15}
 \begin{tabular}{|p{3.2cm}|p{11.8cm}|}
 \hline
-\textbf{Código}      & RF-11 \\ \hline
+\textbf{Código}      & RF-15 \\ \hline
 \textbf{Grupo}       & Editor de Layout \\ \hline
 \textbf{Descrição}   &
 \textbf{Ação:} Associar
 
-\textbf{Objeto:} Layout (template) a uma categoria ou a uma coleção
+\textbf{Objeto:} Layout (template) a uma coleção
 
-\textbf{Atributos:} destino da associação (categoria existente -- layout padrão; ou coleção existente -- layout próprio que sobrescreve o padrão da categoria), layout selecionado (pertencente ao usuário).
+\textbf{Atributos:} coleção de destino (existente, pertencente ao usuário), layout selecionado (pertencente ao usuário, podendo já estar associado a outras coleções).
 
-\textbf{Exemplos:} Camila associa o layout `Card de Livro' à categoria `Livros' como layout padrão; todas as coleções dessa categoria que não definirem layout próprio passam a usar esse template.
-Camila associa o layout `Card de Mangá' especificamente à coleção `Mangás' (dentro da categoria `Livros'); essa coleção passa a usar o layout próprio, enquanto as demais seguem o padrão da categoria.
-Camila remove o layout próprio da coleção `Mangás'; a coleção volta a usar o layout padrão herdado da categoria.
+\textbf{Exemplos:} Camila associa o layout `Card de Livro' à coleção `Lidos'; todos os itens dessa coleção passam a usar esse layout.
+Camila associa o mesmo layout `Card de Livro' também à coleção `Para Ler'; as duas coleções reutilizam o mesmo template, de forma independente.
+Camila troca o layout da coleção `Mangás' para `Card de Mangá'; os novos itens passam a usar o novo layout, e os itens já existentes mantêm seus dados (RF-17).
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
-  \item Um layout só pode ser associado a categorias ou coleções existentes e pertencentes ao mesmo usuário.
-  \item Uma categoria pode ter, no máximo, um layout padrão ativo por vez.
-  \item Uma coleção pode ter, no máximo, um layout próprio ativo por vez.
-  \item A cadeia de herança para determinar o layout aplicável a um item é: layout próprio da coleção (se houver) → layout padrão da categoria (se houver) → nenhum layout (formulário básico com campos padrão).
-  \item A troca ou remoção de layout (em qualquer nível) não altera os dados nem os layouts individuais dos itens já cadastrados (RF-12).
+  \item Um layout só pode ser associado a coleções existentes e pertencentes ao mesmo usuário.
+  \item O layout é associado no nível da coleção; a categoria não recebe layout (RF-06).
+  \item Uma coleção pode ter, no máximo, um layout ativo por vez.
+  \item Um mesmo layout pode ser associado a várias coleções simultaneamente, sendo reutilizado como template.
+  \item O layout aplicável a um item é o da sua coleção; na ausência de layout associado, o item utiliza um formulário básico com campos padrão. Modificações individuais por item são tratadas como \textit{override} (RF-17).
+  \item A troca ou remoção do layout da coleção não altera os dados nem os elementos individuais (\textit{override}) dos itens já cadastrados (RF-17).
   \item Ao associar um layout, o sistema deve exibir prévia de como os novos itens serão criados.
-  \item O usuário pode remover a associação de layout em qualquer nível a qualquer momento.
+  \item O usuário pode remover a associação de layout da coleção a qualquer momento.
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Importante \\ \hline
 \textbf{Operação}    & Entrada \\ \hline
@@ -580,27 +814,63 @@ Camila remove o layout próprio da coleção `Mangás'; a coleção volta a usar
 % ═══════════════════════════════════════════════════════════════
 \FloatBarrier
 \begin{quadro}[h!]
-\caption{RF-12 -- Modificar Layout de Item Individualmente}
-\label{quad:rf12}
+\caption{RF-16 -- Compartilhar Layout}
+\label{quad:rf16}
 \begin{tabular}{|p{3.2cm}|p{11.8cm}|}
 \hline
-\textbf{Código}      & RF-12 \\ \hline
+\textbf{Código}      & RF-16 \\ \hline
+\textbf{Grupo}       & Editor de Layout \\ \hline
+\textbf{Descrição}   &
+\textbf{Ação:} Compartilhar e importar
+
+\textbf{Objeto:} Layout (template) compartilhado entre usuários
+
+\textbf{Atributos:} layout de origem (pertencente ao usuário que compartilha), código de compartilhamento (identificador único gerado pelo sistema) ou link de compartilhamento, visibilidade do compartilhamento (ativo/inativo), usuário importador (quem utiliza o código/link), layout importado (cópia gerada na biblioteca do importador).
+
+\textbf{Exemplos:} Camila cria o layout `Card de Livro' e gera um código de compartilhamento `LAY-7K3F9'; ela envia o código para uma amiga.
+A amiga informa o código `LAY-7K3F9' em sua biblioteca de layouts e o sistema cria uma cópia do layout na conta dela, que pode ser usada e editada livremente.
+Camila desativa o compartilhamento do layout; o código deixa de permitir novas importações, mas as cópias já criadas por outros usuários permanecem intactas.
+
+\textbf{Restrições:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item Apenas o usuário dono de um layout pode gerar ou desativar o compartilhamento dele.
+  \item O código (ou link) de compartilhamento deve ser único em toda a plataforma.
+  \item A importação cria uma cópia independente do layout na biblioteca do usuário importador; alterações na cópia não afetam o layout de origem, e vice-versa.
+  \item O dono pode desativar o compartilhamento a qualquer momento, impedindo novas importações sem afetar as cópias já realizadas.
+  \item O compartilhamento abrange apenas a estrutura do layout (elementos, posição e tamanho), não os itens nem os valores preenchidos do dono.
+  \item A importação está disponível a partir do código de compartilhamento, independentemente de haver vínculo de amizade entre os usuários.
+\end{enumerate} \\ \hline
+\textbf{Prioridade}  & Desejável \\ \hline
+\textbf{Operação}    & Entrada \\ \hline
+\textbf{Ator}        & Usuário \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+
+% ═══════════════════════════════════════════════════════════════
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{RF-17 -- Modificar Layout de Item Individualmente}
+\label{quad:rf17}
+\begin{tabular}{|p{3.2cm}|p{11.8cm}|}
+\hline
+\textbf{Código}      & RF-17 \\ \hline
 \textbf{Grupo}       & Editor de Layout \\ \hline
 \textbf{Descrição}   &
 \textbf{Ação:} Modificar individualmente
 
 \textbf{Objeto:} Layout herdado em um item específico
 
-\textbf{Atributos:} widgets herdados do layout aplicável ao item (base de partida), widgets adicionados pelo usuário no item (override), widgets removidos pelo usuário no item (override), widgets reposicionados ou redimensionados no item (override).
+\textbf{Atributos:} elementos herdados do layout aplicável ao item (base de partida), elementos adicionados pelo usuário no item (\textit{override}), elementos removidos pelo usuário no item (\textit{override}), elementos reposicionados ou redimensionados no item (\textit{override}).
 
-\textbf{Exemplos:} Camila cria o item `Harry Potter e a Pedra Filosofal' na coleção `Lidos' (categoria `Livros'); o item abre com o layout aplicável herdado; Camila adiciona widget extra de Input Field `Data de Início de Leitura' apenas nesse item.
-Camila remove o widget de GIF de um item específico pois não se aplica, sem afetar o layout da coleção, o da categoria nem os outros itens.
+\textbf{Exemplos:} Camila cria o item `Harry Potter e a Pedra Filosofal' na coleção `Lidos' (categoria `Livros'); o item abre com o layout aplicável herdado; Camila adiciona elemento extra de Campo de Texto `Data de Início de Leitura' apenas nesse item.
+Camila remove o elemento de GIF de um item específico pois não se aplica, sem afetar o layout da coleção, o da categoria nem os outros itens.
 Camila restaura o layout original aplicável descartando todas as modificações individuais do item.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
-  \item Todo item, ao ser criado, herda automaticamente o layout aplicável como ponto de partida (RF-06 e RF-11).
-  \item O usuário pode adicionar, remover ou reposicionar widgets no item sem afetar o layout da coleção, o da categoria ou os demais itens.
+  \item Todo item, ao ser criado, adota o layout da sua coleção como ponto de partida (RF-09 e RF-15).
+  \item O usuário pode adicionar, remover ou reposicionar elementos no item sem afetar o layout da coleção, o da categoria ou os demais itens.
   \item O layout aplicável deve ser exibido como referência visual durante a edição individual do item.
   \item O usuário pode restaurar o layout original aplicável a qualquer momento, descartando todas as modificações individuais.
   \item As modificações individuais são exclusivas do item; nenhuma alteração feita no item reflete nos layouts da coleção ou da categoria.
@@ -615,27 +885,30 @@ Camila restaura o layout original aplicável descartando todas as modificações
 % ═══════════════════════════════════════════════════════════════
 \FloatBarrier
 \begin{quadro}[h!]
-\caption{RF-13 -- Gerenciar Personalização Visual Global}
-\label{quad:rf13}
+\caption{RF-18 -- Gerenciar Aparência (Tema e Cores)}
+\label{quad:rf18}
 \begin{tabular}{|p{3.2cm}|p{11.8cm}|}
 \hline
-\textbf{Código}      & RF-13 \\ \hline
-\textbf{Grupo}       & Personalização Visual \\ \hline
+\textbf{Código}      & RF-18 \\ \hline
+\textbf{Grupo}       & Aparência \\ \hline
 \textbf{Descrição}   &
-\textbf{Ação:} Personalizar globalmente
+\textbf{Ação:} Gerenciar aparência
 
-\textbf{Objeto:} Interface do sistema
+\textbf{Objeto:} Configuração visual global da interface do usuário
 
 \textbf{Atributos:} cor primária (hex), subcores (até 4 valores hex), paletas predefinidas (lista do sistema), paletas personalizadas (nome de até 50 caracteres), estilo global (claro / escuro / automático conforme sistema operacional).
 
-\textbf{Exemplos:} Camila seleciona a paleta predefinida `Outono' com tons terrosos e estilo escuro; toda a interface é atualizada em tempo real.
+\textbf{Exemplos:} No momento do cadastro (RF-01), o sistema cria para o usuário uma aparência padrão: tema claro, com esquema neutro em preto e branco.
+Camila seleciona a paleta predefinida `Outono' com tons terrosos e estilo escuro; toda a interface é atualizada em tempo real.
 Camila cria a paleta personalizada `Meu Rosa' com cor primária \#E91E8C, aplica e salva no perfil.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item Todo usuário recém-cadastrado recebe uma configuração de aparência padrão (tema claro, esquema neutro preto e branco), criada automaticamente no cadastro (RF-01).
+  \item O usuário pode alterar a aparência a qualquer momento; as mudanças sobrescrevem a configuração existente.
   \item O tema selecionado deve ser aplicado globalmente a todas as telas do sistema de forma imediata.
   \item Paletas predefinidas podem ser editadas diretamente nas configurações.
-  \item As configurações de tema devem ser salvas no perfil e persistidas entre sessões e dispositivos.
+  \item As configurações de aparência devem ser salvas no perfil e persistidas entre sessões e dispositivos.
   \item As alterações devem ser exibidas em área de prévia antes de o usuário confirmar a aplicação.
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Desejável \\ \hline
@@ -648,12 +921,12 @@ Camila cria a paleta personalizada `Meu Rosa' com cor primária \#E91E8C, aplica
 % ═══════════════════════════════════════════════════════════════
 \FloatBarrier
 \begin{quadro}[h!]
-\caption{RF-14 -- Gerenciar Tipografia Global}
-\label{quad:rf14}
+\caption{RF-19 -- Gerenciar Tipografia Global}
+\label{quad:rf19}
 \begin{tabular}{|p{3.2cm}|p{11.8cm}|}
 \hline
-\textbf{Código}      & RF-14 \\ \hline
-\textbf{Grupo}       & Personalização Visual \\ \hline
+\textbf{Código}      & RF-19 \\ \hline
+\textbf{Grupo}       & Aparência \\ \hline
 \textbf{Descrição}   &
 \textbf{Ação:} Alterar
 
@@ -679,12 +952,12 @@ Camila cria a paleta personalizada `Meu Rosa' com cor primária \#E91E8C, aplica
 % ═══════════════════════════════════════════════════════════════
 \FloatBarrier
 \begin{quadro}[h!]
-\caption{RF-15 -- Gerenciar Amizade}
-\label{quad:rf15}
+\caption{RF-20 -- Gerenciar Amizade}
+\label{quad:rf20}
 \begin{tabular}{|p{3.2cm}|p{11.8cm}|}
 \hline
-\textbf{Código}      & RF-15 \\ \hline
-\textbf{Grupo}       & Social \\ \hline
+\textbf{Código}      & RF-20 \\ \hline
+\textbf{Grupo}       & Interação Social \\ \hline
 \textbf{Descrição}   &
 \textbf{Ação:} Adicionar, aceitar e visualizar
 
@@ -694,7 +967,7 @@ Camila cria a paleta personalizada `Meu Rosa' com cor primária \#E91E8C, aplica
 
 \textbf{Exemplos:} Camila informa o código de usuário `joao\#1203' no campo de busca e envia a solicitação de amizade; João aceita e ambos aparecem mutuamente na lista de amigos.
 Camila busca por `João Silva' pelo nome e o sistema exibe a lista de usuários correspondentes; Camila seleciona o usuário correto e envia a solicitação.
-Camila recusa a solicitação de um usuário desconhecido; o status é atualizado para `recusada' e o solicitante é notificado.
+Camila recusa a solicitação de um usuário desconhecido; o status é atualizado para `recusada' sem gerar notificação ao solicitante.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
@@ -705,7 +978,7 @@ Camila recusa a solicitação de um usuário desconhecido; o status é atualizad
   \item Uma solicitação pendente não pode ser reenviada enquanto aguarda resposta.
   \item A lista de amigos exibe apenas amizades com status `aceita'.
   \item O usuário pode desfazer uma amizade aceita a qualquer momento, removendo o vínculo para ambos os lados.
-  \item Todas as alterações de status (envio, aceite, recusa e desfazer) devem gerar notificação ao usuário envolvido, conforme RF-21.
+  \item Envio, aceite e desfazer amizade devem gerar notificação ao usuário envolvido, conforme RF-24; a recusa é silenciosa.
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Importante \\ \hline
 \textbf{Operação}    & Entrada \\ \hline
@@ -717,31 +990,31 @@ Camila recusa a solicitação de um usuário desconhecido; o status é atualizad
 % ═══════════════════════════════════════════════════════════════
 \FloatBarrier
 \begin{quadro}[h!]
-\caption{RF-16 -- Seguir Coleção de Amigo}
-\label{quad:rf16}
+\caption{RF-21 -- Seguir Coleção Visível}
+\label{quad:rf21}
 \begin{tabular}{|p{3.2cm}|p{11.8cm}|}
 \hline
-\textbf{Código}      & RF-16 \\ \hline
-\textbf{Grupo}       & Social \\ \hline
+\textbf{Código}      & RF-21 \\ \hline
+\textbf{Grupo}       & Interação Social \\ \hline
 \textbf{Descrição}   &
 \textbf{Ação:} Seguir
 
-\textbf{Objeto:} Coleção específica de um amigo
+\textbf{Objeto:} Coleção visível de outro usuário
 
 \textbf{Atributos:} coleção seguida (com privacidade pública ou `somente amigos'), categoria pai da coleção (referência), usuário seguidor, data de início do acompanhamento.
 
 \textbf{Exemplos:} Camila visita o perfil de `João Silva', vê a coleção pública `Filmes Assistidos' (dentro da categoria `Filmes') e clica em `Seguir'; as atualizações dessa coleção passam a aparecer no feed de Camila, mas as demais coleções da categoria `Filmes' (como `Quero Ver') não, a menos que sejam seguidas individualmente.
-Camila segue também a coleção `Séries Concluídas' do mesmo amigo, na categoria `Séries'; ambas passam a alimentar seu feed de forma independente.
-Camila tenta seguir uma coleção privada de um amigo e não encontra a opção disponível, pois a coleção sequer aparece no perfil do amigo.
+Camila segue também a coleção `Séries Concluídas' do mesmo usuário, na categoria `Séries'; ambas passam a alimentar seu feed de forma independente.
+Camila tenta seguir uma coleção privada de outro usuário e não encontra a opção disponível, pois a coleção sequer aparece no perfil visitado.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
-  \item Apenas coleções de usuários com vínculo de amizade confirmada podem ser seguidas.
-  \item Somente coleções com privacidade `pública' ou `somente amigos' estão disponíveis para seguir (RF-19).
+  \item Coleções públicas podem ser seguidas por qualquer usuário cadastrado.
+  \item Coleções com privacidade `somente amigos' só podem ser seguidas por usuários com vínculo de amizade confirmado (RF-20).
   \item Coleções `privadas' não aparecem para outros usuários, nem mesmo para amigos.
   \item O acompanhamento ocorre no nível da coleção: o usuário pode seguir múltiplas coleções da mesma categoria, de forma independente, sem que isso implique seguir as demais.
   \item O usuário pode deixar de seguir uma coleção a qualquer momento, sem restrições.
-  \item Se a privacidade de uma coleção seguida for alterada para `privada', o acompanhamento dessa coleção deve ser encerrado automaticamente.
+  \item Se a privacidade de uma coleção seguida for alterada para `privada', o acompanhamento dessa coleção deve ser encerrado automaticamente (RF-08).
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Importante \\ \hline
 \textbf{Operação}    & Entrada \\ \hline
@@ -753,12 +1026,12 @@ Camila tenta seguir uma coleção privada de um amigo e não encontra a opção 
 % ═══════════════════════════════════════════════════════════════
 \FloatBarrier
 \begin{quadro}[h!]
-\caption{RF-17 -- Exibir Feed de Atualizações}
-\label{quad:rf17}
+\caption{RF-22 -- Exibir Feed de Atualizações}
+\label{quad:rf22}
 \begin{tabular}{|p{3.2cm}|p{11.8cm}|}
 \hline
-\textbf{Código}      & RF-17 \\ \hline
-\textbf{Grupo}       & Social \\ \hline
+\textbf{Código}      & RF-22 \\ \hline
+\textbf{Grupo}       & Interação Social \\ \hline
 \textbf{Descrição}   &
 \textbf{Ação:} Exibir
 
@@ -772,11 +1045,11 @@ Camila rola o feed e carrega eventos mais antigos progressivamente.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
-  \item O feed deve exibir apenas eventos de coleções que o usuário segue ativamente (RF-16).
+  \item O feed deve exibir apenas eventos de coleções que o usuário segue ativamente (RF-21).
   \item Os eventos devem ser ordenados cronologicamente, do mais recente ao mais antigo.
   \item O feed deve ser atualizado automaticamente em tempo real, sem necessidade de recarregar a página.
-  \item Se a privacidade de uma coleção seguida for alterada para `privada', os eventos anteriores dessa coleção não devem mais ser exibidos, e o acompanhamento é encerrado automaticamente (RF-16).
-  \item Eventos de criação ou exclusão de coleção em si não são exibidos no feed; a descoberta de novas coleções de amigos ocorre por meio da visita ao perfil do amigo (RF-18).
+  \item Se a privacidade de uma coleção seguida for alterada para `privada', os eventos anteriores dessa coleção não devem mais ser exibidos, e o acompanhamento é encerrado automaticamente (RF-21).
+  \item Eventos de criação ou exclusão de coleção em si não são exibidos no feed; a descoberta de novas coleções ocorre por meio da visita a perfis de usuários (RF-23).
   \item O feed deve suportar carregamento progressivo (paginação) para históricos longos.
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Essencial \\ \hline
@@ -789,18 +1062,18 @@ Camila rola o feed e carrega eventos mais antigos progressivamente.
 % ═══════════════════════════════════════════════════════════════
 \FloatBarrier
 \begin{quadro}[h!]
-\caption{RF-18 -- Visualizar Categorias e Coleções de Amigos}
-\label{quad:rf18}
+\caption{RF-23 -- Visualizar Perfis e Coleções de Usuários}
+\label{quad:rf23}
 \begin{tabular}{|p{3.2cm}|p{11.8cm}|}
 \hline
-\textbf{Código}      & RF-18 \\ \hline
-\textbf{Grupo}       & Social \\ \hline
+\textbf{Código}      & RF-23 \\ \hline
+\textbf{Grupo}       & Interação Social \\ \hline
 \textbf{Descrição}   &
 \textbf{Ação:} Visualizar
 
-\textbf{Objeto:} Categorias, coleções públicas (ou de amigos) e itens de amigos
+\textbf{Objeto:} Perfis, categorias, coleções acessíveis e itens de outros usuários
 
-\textbf{Atributos:} perfil do amigo (nome, foto, bio), coleções acessíveis (com privacidade `pública' ou `somente amigos'), categorias agrupadoras dessas coleções, itens pertencentes a cada coleção visível.
+\textbf{Atributos:} perfil do usuário visitado (nome, foto, bio), coleções acessíveis (com privacidade `pública' ou `somente amigos'), categorias agrupadoras dessas coleções, itens pertencentes a cada coleção visível.
 
 \textbf{Exemplos:} Camila visita o perfil de `João Silva' e visualiza, agrupadas pelas respectivas categorias, as coleções públicas e somente para amigos de João -- por exemplo, `Filmes / Assistidos' (pública), `Filmes / Favoritos' (somente amigos) e `Séries / Concluídas' (pública); dentro de cada coleção, vê os itens cadastrados.
 Camila não encontra a coleção `Diário Pessoal' de João (categoria `Diários'), pois ela é privada; como é a única coleção da categoria, a categoria `Diários' inteira não aparece para Camila.
@@ -825,120 +1098,31 @@ A categoria `Jogos' de João aparece para Camila apenas com as coleções não-p
 % ═══════════════════════════════════════════════════════════════
 \FloatBarrier
 \begin{quadro}[h!]
-\caption{RF-20 -- Exibir Tela Principal de Categorias}
-\label{quad:rf20}
+\caption{RF-24 -- Gerenciar Notificações do Sistema}
+\label{quad:rf24}
 \begin{tabular}{|p{3.2cm}|p{11.8cm}|}
 \hline
-\textbf{Código}      & RF-20 \\ \hline
-\textbf{Grupo}       & Navegação \\ \hline
-\textbf{Descrição}   &
-\textbf{Ação:} Exibir
-
-\textbf{Objeto:} Tela principal (dashboard) de categorias do usuário
-
-\textbf{Atributos:} lista de categorias do usuário autenticado (nome, ícone, contagem total de coleções, contagem total de itens somados entre todas as coleções), resumo de privacidade das coleções da categoria (ex.: ``3 públicas, 1 amigos, 2 privadas''), modo de exibição (grade ou lista), critérios de ordenação (nome A--Z, nome Z--A, data de criação crescente, data de criação decrescente), critérios de filtro (tipo/tema da categoria), atalhos de navegação para coleções e itens.
-
-\textbf{Exemplos:} Ao fazer login, Camila vê na tela inicial os cartões `Livros (2 coleções, 20 itens)', `Filmes (2 coleções, 30 itens)' e `Cafés (1 coleção, 7 itens)' em modo grade, cada um exibindo um resumo das privacidades das coleções que contém.
-Camila clica em `Livros' e visualiza as coleções `Lidos (20, pública)', `Para Ler (30, somente amigos)' e `Diário (2, privada)', podendo navegar para os itens de cada uma.
-Camila alterna para o modo lista e ordena as categorias por data de criação decrescente; a preferência é mantida na próxima sessão.
-Camila aplica filtro por tipo `Livros' e visualiza apenas as categorias desse tema.
-Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão `Criar primeira categoria'.
-
-\textbf{Restrições:}
-\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
-  \item A tela deve exibir todas as categorias do usuário autenticado em uma única tela dedicada.
-  \item Cada categoria deve exibir nome, ícone, contagem de coleções, contagem total de itens e resumo de privacidade das coleções que contém.
-  \item A categoria em si não possui nível de privacidade; o resumo apresentado é uma contagem das privacidades de suas coleções (RF-19).
-  \item O indicador individual de privacidade aparece no card de cada coleção dentro da categoria, e não no card da categoria.
-  \item A navegação até as coleções de uma categoria deve ser acessível com um único clique ou toque; a navegação até um item, com no máximo três.
-  \item Usuários sem categorias devem ver mensagem de boas-vindas com atalho para criação da primeira categoria.
-  \item Ao acessar uma categoria vazia (sem coleções), o sistema deve exibir mensagem informativa e atalho para criação da primeira coleção.
-  \item O usuário deve poder alternar entre os modos de visualização `grade' e `lista' a qualquer momento.
-  \item O modo de visualização padrão é `grade'; a escolha do usuário deve ser persistida entre sessões.
-  \item O usuário deve poder ordenar as categorias por pelo menos quatro critérios: nome crescente, nome decrescente, data de criação crescente e data de criação decrescente.
-  \item A ordenação padrão é por data de criação decrescente (mais recentes primeiro).
-  \item Os filtros e a ordenação aplicados devem ser persistidos entre sessões do mesmo usuário.
-\end{enumerate} \\ \hline
-\textbf{Prioridade}  & Essencial \\ \hline
-\textbf{Operação}    & Saída \\ \hline
-\textbf{Ator}        & Sistema \\ \hline
-\end{tabular}
-\fonte{Elaborada pelo autor}
-\end{quadro}
-
-
-% ═══════════════════════════════════════════════════════════════
-\FloatBarrier
-\begin{quadro}[h!]
-\caption{RF-20 -- Exibir Tela Principal de Categorias}
-\label{quad:rf20}
-\begin{tabular}{|p{3.2cm}|p{11.8cm}|}
-\hline
-\textbf{Código}      & RF-20 \\ \hline
-\textbf{Grupo}       & Navegação \\ \hline
-\textbf{Descrição}   &
-\textbf{Ação:} Exibir
-
-\textbf{Objeto:} Tela principal (dashboard) de categorias do usuário
-
-\textbf{Atributos:} lista de categorias do usuário autenticado (nome, ícone, contagem total de coleções, contagem total de itens somados entre todas as coleções, indicador de privacidade), modo de exibição (grade ou lista), critérios de ordenação (nome A--Z, nome Z--A, data de criação crescente, data de criação decrescente), critérios de filtro (tipo/tema da categoria, nível de privacidade), atalhos de navegação para coleções e itens.
-
-\textbf{Exemplos:} Ao fazer login, Camila vê na tela inicial os cartões `Livros (2 coleções, 20 itens)', `Filmes (2 coleções, 30 itens)' e `Cafés (1 coleção, 7 itens)' em modo grade.
-Camila clica em `Livros' e visualiza as coleções `Lidos (20)', `Para Ler (30)' e `Diário (2)', podendo navegar para os itens de cada uma.
-Camila alterna para o modo lista e ordena as categorias por data de criação decrescente; a preferência é mantida na próxima sessão.
-Camila aplica filtro por tipo `Livros' e visualiza apenas as categorias desse tema.
-Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão `Criar primeira categoria'.
-
-\textbf{Restrições:}
-\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
-  \item A tela deve exibir todas as categorias do usuário autenticado em uma única tela dedicada.
-  \item Cada categoria deve exibir nome, ícone, contagem de coleções, contagem total de itens.
-  \item A navegação até as coleções de uma categoria deve ser acessível com um único clique ou toque; a navegação até um item, com no máximo três.
-  \item A tela deve ser totalmente responsiva e funcional em dispositivos móveis a partir de 320 px de largura.
-  \item Usuários sem categorias devem ver mensagem de boas-vindas com atalho para criação da primeira categoria.
-  \item Ao acessar uma categoria vazia (sem coleções), o sistema deve exibir mensagem informativa e atalho para criação da primeira coleção.
-  \item O usuário deve poder alternar entre os modos de visualização `grade' e `lista' a qualquer momento.
-  \item O modo de visualização padrão é `grade'; a escolha do usuário deve ser persistida entre sessões.
-  \item O usuário deve poder ordenar as categorias por pelo menos quatro critérios: nome crescente, nome decrescente, data de criação crescente e data de criação decrescente.
-  \item A ordenação padrão é por data de criação decrescente (mais recentes primeiro).
-  \item O usuário deve poder filtrar as categorias por tipo/tema e por nível de privacidade; os filtros podem ser combinados.
-  \item Os filtros e a ordenação aplicados devem ser persistidos entre sessões do mesmo usuário.
-\end{enumerate} \\ \hline
-\textbf{Prioridade}  & Essencial \\ \hline
-\textbf{Operação}    & Saída \\ \hline
-\textbf{Ator}        & Sistema \\ \hline
-\end{tabular}
-\fonte{Elaborada pelo autor}
-\end{quadro}
-
-% ═══════════════════════════════════════════════════════════════
-\FloatBarrier
-\begin{quadro}[h!]
-\caption{RF-21 -- Gerenciar Notificações do Sistema}
-\label{quad:rf21}
-\begin{tabular}{|p{3.2cm}|p{11.8cm}|}
-\hline
-\textbf{Código}      & RF-21 \\ \hline
-\textbf{Grupo}       & Social \\ \hline
+\textbf{Código}      & RF-24 \\ \hline
+\textbf{Grupo}       & Notificação \\ \hline
 \textbf{Descrição}   &
 \textbf{Ação:} Gerar, exibir e gerenciar
 
 \textbf{Objeto:} Notificações do sistema
 
-\textbf{Atributos:} tipo de notificação (solicitação de amizade recebida, solicitação de amizade aceita, solicitação de amizade recusada, atualização em coleção seguida, verificação de e-mail), usuário destinatário, usuário autor (quando aplicável), mensagem (texto descritivo gerado pelo sistema), data e hora de geração, status (não lida / lida), canal de entrega (in-app, sempre; e-mail, apenas para verificação de e-mail).
+\textbf{Atributos:} tipo de notificação (solicitação de amizade recebida, solicitação de amizade aceita, atualização em coleção seguida, verificação de e-mail, recuperação de senha), usuário destinatário, usuário autor (quando aplicável), mensagem (texto descritivo gerado pelo sistema), data e hora de geração, status (não lida / lida), canal de entrega (in-app, sempre; e-mail, para verificação de e-mail e recuperação de senha).
 
 \textbf{Exemplos:} João envia solicitação de amizade para Camila; o sistema gera notificação in-app para Camila com o texto `João Silva (joao\#1203) enviou uma solicitação de amizade' e exibe indicador visual de notificação não lida.
 Camila aceita a solicitação; o sistema gera notificação in-app para João com o texto `Camila Mattos aceitou sua solicitação de amizade'.
-Camila altera o e-mail cadastrado; o sistema envia notificação via e-mail com link de verificação (conforme RF-03).
+Camila solicita recuperação de senha; o sistema envia notificação via e-mail com link de redefinição (conforme RF-04).
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
-  \item Toda solicitação de amizade enviada, aceita ou recusada deve gerar notificação in-app ao usuário envolvido.
+  \item Toda solicitação de amizade enviada ou aceita deve gerar notificação in-app ao usuário envolvido; recusas são silenciosas (RF-20).
   \item As notificações in-app devem ser exibidas em uma área dedicada (ex.: ícone de sino no menu principal) com indicador visual de quantidade de notificações não lidas.
   \item As notificações devem ser ordenadas cronologicamente, da mais recente à mais antiga.
   \item O usuário pode marcar uma notificação como lida, marcar todas como lidas ou remover notificações individuais.
-  \item Notificações de verificação de e-mail (RF-03) devem ser enviadas também pelo canal de e-mail, contendo link único e com prazo de expiração.
-  \item Notificações referentes a coleções cuja privacidade tenha sido alterada para `privada' devem ser ocultadas automaticamente do destinatário.
+  \item Notificações de verificação de e-mail (RF-05) e de recuperação de senha (RF-04) devem ser enviadas também pelo canal de e-mail, contendo link único e com prazo de expiração.
+  \item Notificações referentes a coleções cuja privacidade tenha sido alterada para `privada' devem ser ocultadas automaticamente do destinatário (RF-08).
   \item As notificações in-app devem ser atualizadas em tempo real, sem necessidade de recarregar a página.
   \item Notificações lidas devem ser mantidas por no mínimo 30 dias antes de qualquer limpeza automática.
 \end{enumerate} \\ \hline
@@ -949,12 +1133,12 @@ Camila altera o e-mail cadastrado; o sistema envia notificação via e-mail com 
 \fonte{Elaborada pelo autor}
 \end{quadro}
 
-
-
 \subsection{Requisitos Não-Funcionais}
-Segundo \citeauthorandyear{Sommerville2011}, os requisitos não funcionais são requisitos que não estão diretamente relacionados com os serviços específicos oferecidos pelo sistema a seus usuários.
+Segundo \citeauthorandyear{Sommerville2011}, os requisitos não funcionais são requisitos que não estão diretamente relacionados com os serviços específicos oferecidos 
+pelo sistema a seus usuários.
 Logo, não dizem respeito diretamente às funcionalidades fornecidas pelo sistema, mas sim às suas propriedades e restrições de qualidade.
-\citeauthorandyear{Pressman2016}, dizem que esses requisitos especificam atributos como desempenho, usabilidade, segurança, confiabilidade e portabilidade, sendo fundamentais para garantir que o sistema atenda aos padrões de qualidade esperados.
+\citeauthorandyear{pressman2016}, dizem que esses requisitos especificam atributos como desempenho, usabilidade, segurança, confiabilidade e portabilidade, 
+sendo fundamentais para garantir que o sistema atenda aos padrões de qualidade esperados.
 Assim, esta seção apresenta os requisitos não-funcionais identificados neste trabalho, consolidados nos Quadros de ~\ref{quad:rnf01} a ~\ref{quad:rnf10}.
 
 \FloatBarrier
@@ -971,7 +1155,7 @@ Assim, esta seção apresenta os requisitos não-funcionais identificados neste 
 \textbf{Métrica:} Usuários iniciantes devem ser capazes de criar uma coleção e adicionar um item em até 5 minutos sem consultar documentação externa.
 
 \textbf{Exemplos:} Um novo usuário acessa o sistema pela primeira vez e consegue criar a coleção `Meus Filmes', associar um layout e cadastrar o item `Interestelar' seguindo apenas as indicações visuais da interface.
-Um usuário utiliza o editor de layout pela primeira vez e compreende como arrastar e posicionar widgets sem necessitar de tutorial.
+Um usuário utiliza o editor de layout pela primeira vez e compreende como arrastar e posicionar elementos sem necessitar de tutorial.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
@@ -996,9 +1180,9 @@ Um usuário utiliza o editor de layout pela primeira vez e compreende como arras
 \textbf{Código}     & RNF-02 \\ \hline
 \textbf{Categoria}  & Desempenho \\ \hline
 \textbf{Descrição}  &
-\textbf{Descrição:} O sistema deve carregar coleções, subcoleções e itens em tempo adequado sob condições normais de uso.
+\textbf{Descrição:} O sistema deve carregar categorias, coleções e itens em tempo adequado sob condições normais de uso.
 
-\textbf{Métrica:} O tempo de carregamento de qualquer tela principal (coleções, subcoleções, lista de itens) não deve exceder 3 segundos em conexão de banda larga padrão (10 Mbps).
+\textbf{Métrica:} O tempo de carregamento de qualquer tela principal (categorias, coleções, lista de itens) não deve exceder 3 segundos em conexão de banda larga padrão (10 Mbps).
 
 \textbf{Exemplos:} Camila acessa sua coleção `Livros' com 42 itens e a listagem completa é exibida em menos de 2 segundos.
 Camila abre o feed de atualizações com 50 eventos recentes e o carregamento inicial ocorre em menos de 3 segundos.
@@ -1047,6 +1231,7 @@ Uma tentativa de login com credenciais inválidas retorna mensagem genérica sem
 \fonte{Elaborada pelo autor}
 \end{quadro}
 
+
 % ═══════════════════════════════════════════════════════════════
 \FloatBarrier
 \begin{quadro}[h!]
@@ -1077,7 +1262,6 @@ Camila acessa o mesmo sistema pelo Safari no iPhone e consegue navegar, criar co
 \fonte{Elaborada pelo autor}
 \end{quadro}
 
-% ═══════════════════════════════════════════════════════════════
 \FloatBarrier
 \begin{quadro}[h!]
 \caption{RNF-05 -- Personalização Visual sem Quebras de Layout}
@@ -1117,19 +1301,19 @@ Camila alterna entre os estilos claro e escuro e nenhum texto fica ilegível ou 
 \textbf{Código}     & RNF-06 \\ \hline
 \textbf{Categoria}  & Desempenho \\ \hline
 \textbf{Descrição}  &
-\textbf{Descrição:} A movimentação de itens entre subcoleções deve ocorrer com no máximo dois comandos e sem atraso perceptível.
+\textbf{Descrição:} A movimentação de itens entre coleções deve ocorrer com no máximo dois comandos e sem atraso perceptível.
 
 \textbf{Métrica:} A operação de mover um item deve ser concluída em no máximo 500 milissegundos desde a ação do usuário até a atualização visual na interface.
 
 \textbf{Exemplos:} Camila arrasta o item `Duna' da subcoleção `Para Ler' para `Lidos' e a mudança é refletida instantaneamente na tela, sem indicador de carregamento.
-Camila move `O Hobbit' para a coleção principal via menu de contexto (selecionar destino e confirmar) e a contagem de itens é atualizada imediatamente em ambas as subcoleções.
+Camila move `O Hobbit' para outra coleção via menu de contexto (selecionar destino e confirmar) e a contagem de itens é atualizada imediatamente em ambas as coleções.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
   \item A interface deve aplicar a movimentação de forma otimista (atualizar visualmente antes da confirmação do servidor).
   \item Em caso de falha na comunicação com o servidor, o sistema deve reverter a movimentação e informar o usuário.
   \item A operação de desfazer (Ctrl+Z) deve estar disponível por até 10 segundos após a movimentação.
-  \item As contagens de itens nas subcoleções de origem e destino devem ser recalculadas imediatamente.
+  \item As contagens de itens nas coleções de origem e destino devem ser recalculadas imediatamente.
 \end{enumerate} \\ \hline
 \textbf{Prioridade} & Importante \\ \hline
 \textbf{Operação}   & Processamento \\ \hline
@@ -1147,19 +1331,19 @@ Camila move `O Hobbit' para a coleção principal via menu de contexto (selecion
 \textbf{Código}     & RNF-07 \\ \hline
 \textbf{Categoria}  & Desempenho \\ \hline
 \textbf{Descrição}  &
-\textbf{Descrição:} O editor de layout deve refletir alterações de widgets em tempo real, sem travamentos ou recarregamentos completos da página.
+\textbf{Descrição:} O editor de layout deve refletir alterações de elementos em tempo real, sem travamentos ou recarregamentos completos da página.
 
-\textbf{Métrica:} Qualquer operação no editor (adicionar, remover, reposicionar ou redimensionar widget) deve ser refletida na prévia em no máximo 200 milissegundos.
+\textbf{Métrica:} Qualquer operação no editor (adicionar, remover, reposicionar ou redimensionar elemento) deve ser refletida na prévia em no máximo 200 milissegundos.
 
-\textbf{Exemplos:} Camila arrasta um widget de Imagem para uma nova posição no editor e a prévia atualiza instantaneamente sem piscar ou travar.
-Camila adiciona cinco widgets consecutivos ao layout e o editor mantém fluidez durante todas as operações.
+\textbf{Exemplos:} Camila arrasta um elemento de Imagem para uma nova posição no editor e a prévia atualiza instantaneamente sem piscar ou travar.
+Camila adiciona cinco elementos consecutivos ao layout e o editor mantém fluidez durante todas as operações.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
   \item O editor deve utilizar renderização parcial, atualizando apenas os componentes afetados pela alteração.
   \item O salvamento do layout deve ocorrer de forma assíncrona, sem bloquear a interação do usuário com o editor.
   \item A prévia deve manter fidelidade visual com o resultado final exibido na ficha do item.
-  \item O editor deve suportar pelo menos 15 widgets simultâneos sem degradação perceptível de desempenho.
+  \item O editor deve suportar pelo menos 15 elementos simultâneos sem degradação perceptível de desempenho.
 \end{enumerate} \\ \hline
 \textbf{Prioridade} & Essencial \\ \hline
 \textbf{Operação}   & Processamento \\ \hline
@@ -1282,12 +1466,15 @@ Alguns requisitos foram identificados durante a elicitação, porém não serão
 
 
 \section{Casos de Uso}
-Conforme \citeauthorandyear{Valente2020}, um caso de uso descreve a sequência de interações realizadas por um ator com um sistema para atingir um objetivo específico, sendo esse ator, em geral, uma entidade externa, como um usuário humano ou outro sistema. 
-Logo, um caso de uso é uma descrição de um cenário específico de interação entre um ator e o sistema, detalhando as ações realizadas e os resultados esperados. Ele é utilizado para capturar os requisitos funcionais do sistema, fornecendo uma visão clara e estruturada das funcionalidades que o sistema deve oferecer.
+Conforme \citeauthorandyear{Valente2020}, um caso de uso descreve a sequência de interações realizadas por um ator com um sistema para atingir um objetivo específico, 
+sendo esse ator, em geral, uma entidade externa, como um usuário humano ou outro sistema. 
+Logo, um caso de uso é uma descrição de um cenário específico de interação entre um ator e o sistema, detalhando as ações realizadas e os resultados esperados. 
+Ele é utilizado para capturar os requisitos funcionais do sistema, fornecendo uma visão clara e estruturada das funcionalidades que o sistema deve oferecer.
 
 \subsection{Diagrama de Casos de Uso}
 O diagrama de casos de uso elaborado neste trabalho descreve as principais interações do usuário com a plataforma personalizável para criação e compartilhamento de coleções digitais,
-representando ações como a captura de imagens, a visualização dos objetos detectados e a interação com as informações fornecidas pelo sistema. Essas interações são essenciais para garantir que o aplicativo atenda às necessidades dos usuários, proporcionando uma experiência eficaz e acessível.
+representando ações como a captura de imagens, a visualização dos objetos detectados e a interação com as informações fornecidas pelo sistema. Essas interações 
+são essenciais para garantir que o aplicativo atenda às necessidades dos usuários, proporcionando uma experiência eficaz e acessível.
 O diagrama de casos de uso elaborado neste trabalho está apresentado nas Figuras de ~\ref{fig:UC01_GerenciamentoColecoes} a ~\ref{fig:UC05_PerfilSocial}.
 
 \FloatBarrier
@@ -1369,7 +1556,7 @@ O diagrama de casos de uso elaborado neste trabalho está apresentado nas Figura
 	%0.20 = 20% do tamanho original
 	\includegraphics[scale=0.9]{imagens/CasosDeUso/UC — Autenticação.png}
 	\\\textbf{Fonte:} Elaborada pelo autor
-	\label{fig:UC05_PerfilSocial}
+	\label{fig:UC06_Autenticacao}
 \end{figure}
 \FloatBarrier
 
@@ -1383,37 +1570,28 @@ O diagrama de casos de uso elaborado neste trabalho está apresentado nas Figura
 	%0.20 = 20% do tamanho original
 	\includegraphics[scale=0.9]{imagens/CasosDeUso/UC — Notificações.png}
 	\\\textbf{Fonte:} Elaborada pelo autor
-	\label{fig:UC05_PerfilSocial}
+	\label{fig:UC07_Notificacoes}
 \end{figure}
 \FloatBarrier
 
 
-% ═══════════════════════════════════════════════════════════════
-%  ESPECIFICAÇÕES DOS CASOS DE USO — NOVA ESTRUTURA
-% ═══════════════════════════════════════════════════════════════
-%
-%  Nomenclatura:
-%    Categoria = agrupador temático (ex.: "Livros")
-%    Coleção   = onde os itens vivem (ex.: "Lidos")
-%    Item      = unidade de conteúdo (ex.: livro "Duna")
-%
-%  Mudanças principais em relação à versão anterior:
-%   - "Criar Coleção" virou "Criar Categoria"
-%   - "Criar Item" agora cria item dentro de uma Coleção
-%   - Novo caso de uso: "Criar Coleção" (dentro de uma categoria)
-%   - Dashboard exibe Categorias (não mais Coleções)
-%   - Referências a RFs atualizadas
-%
-% ═══════════════════════════════════════════════════════════════
-
 \subsection{Especificação dos Casos de Uso}
-Uma especificação de caso de uso fornece a descrição textual detalhada do comportamento do sistema a partir da perspectiva do usuário, permitindo compreender como as funcionalidades são executadas e quais resultados são esperados. As especificações apresentam os fluxos principais, fluxos alternativos, condições prévias e pós-condições associadas a cada interação.
+Uma especificação de caso de uso fornece a descrição textual detalhada do comportamento do sistema a partir da perspectiva do usuário, permitindo compreender 
+como as funcionalidades são executadas e quais resultados são esperados. As especificações apresentam os fluxos principais, fluxos alternativos, condições prévias 
+e pós-condições associadas a cada interação.
 
-Neste trabalho, as especificações textuais foram elaboradas apenas para os casos de uso principais, uma vez que os demais representam variações, detalhamentos ou funcionalidades incluídas nos fluxos básicos. O modelo adotado para a especificação dos casos de uso é apresentado nas Tabelas~\ref{tab:especFazerLogin} á ~\ref{tab:especVisualizarPerfil}, adaptado da IBM.
+Neste trabalho, as especificações textuais foram elaboradas apenas para os casos de uso principais, uma vez que os demais representam variações, detalhamentos 
+ou funcionalidades incluídas nos fluxos básicos. O modelo adotado para a especificação dos casos de uso é apresentado nos Quadros~\ref{tab:especFazerLogin} 
+a~\ref{tab:especVisualizarPerfil}, adaptado da IBM.
 
-Cabe destacar a estrutura hierárquica adotada pelo sistema, que organiza os dados em três níveis: \textbf{Categoria} (agrupador temático de alto nível, ex.: ``Livros''), \textbf{Coleção} (subdivisão de uma categoria onde os itens são efetivamente cadastrados, ex.: ``Lidos'', ``Para Ler'') e \textbf{Item} (unidade individual de conteúdo, ex.: o livro ``Duna''). Essa separação permite que o usuário organize seu acervo em duas camadas antes de cadastrar qualquer item, facilitando a categorização e a personalização por meio de layouts em níveis distintos.
+Cabe destacar a estrutura hierárquica adotada pelo sistema, que organiza os dados em três níveis: \textbf{Categoria} (agrupador temático de alto nível, ex.: ``Livros''), 
+\textbf{Coleção} (subdivisão de uma categoria onde os itens são efetivamente cadastrados e onde o layout é associado, ex.: ``Lidos'', ``Para Ler'') e \textbf{Item} 
+unidade individual de conteúdo, ex.: o livro ``Duna''). Essa separação permite que o usuário organize seu acervo em duas camadas antes de cadastrar qualquer item, 
+facilitando a categorização e a personalização por meio do layout definido em cada coleção.
 
 A seguir, são apresentadas as especificações detalhadas dos casos de uso principais identificados no sistema.
+\begingroup
+\renewcommand{\tablename}{Quadro}
 
 \subsubsection{Fazer Login}
 
@@ -1574,7 +1752,7 @@ Pontos de Extensão & Nenhum ponto de extensão identificado para este caso de u
 
 Nome do Caso de Uso & Criar Categoria \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário crie uma nova categoria (agrupador temático de alto nível) para organizar coleções e itens relacionados a um tema, como livros, filmes, séries ou jogos. A categoria é criada vazia e servirá como container para coleções que serão criadas posteriormente. A categoria não possui nível de privacidade próprio; a privacidade é configurada individualmente em cada coleção (RF-04 e RF-19). \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário crie uma nova categoria (agrupador temático de alto nível) para organizar coleções e itens relacionados a um tema, como livros, filmes, séries ou jogos. A categoria é criada vazia e servirá como container para coleções que serão criadas posteriormente. A categoria não possui nível de privacidade próprio; a privacidade é configurada individualmente em cada coleção (RF-06 e RF-08). \\ \hline
 
 Fluxo Básico & \mbox{}
 \textbf{FB01:} Criação de categoria
@@ -1587,7 +1765,6 @@ Fluxo Básico & \mbox{}
 	\item O usuário seleciona um ícone para representar a categoria (opcional).
 	\item O usuário insere uma descrição para a categoria (opcional).
 	\item O usuário seleciona o tipo/tema (opcional).
-	\item O usuário associa um layout padrão à categoria (opcional) [E01].
 	\item O usuário confirma a criação da categoria.
 	\item O sistema valida os dados inseridos.
 	\item O sistema cria a categoria vazia no banco de dados.
@@ -1600,7 +1777,7 @@ Fluxos Alternativos & \mbox{}
 \textbf{FA01:} Nome da categoria já existe
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item No passo 10 do FB01, o sistema identifica que já existe uma categoria com o mesmo nome para o usuário.
+	\item No passo 9 do FB01, o sistema identifica que já existe uma categoria com o mesmo nome para o usuário.
 	\item O sistema exibe mensagem de erro: "Já existe uma categoria com este nome. Por favor, escolha outro nome."
 	\item O sistema retorna ao passo 4 do FB01.
 \end{enumerate}
@@ -1608,7 +1785,7 @@ Fluxos Alternativos & \mbox{}
 \textbf{FA02:} Campos obrigatórios não preenchidos
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item No passo 10 do FB01, o sistema identifica que o campo nome não foi preenchido.
+	\item No passo 9 do FB01, o sistema identifica que o campo nome não foi preenchido.
 	\item O sistema exibe mensagem de erro: "O nome da categoria é obrigatório."
 	\item O sistema retorna ao passo 4 do FB01.
 \end{enumerate}
@@ -1616,7 +1793,7 @@ Fluxos Alternativos & \mbox{}
 \textbf{FA03:} Cancelamento da operação
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item Em qualquer momento entre os passos 4 e 9 do FB01, o usuário pode selecionar "Cancelar".
+	\item Em qualquer momento entre os passos 4 e 8 do FB01, o usuário pode selecionar "Cancelar".
 	\item O sistema descarta as informações inseridas.
 	\item O sistema retorna ao dashboard de categorias.
 	\item O caso de uso é encerrado.
@@ -1627,9 +1804,9 @@ Requisitos Especiais & RNF01 - A interface deve ser intuitiva. RNF02 - O sistema
 
 Condições Prévias & O usuário deve estar autenticado no sistema. \\ \hline
 
-Pós-Condições & Uma nova categoria é criada e armazenada no banco de dados. A categoria aparece no dashboard do usuário. A categoria está pronta para receber coleções, que terão sua própria privacidade individual (padrão privada, conforme RF-19). Nenhum item pode ser cadastrado diretamente na categoria; é necessário criar ao menos uma coleção antes. \\ \hline
+Pós-Condições & Uma nova categoria é criada e armazenada no banco de dados. A categoria aparece no dashboard do usuário. A categoria está pronta para receber coleções, que terão sua própria privacidade individual (padrão pública, conforme RF-08). Nenhum item pode ser cadastrado diretamente na categoria; é necessário criar ao menos uma coleção antes. \\ \hline
 
-Pontos de Extensão & E01 - Associar Layout Padrão à Categoria (estende o passo 8 do FB01, conforme RF-11). \\
+Pontos de Extensão & Nenhum ponto de extensão identificado para este caso de uso. \\
 \end{longtable}
 \renewcommand{\arraystretch}{1}
 \FloatBarrier
@@ -1660,7 +1837,7 @@ Pontos de Extensão & E01 - Associar Layout Padrão à Categoria (estende o pass
 
 Nome do Caso de Uso & Criar Coleção \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário crie uma nova coleção dentro de uma categoria existente. A coleção é onde os itens serão efetivamente cadastrados e é também a unidade onde a privacidade é configurada (pública, somente amigos ou privada). A coleção pode herdar o layout padrão da categoria pai ou definir um layout próprio (RF-05, RF-11 e RF-19). \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário crie uma nova coleção dentro de uma categoria existente. A coleção é onde os itens serão efetivamente cadastrados e é também a unidade onde a privacidade é configurada (pública, somente amigos ou privada) e onde o layout é associado (RF-07, RF-15 e RF-08). \\ \hline
 
 Fluxo Básico & \mbox{}
 \textbf{FB01:} Criação de coleção
@@ -1668,11 +1845,11 @@ Fluxo Básico & \mbox{}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
 	\item O usuário acessa uma categoria específica no dashboard.
 	\item O usuário seleciona a opção "Criar Coleção".
-	\item O sistema exibe o formulário de criação de coleção, com privacidade preenchida como "privada" por padrão.
+	\item O sistema exibe o formulário de criação de coleção, com privacidade preenchida como "pública" por padrão.
 	\item O usuário insere o nome da coleção.
 	\item O usuário seleciona um ícone (opcional).
 	\item O usuário insere uma descrição (opcional).
-	\item O usuário opta por usar o layout padrão da categoria ou associar um layout próprio (opcional) [E01].
+	\item O usuário associa um layout à coleção (opcional) [E01].
 	\item O usuário configura a privacidade da coleção (pública, somente amigos ou privada) [E02].
 	\item O usuário confirma a criação da coleção.
 	\item O sistema valida os dados inseridos.
@@ -1694,7 +1871,7 @@ Fluxos Alternativos & \mbox{}
 \textbf{FA02:} Campos obrigatórios não preenchidos
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item No passo 10 do FB01, o sistema identifica que o campo nome não foi preenchido.
+	\item No passo 9 do FB01, o sistema identifica que o campo nome não foi preenchido.
 	\item O sistema exibe mensagem de erro: "O nome da coleção é obrigatório."
 	\item O sistema retorna ao passo 4 do FB01.
 \end{enumerate}
@@ -1702,7 +1879,7 @@ Fluxos Alternativos & \mbox{}
 \textbf{FA03:} Cancelamento da operação
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item Em qualquer momento entre os passos 4 e 9 do FB01, o usuário pode selecionar "Cancelar".
+	\item Em qualquer momento entre os passos 4 e 8 do FB01, o usuário pode selecionar "Cancelar".
 	\item O sistema descarta as informações inseridas.
 	\item O sistema retorna à categoria pai.
 	\item O caso de uso é encerrado.
@@ -1713,9 +1890,9 @@ Requisitos Especiais & RNF01 - A interface deve ser intuitiva. RNF02 - A coleç�
 
 Condições Prévias & O usuário deve estar autenticado. A categoria pai deve existir e pertencer ao usuário. \\ \hline
 
-Pós-Condições & Uma nova coleção é criada vinculada à categoria pai, com sua privacidade individual configurada. A coleção está pronta para receber itens. Se não foi definido layout próprio, a coleção herda o layout padrão da categoria. A contagem de coleções da categoria é atualizada. Se a privacidade configurada for `pública' ou `somente amigos', a coleção poderá ser seguida por amigos (RF-16). \\ \hline
+Pós-Condições & Uma nova coleção é criada vinculada à categoria pai, com sua privacidade individual configurada. A coleção está pronta para receber itens. Caso um layout tenha sido associado, os itens dessa coleção passam a adotá-lo; caso contrário, utilizam um formulário básico. A contagem de coleções da categoria é atualizada. Se a privacidade configurada for `pública' ou `somente amigos', a coleção poderá ser seguida por amigos (RF-21). \\ \hline
 
-Pontos de Extensão & E01 - Associar Layout Próprio à Coleção (estende o passo 7 do FB01, conforme RF-11; sobrescreve o layout padrão da categoria). E02 - Configurar Privacidade da Coleção (estende o passo 8 do FB01, conforme RF-19; padrão privada, alterável para pública ou somente amigos). \\
+Pontos de Extensão & E01 - Associar Layout à Coleção (estende o passo 7 do FB01, conforme RF-15). E02 - Configurar Privacidade da Coleção (estende o passo 8 do FB01, conforme RF-08; padrão pública, alterável para privada ou somente amigos). \\
 \end{longtable}
 \renewcommand{\arraystretch}{1}
 \FloatBarrier
@@ -1745,7 +1922,7 @@ Pontos de Extensão & E01 - Associar Layout Próprio à Coleção (estende o pas
 
 Nome do Caso de Uso & Criar Item \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário cadastre um novo item dentro de uma coleção específica. O item herda automaticamente o layout aplicável, determinado pela cadeia: layout próprio da coleção, se houver; caso contrário, layout padrão da categoria pai (RF-06 e RF-11). \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário cadastre um novo item dentro de uma coleção específica. O item adota automaticamente o layout associado à coleção; caso a coleção não tenha layout, utiliza um formulário básico (RF-09 e RF-15). \\ \hline
 
 Fluxo Básico & \mbox{}
 \textbf{FB01:} Criação de item
@@ -1753,10 +1930,10 @@ Fluxo Básico & \mbox{}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
 	\item O usuário acessa uma coleção específica (dentro de uma categoria).
 	\item O usuário seleciona a opção "Adicionar Item".
-	\item O sistema determina o layout aplicável ao item conforme a cadeia de herança: layout próprio da coleção, se houver; caso contrário, layout padrão da categoria.
+	\item O sistema determina o layout aplicável ao item: o layout associado à coleção, se houver; caso contrário, um formulário básico com campos padrão.
 	\item O sistema exibe o formulário de criação de item baseado no layout aplicável [E01].
 	\item O usuário insere o nome do item.
-	\item O usuário preenche os widgets disponíveis no layout (autor, ano, gênero, avaliação, etc.).
+	\item O usuário preenche os elementos disponíveis no layout (autor, ano, gênero, avaliação, etc.).
 	\item O usuário associa uma imagem ao item (opcional) [E02].
 	\item O usuário confirma a criação do item.
 	\item O sistema valida os dados inseridos.
@@ -1770,7 +1947,7 @@ Fluxos Alternativos & \mbox{}
 \textbf{FA01:} Nenhum layout aplicável
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item No passo 3 do FB01, o sistema identifica que nem a coleção nem a categoria possuem layout definido.
+	\item No passo 3 do FB01, o sistema identifica que a coleção não possui layout associado.
 	\item O sistema exibe formulário básico com campos padrão (nome, descrição, imagem).
 	\item O fluxo continua no passo 5 do FB01.
 \end{enumerate}
@@ -1806,9 +1983,9 @@ Requisitos Especiais & RNF01 - A interface deve ser intuitiva. RNF02 - O sistema
 
 Condições Prévias & O usuário deve estar autenticado. A coleção de destino deve existir dentro de uma categoria válida. \\ \hline
 
-Pós-Condições & Um novo item é criado e vinculado à coleção. O item herda o layout aplicável. A ficha individual do item é gerada automaticamente (RF-07). O item aparece na visualização da coleção. A contagem de itens da coleção e da categoria pai é atualizada. \\ \hline
+Pós-Condições & Um novo item é criado e vinculado à coleção. O item herda o layout aplicável. A ficha individual do item é gerada automaticamente (RF-11). O item aparece na visualização da coleção. A contagem de itens da coleção e da categoria pai é atualizada. \\ \hline
 
-Pontos de Extensão & E01 - Exibir Ficha do Item (estende o passo 4 do FB01, referente ao RF-07). E02 - Associar Imagem ao Item (estende o passo 7 do FB01). \\
+Pontos de Extensão & E01 - Exibir Ficha do Item (estende o passo 4 do FB01, referente ao RF-11). E02 - Associar Imagem ao Item (estende o passo 7 do FB01). \\
 \end{longtable}
 \renewcommand{\arraystretch}{1}
 \FloatBarrier
@@ -1838,7 +2015,7 @@ Pontos de Extensão & E01 - Exibir Ficha do Item (estende o passo 4 do FB01, ref
 
 Nome do Caso de Uso & Criar Layout Base \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário crie um layout personalizado através de um editor de widgets, definindo quais campos e elementos visuais farão parte da estrutura de fichas de itens. O layout pode ser criado do zero ou por duplicação de um layout já existente e, posteriormente, associado a uma categoria (como padrão) ou a uma coleção (sobrescrevendo o padrão da categoria), conforme RF-10 e RF-11. \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário crie um layout personalizado através de um editor de elementos, definindo quais campos e elementos visuais farão parte da estrutura de fichas de itens. O layout pode ser criado do zero ou por duplicação de um layout já existente e, posteriormente, associado a uma ou mais coleções, conforme RF-14 e RF-15. \\ \hline
 
 Fluxo Básico & \mbox{}
 \textbf{FB01:} Criação de layout base
@@ -1849,9 +2026,9 @@ Fluxo Básico & \mbox{}
 	\item O sistema exibe o editor de layout com uma área de trabalho vazia.
 	\item O usuário insere um nome para o layout.
 	\item O usuário insere uma descrição para o layout (opcional).
-	\item O usuário adiciona widgets à área de trabalho (texto, imagem, avaliação, nota, campo personalizado, etc.) [E01].
-	\item O usuário configura as propriedades de cada widget (nome do campo, tipo de dado, obrigatoriedade, etc.).
-	\item O usuário organiza visualmente os widgets na área de trabalho (posicionamento, tamanho, ordem).
+	\item O usuário adiciona elementos à área de trabalho (texto, imagem, avaliação, nota, campo personalizado, etc.) [E01].
+	\item O usuário configura as propriedades de cada elemento (nome do campo, tipo de dado, obrigatoriedade, etc.).
+	\item O usuário organiza visualmente os elementos na área de trabalho (posicionamento, tamanho, ordem).
 	\item O sistema exibe prévia do layout em tempo real conforme as modificações.
 	\item O usuário confirma a criação do layout.
 	\item O sistema valida a estrutura do layout.
@@ -1870,11 +2047,11 @@ Fluxos Alternativos & \mbox{}
 	\item O sistema retorna ao passo 4 do FB01.
 \end{enumerate}
 
-\textbf{FA02:} Layout sem widgets
+\textbf{FA02:} Layout sem elementos
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item No passo 11 do FB01, o sistema identifica que nenhum widget foi adicionado ao layout.
-	\item O sistema exibe mensagem de erro: "O layout deve conter pelo menos um widget."
+	\item No passo 11 do FB01, o sistema identifica que nenhum elemento foi adicionado ao layout.
+	\item O sistema exibe mensagem de erro: "O layout deve conter pelo menos um elemento."
 	\item O sistema retorna ao passo 6 do FB01.
 \end{enumerate}
 
@@ -1903,9 +2080,9 @@ Requisitos Especiais & RNF01 - O editor deve ser intuitivo e facilitar a persona
 
 Condições Prévias & O usuário deve estar autenticado. Para duplicação (FA03), deve existir ao menos um layout prévio de propriedade do usuário. \\ \hline
 
-Pós-Condições & Um novo layout é criado e armazenado no banco de dados. O layout está disponível para associação a categorias (como padrão) ou a coleções (como layout próprio), conforme RF-11. O layout aparece na lista de layouts do usuário. Se criado por duplicação, o layout de origem permanece inalterado. \\ \hline
+Pós-Condições & Um novo layout é criado e armazenado no banco de dados. O layout está disponível para associação a uma ou mais coleções, conforme RF-15. O layout aparece na lista de layouts do usuário. Se criado por duplicação, o layout de origem permanece inalterado. \\ \hline
 
-Pontos de Extensão & E01 - Editar Layout Base (durante a criação, permite modificações em tempo real, conforme RF-10). E02 - Duplicar Layout Base (permite criar novo layout baseado em existente, conforme RF-10). \\
+Pontos de Extensão & E01 - Editar Layout Base (durante a criação, permite modificações em tempo real, conforme RF-14). E02 - Duplicar Layout Base (permite criar novo layout baseado em existente, conforme RF-14). \\
 \end{longtable}
 \renewcommand{\arraystretch}{1}
 \FloatBarrier
@@ -1935,7 +2112,7 @@ Pontos de Extensão & E01 - Editar Layout Base (durante a criação, permite mod
 
 Nome do Caso de Uso & Visualizar Dashboard de Categorias \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário visualize todas as suas categorias em uma tela dedicada, com informações resumidas de cada uma (nome, ícone, número de coleções, número total de itens, indicador de privacidade) e acesso rápido às coleções que pertencem a cada categoria. O dashboard é o ponto central de navegação do sistema e permite alternar entre modos de visualização, aplicar filtros e ordenações (RF-20). \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário visualize todas as suas categorias em uma tela dedicada, com informações resumidas de cada uma (nome, ícone, número de coleções, número total de itens, indicador de privacidade) e acesso rápido às coleções que pertencem a cada categoria. O dashboard é o ponto central de navegação do sistema e permite alternar entre modos de visualização, aplicar filtros e ordenações (RF-13). \\ \hline
 
 Fluxo Básico & \mbox{}
 \textbf{FB01:} Visualização do dashboard
@@ -1986,7 +2163,7 @@ Condições Prévias & O usuário deve estar autenticado no sistema. \\ \hline
 
 Pós-Condições & O usuário visualiza todas as suas categorias. O usuário pode navegar para qualquer categoria e, dentro dela, para qualquer coleção ou item. O estado de visualização (grade/lista, filtros, ordenação) é persistido para futuras sessões. \\ \hline
 
-Pontos de Extensão & E01 - Alternar modo de visualização (grade/lista, conforme RF-20). E02 - Filtrar e Ordenar Categorias (permite organizar por diferentes critérios, conforme RF-20). \\
+Pontos de Extensão & E01 - Alternar modo de visualização (grade/lista, conforme RF-13). E02 - Filtrar e Ordenar Categorias (permite organizar por diferentes critérios, conforme RF-13). \\
 \end{longtable}
 \renewcommand{\arraystretch}{1}
 \FloatBarrier
@@ -2016,7 +2193,7 @@ Pontos de Extensão & E01 - Alternar modo de visualização (grade/lista, confor
 
 Nome do Caso de Uso & Editar Perfil \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário visualize e edite as informações de seu perfil, incluindo dados cadastrais básicos (nome, e-mail) e personalizações visuais (foto de perfil, descrição, biografia). Alterações no e-mail exigem verificação por meio de link enviado ao novo endereço (RF-03). \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário visualize e edite as informações de seu perfil, incluindo dados cadastrais básicos (nome, e-mail) e personalizações visuais (foto de perfil, descrição, biografia). Alterações no e-mail exigem verificação por meio de link enviado ao novo endereço (RF-05). \\ \hline
 
 Fluxo Básico & \mbox{}
 \textbf{FB01:} Edição de perfil
@@ -2121,7 +2298,7 @@ Pontos de Extensão & E01 - Personalizar Informações (permite modificar foto, 
 
 Nome do Caso de Uso & Personalizar Interface \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário configure a aparência visual global da plataforma, incluindo cores, subcores, tipografia e tema do sistema (claro, escuro ou automático). As alterações são exibidas em prévia antes de serem confirmadas e persistem entre sessões e dispositivos (RF-13 e RF-14). \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário configure a aparência visual global da plataforma, incluindo cores, subcores, tipografia e tema do sistema (claro, escuro ou automático). As alterações são exibidas em prévia antes de serem confirmadas e persistem entre sessões e dispositivos (RF-18 e RF-19). \\ \hline
 
 Fluxo Básico & \mbox{}
 \textbf{FB01:} Personalização da interface
@@ -2175,8 +2352,8 @@ Condições Prévias & O usuário deve estar autenticado no sistema. \\ \hline
 Pós-Condições & As configurações visuais são salvas no perfil do usuário. As alterações são aplicadas globalmente e imediatamente a todas as telas. As configurações persistem em futuras sessões e em outros dispositivos. \\ \hline
 
 Pontos de Extensão &
-E01 - Modificar Cores (estende o passo 4 do FB01, conforme RF-13).
-E02 - Modificar Fontes (estende o passo 4 do FB01, conforme RF-14).
+E01 - Modificar Cores (estende o passo 4 do FB01, conforme RF-18).
+E02 - Modificar Fontes (estende o passo 4 do FB01, conforme RF-19).
 E03 - Visualizar Prévia (estende o passo 4 do FB01 — exibe prévia em tempo real das alterações antes de aplicar). \\
 \end{longtable}
 \renewcommand{\arraystretch}{1}
@@ -2207,7 +2384,7 @@ E03 - Visualizar Prévia (estende o passo 4 do FB01 — exibe prévia em tempo r
 
 Nome do Caso de Uso & Adicionar Amigo \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário envie solicitações de amizade para outros usuários da plataforma. A busca pode ser realizada pelo código de usuário ou pelo nome, e a solicitação fica pendente até que o destinatário a aceite ou recuse (RF-15 e RF-21). \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário envie solicitações de amizade para outros usuários da plataforma. A busca pode ser realizada pelo código de usuário ou pelo nome, e a solicitação fica pendente até que o destinatário a aceite ou recuse (RF-20 e RF-24). \\ \hline
 
 Fluxo Básico & \mbox{}
 \textbf{FB01:} Envio de solicitação de amizade
@@ -2267,7 +2444,7 @@ Requisitos Especiais & RNF02 - A busca e envio de solicitação devem ocorrer em
 
 Condições Prévias & O usuário deve estar autenticado no sistema. O usuário destinatário deve existir e ter um perfil ativo. \\ \hline
 
-Pós-Condições & Uma solicitação de amizade é criada com status "pendente". O destinatário recebe notificação da solicitação (RF-21). A solicitação aparece na lista de pendentes de ambos os usuários. O botão no perfil do destinatário muda para "Solicitação Pendente". \\ \hline
+Pós-Condições & Uma solicitação de amizade é criada com status "pendente". O destinatário recebe notificação da solicitação (RF-24). A solicitação aparece na lista de pendentes de ambos os usuários. O botão no perfil do destinatário muda para "Solicitação Pendente". \\ \hline
 
 Pontos de Extensão & Nenhum ponto de extensão identificado para este caso de uso. \\
 \end{longtable}
@@ -2296,16 +2473,16 @@ Pontos de Extensão & Nenhum ponto de extensão identificado para este caso de u
 
 Nome do Caso de Uso & Visualizar Feed de Atualizações \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário acompanhe em tempo real as atualizações das coleções que segue, visualizando eventos de adição, edição e remoção de itens realizados por amigos, ordenados cronologicamente do mais recente ao mais antigo (RF-17). \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário acompanhe em tempo real as atualizações das coleções que segue, visualizando eventos de adição, edição e remoção de itens realizados por seus proprietários, ordenados cronologicamente do mais recente ao mais antigo (RF-22). \\ \hline
 
 Fluxo Básico & \mbox{}
 \textbf{FB01:} Exibição do feed
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
     \item O usuário acessa a área de feed de atualizações.
-    \item O sistema identifica todas as coleções que o usuário segue ativamente (conforme RF-16).
+    \item O sistema identifica todas as coleções que o usuário segue ativamente (conforme RF-21).
     \item O sistema recupera os eventos de atualização associados a essas coleções (adição/edição/remoção de itens), ordenados do mais recente ao mais antigo.
-    \item O sistema verifica a privacidade atual de cada coleção antes de exibir seus eventos (RF-19).
+    \item O sistema verifica a privacidade atual de cada coleção antes de exibir seus eventos (RF-08).
     \item O sistema exibe o feed com os eventos, contendo: nome do autor da ação, tipo de evento, nome do item afetado, nome da coleção, nome da categoria pai e data/hora relativa do evento.
     \item O feed é atualizado automaticamente em tempo real sem necessidade de recarregar a página.
     \item O usuário pode rolar o feed para carregar eventos mais antigos progressivamente (paginação).
@@ -2317,8 +2494,8 @@ Fluxos Alternativos & \mbox{}
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
     \item No passo 2 do FB01, o sistema identifica que o usuário não segue nenhuma coleção.
-    \item O sistema exibe mensagem: ``Seu feed está vazio. Siga coleções de amigos para acompanhar suas atualizações.''
-    \item O sistema exibe atalho para a área de busca de amigos.
+    \item O sistema exibe mensagem: ``Seu feed está vazio. Siga coleções para acompanhar suas atualizações.''
+    \item O sistema exibe atalho para a área de descoberta de perfis e coleções públicas.
 \end{enumerate}
 
 \textbf{FA02:} Coleção seguida alterada para privada
@@ -2341,7 +2518,7 @@ Fluxos Alternativos & \mbox{}
 
 Requisitos Especiais & RNF07 - O feed deve ser atualizado em tempo real sem recarregar a página. RNF02 - O carregamento inicial do feed deve ocorrer em até 3 segundos. RNF03 - Eventos de coleções privadas não devem ser exibidos em nenhuma circunstância. \\ \hline
 
-Condições Prévias & O usuário deve estar autenticado. O usuário deve seguir ao menos uma coleção com privacidade pública ou somente amigos (RF-16). \\ \hline
+Condições Prévias & O usuário deve estar autenticado. O usuário deve seguir ao menos uma coleção com privacidade pública ou somente amigos (RF-21). \\ \hline
 
 Pós-Condições & O usuário visualiza os eventos recentes das coleções que segue. O feed permanece atualizado em tempo real durante a navegação. Coleções tornadas privadas são removidas do feed imediatamente, com seu acompanhamento encerrado. \\ \hline
 
@@ -2372,7 +2549,7 @@ Pontos de Extensão & Nenhum ponto de extensão identificado para este caso de u
 
 Nome do Caso de Uso & Gerenciar Solicitações de Amizade \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário visualize, aceite ou recuse solicitações de amizade recebidas de outros usuários da plataforma. Ao aceitar, o vínculo de amizade é criado mutuamente. Ao recusar, a solicitação é marcada como recusada e o solicitante é notificado (RF-15 e RF-21). \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário visualize, aceite ou recuse solicitações de amizade recebidas de outros usuários da plataforma. Ao aceitar, o vínculo de amizade é criado mutuamente e o solicitante é notificado. Ao recusar, a solicitação é marcada como recusada sem notificação ao solicitante (RF-20 e RF-24). \\ \hline
 
 Fluxo Básico & \mbox{}
 \textbf{FB01:} Aceitação de solicitação de amizade
@@ -2395,7 +2572,7 @@ Fluxos Alternativos & \mbox{}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
     \item No passo 3 do FB01, o usuário clica em ``Recusar'' na solicitação desejada.
     \item O sistema atualiza o status da solicitação para ``recusada'' no banco de dados.
-    \item O sistema notifica o solicitante de que a solicitação foi recusada (RF-21).
+    \item O sistema não gera notificação ao solicitante; a recusa é silenciosa.
     \item O sistema remove a solicitação da lista de pendentes do usuário.
     \item O caso de uso é encerrado.
 \end{enumerate}
@@ -2418,11 +2595,11 @@ Fluxos Alternativos & \mbox{}
 \end{enumerate}
 \mbox{} \\ \hline
 
-Requisitos Especiais & RNF08 - Notificações de aceite/recusa devem ser enviadas em tempo real. RNF02 - A operação deve ser concluída em até 3 segundos. \\ \hline
+Requisitos Especiais & RNF08 - Notificações de aceite devem ser enviadas em tempo real; recusas não geram evento. RNF02 - A operação deve ser concluída em até 3 segundos. \\ \hline
 
 Condições Prévias & O usuário deve estar autenticado. Deve existir ao menos uma solicitação de amizade com status ``pendente'' endereçada ao usuário. \\ \hline
 
-Pós-Condições & Se aceita: vínculo de amizade mútuo criado; ambos os usuários aparecem na lista de amigos um do outro. Se recusada: status da solicitação atualizado para ``recusada''; nenhum vínculo é criado. Em ambos os casos, o solicitante é notificado (RF-21). \\ \hline
+Pós-Condições & Se aceita: vínculo de amizade mútuo criado; ambos os usuários aparecem na lista de amigos um do outro e o solicitante é notificado. Se recusada: status da solicitação atualizado para ``recusada''; nenhum vínculo ou notificação é criado. \\ \hline
 
 Pontos de Extensão & Nenhum ponto de extensão identificado para este caso de uso. \\
 \end{longtable}
@@ -2451,20 +2628,20 @@ Pontos de Extensão & Nenhum ponto de extensão identificado para este caso de u
 
 Nome do Caso de Uso & Visualizar Perfil de Amigo \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário acesse o perfil público de outro usuário (amigo ou não), visualizando suas informações básicas e as coleções disponíveis conforme o nível de privacidade configurado em cada uma delas. As coleções visíveis são agrupadas pelas respectivas categorias, e a navegação nas coleções e itens do usuário visitado é restrita ao modo somente leitura (RF-18 e RF-19). \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário acesse o perfil público de outro usuário (amigo ou não), visualizando suas informações básicas e as coleções disponíveis conforme o nível de privacidade configurado em cada uma delas. As coleções visíveis são agrupadas pelas respectivas categorias, e a navegação nas coleções e itens do usuário visitado é restrita ao modo somente leitura (RF-23 e RF-08). \\ \hline
 
 Fluxo Básico & \mbox{}
 \textbf{FB01:} Visualização do perfil
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-    \item O usuário acessa a lista de amigos ou realiza busca pelo nome do usuário desejado.
+    \item O usuário acessa a lista de amigos ou realiza busca pelo código do usuário desejado.
     \item O usuário seleciona o perfil desejado.
     \item O sistema recupera as informações públicas do perfil (nome, foto, biografia).
     \item O sistema recupera as coleções do usuário visitado com privacidade ``pública'' ou ``somente amigos'' (esta última apenas quando há vínculo de amizade confirmada), agrupando-as pelas respectivas categorias.
     \item O sistema exibe o perfil com suas informações e as coleções acessíveis, agrupadas por categoria.
     \item Coleções com privacidade ``privada'' não são listadas nem mencionadas. Categorias que, para esse visitante, não tenham nenhuma coleção visível também são ocultadas integralmente.
     \item O usuário navega pelas coleções visíveis e pelos itens contidos nelas, em modo somente leitura.
-    \item O usuário pode optar por seguir uma coleção visível [E01].
+    \item O usuário pode seguir uma coleção pública independentemente de amizade; para coleções ``somente amigos'', o acompanhamento exige amizade confirmada [E01].
 \end{enumerate}
 \mbox{} \\ \hline
 
@@ -2502,17 +2679,19 @@ Condições Prévias & O usuário deve estar autenticado. O usuário visitado de
 
 Pós-Condições & O usuário visualiza o perfil e as coleções acessíveis do usuário visitado, agrupadas por categoria. Nenhuma alteração é feita nos dados do usuário visitado. O usuário pode iniciar o fluxo de seguir uma coleção a partir desta tela. \\ \hline
 
-Pontos de Extensão & E01 - Seguir Coleção (estende o passo 8 do FB01, conforme RF-16 -- permite ao usuário acompanhar uma coleção pública ou somente amigos a partir do perfil visitado). \\
+Pontos de Extensão & E01 - Seguir Coleção (estende o passo 8 do FB01, conforme RF-21 -- permite ao usuário acompanhar uma coleção pública ou somente amigos a partir do perfil visitado). \\
 \end{longtable}
 \renewcommand{\arraystretch}{1}
 \FloatBarrier
+\endgroup 
 
 
 
 
 \section{Modelo de Domínio}
 
-De acordo com \cite{Larman2007}, o modelo de domínio é uma representação visual das classes conceituais ou objetos do mundo real em um domínio de interesse, ilustrando conceitos significativos, atributos e associações entre eles.
+De acordo com \cite{Larman2007}, o modelo de domínio é uma representação visual das classes conceituais ou objetos do mundo real em um domínio de interesse, 
+ilustrando conceitos significativos, atributos e associações entre eles.
 
 
 A Figura~\ref{fig:ModeloDominio} apresenta o modelo de domínio desenvolvido para o escopo deste trabalho, evidenciando a organização em pacotes descrito no projeto, bem como as 
