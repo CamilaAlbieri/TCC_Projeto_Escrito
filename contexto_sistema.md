@@ -25,7 +25,7 @@ A diferença é que a tela montada é um **modelo reutilizável** por vários it
 - **Element** — Componente visual reutilizável utilizado para compor layouts, como textos, imagens, classificações, datas, listas, ícones, entre outros. Cada elemento possui tipo, posição, tamanho, conteúdo opcional e propriedades visuais próprias (fonte, tamanho da fonte, peso, alinhamento, cor e cor de fundo).
 - **ElementType** — Conjunto fixo e predefinido de categorias de elemento que o usuário pode arrastar para o editor, à semelhança dos elementos básicos de ferramentas como o Canva. Compreende: texto fixo, campo de texto, imagem, gif, forma, ícone, classificação, data e lista. É representado por uma enumeração, pois constitui um conjunto estável que faz parte das capacidades do próprio editor.
 - **Layout** — Estrutura personalizada que define quais elementos compõem a ficha de um item e como eles se organizam visualmente. Funciona como um _template_ reutilizável, associado a uma coleção; um mesmo layout pode ser reutilizado por diferentes coleções. Todos os itens de uma coleção compartilham o layout dela.
-- **Item** — Unidade individual de conteúdo cadastrada pelo usuário (por exemplo, um livro, filme ou jogo específico). Todo item pertence a uma coleção e adota, por padrão, o layout associado a essa coleção, podendo receber uma versão visual própria conforme RF-19.
+- **Item** — Unidade individual de conteúdo cadastrada pelo usuário (por exemplo, um livro, filme ou jogo específico). Todo item pertence a uma coleção e adota, por padrão, o layout associado a essa coleção, podendo receber uma versão visual própria conforme RF-17.
 
 **Texto no canvas:** elementos textuais funcionam como objetos visuais editáveis, à semelhança do Canva. Um texto pode conter "Autor:" ou "Autor: Frank Herbert" diretamente em `Element.content`; se o usuário quiser separar rótulo e valor visualmente, pode criar dois elementos de texto independentes.
 
@@ -45,9 +45,9 @@ _override_ individual (adicionar/remover elementos só para ele), sem afetar a c
 Os requisitos seguem esta ordem (do mais básico ao mais avançado):
 
 1. **Acesso ao Sistema** — Cadastro, autenticação, recuperação e alteração de senha e gerenciamento do perfil do usuário.
-2. **Aparência** — Configuração visual global da interface, incluindo tema, cores e tipografia.
-3. **Coleção** — Gerenciamento de categorias, coleções, privacidade, itens e respectivas formas de visualização.
-4. **Editor de Layout** — Criação, associação, compartilhamento e personalização de layouts e elementos.
+2. **Coleção** — Gerenciamento de categorias, coleções, privacidade, itens e respectivas formas de visualização.
+3. **Editor de Layout** — Criação, associação, compartilhamento e personalização de layouts e elementos.
+4. **Aparência** — Configuração visual global da interface, incluindo tema, cores e tipografia.
 5. **Interação Social** — Vínculos de amizade, acompanhamento de coleções e visualização de perfis de outros usuários.
 6. **Notificação** — Geração, exibição e gerenciamento das notificações enviadas ao usuário.
 
@@ -60,25 +60,26 @@ Os requisitos seguem esta ordem (do mais básico ao mais avançado):
 | RF-03 | Alterar Senha na Área Restrita | Acesso ao Sistema | Importante | Usuário |
 | RF-04 | Recuperar Senha via E-mail | Acesso ao Sistema | Importante | Usuário |
 | RF-05 | Gerenciar Perfil do Usuário | Acesso ao Sistema | Importante | Usuário |
-| RF-06 | Gerenciar Aparência (Tema e Cores) | Aparência | Desejável | Usuário |
-| RF-07 | Gerenciar Tipografia Global | Aparência | Desejável | Usuário |
-| RF-08 | Gerenciar Categoria | Coleção | Essencial | Usuário |
-| RF-09 | Gerenciar Coleção | Coleção | Essencial | Usuário |
-| RF-10 | Gerenciar Privacidade da Coleção | Coleção | Essencial | Usuário |
-| RF-11 | Gerenciar Item | Coleção | Essencial | Usuário |
-| RF-12 | Mover Item entre Coleções | Coleção | Importante | Usuário |
-| RF-13 | Exibir Ficha de Item em Modo Leitura | Coleção | Essencial | Sistema |
-| RF-14 | Visualizar Itens de uma Coleção | Coleção | Essencial | Usuário |
-| RF-15 | Exibir Tela Principal de Categorias | Coleção | Essencial | Sistema |
-| RF-16 | Gerenciar Layout Personalizado | Editor de Layout | Importante | Usuário |
-| RF-17 | Associar Layout a Coleção | Editor de Layout | Importante | Usuário |
-| RF-18 | Compartilhar Layout | Editor de Layout | Desejável | Usuário |
-| RF-19 | Modificar Layout de Item Individualmente | Editor de Layout | Desejável | Usuário |
+| RF-06 | Gerenciar Categoria | Coleção | Essencial | Usuário |
+| RF-07 | Gerenciar Coleção | Coleção | Essencial | Usuário |
+| RF-08 | Gerenciar Privacidade da Coleção | Coleção | Essencial | Usuário |
+| RF-09 | Gerenciar Item | Coleção | Essencial | Usuário |
+| RF-10 | Mover Item entre Coleções | Coleção | Importante | Usuário |
+| RF-11 | Exibir Ficha de Item em Modo Leitura | Coleção | Essencial | Sistema |
+| RF-12 | Visualizar Itens de uma Coleção | Coleção | Essencial | Usuário |
+| RF-13 | Exibir Tela Principal de Categorias | Coleção | Essencial | Sistema |
+| RF-14 | Gerenciar Layout Personalizado | Editor de Layout | Importante | Usuário |
+| RF-15 | Associar Layout a Coleção | Editor de Layout | Importante | Usuário |
+| RF-16 | Compartilhar Layout | Editor de Layout | Desejável | Usuário |
+| RF-17 | Modificar Layout de Item Individualmente | Editor de Layout | Desejável | Usuário |
+| RF-18 | Gerenciar Aparência (Tema e Cores) | Aparência | Desejável | Usuário |
+| RF-19 | Gerenciar Tipografia Global | Aparência | Desejável | Usuário |
 | RF-20 | Gerenciar Amizade | Interação Social | Importante | Usuário |
 | RF-21 | Seguir Coleção Visível | Interação Social | Importante | Usuário |
 | RF-22 | Exibir Feed de Atualizações | Interação Social | Essencial | Sistema |
 | RF-23 | Visualizar Perfis e Coleções de Usuários | Interação Social | Importante | Usuário |
 | RF-24 | Gerenciar Notificações do Sistema | Notificação | Importante | Sistema |
+
 ## Requisitos Funcionais (detalhado)
 
 ### RF-01 — Cadastrar Usuário
@@ -102,7 +103,7 @@ Usuário tenta cadastrar com o email "camilamattos.mila@gmail.com", que já exis
 5. A senha deve ser armazenada de forma criptografada (RNF-03).
 6. O código de usuário é gerado automaticamente pelo sistema no momento do cadastro, deve ser único em toda a plataforma e não pode ser alterado posteriormente.
 7. O código de usuário é o identificador público utilizado para buscas e envio de solicitações de amizade.
-8. Ao concluir o cadastro, o sistema cria automaticamente para o usuário uma configuração de aparência padrão (tema claro, esquema neutro preto e branco), conforme RF-06.
+8. Ao concluir o cadastro, o sistema cria automaticamente para o usuário uma configuração de aparência padrão (tema claro, esquema neutro preto e branco), conforme RF-18.
 
 ### RF-02 — Autenticar Usuário (Login e Logout)
 
@@ -195,46 +196,7 @@ Usuário altera o e-mail para "cami.mattos@gmail.com"; o sistema envia um link d
 9. A alteração de senha não é feita por este requisito, e sim pelo RF-03 (área restrita).
 10. O código de usuário (RF-01) não pode ser alterado por este caso de uso.
 
-### RF-06 — Gerenciar Aparência (Tema e Cores)
-
-- **Grupo:** Aparência
-- **Ação:** Gerenciar aparência
-- **Objeto:** Configuração visual global da interface do usuário
-- **Prioridade:** Desejável · **Operação:** Entrada · **Ator:** Usuário
-
-**Atributos:** cor primária (hex), subcores (até 4 valores hex), paletas predefinidas (lista do sistema), paletas personalizadas (nome de até 50 caracteres), estilo global (claro / escuro / automático conforme sistema operacional).
-
-**Exemplos:** No momento do cadastro (RF-01), o sistema cria para o usuário uma aparência padrão: tema claro, com esquema neutro em preto e branco.
-Camila seleciona a paleta predefinida "Outono" com tons terrosos e estilo escuro; toda a interface é atualizada em tempo real.
-Camila cria a paleta personalizada "Meu Rosa" com cor primária #E91E8C, aplica e salva no perfil.
-
-**Regras / Restrições:**
-
-1. Todo usuário recém-cadastrado recebe uma configuração de aparência padrão (tema claro, esquema neutro preto e branco), criada automaticamente no cadastro (RF-01).
-2. O usuário pode alterar a aparência a qualquer momento; as mudanças sobrescrevem a configuração existente.
-3. O tema selecionado deve ser aplicado globalmente a todas as telas do sistema de forma imediata.
-4. Paletas predefinidas podem ser editadas diretamente nas configurações.
-5. As configurações de aparência devem ser salvas no perfil e persistidas entre sessões e dispositivos.
-6. As alterações devem ser exibidas em área de prévia antes de o usuário confirmar a aplicação.
-
-### RF-07 — Gerenciar Tipografia Global
-
-- **Grupo:** Aparência
-- **Ação:** Alterar
-- **Objeto:** Tipografia e aparência textual global
-- **Prioridade:** Desejável · **Operação:** Entrada · **Ator:** Usuário
-
-**Atributos:** família de fonte (lista predefinida com no mínimo 5 opções), tamanho base em px (mínimo 12 px, máximo 24 px), espaço entre linhas (1.0 a 2.0), espaço entre letras.
-
-**Exemplos:** Camila altera a fonte para "Georgia", tamanho base para 16 px e espaço de linha para 1.6; a prévia reflete as mudanças antes da confirmação.
-
-**Regras / Restrições:**
-
-1. As fontes disponíveis devem incluir ao menos cinco opções tipográficas distintas (ex.: serif, sans-serif, monospace).
-2. As alterações devem ser exibidas em área de prévia antes de o usuário confirmar a aplicação.
-3. As configurações de tipografia devem ser aplicadas globalmente e persistidas entre sessões.
-
-### RF-08 — Gerenciar Categoria
+### RF-06 — Gerenciar Categoria
 
 - **Grupo:** Coleção
 - **Ação:** Gerenciar
@@ -251,13 +213,13 @@ Camila exclui a categoria "Jogos Antigos" e confirma a exclusão permanente no d
 
 1. O nome da categoria é obrigatório; ícone e descrição são opcionais.
 2. Não podem existir duas categorias com o mesmo nome para o mesmo usuário.
-3. A categoria, ao ser criada, permanece vazia e não contém itens diretamente; os itens só podem ser cadastrados dentro de suas coleções (RF-09 e RF-11).
-4. A categoria serve apenas como agrupador temático; a definição de layout ocorre no nível da coleção, e não no da categoria (RF-09 e RF-17).
-5. A categoria não possui nível de privacidade próprio; a privacidade é configurada individualmente em cada coleção (RF-10).
+3. A categoria, ao ser criada, permanece vazia e não contém itens diretamente; os itens só podem ser cadastrados dentro de suas coleções (RF-07 e RF-09).
+4. A categoria serve apenas como agrupador temático; a definição de layout ocorre no nível da coleção, e não no da categoria (RF-07 e RF-15).
+5. A categoria não possui nível de privacidade próprio; a privacidade é configurada individualmente em cada coleção (RF-08).
 6. A exclusão deve exibir diálogo de confirmação alertando que todas as coleções e itens vinculados serão removidos permanentemente.
 7. A data de criação é gerada automaticamente pelo sistema e não pode ser editada.
 
-### RF-09 — Gerenciar Coleção
+### RF-07 — Gerenciar Coleção
 
 - **Grupo:** Coleção
 - **Ação:** Gerenciar
@@ -275,12 +237,12 @@ Camila exclui a coleção "Rascunhos" e confirma no diálogo a remoção de todo
 1. O nome e a referência à categoria pai são obrigatórios.
 2. Não podem existir duas coleções com o mesmo nome dentro da mesma categoria para o mesmo usuário.
 3. Toda coleção pertence a exatamente uma categoria.
-4. Por padrão, a privacidade de uma nova coleção é "pública", podendo ser alterada conforme RF-10.
-5. Toda coleção pode ter um layout associado, que determina os elementos exibidos e preenchíveis nos itens dessa coleção; um mesmo layout pode ser reutilizado por diferentes coleções (RF-17).
+4. Por padrão, a privacidade de uma nova coleção é "pública", podendo ser alterada conforme RF-08.
+5. Toda coleção pode ter um layout associado, que determina os elementos exibidos e preenchíveis nos itens dessa coleção; um mesmo layout pode ser reutilizado por diferentes coleções (RF-15).
 6. A exclusão deve exibir diálogo de confirmação alertando que todos os itens vinculados serão removidos permanentemente.
 7. A data de criação é gerada automaticamente pelo sistema e não pode ser editada.
 
-### RF-10 — Gerenciar Privacidade da Coleção
+### RF-08 — Gerenciar Privacidade da Coleção
 
 - **Grupo:** Coleção
 - **Ação:** Configurar
@@ -295,15 +257,15 @@ Camila define "Favoritos" como "somente amigos"; apenas amigos confirmados passa
 
 **Regras / Restrições:**
 
-1. A privacidade é configurada no nível da coleção; a categoria não possui privacidade própria (RF-08).
+1. A privacidade é configurada no nível da coleção; a categoria não possui privacidade própria (RF-06).
 2. Coleções "privadas" são visíveis unicamente pelo proprietário.
 3. Coleções "somente amigos" liberam visualização e acompanhamento apenas para usuários com vínculo de amizade aceito (RF-20).
 4. Coleções "públicas" ficam acessíveis a qualquer usuário cadastrado.
-5. Por padrão, toda coleção recém-criada nasce como "pública" (RF-09).
+5. Por padrão, toda coleção recém-criada nasce como "pública" (RF-07).
 6. Se uma coleção "pública" ou "somente amigos" for alterada para "privada", o sistema deve encerrar automaticamente o acompanhamento de todos os seguidores e remover seus eventos do feed (RF-21 e RF-22).
 7. Se uma coleção "pública" for alterada para "somente amigos", o sistema deve manter o acompanhamento dos amigos confirmados e encerrar o dos demais seguidores (RF-20 e RF-21).
 
-### RF-11 — Gerenciar Item
+### RF-09 — Gerenciar Item
 
 - **Grupo:** Coleção
 - **Ação:** Gerenciar
@@ -319,15 +281,15 @@ Posteriormente edita a classificação de 5 para 4 estrelas e, por fim, exclui o
 **Regras / Restrições:**
 
 1. O nome do item é obrigatório; todos os demais campos são opcionais.
-2. Todo item deve pertencer a uma coleção existente (RF-09); não é possível criar itens diretamente em uma categoria.
-3. Ao ser criado, o item adota automaticamente a estrutura visual do layout associado à sua coleção (RF-17); caso a coleção não tenha layout, o item utiliza uma visualização básica com campos padrão.
-4. O usuário pode adicionar, remover ou reposicionar elementos individualmente no item sem afetar os layouts da coleção ou da categoria, nem os demais itens (RF-19).
+2. Todo item deve pertencer a uma coleção existente (RF-07); não é possível criar itens diretamente em uma categoria.
+3. Ao ser criado, o item adota automaticamente a estrutura visual do layout associado à sua coleção (RF-15); caso a coleção não tenha layout, o item utiliza uma visualização básica com campos padrão.
+4. O usuário pode adicionar, remover ou reposicionar elementos individualmente no item sem afetar os layouts da coleção ou da categoria, nem os demais itens (RF-17).
 5. Não podem existir dois itens com o mesmo nome dentro da mesma coleção.
 6. Imagens enviadas devem estar em formato JPEG ou PNG com tamanho máximo de 5 MB por arquivo.
 7. A exclusão deve exibir diálogo de confirmação informando que a ação é irreversível.
 8. A data de criação é gerada automaticamente e não pode ser editada pelo usuário.
 
-### RF-12 — Mover Item entre Coleções
+### RF-10 — Mover Item entre Coleções
 
 - **Grupo:** Coleção
 - **Ação:** Mover
@@ -349,7 +311,7 @@ Camila move um item para uma coleção que usa um layout diferente e o sistema a
 5. A operação deve ser reversível via ação de desfazer (Ctrl+Z ou botão equivalente) em até 30 segundos após a confirmação.
 6. As contagens de itens das coleções de origem e destino devem ser atualizadas imediatamente.
 
-### RF-13 — Exibir Ficha de Item em Modo Leitura
+### RF-11 — Exibir Ficha de Item em Modo Leitura
 
 - **Grupo:** Coleção
 - **Ação:** Exibir em modo leitura
@@ -368,10 +330,10 @@ Elementos não preenchidos continuam visíveis para visitantes com indicação v
 2. Elementos sem conteúdo devem ser exibidos para dono e visitantes com indicação visual de que estão vazios; isso não concede permissão de edição ao visitante.
 3. Para o dono do item, a ficha deve oferecer acesso direto às ações de editar e excluir.
 4. Para visitantes, a ficha é estritamente somente leitura, sem nenhuma opção de edição visível.
-5. A ficha deve respeitar a aparência (tema e cores) configurada pelo dono (RF-06).
+5. A ficha deve respeitar a aparência (tema e cores) configurada pelo dono (RF-18).
 6. O sistema deve fornecer ao front-end as informações necessárias para exibir a ficha final do item em modo leitura, diferenciando visualmente o acesso do dono e de visitantes.
 
-### RF-14 — Visualizar Itens de uma Coleção
+### RF-12 — Visualizar Itens de uma Coleção
 
 - **Grupo:** Coleção
 - **Ação:** Visualizar
@@ -392,7 +354,7 @@ Camila visualiza a coleção "Favoritos" usando o mesmo filtro; o sistema manté
 4. A ordenação aplicada deve ser persistida por usuário e válida para todas as coleções até ser alterada.
 5. Os filtros aplicados são mantidos durante a navegação dentro da mesma coleção e reiniciados ao sair dela.
 
-### RF-15 — Exibir Tela Principal de Categorias
+### RF-13 — Exibir Tela Principal de Categorias
 
 - **Grupo:** Coleção
 - **Ação:** Exibir
@@ -410,7 +372,7 @@ Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão "Criar prim
 
 1. A tela deve exibir todas as categorias do usuário autenticado em uma única tela dedicada.
 2. Cada categoria deve exibir nome, ícone, contagem de coleções, contagem total de itens e resumo de privacidade das coleções que contém.
-3. A categoria em si não possui nível de privacidade; o resumo apresentado é uma contagem das privacidades de suas coleções (RF-10).
+3. A categoria em si não possui nível de privacidade; o resumo apresentado é uma contagem das privacidades de suas coleções (RF-08).
 4. O indicador individual de privacidade aparece no card de cada coleção dentro da categoria, e não no card da categoria.
 5. A navegação até as coleções de uma categoria deve ser acessível com um único clique ou toque; a navegação até um item, com no máximo três.
 6. Usuários sem categorias devem ver mensagem de boas-vindas com atalho para criação da primeira categoria.
@@ -421,7 +383,7 @@ Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão "Criar prim
 11. A ordenação padrão é por data de criação decrescente (mais recentes primeiro).
 12. Os filtros e a ordenação aplicados devem ser persistidos entre sessões do mesmo usuário.
 
-### RF-16 — Gerenciar Layout Personalizado
+### RF-14 — Gerenciar Layout Personalizado
 
 - **Grupo:** Editor de Layout
 - **Ação:** Gerenciar e duplicar
@@ -446,10 +408,10 @@ Camila exclui o layout "Card Antigo" que não está associado a nenhuma coleçã
 7. A duplicação deve copiar integralmente a estrutura de elementos (tipo, conteúdo, estilo, posição, tamanho e propriedades) do layout de origem.
 8. Na duplicação, o sistema sugere automaticamente o nome original acrescido de "(cópia)", podendo ser editado antes de salvar.
 9. Alterações no layout duplicado não devem refletir no layout de origem.
-10. O usuário pode excluir um layout somente se ele não estiver associado a nenhuma coleção ativa (RF-17).
+10. O usuário pode excluir um layout somente se ele não estiver associado a nenhuma coleção ativa (RF-15).
 11. A data de criação do layout duplicado é a data da operação, e não a do layout de origem.
 
-### RF-17 — Associar Layout a Coleção
+### RF-15 — Associar Layout a Coleção
 
 - **Grupo:** Editor de Layout
 - **Ação:** Associar
@@ -460,20 +422,20 @@ Camila exclui o layout "Card Antigo" que não está associado a nenhuma coleçã
 
 **Exemplos:** Camila associa o layout "Card de Livro" à coleção "Lidos"; todos os itens dessa coleção passam a usar esse layout.
 Camila associa o mesmo layout "Card de Livro" também à coleção "Para Ler"; as duas coleções reutilizam o mesmo template, de forma independente.
-Camila troca o layout da coleção "Mangás" para "Card de Mangá"; os novos itens passam a usar o novo layout, e os itens já existentes mantêm seus dados (RF-19).
+Camila troca o layout da coleção "Mangás" para "Card de Mangá"; os novos itens passam a usar o novo layout, e os itens já existentes mantêm seus dados (RF-17).
 
 **Regras / Restrições:**
 
 1. Um layout só pode ser associado a coleções existentes e pertencentes ao mesmo usuário.
-2. O layout é associado no nível da coleção; a categoria não recebe layout (RF-08).
+2. O layout é associado no nível da coleção; a categoria não recebe layout (RF-06).
 3. Uma coleção pode ter, no máximo, um layout ativo por vez.
 4. Um mesmo layout pode ser associado a várias coleções simultaneamente, sendo reutilizado como template.
-5. O layout aplicável a um item é o da sua coleção; na ausência de layout associado, o item utiliza um formulário básico com campos padrão. Modificações individuais por item são tratadas como _override_ (RF-19).
-6. A troca ou remoção do layout da coleção não altera os dados nem os elementos individuais (_override_) dos itens já cadastrados (RF-19).
+5. O layout aplicável a um item é o da sua coleção; na ausência de layout associado, o item utiliza um formulário básico com campos padrão. Modificações individuais por item são tratadas como _override_ (RF-17).
+6. A troca ou remoção do layout da coleção não altera os dados nem os elementos individuais (_override_) dos itens já cadastrados (RF-17).
 7. Ao associar um layout, o sistema deve exibir prévia de como os novos itens serão criados.
 8. O usuário pode remover a associação de layout da coleção a qualquer momento.
 
-### RF-18 — Compartilhar Layout
+### RF-16 — Compartilhar Layout
 
 - **Grupo:** Editor de Layout
 - **Ação:** Compartilhar e importar
@@ -495,7 +457,7 @@ Camila altera o layout original depois do compartilhamento; as cópias já impor
 5. A importação está disponível a partir do identificador/link de compartilhamento, independentemente de haver vínculo de amizade entre os usuários.
 6. O usuário não deve importar um layout da própria biblioteca por este fluxo; para isso deve usar a duplicação.
 
-### RF-19 — Modificar Layout de Item Individualmente
+### RF-17 — Modificar Layout de Item Individualmente
 
 - **Grupo:** Editor de Layout
 - **Ação:** Modificar individualmente
@@ -510,13 +472,52 @@ Depois da personalização, o item mantém sua própria composição visual, sem
 
 **Regras / Restrições:**
 
-1. Todo item, ao ser criado, adota o layout da sua coleção como ponto de partida (RF-11 e RF-17).
+1. Todo item, ao ser criado, adota o layout da sua coleção como ponto de partida (RF-09 e RF-15).
 2. O usuário pode adicionar, remover ou reposicionar elementos no item sem afetar o layout da coleção, o da categoria ou os demais itens.
 3. O layout aplicável deve ser exibido como referência visual durante a edição individual do item.
 4. As modificações individuais são exclusivas do item; nenhuma alteração feita no item reflete nos layouts da coleção ou da categoria.
 5. Ao iniciar a edição visual individual, o sistema deve criar uma cópia própria do layout da coleção para aquele item, preservando elementos, conteúdo e estilos como ponto de partida.
 6. Após a criação da cópia individual, alterações de conteúdo, estilo, posição, tamanho, adição ou remoção de elementos devem afetar apenas aquele item, sem modificar o layout da coleção nem os demais itens.
 7. Depois de personalizado, o item mantém sua composição visual própria, mesmo que o layout da coleção seja alterado posteriormente.
+
+### RF-18 — Gerenciar Aparência (Tema e Cores)
+
+- **Grupo:** Aparência
+- **Ação:** Gerenciar aparência
+- **Objeto:** Configuração visual global da interface do usuário
+- **Prioridade:** Desejável · **Operação:** Entrada · **Ator:** Usuário
+
+**Atributos:** cor primária (hex), subcores (até 4 valores hex), paletas predefinidas (lista do sistema), paletas personalizadas (nome de até 50 caracteres), estilo global (claro / escuro / automático conforme sistema operacional).
+
+**Exemplos:** No momento do cadastro (RF-01), o sistema cria para o usuário uma aparência padrão: tema claro, com esquema neutro em preto e branco.
+Camila seleciona a paleta predefinida "Outono" com tons terrosos e estilo escuro; toda a interface é atualizada em tempo real.
+Camila cria a paleta personalizada "Meu Rosa" com cor primária #E91E8C, aplica e salva no perfil.
+
+**Regras / Restrições:**
+
+1. Todo usuário recém-cadastrado recebe uma configuração de aparência padrão (tema claro, esquema neutro preto e branco), criada automaticamente no cadastro (RF-01).
+2. O usuário pode alterar a aparência a qualquer momento; as mudanças sobrescrevem a configuração existente.
+3. O tema selecionado deve ser aplicado globalmente a todas as telas do sistema de forma imediata.
+4. Paletas predefinidas podem ser editadas diretamente nas configurações.
+5. As configurações de aparência devem ser salvas no perfil e persistidas entre sessões e dispositivos.
+6. As alterações devem ser exibidas em área de prévia antes de o usuário confirmar a aplicação.
+
+### RF-19 — Gerenciar Tipografia Global
+
+- **Grupo:** Aparência
+- **Ação:** Alterar
+- **Objeto:** Tipografia e aparência textual global
+- **Prioridade:** Desejável · **Operação:** Entrada · **Ator:** Usuário
+
+**Atributos:** família de fonte (lista predefinida com no mínimo 5 opções), tamanho base em px (mínimo 12 px, máximo 24 px), espaço entre linhas (1.0 a 2.0), espaço entre letras.
+
+**Exemplos:** Camila altera a fonte para "Georgia", tamanho base para 16 px e espaço de linha para 1.6; a prévia reflete as mudanças antes da confirmação.
+
+**Regras / Restrições:**
+
+1. As fontes disponíveis devem incluir ao menos cinco opções tipográficas distintas (ex.: serif, sans-serif, monospace).
+2. As alterações devem ser exibidas em área de prévia antes de o usuário confirmar a aplicação.
+3. As configurações de tipografia devem ser aplicadas globalmente e persistidas entre sessões.
 
 ### RF-20 — Gerenciar Amizade
 
@@ -565,7 +566,7 @@ Camila tenta acessar uma coleção privada de João e não encontra a opção de
 4. O proprietário não pode seguir a própria coleção.
 5. O acompanhamento ocorre no nível da coleção: o usuário pode seguir múltiplas coleções da mesma categoria, de forma independente, sem que isso implique seguir as demais.
 6. O usuário pode deixar de seguir uma coleção a qualquer momento, sem restrições.
-7. Se a coleção seguida for alterada para "privada", todos os acompanhamentos devem ser encerrados automaticamente (RF-10).
+7. Se a coleção seguida for alterada para "privada", todos os acompanhamentos devem ser encerrados automaticamente (RF-08).
 8. Se uma coleção "pública" for alterada para "somente amigos", acompanhamentos de usuários sem amizade confirmada devem ser encerrados; os de amigos permanecem ativos.
 9. Ao desfazer uma amizade, acompanhamentos de coleções "públicas" permanecem ativos e acompanhamentos de coleções "somente amigos" entre os dois usuários são encerrados.
 
@@ -635,7 +636,7 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 3. As notificações devem ser ordenadas cronologicamente, da mais recente à mais antiga.
 4. O usuário pode marcar uma notificação como lida, marcar todas como lidas ou limpar sua área de notificações sem excluir os registros do sistema; `isRead` indica o estado atual, `readAt` registra quando a leitura ocorreu e a limpeza oculta as notificações da listagem do usuário.
 5. Notificações de verificação de e-mail (RF-05) e de recuperação de senha (RF-04) devem ser enviadas também pelo canal de e-mail, contendo link único e com prazo de expiração.
-6. Notificações referentes a coleções cuja privacidade tenha sido alterada para "privada" devem ser ocultadas automaticamente do destinatário (RF-10).
+6. Notificações referentes a coleções cuja privacidade tenha sido alterada para "privada" devem ser ocultadas automaticamente do destinatário (RF-08).
 7. As notificações in-app serão persistidas para consulta pela API; atualização em tempo real por SSE permanece fora desta etapa.
 8. Notificações lidas devem ser mantidas por no mínimo 30 dias antes de qualquer limpeza automática.
 
@@ -867,6 +868,206 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 
 **Requisitos especiais:** RNF02 - O logout deve ser concluído em até 2 segundos. RNF03 - O token invalidado não deve ser reutilizável em nenhuma hipótese.
 
+### Caso de uso: Criar Categoria
+
+**Descrição:** Este caso de uso permite que o usuário crie uma nova categoria (agrupador temático de alto nível) para organizar coleções e itens relacionados a um tema, como livros, filmes, séries ou jogos. A categoria é criada vazia e servirá como container para coleções que serão criadas posteriormente. A categoria não possui nível de privacidade próprio; a privacidade é configurada individualmente em cada coleção (RF-06 e RF-08).
+
+**Condições prévias:** O usuário deve estar autenticado no sistema.
+
+**Fluxo básico:**
+
+1. O usuário acessa a funcionalidade de gerenciamento de categorias no dashboard.
+2. O usuário seleciona a opção "Criar Categoria".
+3. O sistema exibe o formulário de criação de categoria.
+4. O usuário insere o nome da categoria.
+5. O usuário seleciona um ícone para representar a categoria (opcional).
+6. O usuário insere uma descrição para a categoria (opcional).
+7. O usuário seleciona o tipo/tema (opcional).
+8. O usuário confirma a criação da categoria.
+9. O sistema valida os dados inseridos.
+10. O sistema cria a categoria vazia no banco de dados.
+11. O sistema exibe mensagem de sucesso.
+12. O sistema exibe a categoria recém-criada com atalho destacado para "Criar primeira coleção".
+
+**Fluxos alternativos / exceções:**
+
+- No passo 9 do FB01, o sistema identifica que já existe uma categoria com o mesmo nome para o usuário.
+- O sistema exibe mensagem de erro: "Já existe uma categoria com este nome. Por favor, escolha outro nome."
+- O sistema retorna ao passo 4 do FB01.
+- No passo 9 do FB01, o sistema identifica que o campo nome não foi preenchido.
+- O sistema exibe mensagem de erro: "O nome da categoria é obrigatório."
+- O sistema retorna ao passo 4 do FB01.
+- Em qualquer momento entre os passos 4 e 8 do FB01, o usuário pode selecionar "Cancelar".
+- O sistema descarta as informações inseridas.
+- O sistema retorna ao dashboard de categorias.
+- O caso de uso é encerrado.
+
+**Pós-condições:** Uma nova categoria é criada e armazenada no banco de dados. A categoria aparece no dashboard do usuário. A categoria está pronta para receber coleções, que terão sua própria privacidade individual (padrão pública, conforme RF-08). Nenhum item pode ser cadastrado diretamente na categoria; é necessário criar ao menos uma coleção antes.
+
+**Requisitos especiais:** RNF01 - A interface deve ser intuitiva. RNF02 - O sistema deve criar a categoria em até 3 segundos. RNF04 - Compatibilidade com navegadores modernos e dispositivos móveis.
+
+### Caso de uso: Criar Coleção
+
+**Descrição:** Este caso de uso permite que o usuário crie uma nova coleção dentro de uma categoria existente. A coleção é onde os itens serão efetivamente cadastrados e é também a unidade onde a privacidade é configurada (pública, somente amigos ou privada) e onde o layout é associado (RF-07, RF-15 e RF-08).
+
+**Condições prévias:** O usuário deve estar autenticado. A categoria pai deve existir e pertencer ao usuário.
+
+**Fluxo básico:**
+
+1. O usuário acessa uma categoria específica no dashboard.
+2. O usuário seleciona a opção "Criar Coleção".
+3. O sistema exibe o formulário de criação de coleção, com privacidade preenchida como "pública" por padrão.
+4. O usuário insere o nome da coleção.
+5. O usuário seleciona um ícone (opcional).
+6. O usuário insere uma descrição (opcional).
+7. O usuário associa um layout à coleção (opcional) [E01].
+8. O usuário configura a privacidade da coleção (pública, somente amigos ou privada) [E02].
+9. O usuário confirma a criação da coleção.
+10. O sistema valida os dados inseridos.
+11. O sistema cria a coleção vinculada à categoria pai, com a privacidade configurada.
+12. O sistema exibe mensagem de sucesso.
+13. O sistema redireciona para a visualização da coleção, pronta para receber itens.
+
+**Fluxos alternativos / exceções:**
+
+- No passo 10 do FB01, o sistema identifica que já existe uma coleção com o mesmo nome na categoria pai.
+- O sistema exibe mensagem de erro: "Já existe uma coleção com este nome nesta categoria. Por favor, escolha outro nome."
+- O sistema retorna ao passo 4 do FB01.
+- No passo 9 do FB01, o sistema identifica que o campo nome não foi preenchido.
+- O sistema exibe mensagem de erro: "O nome da coleção é obrigatório."
+- O sistema retorna ao passo 4 do FB01.
+- Em qualquer momento entre os passos 4 e 8 do FB01, o usuário pode selecionar "Cancelar".
+- O sistema descarta as informações inseridas.
+- O sistema retorna à categoria pai.
+- O caso de uso é encerrado.
+
+**Pós-condições:** Uma nova coleção é criada vinculada à categoria pai, com sua privacidade individual configurada. A coleção está pronta para receber itens. Caso um layout tenha sido associado, os itens dessa coleção passam a adotá-lo; caso contrário, utilizam um formulário básico. A contagem de coleções da categoria é atualizada. Se a privacidade configurada for "pública" ou "somente amigos", a coleção poderá ser seguida por amigos (RF-21).
+
+**Requisitos especiais:** RNF01 - A interface deve ser intuitiva. RNF02 - A coleção deve ser criada em até 3 segundos.
+
+### Caso de uso: Criar Item
+
+**Descrição:** Este caso de uso permite que o usuário cadastre um novo item dentro de uma coleção específica. O item adota automaticamente o layout associado à coleção; caso a coleção não tenha layout, utiliza um formulário básico (RF-09 e RF-15).
+
+**Condições prévias:** O usuário deve estar autenticado. A coleção de destino deve existir dentro de uma categoria válida.
+
+**Fluxo básico:**
+
+1. O usuário acessa uma coleção específica (dentro de uma categoria).
+2. O usuário seleciona a opção "Adicionar Item".
+3. O sistema determina o layout aplicável ao item: o layout associado à coleção, se houver; caso contrário, um formulário básico com campos padrão.
+4. O sistema exibe o formulário de criação de item baseado no layout aplicável [E01].
+5. O usuário insere o nome do item.
+6. O usuário preenche os elementos disponíveis no layout (autor, ano, gênero, avaliação, etc.).
+7. O usuário associa uma imagem ao item (opcional) [E02].
+8. O usuário confirma a criação do item.
+9. O sistema valida os dados inseridos.
+10. O sistema cria o item e o vincula à coleção.
+11. O sistema exibe mensagem de sucesso.
+12. O sistema exibe a ficha completa do item criado.
+
+**Fluxos alternativos / exceções:**
+
+- No passo 3 do FB01, o sistema identifica que a coleção não possui layout associado.
+- O sistema exibe formulário básico com campos padrão (nome, descrição, imagem).
+- O fluxo continua no passo 5 do FB01.
+- No passo 9 do FB01, o sistema identifica que já existe um item com o mesmo nome na coleção.
+- O sistema exibe mensagem de alerta: "Já existe um item com este nome nesta coleção. Deseja criar mesmo assim?"
+- Se o usuário confirmar, o fluxo continua no passo 10 do FB01.
+- Se o usuário cancelar, o sistema retorna ao passo 5 do FB01.
+- No passo 9 do FB01, o sistema identifica que o campo nome não foi preenchido.
+- O sistema exibe mensagem de erro indicando os campos que precisam ser preenchidos.
+- O sistema retorna ao passo 5 do FB01.
+- Em qualquer momento entre os passos 5 e 8 do FB01, o usuário pode selecionar "Cancelar".
+- O sistema descarta as informações inseridas.
+- O sistema retorna à visualização da coleção.
+- O caso de uso é encerrado.
+
+**Pós-condições:** Um novo item é criado e vinculado à coleção. O item herda o layout aplicável. A ficha individual do item é gerada automaticamente (RF-11). O item aparece na visualização da coleção. A contagem de itens da coleção e da categoria pai é atualizada.
+
+**Requisitos especiais:** RNF01 - A interface deve ser intuitiva. RNF02 - O sistema deve criar o item em até 3 segundos. RNF07 - Alterações devem refletir em tempo real.
+
+### Caso de uso: Criar Layout Base
+
+**Descrição:** Este caso de uso permite que o usuário crie um layout personalizado através de um editor de elementos, definindo quais campos e elementos visuais farão parte da estrutura de fichas de itens. O layout pode ser criado do zero ou por duplicação de um layout já existente e, posteriormente, associado a uma ou mais coleções, conforme RF-14 e RF-15.
+
+**Condições prévias:** O usuário deve estar autenticado. Para duplicação (FA03), deve existir ao menos um layout prévio de propriedade do usuário.
+
+**Fluxo básico:**
+
+1. O usuário acessa a área de gerenciamento de layouts.
+2. O usuário seleciona a opção "Criar Layout Base".
+3. O sistema exibe o editor de layout com uma área de trabalho vazia.
+4. O usuário insere um nome para o layout.
+5. O usuário insere uma descrição para o layout (opcional).
+6. O usuário adiciona elementos à área de trabalho (texto, imagem, avaliação, nota, campo personalizado, etc.) [E01].
+7. O usuário configura as propriedades de cada elemento (nome do campo, tipo de dado, obrigatoriedade, etc.).
+8. O usuário organiza visualmente os elementos na área de trabalho (posicionamento, tamanho, ordem).
+9. O sistema exibe prévia do layout em tempo real conforme as modificações.
+10. O usuário confirma a criação do layout.
+11. O sistema valida a estrutura do layout.
+12. O sistema salva o layout no banco de dados.
+13. O sistema exibe mensagem de sucesso.
+14. O sistema retorna à lista de layouts disponíveis, exibindo o novo layout criado.
+
+**Fluxos alternativos / exceções:**
+
+- No passo 11 do FB01, o sistema identifica que já existe um layout com o mesmo nome.
+- O sistema exibe mensagem de erro: "Já existe um layout com este nome. Por favor, escolha outro nome."
+- O sistema retorna ao passo 4 do FB01.
+- No passo 11 do FB01, o sistema identifica que nenhum elemento foi adicionado ao layout.
+- O sistema exibe mensagem de erro: "O layout deve conter pelo menos um elemento."
+- O sistema retorna ao passo 6 do FB01.
+- No passo 2 do FB01, o usuário pode optar por "Duplicar Layout Existente" [E02].
+- O sistema exibe a lista de layouts disponíveis do usuário.
+- O usuário seleciona um layout para duplicar.
+- O sistema carrega a estrutura do layout selecionado no editor, pré-preenchendo o nome com o original acrescido de "(cópia)".
+- O fluxo continua no passo 4 do FB01, com o usuário podendo renomear e ajustar a cópia livremente.
+- Alterações realizadas no layout duplicado não refletem no layout de origem.
+- Em qualquer momento entre os passos 4 e 10 do FB01, o usuário pode selecionar "Cancelar".
+- O sistema exibe mensagem de confirmação: "Deseja descartar as alterações?"
+- Se o usuário confirmar, o sistema descarta as informações e retorna à lista de layouts.
+- Se o usuário cancelar, o sistema retorna ao editor mantendo as informações.
+
+**Pós-condições:** Um novo layout é criado e armazenado no banco de dados. O layout está disponível para associação a uma ou mais coleções, conforme RF-15. O layout aparece na lista de layouts do usuário. Se criado por duplicação, o layout de origem permanece inalterado.
+
+**Requisitos especiais:** RNF01 - O editor deve ser intuitivo e facilitar a personalização. RNF07 - As alterações devem refletir em tempo real na prévia, sem travamentos. RNF04 - Compatibilidade com navegadores modernos.
+
+### Caso de uso: Visualizar Dashboard de Categorias
+
+**Descrição:** Este caso de uso permite que o usuário visualize todas as suas categorias em uma tela dedicada, com informações resumidas de cada uma (nome, ícone, número de coleções, número total de itens, indicador de privacidade) e acesso rápido às coleções que pertencem a cada categoria. O dashboard é o ponto central de navegação do sistema e permite alternar entre modos de visualização, aplicar filtros e ordenações (RF-13).
+
+**Condições prévias:** O usuário deve estar autenticado no sistema.
+
+**Fluxo básico:**
+
+1. O usuário acessa o menu principal do sistema.
+2. O usuário seleciona a opção "Minhas Categorias" ou equivalente.
+3. O sistema recupera todas as categorias do usuário no banco de dados.
+4. O sistema exibe o dashboard com cards de todas as categorias, aplicando as preferências de visualização previamente salvas (modo, ordenação e filtros).
+5. Para cada categoria, o sistema exibe: nome, ícone, descrição resumida, contagem de coleções, contagem total de itens (somando todas as coleções) e indicador de privacidade.
+6. O usuário pode alternar entre modo grade e modo lista [E01].
+7. O usuário pode aplicar filtros e ordenações (por nome, data de criação, tipo ou nível de privacidade) [E02].
+8. O usuário clica em uma categoria para acessar suas coleções.
+
+**Fluxos alternativos / exceções:**
+
+- No passo 3 do FB01, o sistema identifica que o usuário não possui categorias criadas.
+- O sistema exibe mensagem informativa: "Você ainda não criou nenhuma categoria. Crie sua primeira categoria para começar!"
+- O sistema exibe botão destacado "Criar Nova Categoria".
+- Se o usuário clicar no botão, o sistema aciona o caso de uso "Criar Categoria".
+- No passo 3 do FB01, o sistema encontra erro ao recuperar as categorias do banco de dados.
+- O sistema exibe mensagem de erro: "Não foi possível carregar suas categorias. Por favor, tente novamente."
+- O sistema oferece opção para recarregar a página.
+- No passo 8 do FB01, o usuário clica em uma categoria que não possui coleções criadas.
+- O sistema exibe a página da categoria com mensagem: "Esta categoria ainda não tem coleções. Crie sua primeira coleção para começar a adicionar itens."
+- O sistema exibe atalho destacado "Criar Primeira Coleção".
+- Se o usuário clicar no atalho, o sistema aciona o caso de uso "Criar Coleção".
+
+**Pós-condições:** O usuário visualiza todas as suas categorias. O usuário pode navegar para qualquer categoria e, dentro dela, para qualquer coleção ou item. O estado de visualização (grade/lista, filtros, ordenação) é persistido para futuras sessões.
+
+**Requisitos especiais:** RNF02 - O sistema deve carregar as categorias em até 3 segundos. RNF04 - O dashboard deve ser responsivo em dispositivos móveis. RNF09 - A interface deve seguir padrões de acessibilidade.
+
 ### Caso de uso: Editar Perfil
 
 **Descrição:** Este caso de uso permite que o usuário visualize e edite as informações de seu perfil, incluindo dados cadastrais básicos (nome, e-mail) e personalizações visuais (foto de perfil, descrição, biografia). Alterações no e-mail exigem verificação por meio de link enviado ao novo endereço (RF-05).
@@ -916,7 +1117,7 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 
 ### Caso de uso: Personalizar Interface
 
-**Descrição:** Este caso de uso permite que o usuário configure a aparência visual global da plataforma, incluindo cores, subcores, tipografia e tema do sistema (claro, escuro ou automático). As alterações são exibidas em prévia antes de serem confirmadas e persistem entre sessões e dispositivos (RF-06 e RF-07).
+**Descrição:** Este caso de uso permite que o usuário configure a aparência visual global da plataforma, incluindo cores, subcores, tipografia e tema do sistema (claro, escuro ou automático). As alterações são exibidas em prévia antes de serem confirmadas e persistem entre sessões e dispositivos (RF-18 e RF-19).
 
 **Condições prévias:** O usuário deve estar autenticado no sistema.
 
@@ -950,206 +1151,6 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 **Pós-condições:** As configurações visuais são salvas no perfil do usuário. As alterações são aplicadas globalmente e imediatamente a todas as telas. As configurações persistem em futuras sessões e em outros dispositivos.
 
 **Requisitos especiais:** RNF01 - O painel de personalização deve ser intuitivo e acessível. RNF07 - As alterações devem ser refletidas na prévia em tempo real, sem recarregar a página. RNF04 - As configurações devem ser persistidas entre sessões e dispositivos.
-
-### Caso de uso: Criar Categoria
-
-**Descrição:** Este caso de uso permite que o usuário crie uma nova categoria (agrupador temático de alto nível) para organizar coleções e itens relacionados a um tema, como livros, filmes, séries ou jogos. A categoria é criada vazia e servirá como container para coleções que serão criadas posteriormente. A categoria não possui nível de privacidade próprio; a privacidade é configurada individualmente em cada coleção (RF-08 e RF-10).
-
-**Condições prévias:** O usuário deve estar autenticado no sistema.
-
-**Fluxo básico:**
-
-1. O usuário acessa a funcionalidade de gerenciamento de categorias no dashboard.
-2. O usuário seleciona a opção "Criar Categoria".
-3. O sistema exibe o formulário de criação de categoria.
-4. O usuário insere o nome da categoria.
-5. O usuário seleciona um ícone para representar a categoria (opcional).
-6. O usuário insere uma descrição para a categoria (opcional).
-7. O usuário seleciona o tipo/tema (opcional).
-8. O usuário confirma a criação da categoria.
-9. O sistema valida os dados inseridos.
-10. O sistema cria a categoria vazia no banco de dados.
-11. O sistema exibe mensagem de sucesso.
-12. O sistema exibe a categoria recém-criada com atalho destacado para "Criar primeira coleção".
-
-**Fluxos alternativos / exceções:**
-
-- No passo 9 do FB01, o sistema identifica que já existe uma categoria com o mesmo nome para o usuário.
-- O sistema exibe mensagem de erro: "Já existe uma categoria com este nome. Por favor, escolha outro nome."
-- O sistema retorna ao passo 4 do FB01.
-- No passo 9 do FB01, o sistema identifica que o campo nome não foi preenchido.
-- O sistema exibe mensagem de erro: "O nome da categoria é obrigatório."
-- O sistema retorna ao passo 4 do FB01.
-- Em qualquer momento entre os passos 4 e 8 do FB01, o usuário pode selecionar "Cancelar".
-- O sistema descarta as informações inseridas.
-- O sistema retorna ao dashboard de categorias.
-- O caso de uso é encerrado.
-
-**Pós-condições:** Uma nova categoria é criada e armazenada no banco de dados. A categoria aparece no dashboard do usuário. A categoria está pronta para receber coleções, que terão sua própria privacidade individual (padrão pública, conforme RF-10). Nenhum item pode ser cadastrado diretamente na categoria; é necessário criar ao menos uma coleção antes.
-
-**Requisitos especiais:** RNF01 - A interface deve ser intuitiva. RNF02 - O sistema deve criar a categoria em até 3 segundos. RNF04 - Compatibilidade com navegadores modernos e dispositivos móveis.
-
-### Caso de uso: Criar Coleção
-
-**Descrição:** Este caso de uso permite que o usuário crie uma nova coleção dentro de uma categoria existente. A coleção é onde os itens serão efetivamente cadastrados e é também a unidade onde a privacidade é configurada (pública, somente amigos ou privada) e onde o layout é associado (RF-09, RF-17 e RF-10).
-
-**Condições prévias:** O usuário deve estar autenticado. A categoria pai deve existir e pertencer ao usuário.
-
-**Fluxo básico:**
-
-1. O usuário acessa uma categoria específica no dashboard.
-2. O usuário seleciona a opção "Criar Coleção".
-3. O sistema exibe o formulário de criação de coleção, com privacidade preenchida como "pública" por padrão.
-4. O usuário insere o nome da coleção.
-5. O usuário seleciona um ícone (opcional).
-6. O usuário insere uma descrição (opcional).
-7. O usuário associa um layout à coleção (opcional) [E01].
-8. O usuário configura a privacidade da coleção (pública, somente amigos ou privada) [E02].
-9. O usuário confirma a criação da coleção.
-10. O sistema valida os dados inseridos.
-11. O sistema cria a coleção vinculada à categoria pai, com a privacidade configurada.
-12. O sistema exibe mensagem de sucesso.
-13. O sistema redireciona para a visualização da coleção, pronta para receber itens.
-
-**Fluxos alternativos / exceções:**
-
-- No passo 10 do FB01, o sistema identifica que já existe uma coleção com o mesmo nome na categoria pai.
-- O sistema exibe mensagem de erro: "Já existe uma coleção com este nome nesta categoria. Por favor, escolha outro nome."
-- O sistema retorna ao passo 4 do FB01.
-- No passo 9 do FB01, o sistema identifica que o campo nome não foi preenchido.
-- O sistema exibe mensagem de erro: "O nome da coleção é obrigatório."
-- O sistema retorna ao passo 4 do FB01.
-- Em qualquer momento entre os passos 4 e 8 do FB01, o usuário pode selecionar "Cancelar".
-- O sistema descarta as informações inseridas.
-- O sistema retorna à categoria pai.
-- O caso de uso é encerrado.
-
-**Pós-condições:** Uma nova coleção é criada vinculada à categoria pai, com sua privacidade individual configurada. A coleção está pronta para receber itens. Caso um layout tenha sido associado, os itens dessa coleção passam a adotá-lo; caso contrário, utilizam um formulário básico. A contagem de coleções da categoria é atualizada. Se a privacidade configurada for "pública" ou "somente amigos", a coleção poderá ser seguida por amigos (RF-21).
-
-**Requisitos especiais:** RNF01 - A interface deve ser intuitiva. RNF02 - A coleção deve ser criada em até 3 segundos.
-
-### Caso de uso: Criar Item
-
-**Descrição:** Este caso de uso permite que o usuário cadastre um novo item dentro de uma coleção específica. O item adota automaticamente o layout associado à coleção; caso a coleção não tenha layout, utiliza um formulário básico (RF-11 e RF-17).
-
-**Condições prévias:** O usuário deve estar autenticado. A coleção de destino deve existir dentro de uma categoria válida.
-
-**Fluxo básico:**
-
-1. O usuário acessa uma coleção específica (dentro de uma categoria).
-2. O usuário seleciona a opção "Adicionar Item".
-3. O sistema determina o layout aplicável ao item: o layout associado à coleção, se houver; caso contrário, um formulário básico com campos padrão.
-4. O sistema exibe o formulário de criação de item baseado no layout aplicável [E01].
-5. O usuário insere o nome do item.
-6. O usuário preenche os elementos disponíveis no layout (autor, ano, gênero, avaliação, etc.).
-7. O usuário associa uma imagem ao item (opcional) [E02].
-8. O usuário confirma a criação do item.
-9. O sistema valida os dados inseridos.
-10. O sistema cria o item e o vincula à coleção.
-11. O sistema exibe mensagem de sucesso.
-12. O sistema exibe a ficha completa do item criado.
-
-**Fluxos alternativos / exceções:**
-
-- No passo 3 do FB01, o sistema identifica que a coleção não possui layout associado.
-- O sistema exibe formulário básico com campos padrão (nome, descrição, imagem).
-- O fluxo continua no passo 5 do FB01.
-- No passo 9 do FB01, o sistema identifica que já existe um item com o mesmo nome na coleção.
-- O sistema exibe mensagem de alerta: "Já existe um item com este nome nesta coleção. Deseja criar mesmo assim?"
-- Se o usuário confirmar, o fluxo continua no passo 10 do FB01.
-- Se o usuário cancelar, o sistema retorna ao passo 5 do FB01.
-- No passo 9 do FB01, o sistema identifica que o campo nome não foi preenchido.
-- O sistema exibe mensagem de erro indicando os campos que precisam ser preenchidos.
-- O sistema retorna ao passo 5 do FB01.
-- Em qualquer momento entre os passos 5 e 8 do FB01, o usuário pode selecionar "Cancelar".
-- O sistema descarta as informações inseridas.
-- O sistema retorna à visualização da coleção.
-- O caso de uso é encerrado.
-
-**Pós-condições:** Um novo item é criado e vinculado à coleção. O item herda o layout aplicável. A ficha individual do item é gerada automaticamente (RF-13). O item aparece na visualização da coleção. A contagem de itens da coleção e da categoria pai é atualizada.
-
-**Requisitos especiais:** RNF01 - A interface deve ser intuitiva. RNF02 - O sistema deve criar o item em até 3 segundos. RNF07 - Alterações devem refletir em tempo real.
-
-### Caso de uso: Visualizar Dashboard de Categorias
-
-**Descrição:** Este caso de uso permite que o usuário visualize todas as suas categorias em uma tela dedicada, com informações resumidas de cada uma (nome, ícone, número de coleções, número total de itens, indicador de privacidade) e acesso rápido às coleções que pertencem a cada categoria. O dashboard é o ponto central de navegação do sistema e permite alternar entre modos de visualização, aplicar filtros e ordenações (RF-15).
-
-**Condições prévias:** O usuário deve estar autenticado no sistema.
-
-**Fluxo básico:**
-
-1. O usuário acessa o menu principal do sistema.
-2. O usuário seleciona a opção "Minhas Categorias" ou equivalente.
-3. O sistema recupera todas as categorias do usuário no banco de dados.
-4. O sistema exibe o dashboard com cards de todas as categorias, aplicando as preferências de visualização previamente salvas (modo, ordenação e filtros).
-5. Para cada categoria, o sistema exibe: nome, ícone, descrição resumida, contagem de coleções, contagem total de itens (somando todas as coleções) e indicador de privacidade.
-6. O usuário pode alternar entre modo grade e modo lista [E01].
-7. O usuário pode aplicar filtros e ordenações (por nome, data de criação, tipo ou nível de privacidade) [E02].
-8. O usuário clica em uma categoria para acessar suas coleções.
-
-**Fluxos alternativos / exceções:**
-
-- No passo 3 do FB01, o sistema identifica que o usuário não possui categorias criadas.
-- O sistema exibe mensagem informativa: "Você ainda não criou nenhuma categoria. Crie sua primeira categoria para começar!"
-- O sistema exibe botão destacado "Criar Nova Categoria".
-- Se o usuário clicar no botão, o sistema aciona o caso de uso "Criar Categoria".
-- No passo 3 do FB01, o sistema encontra erro ao recuperar as categorias do banco de dados.
-- O sistema exibe mensagem de erro: "Não foi possível carregar suas categorias. Por favor, tente novamente."
-- O sistema oferece opção para recarregar a página.
-- No passo 8 do FB01, o usuário clica em uma categoria que não possui coleções criadas.
-- O sistema exibe a página da categoria com mensagem: "Esta categoria ainda não tem coleções. Crie sua primeira coleção para começar a adicionar itens."
-- O sistema exibe atalho destacado "Criar Primeira Coleção".
-- Se o usuário clicar no atalho, o sistema aciona o caso de uso "Criar Coleção".
-
-**Pós-condições:** O usuário visualiza todas as suas categorias. O usuário pode navegar para qualquer categoria e, dentro dela, para qualquer coleção ou item. O estado de visualização (grade/lista, filtros, ordenação) é persistido para futuras sessões.
-
-**Requisitos especiais:** RNF02 - O sistema deve carregar as categorias em até 3 segundos. RNF04 - O dashboard deve ser responsivo em dispositivos móveis. RNF09 - A interface deve seguir padrões de acessibilidade.
-
-### Caso de uso: Criar Layout Base
-
-**Descrição:** Este caso de uso permite que o usuário crie um layout personalizado através de um editor de elementos, definindo quais campos e elementos visuais farão parte da estrutura de fichas de itens. O layout pode ser criado do zero ou por duplicação de um layout já existente e, posteriormente, associado a uma ou mais coleções, conforme RF-16 e RF-17.
-
-**Condições prévias:** O usuário deve estar autenticado. Para duplicação (FA03), deve existir ao menos um layout prévio de propriedade do usuário.
-
-**Fluxo básico:**
-
-1. O usuário acessa a área de gerenciamento de layouts.
-2. O usuário seleciona a opção "Criar Layout Base".
-3. O sistema exibe o editor de layout com uma área de trabalho vazia.
-4. O usuário insere um nome para o layout.
-5. O usuário insere uma descrição para o layout (opcional).
-6. O usuário adiciona elementos à área de trabalho (texto, imagem, avaliação, nota, campo personalizado, etc.) [E01].
-7. O usuário configura as propriedades de cada elemento (nome do campo, tipo de dado, obrigatoriedade, etc.).
-8. O usuário organiza visualmente os elementos na área de trabalho (posicionamento, tamanho, ordem).
-9. O sistema exibe prévia do layout em tempo real conforme as modificações.
-10. O usuário confirma a criação do layout.
-11. O sistema valida a estrutura do layout.
-12. O sistema salva o layout no banco de dados.
-13. O sistema exibe mensagem de sucesso.
-14. O sistema retorna à lista de layouts disponíveis, exibindo o novo layout criado.
-
-**Fluxos alternativos / exceções:**
-
-- No passo 11 do FB01, o sistema identifica que já existe um layout com o mesmo nome.
-- O sistema exibe mensagem de erro: "Já existe um layout com este nome. Por favor, escolha outro nome."
-- O sistema retorna ao passo 4 do FB01.
-- No passo 11 do FB01, o sistema identifica que nenhum elemento foi adicionado ao layout.
-- O sistema exibe mensagem de erro: "O layout deve conter pelo menos um elemento."
-- O sistema retorna ao passo 6 do FB01.
-- No passo 2 do FB01, o usuário pode optar por "Duplicar Layout Existente" [E02].
-- O sistema exibe a lista de layouts disponíveis do usuário.
-- O usuário seleciona um layout para duplicar.
-- O sistema carrega a estrutura do layout selecionado no editor, pré-preenchendo o nome com o original acrescido de "(cópia)".
-- O fluxo continua no passo 4 do FB01, com o usuário podendo renomear e ajustar a cópia livremente.
-- Alterações realizadas no layout duplicado não refletem no layout de origem.
-- Em qualquer momento entre os passos 4 e 10 do FB01, o usuário pode selecionar "Cancelar".
-- O sistema exibe mensagem de confirmação: "Deseja descartar as alterações?"
-- Se o usuário confirmar, o sistema descarta as informações e retorna à lista de layouts.
-- Se o usuário cancelar, o sistema retorna ao editor mantendo as informações.
-
-**Pós-condições:** Um novo layout é criado e armazenado no banco de dados. O layout está disponível para associação a uma ou mais coleções, conforme RF-17. O layout aparece na lista de layouts do usuário. Se criado por duplicação, o layout de origem permanece inalterado.
-
-**Requisitos especiais:** RNF01 - O editor deve ser intuitivo e facilitar a personalização. RNF07 - As alterações devem refletir em tempo real na prévia, sem travamentos. RNF04 - Compatibilidade com navegadores modernos.
 
 ### Caso de uso: Adicionar Amigo
 
@@ -1192,6 +1193,39 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 
 **Requisitos especiais:** RNF02 - A busca e envio de solicitação devem ocorrer em até 3 segundos. RNF08 - O sistema deve enviar notificações em tempo real. RNF03 - A privacidade dos usuários deve ser respeitada.
 
+### Caso de uso: Visualizar Feed de Atualizações
+
+**Descrição:** Este caso de uso permite que o usuário acompanhe em tempo real as atualizações das coleções que segue, visualizando eventos de adição, edição e remoção de itens realizados por seus proprietários, ordenados cronologicamente do mais recente ao mais antigo (RF-22).
+
+**Condições prévias:** O usuário deve estar autenticado. O usuário deve seguir ao menos uma coleção com privacidade pública ou somente amigos (RF-21).
+
+**Fluxo básico:**
+
+1. O usuário acessa a área de feed de atualizações.
+2. O sistema identifica todas as coleções que o usuário segue ativamente (conforme RF-21).
+3. O sistema recupera os eventos de atualização associados a essas coleções (adição/edição/remoção de itens), ordenados do mais recente ao mais antigo.
+4. O sistema verifica a privacidade atual de cada coleção antes de exibir seus eventos (RF-08).
+5. O sistema exibe o feed com os eventos, contendo: nome do autor da ação, tipo de evento, nome do item afetado, nome da coleção, nome da categoria pai e data/hora relativa do evento.
+6. O feed é atualizado automaticamente em tempo real sem necessidade de recarregar a página.
+7. O usuário pode rolar o feed para carregar eventos mais antigos progressivamente (paginação).
+
+**Fluxos alternativos / exceções:**
+
+- No passo 2 do FB01, o sistema identifica que o usuário não segue nenhuma coleção.
+- O sistema exibe mensagem: "Seu feed está vazio. Siga coleções para acompanhar suas atualizações."
+- O sistema exibe atalho para a área de descoberta de perfis e coleções públicas.
+- No passo 4 do FB01, o sistema identifica que uma coleção anteriormente seguida foi alterada para privada.
+- O sistema não exibe os eventos dessa coleção, incluindo eventos anteriores à mudança de privacidade.
+- O sistema encerra automaticamente o acompanhamento dessa coleção.
+- Os demais eventos do feed continuam sendo exibidos normalmente.
+- No passo 3 do FB01, o sistema encontra erro ao recuperar os eventos.
+- O sistema exibe mensagem: "Não foi possível carregar o feed. Tente novamente."
+- O sistema oferece botão para recarregar.
+
+**Pós-condições:** O usuário visualiza os eventos recentes das coleções que segue. O feed permanece atualizado em tempo real durante a navegação. Coleções tornadas privadas são removidas do feed imediatamente, com seu acompanhamento encerrado.
+
+**Requisitos especiais:** RNF07 - O feed deve ser atualizado em tempo real sem recarregar a página. RNF02 - O carregamento inicial do feed deve ocorrer em até 3 segundos. RNF03 - Eventos de coleções privadas não devem ser exibidos em nenhuma circunstância.
+
 ### Caso de uso: Gerenciar Solicitações de Amizade
 
 **Descrição:** Este caso de uso permite que o usuário visualize, aceite ou recuse solicitações de amizade recebidas de outros usuários da plataforma. Ao aceitar, o vínculo de amizade é criado mutuamente e o solicitante é notificado. Ao recusar, a solicitação é marcada como recusada sem notificação ao solicitante (RF-20 e RF-24).
@@ -1230,7 +1264,7 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 
 ### Caso de uso: Visualizar Perfil de Amigo
 
-**Descrição:** Este caso de uso permite que o usuário acesse o perfil público de outro usuário (amigo ou não), visualizando suas informações básicas e as coleções disponíveis conforme o nível de privacidade configurado em cada uma delas. As coleções visíveis são agrupadas pelas respectivas categorias, e a navegação nas coleções e itens do usuário visitado é restrita ao modo somente leitura (RF-23 e RF-10).
+**Descrição:** Este caso de uso permite que o usuário acesse o perfil público de outro usuário (amigo ou não), visualizando suas informações básicas e as coleções disponíveis conforme o nível de privacidade configurado em cada uma delas. As coleções visíveis são agrupadas pelas respectivas categorias, e a navegação nas coleções e itens do usuário visitado é restrita ao modo somente leitura (RF-23 e RF-08).
 
 **Condições prévias:** O usuário deve estar autenticado. O usuário visitado deve existir na plataforma.
 
@@ -1262,36 +1296,3 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 **Pós-condições:** O usuário visualiza o perfil e as coleções acessíveis do usuário visitado, agrupadas por categoria. Nenhuma alteração é feita nos dados do usuário visitado. O usuário pode iniciar o fluxo de seguir uma coleção a partir desta tela.
 
 **Requisitos especiais:** RNF03 - A privacidade das coleções deve ser respeitada rigorosamente em toda a navegação. RNF02 - O perfil deve ser carregado em até 3 segundos. RNF04 - A visualização deve ser responsiva em dispositivos móveis.
-
-### Caso de uso: Visualizar Feed de Atualizações
-
-**Descrição:** Este caso de uso permite que o usuário acompanhe em tempo real as atualizações das coleções que segue, visualizando eventos de adição, edição e remoção de itens realizados por seus proprietários, ordenados cronologicamente do mais recente ao mais antigo (RF-22).
-
-**Condições prévias:** O usuário deve estar autenticado. O usuário deve seguir ao menos uma coleção com privacidade pública ou somente amigos (RF-21).
-
-**Fluxo básico:**
-
-1. O usuário acessa a área de feed de atualizações.
-2. O sistema identifica todas as coleções que o usuário segue ativamente (conforme RF-21).
-3. O sistema recupera os eventos de atualização associados a essas coleções (adição/edição/remoção de itens), ordenados do mais recente ao mais antigo.
-4. O sistema verifica a privacidade atual de cada coleção antes de exibir seus eventos (RF-10).
-5. O sistema exibe o feed com os eventos, contendo: nome do autor da ação, tipo de evento, nome do item afetado, nome da coleção, nome da categoria pai e data/hora relativa do evento.
-6. O feed é atualizado automaticamente em tempo real sem necessidade de recarregar a página.
-7. O usuário pode rolar o feed para carregar eventos mais antigos progressivamente (paginação).
-
-**Fluxos alternativos / exceções:**
-
-- No passo 2 do FB01, o sistema identifica que o usuário não segue nenhuma coleção.
-- O sistema exibe mensagem: "Seu feed está vazio. Siga coleções para acompanhar suas atualizações."
-- O sistema exibe atalho para a área de descoberta de perfis e coleções públicas.
-- No passo 4 do FB01, o sistema identifica que uma coleção anteriormente seguida foi alterada para privada.
-- O sistema não exibe os eventos dessa coleção, incluindo eventos anteriores à mudança de privacidade.
-- O sistema encerra automaticamente o acompanhamento dessa coleção.
-- Os demais eventos do feed continuam sendo exibidos normalmente.
-- No passo 3 do FB01, o sistema encontra erro ao recuperar os eventos.
-- O sistema exibe mensagem: "Não foi possível carregar o feed. Tente novamente."
-- O sistema oferece botão para recarregar.
-
-**Pós-condições:** O usuário visualiza os eventos recentes das coleções que segue. O feed permanece atualizado em tempo real durante a navegação. Coleções tornadas privadas são removidas do feed imediatamente, com seu acompanhamento encerrado.
-
-**Requisitos especiais:** RNF07 - O feed deve ser atualizado em tempo real sem recarregar a página. RNF02 - O carregamento inicial do feed deve ocorrer em até 3 segundos. RNF03 - Eventos de coleções privadas não devem ser exibidos em nenhuma circunstância.
