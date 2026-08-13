@@ -123,8 +123,10 @@ Usuário clica em "Sair" e tem sua sessão encerrada imediatamente, sendo redire
 1. Email e senha são obrigatórios para realizar o login.
 2. O sistema deve verificar se o email está cadastrado e se a senha confere com o hash armazenado.
 3. Não conferindo, o sistema deve exibir "Credenciais de login inválidas" sem especificar qual campo está errado.
-4. O token de sessão deve expirar após 30 minutos de inatividade.
-5. O logout deve encerrar imediatamente a sessão ativa e invalidar o token.
+4. A cada autenticação bem-sucedida o sistema registra uma sessão própria e a vincula ao token emitido.
+5. O token de sessão tem prazo de validade definido, expirando automaticamente ao final desse prazo.
+6. A validade da sessão é verificada a cada requisição autenticada, de modo que uma sessão revogada deixe de conceder acesso imediatamente, mesmo que o token ainda não tenha expirado.
+7. O logout deve revogar imediatamente a sessão ativa, tornando o token inutilizável a partir desse momento.
 
 ### RF-03 — Alterar Senha na Área Restrita
 
@@ -340,7 +342,7 @@ Elementos não preenchidos continuam visíveis para visitantes com indicação v
 - **Objeto:** Itens de uma coleção
 - **Prioridade:** Essencial · **Operação:** Saída · **Ator:** Usuário
 
-**Atributos:** lista de itens da coleção selecionada, critérios de ordenação (nome A–Z, nome Z–A, data de criação crescente, data de criação decrescente, avaliação crescente, avaliação decrescente), critérios de filtro (tags, conteúdo dos elementos visuais, campos personalizados do layout aplicável).
+**Atributos:** lista de itens da coleção selecionada, critérios de ordenação (nome A–Z, nome Z–A, data de criação crescente, data de criação decrescente, avaliação crescente, avaliação decrescente), critérios de filtro (conteúdo dos elementos visuais e campos personalizados do layout aplicável).
 
 **Exemplos:** Camila abre a coleção "Lidos" da categoria "Livros" e visualiza todos os 30 itens ordenados por data de criação decrescente.
 Camila ordena por avaliação decrescente e filtra por gênero "Ficção Científica", vendo apenas os livros desse gênero do melhor ao pior avaliado.
@@ -674,9 +676,9 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 
 - **Categoria:** Desempenho · **Prioridade:** Essencial
 
-**Descrição:** O sistema deve carregar coleções, subcoleções e itens em tempo adequado sob condições normais de uso.
+**Descrição:** O sistema deve carregar categorias, coleções e itens em tempo adequado sob condições normais de uso.
 
-**Métrica:** O tempo de carregamento de qualquer tela principal (coleções, subcoleções, lista de itens) não deve exceder 3 segundos em conexão de banda larga padrão (10 Mbps).
+**Métrica:** O tempo de carregamento de qualquer tela principal (categorias, coleções, lista de itens) não deve exceder 3 segundos em conexão de banda larga padrão (10 Mbps).
 
 **Restrições:**
 
@@ -697,7 +699,7 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 
 1. Senhas nunca devem ser armazenadas em texto puro ou com criptografia reversível.
 2. Toda comunicação entre cliente e servidor deve utilizar protocolo HTTPS/TLS.
-3. Tokens de sessão devem ser gerados com entropia suficiente e expirar após 30 minutos de inatividade.
+3. Tokens de sessão devem ser gerados com entropia suficiente, ter prazo de validade definido e poder ser revogados a qualquer momento pelo servidor, independentemente da expiração.
 4. Dados sensíveis (email, senha) não devem ser expostos em logs do sistema.
 5. O sistema deve limitar tentativas de login a 5 por minuto por endereço IP para mitigar ataques de força bruta.
 
@@ -735,7 +737,7 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 
 - **Categoria:** Desempenho · **Prioridade:** Importante
 
-**Descrição:** A movimentação de itens entre subcoleções deve ocorrer com no máximo dois comandos e sem atraso perceptível.
+**Descrição:** A movimentação de itens entre coleções deve ocorrer com no máximo três comandos e sem atraso perceptível.
 
 **Métrica:** A operação de mover um item deve ser concluída em no máximo 500 milissegundos desde a ação do usuário até a atualização visual na interface.
 
@@ -743,8 +745,8 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 
 1. A interface deve aplicar a movimentação de forma otimista (atualizar visualmente antes da confirmação do servidor).
 2. Em caso de falha na comunicação com o servidor, o sistema deve reverter a movimentação e informar o usuário.
-3. A operação de desfazer (Ctrl+Z) deve estar disponível por até 10 segundos após a movimentação.
-4. As contagens de itens nas subcoleções de origem e destino devem ser recalculadas imediatamente.
+3. A operação de desfazer (Ctrl+Z) deve estar disponível por até 30 segundos após a movimentação, conforme RF-10.
+4. As contagens de itens nas coleções de origem e destino devem ser recalculadas imediatamente.
 
 ### RNF-07 — Desempenho do Editor de Layout
 
@@ -835,14 +837,14 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 - No passo 3 do FB01, o sistema identifica que um ou ambos os campos estão vazios.
 - O sistema exibe mensagem de erro indicando os campos obrigatórios.
 - O sistema retorna ao passo 2 do FB01.
-- Após 30 minutos de inatividade, o token de sessão expira automaticamente.
-- Na próxima ação do usuário, o sistema detecta o token inválido.
+- O token de sessão atinge o fim de seu prazo de validade, ou a sessão correspondente é revogada pelo sistema (por exemplo, após um logout ou uma alteração de senha).
+- Na próxima ação do usuário, o sistema verifica a sessão vinculada ao token e a identifica como inválida.
 - O sistema exibe mensagem: "Sua sessão expirou. Por favor, faça login novamente."
 - O sistema redireciona o usuário para a tela de login.
 
 **Pós-condições:** O usuário está autenticado e possui sessão ativa. Um token de sessão válido é gerado e armazenado. O usuário tem acesso às funcionalidades restritas da plataforma.
 
-**Requisitos especiais:** RNF02 - A autenticação deve ser concluída em até 3 segundos. RNF03 - A senha nunca deve ser trafegada ou armazenada em texto plano. RNF05 - O token de sessão deve expirar após 30 minutos de inatividade.
+**Requisitos especiais:** RNF02 - A autenticação deve ser concluída em até 3 segundos. RNF03 - A senha nunca deve ser trafegada ou armazenada em texto plano. RNF03 - O token de sessão deve ter prazo de validade definido e poder ser revogado pelo servidor a qualquer momento.
 
 ### Caso de uso: Realizar Logout
 
@@ -933,7 +935,7 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 - No passo 10 do FB01, o sistema identifica que já existe uma coleção com o mesmo nome na categoria pai.
 - O sistema exibe mensagem de erro: "Já existe uma coleção com este nome nesta categoria. Por favor, escolha outro nome."
 - O sistema retorna ao passo 4 do FB01.
-- No passo 9 do FB01, o sistema identifica que o campo nome não foi preenchido.
+- No passo 10 do FB01, o sistema identifica que o campo nome não foi preenchido.
 - O sistema exibe mensagem de erro: "O nome da coleção é obrigatório."
 - O sistema retorna ao passo 4 do FB01.
 - Em qualquer momento entre os passos 4 e 8 do FB01, o usuário pode selecionar "Cancelar".
@@ -1288,7 +1290,7 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 - O sistema verifica a privacidade da coleção.
 - O sistema exibe mensagem: "Esta coleção não está disponível."
 - O sistema não exibe nenhum dado da coleção, nem mesmo o nome.
-- No passo 3 do FB01, o sistema identifica que não existe vínculo de amizade confirmado entre os usuários.
+- No passo 4 do FB01, o sistema identifica que não existe vínculo de amizade confirmado entre os usuários.
 - O sistema exibe apenas as coleções com privacidade "pública" do perfil visitado, agrupadas pelas respectivas categorias.
 - Coleções com privacidade "somente amigos" não são exibidas.
 - Categorias sem nenhuma coleção pública visível são ocultadas integralmente.

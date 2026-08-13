@@ -3,6 +3,10 @@
 
 Este capítulo descreve os procedimentos metodológicos, os recursos materiais e as ferramentas computacionais empregadas no desenvolvimento da plataforma proposta. A seleção das abordagens levou em consideração tanto a natureza exploratória do problema abordado --- a carência de soluções que combinem organização de coleções pessoais com personalização aprofundada da interface --- quanto os objetivos práticos deste trabalho, voltados à construção de um protótipo funcional.
 
+\section{Metodologia da Pesquisa}
+
+Esta seção caracteriza a pesquisa quanto aos procedimentos adotados para a construção do referencial teórico e quanto à sua natureza aplicada.
+
 \subsection{Pesquisa Bibliográfica}
 
 A construção do referencial teórico deste trabalho apoiou-se na revisão de literatura, recurso metodológico que, conforme \cite{fontelles2009}, abrange a análise de materiais previamente publicados em diversos suportes, incluindo livros, periódicos científicos, teses, documentos eletrônicos e demais fontes de conhecimento consolidado. Essa fundamentação é essencial para situar a pesquisa no estado da arte e identificar lacunas que justifiquem a proposta desenvolvida.
@@ -45,41 +49,52 @@ Sistema operacional & Windows 11 \\ \hline
 
 \subsection{Softwares}
 
-As ferramentas de \textit{software} empregadas neste trabalho foram escolhidas considerando três critérios: aderência técnica ao escopo do projeto, disponibilidade gratuita ou licenciamento de código aberto, e existência de documentação consolidada que facilitasse a curva de aprendizado. As subseções a seguir descrevem cada uma delas, contextualizando seu uso específico na construção da plataforma proposta.
+As ferramentas de \textit{software} empregadas neste trabalho foram escolhidas considerando três critérios: aderência técnica ao escopo do projeto, disponibilidade gratuita ou licenciamento de código aberto, e existência de documentação consolidada que facilitasse a curva de aprendizado. As subseções da Seção~\ref{sec:ferramentas} descrevem cada uma delas, contextualizando seu uso específico na construção da plataforma proposta.
 
 \section{Ferramentas Utilizadas}
+\label{sec:ferramentas}
 
 \subsection{Visual Studio Code}
 
 O Visual Studio Code (VS Code) é um editor de código multiplataforma mantido pela Microsoft e distribuído gratuitamente. Sua arquitetura baseada em extensões permite estender suas capacidades para atender a diferentes ecossistemas de desenvolvimento, aproximando-o da funcionalidade de um ambiente de desenvolvimento integrado (IDE) tradicional, porém com consumo de recursos mais enxuto.
 
-Neste trabalho, a ferramenta concentrou três frentes distintas de uso: a edição do código \textit{backend} em TypeScript, a edição do código \textit{frontend} em React/Next.js e a escrita do presente documento em LaTeX, viabilizada pela extensão \textit{LaTeX Workshop}. A centralização dessas atividades em um único editor simplificou o fluxo de trabalho e reduziu o tempo dedicado a alternância entre ambientes.
+Neste trabalho, a ferramenta concentrou três frentes distintas de uso: a edição do código \textit{backend} em TypeScript, a edição do código \textit{frontend} em React e a escrita do presente documento em LaTeX, viabilizada pela extensão \textit{LaTeX Workshop}. A centralização dessas atividades em um único editor simplificou o fluxo de trabalho e reduziu o tempo dedicado a alternância entre ambientes.
 
 \subsection{Node.js e NestJS}
 
 O ecossistema Node.js consiste em um ambiente de execução JavaScript construído sobre o motor V8 do Chrome, que habilita a execução desta linguagem fora do navegador, particularmente em contextos de servidor. Por cima dele, o NestJS oferece um \textit{framework} opinativo inspirado em conceitos do Angular, organizando a aplicação em módulos coesos compostos por \textit{controllers}, \textit{providers} e \textit{services}. Essa organização modular alinha-se aos preceitos de separação de responsabilidades defendidos por \cite{Fowler2002}.
 
-No sistema proposto, essa dupla compõe a camada responsável pela lógica de negócio. Suas principais atribuições incluem a autenticação de usuários e emissão de \textit{tokens} de sessão, o processamento das operações sobre categorias, coleções, itens, layouts e elementos visuais, a aplicação das regras de privacidade configuradas no nível das coleções, o gerenciamento dos vínculos sociais (amizades e acompanhamentos) e o disparo de notificações decorrentes dessas interações.
+No sistema proposto, essa dupla compõe a camada responsável pela lógica de negócio. Suas principais atribuições incluem a autenticação de usuários e a emissão de \textit{tokens} de sessão, o processamento das operações sobre categorias, coleções, itens, \textit{layouts} e Elementos, a aplicação das regras de privacidade configuradas no nível das coleções, o gerenciamento dos vínculos sociais (amizades e acompanhamentos) e o disparo de notificações decorrentes dessas interações.
+
+Complementam o \textit{backend} algumas bibliotecas do próprio ecossistema: o Passport e o módulo JWT do NestJS, responsáveis pela emissão e validação dos \textit{tokens} de sessão; o bcrypt, utilizado no armazenamento das senhas em forma de \textit{hash}, conforme exigido pelo RNF-03; o Nodemailer, encarregado do envio das mensagens de recuperação de senha; e um mecanismo de limitação de requisições, que restringe as tentativas de autenticação por endereço de origem.
 
 \subsection{PostgreSQL e Docker}
 
-O PostgreSQL é um sistema gerenciador de banco de dados relacional maduro, de código aberto, reconhecido por sua fidelidade ao padrão SQL e por seu suporte robusto a transações. Sua integração com aplicações Node.js é bem consolidada no mercado, o que pesou em sua escolha como camada de persistência deste projeto.
+O PostgreSQL, em sua versão 16, é um sistema gerenciador de banco de dados relacional maduro, de código aberto, reconhecido por sua fidelidade ao padrão SQL e por seu suporte robusto a transações. Sua integração com aplicações Node.js é bem consolidada no mercado, o que pesou em sua escolha como camada de persistência deste projeto.
 
-A modelagem do banco espelha a organização do modelo de domínio, contemplando as entidades de usuários, categorias, coleções, itens, \textit{layouts} e elementos, bem como estruturas para armazenar os valores e ajustes visuais aplicáveis às fichas dos itens. Estruturas relacionadas à dimensão social (solicitações de amizade, acompanhamento de coleções, eventos de atualização e notificações) e às preferências visuais globais também residem nessa camada.
+A modelagem do banco espelha a organização do modelo de domínio, contemplando as entidades de usuários, categorias, coleções, itens, \textit{layouts} e Elementos, sendo que o conteúdo e o estilo exibidos nas fichas residem nos próprios Elementos. Estruturas relacionadas à dimensão social (solicitações de amizade, acompanhamento de coleções, eventos de atualização e notificações), às preferências visuais globais e ao controle de sessões e de redefinição de senha também residem nessa camada.
 
 A instalação do PostgreSQL foi realizada por meio do Docker, plataforma que abstrai o processo de provisionamento da instância em um contêiner isolado. Essa decisão trouxe dois benefícios imediatos: a reprodutibilidade do ambiente entre máquinas distintas e a facilidade de resetar a base durante os ciclos de teste, sem comprometer o sistema operacional hospedeiro.
+
+\subsection{Prisma}
+
+O Prisma é a ferramenta de mapeamento objeto-relacional adotada para intermediar o acesso do \textit{backend} ao PostgreSQL. A partir de um arquivo de esquema, no qual as entidades são declaradas em uma linguagem própria, o Prisma gera um cliente tipado em TypeScript, de modo que consultas e escritas passam a ser verificadas pelo compilador antes da execução --- um ganho relevante em um domínio com muitas associações entre entidades.
+
+Duas características pesaram na escolha. A primeira é o mecanismo de migrações: cada alteração no esquema gera um arquivo versionado com o SQL correspondente, o que preserva o histórico da evolução do banco e permite reconstruí-lo do zero de forma determinística. A segunda é a possibilidade de dividir o esquema em vários arquivos, recurso empregado neste trabalho para separá-lo por assunto, acompanhando os pacotes do modelo de domínio apresentados no Capítulo~\ref{cap:05}. O detalhamento do mapeamento entre o modelo de objetos e o modelo relacional é apresentado no Capítulo~\ref{cap:06}.
 
 \subsection{DBeaver}
 
 O DBeaver é um cliente gráfico multiplataforma voltado à administração de bancos de dados relacionais, compatível com os principais SGBDs disponíveis no mercado, entre eles o PostgreSQL. Por meio de sua interface visual, a ferramenta permite inspecionar estruturas, executar consultas SQL diretamente no banco e exportar resultados em diferentes formatos.
 
-Ao longo do desenvolvimento, o DBeaver complementou o fluxo de trabalho ao oferecer uma alternativa visual ao terminal interativo do PostgreSQL. Foi particularmente útil para verificar a integridade das associações entre entidades --- por exemplo, confirmar que um item estava vinculado à coleção correta e utilizava os elementos definidos pelo layout aplicável --- e para explorar os dados inseridos durante as sessões de teste manual.
+Ao longo do desenvolvimento, o DBeaver complementou o fluxo de trabalho ao oferecer uma alternativa visual ao terminal interativo do PostgreSQL. Foi particularmente útil para verificar a integridade das associações entre entidades --- por exemplo, confirmar que um item estava vinculado à coleção correta e utilizava os Elementos definidos pelo \textit{layout} aplicável --- e para explorar os dados inseridos durante as sessões de teste manual.
 
-\subsection{Next.js}
+\subsection{React e Vite}
 
-O Next.js é um \textit{framework} mantido pela Vercel, construído sobre a biblioteca React, que estende as capacidades desta última ao oferecer roteamento baseado em arquivos, renderização no servidor, geração estática e rotas de API em uma mesma base de código. Esses recursos simplificam a construção de aplicações \textit{web} modernas ao reduzir a quantidade de configuração manual necessária.
+O React é uma biblioteca para construção de interfaces a partir de componentes, na qual a tela é descrita como função do estado da aplicação. O Vite, por sua vez, é a ferramenta de construção e o servidor de desenvolvimento adotados para executá-la: durante o desenvolvimento, serve os módulos diretamente ao navegador, o que torna a atualização em tela praticamente instantânea; para produção, gera um pacote otimizado. A aplicação resultante é uma \textit{single-page application} (SPA), renderizada inteiramente no navegador.
 
-A camada de apresentação deste projeto foi inteiramente construída com Next.js. As telas contemplam o cadastro e autenticação de usuários, o \textit{dashboard} que lista as categorias do usuário, a navegação entre categorias, coleções e itens, o editor visual de \textit{layouts} (com funcionalidade de \textit{drag-and-drop} de elementos), a exibição e edição de fichas individuais de itens, o painel de personalização visual global, as telas de interações sociais e o \textit{feed} de atualizações. A renderização dinâmica das fichas --- que varia conforme os elementos configurados em cada \textit{layout} --- é um dos pontos em que as capacidades de composição do React foram mais intensamente exploradas.
+A adoção do Vite em lugar do Next.js --- alternativa natural no ecossistema React --- foi deliberada, e apoia-se em três observações sobre a natureza deste sistema. Em primeiro lugar, os recursos de renderização no servidor e de geração estática que justificam o Next.js visam sobretudo a indexação por mecanismos de busca, e todo o conteúdo da plataforma fica atrás de autenticação, sem páginas públicas a indexar. Em segundo lugar, o modelo de autenticação do \textit{backend} baseia-se no envio do \textit{token} no cabeçalho \texttt{Authorization}, ao passo que as abordagens mais recentes do Next.js pressupõem a leitura de \textit{cookies} no servidor antes da renderização, o que exigiria trabalhar contra o desenho do \textit{framework}. Por fim, a tela mais complexa do sistema --- o editor de \textit{layouts} --- é integralmente interativa e depende do estado mantido no navegador, de modo que a renderização prévia no servidor não traria ganho. Manteve-se, assim, uma configuração mais simples e diretamente alinhada ao problema.
+
+A camada de apresentação foi construída com essa combinação, complementada pelo React Router para o roteamento entre telas, pelo TanStack Query para a busca e o \textit{cache} dos dados vindos da API e pelo Axios para as requisições HTTP. As telas contemplam o cadastro e a autenticação de usuários, a recuperação e a redefinição de senha, o \textit{dashboard} que lista as categorias do usuário, a navegação entre categorias, coleções e itens, o editor visual de \textit{layouts} (com funcionalidade de \textit{drag-and-drop} de Elementos), a exibição e a edição de fichas individuais de itens, o painel de personalização visual global, as telas de interação social e o \textit{feed} de atualizações. A renderização dinâmica das fichas --- que varia conforme os Elementos configurados em cada \textit{layout} --- é um dos pontos em que as capacidades de composição do React foram mais intensamente exploradas.
 
 \subsection{Figma}
 
@@ -91,7 +106,7 @@ No presente trabalho, o Figma foi utilizado na fase de concepção visual da pla
 
 O Astah Community, desenvolvido pela empresa japonesa Change Vision, é uma ferramenta voltada à modelagem UML que disponibiliza, em sua versão gratuita para uso acadêmico, recursos para a construção dos principais tipos de diagrama previstos pelo padrão.
 
-Sua utilização neste trabalho concentrou-se na produção dos artefatos de análise e projeto: o diagrama de casos de uso, que formaliza as interações dos atores com o sistema; o modelo de domínio, que evidencia as classes conceituais e suas associações; e os diagramas de classes derivados. A organização dos diagramas em pacotes, facilitada pelo Astah, foi especialmente útil para representar visualmente os seis agrupamentos conceituais do modelo de domínio deste projeto (Usuário, Coleções, Editor de Layout, Interação Social, Notificações e Aparência).
+Sua utilização neste trabalho concentrou-se na produção dos artefatos de análise: os diagramas de casos de uso, que formalizam as interações dos atores com o sistema, e o modelo de domínio, que evidencia as classes conceituais e suas associações. A organização dos diagramas em pacotes, facilitada pelo Astah, foi especialmente útil para representar visualmente os sete agrupamentos conceituais do modelo de domínio deste projeto (Usuário, Sistema, Coleções, Editor de Layout, Aparência, Interação Social e Notificações).
 
 \section{Métodos de Desenvolvimento}
 
@@ -105,11 +120,11 @@ O levantamento partiu da análise crítica de limitações observadas em platafo
 
 A partir dos requisitos elicitados, procedeu-se à modelagem conceitual do sistema, etapa na qual as entidades do mundo real relevantes ao domínio são representadas, juntamente com seus atributos e relações. Tomou-se como base a proposta de \cite{Larman2007}, para quem o modelo de domínio é uma ferramenta visual que evidencia os conceitos significativos antes de qualquer decisão de implementação.
 
-Diante da quantidade de entidades identificadas, adotou-se a organização do diagrama em seis pacotes conceituais --- Usuário, Coleções, Editor de Layout, Interação Social, Notificação e Aparência. Esse agrupamento, além de reduzir a sobrecarga visual do diagrama, evidencia a separação de responsabilidades que seria posteriormente materializada na estrutura modular do \textit{backend} implementado com NestJS.
+Diante da quantidade de entidades identificadas, adotou-se a organização do diagrama em sete pacotes conceituais --- Usuário, Sistema, Coleções, Editor de Layout, Aparência, Interação Social e Notificações. Esse agrupamento, além de reduzir a sobrecarga visual do diagrama, evidencia a separação de responsabilidades que seria posteriormente materializada tanto na divisão do esquema do banco em arquivos por assunto quanto na estrutura modular do \textit{backend} implementado com NestJS.
 
 \subsection{Definição arquitetural}
 
-A arquitetura do sistema seguiu o modelo em camadas descrito por \cite{Fowler2002}, com separação clara entre apresentação, lógica de negócio e persistência. A camada de apresentação é implementada em Next.js e comunica-se com o \textit{backend} em NestJS por meio de uma API baseada no estilo REST \cite{Fielding2000}, enquanto este último acessa o PostgreSQL por meio de um ORM que mapeia objetos para tabelas relacionais.
+A arquitetura do sistema seguiu o modelo em camadas descrito por \cite{Fowler2002}, com separação clara entre apresentação, lógica de negócio e persistência. A camada de apresentação é implementada em React, com Vite, e comunica-se com o \textit{backend} em NestJS por meio de uma API baseada no estilo REST \cite{Fielding2000}, enquanto este último acessa o PostgreSQL por meio do Prisma, que mapeia objetos para tabelas relacionais.
 
 Essa separação em camadas foi uma decisão consciente para permitir que cada responsabilidade fosse testada e evoluída de forma independente. A adoção do estilo REST, por sua vez, ofereceu um vocabulário padronizado para a API (métodos HTTP, códigos de \textit{status} e representações em JSON) que facilita tanto a documentação quanto eventuais evoluções futuras.
 
@@ -121,17 +136,21 @@ A prototipação também serviu para definir o sistema de \textit{design} de bas
 
 \subsection{Implementação}
 
-A codificação foi conduzida de forma iterativa e incremental, da camada de persistência em direção à interface. Iniciou-se pela modelagem do esquema do banco, estabelecendo as tabelas e relacionamentos derivados do modelo conceitual. Em seguida, foi implementada a camada de lógica de negócio, organizada em módulos NestJS que correspondem aos pacotes do modelo de domínio. Por fim, foi desenvolvida a camada de apresentação em Next.js, consumindo as APIs disponibilizadas pelo \textit{backend}.
+A codificação foi conduzida de forma iterativa e incremental, da camada de persistência em direção à interface. Iniciou-se pela modelagem do esquema do banco, estabelecendo as tabelas e relacionamentos derivados do modelo conceitual. Em seguida, foi implementada a camada de lógica de negócio, organizada em módulos NestJS que correspondem aos pacotes do modelo de domínio. Por fim, foi desenvolvida a camada de apresentação em React, consumindo as APIs disponibilizadas pelo \textit{backend}.
 
 A escolha pela ordem \textit{backend}-para-\textit{frontend} decorre do fato de que as telas dependem dos dados e regras já disponíveis na API. Durante toda a implementação, ajustes pontuais nos requisitos ou na modelagem foram feitos quando dificuldades práticas apontavam para oportunidades de refinamento.
 
 \subsection{Gestão do projeto}
 
-O acompanhamento das atividades ao longo do desenvolvimento foi realizado por meio da ferramenta ClickUp, utilizando um modelo de organização baseado em quadros Kanban. As tarefas foram distribuídas em colunas que representam os estados do fluxo de trabalho, como: a fazer, em desenvolvimento, em teste, concluído e adiado, permitindo uma visualização clara do progresso das atividades.
+O planejamento do projeto foi estruturado em ciclos quinzenais, nos quais as tarefas eram definidas, priorizadas e acompanhadas ao longo de cada período. Essa abordagem possibilitou melhor controle do tempo, organização das entregas e adaptação contínua às necessidades do projeto.
 
-Além disso, o planejamento do projeto foi estruturado em ciclos quinzenais, nos quais as tarefas eram definidas, priorizadas e acompanhadas ao longo de cada período. Essa abordagem possibilitou melhor controle do tempo, organização das entregas e adaptação contínua às necessidades do projeto.
+O versionamento do código e do próprio documento foi feito com o Git, em repositórios separados para o \textit{backend}, o \textit{frontend} e a monografia. Além de preservar o histórico das alterações, essa prática serviu ao registro das decisões de projeto: cada mudança relevante de rumo ficou associada ao momento em que foi tomada, o que facilitou recuperar as justificativas na redação deste texto.
 
 \subsection{Estratégia de Testes}
+
+A verificação do sistema apoiou-se em duas frentes complementares. A primeira é a de testes automatizados no \textit{backend}, escritos com o Jest e organizados junto ao código que verificam: cada serviço e cada controlador possui seu próprio arquivo de teste, no qual as dependências externas são substituídas por implementações simuladas, de modo que a regra de negócio seja exercitada de forma isolada. Essa estratégia é particularmente relevante nas regras de privacidade e de acompanhamento de coleções, cujas combinações de vínculo de amizade e nível de visibilidade seriam trabalhosas de cobrir manualmente. Para os testes de ponta a ponta, que percorrem a aplicação a partir de requisições HTTP reais, empregou-se o Supertest.
+
+A segunda frente é a de testes manuais exploratórios, conduzidos sobre a interface a cada funcionalidade concluída, com apoio do DBeaver para inspecionar o estado do banco após cada operação. Essa verificação direta foi o meio adotado para validar aspectos visuais e de interação que os testes automatizados não alcançam, como o comportamento do editor de \textit{layouts} durante o arrastar e soltar de Elementos. Os procedimentos de teste e seus resultados são detalhados no capítulo dedicado aos testes.
 
 % A metodologia especifica como os objetivos estabelecidos serão alcançados. As partes constitutivas da metodologia: a amostragem e as formas de coleta, de organização e de análise dos dados.
 
