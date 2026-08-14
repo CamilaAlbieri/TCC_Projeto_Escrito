@@ -1623,8 +1623,7 @@ Uma especificação de caso de uso fornece a descrição textual detalhada do co
 como as funcionalidades são executadas e quais resultados são esperados. As especificações apresentam os fluxos principais, fluxos alternativos, condições prévias 
 e pós-condições associadas a cada interação.
 
-Neste trabalho, as especificações textuais foram elaboradas apenas para os casos de uso principais, uma vez que os demais representam variações, detalhamentos 
-ou funcionalidades incluídas nos fluxos básicos. O modelo adotado para a especificação dos casos de uso é apresentado nos Quadros~\ref{tab:especFazerLogin}
+Neste trabalho, foram elaboradas dezoito especificações textuais, cobrindo os casos de uso que possuem fluxo próprio e alternativas relevantes. Os demais casos de uso presentes nos diagramas não receberam especificação por representarem variações, detalhamentos ou funcionalidades já incluídas nos fluxos básicos aqui descritos --- é o caso, por exemplo, das operações de edição e exclusão, cujo fluxo espelha o de criação com a diferença do registro previamente selecionado. O modelo adotado para a especificação dos casos de uso é apresentado nos Quadros~\ref{tab:especFazerLogin}
 a~\ref{tab:especVisualizarFeed}, adaptado da IBM.
 
 Cabe destacar a estrutura hierárquica adotada pelo sistema, que organiza os dados em três níveis: \textbf{Categoria} (agrupador temático de alto nível, ex.: ``Livros''), 
@@ -1764,6 +1763,173 @@ Requisitos Especiais & RNF-02 - O logout deve ser concluído em até 2 segundos.
 Condições Prévias & O usuário deve estar autenticado com sessão ativa. \\ \hline
 
 Pós-Condições & A sessão do usuário é encerrada. O token de sessão é invalidado e não pode ser reutilizado. O usuário é redirecionado para a tela de login. \\ \hline
+
+Pontos de Extensão & Nenhum ponto de extensão identificado para este caso de uso. \\
+\end{longtable}
+\renewcommand{\arraystretch}{1}
+\FloatBarrier
+
+
+\subsubsection{Alterar Senha}
+
+\renewcommand{\arraystretch}{1.3}
+\FloatBarrier
+\begin{longtable}{ >{\raggedright}p{2.8cm} | >{\raggedright\arraybackslash}p{10.7cm} }
+\caption{Especificação do Caso de Uso: Alterar Senha} \label{tab:especAlterarSenha} \\
+\hline
+\textbf{Item} & \textbf{Descrição} \\ \hline
+\endfirsthead
+\multicolumn{2}{c}{\tablename\ \thetable\ -- Continuação da página anterior} \\
+\hline
+\textbf{Item} & \textbf{Descrição} \\ \hline
+\endhead
+\hline \multicolumn{2}{r}{Continua na próxima página} \\
+\endfoot
+\hline
+\multicolumn{2}{l}{\textbf{Fonte:} Elaborada pelo autor} \\
+\endlastfoot
+
+Nome do Caso de Uso & Alterar Senha \\ \hline
+
+Descrição Resumida & Este caso de uso permite que o usuário autenticado troque sua senha dentro da área restrita, informando a senha atual para confirmação de identidade antes de definir a nova credencial (RF-03). \\ \hline
+
+Fluxo Básico & \mbox{}
+\textbf{FB01:} Alteração de senha
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item O usuário acessa as configurações de conta.
+    \item O usuário seleciona a opção ``Alterar Senha''.
+    \item O sistema exibe o formulário com os campos de senha atual, nova senha e confirmação.
+    \item O usuário informa a senha atual.
+    \item O usuário define a nova senha e a repete no campo de confirmação.
+    \item O usuário confirma clicando em ``Salvar''.
+    \item O sistema compara a senha atual informada com o hash armazenado.
+    \item O sistema valida a nova senha quanto ao comprimento mínimo e à divergência em relação à atual.
+    \item O sistema armazena a nova senha de forma criptografada.
+    \item O sistema revoga as demais sessões ativas do usuário.
+    \item O sistema exibe mensagem de sucesso: ``Senha alterada com sucesso.''
+\end{enumerate}
+\mbox{} \\ \hline
+
+Fluxos Alternativos & \mbox{}
+\textbf{FA01:} Senha atual incorreta
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 7 do FB01, o sistema identifica que a senha atual não corresponde ao hash armazenado.
+    \item O sistema exibe a mensagem: ``Senha atual inválida''.
+    \item O sistema retorna ao passo 4 do FB01.
+\end{enumerate}
+
+\textbf{FA02:} Nova senha e confirmação divergentes
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 8 do FB01, o sistema identifica que os dois campos não coincidem.
+    \item O sistema exibe aviso de que a nova senha e sua confirmação devem ser iguais.
+    \item O sistema retorna ao passo 5 do FB01.
+\end{enumerate}
+
+\textbf{FA03:} Nova senha inválida
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 8 do FB01, o sistema identifica que a nova senha tem menos de 8 caracteres ou é igual à senha atual.
+    \item O sistema exibe mensagem indicando a regra não atendida.
+    \item O sistema retorna ao passo 5 do FB01.
+\end{enumerate}
+\mbox{} \\ \hline
+
+Requisitos Especiais & RNF-03 - A senha deve ser armazenada com algoritmo de hash seguro e nunca trafegar em texto plano. RNF-02 - A operação deve ser concluída em até 3 segundos. \\ \hline
+
+Condições Prévias & O usuário deve estar autenticado com sessão ativa. \\ \hline
+
+Pós-Condições & A senha é atualizada no banco de dados em forma criptografada. As demais sessões ativas do usuário são revogadas, permanecendo válida apenas a sessão corrente. \\ \hline
+
+Pontos de Extensão & Nenhum ponto de extensão identificado para este caso de uso. \\
+\end{longtable}
+\renewcommand{\arraystretch}{1}
+\FloatBarrier
+
+
+\subsubsection{Recuperar Senha via E-mail}
+
+\renewcommand{\arraystretch}{1.3}
+\FloatBarrier
+\begin{longtable}{ >{\raggedright}p{2.8cm} | >{\raggedright\arraybackslash}p{10.7cm} }
+\caption{Especificação do Caso de Uso: Recuperar Senha via E-mail} \label{tab:especRecuperarSenha} \\
+\hline
+\textbf{Item} & \textbf{Descrição} \\ \hline
+\endfirsthead
+\multicolumn{2}{c}{\tablename\ \thetable\ -- Continuação da página anterior} \\
+\hline
+\textbf{Item} & \textbf{Descrição} \\ \hline
+\endhead
+\hline \multicolumn{2}{r}{Continua na próxima página} \\
+\endfoot
+\hline
+\multicolumn{2}{l}{\textbf{Fonte:} Elaborada pelo autor} \\
+\endlastfoot
+
+Nome do Caso de Uso & Recuperar Senha via E-mail \\ \hline
+
+Descrição Resumida & Este caso de uso permite que um usuário não autenticado, que tenha esquecido sua senha, redefina a credencial por meio de um link enviado ao e-mail cadastrado, contendo um token único e temporário (RF-04 e RF-24). \\ \hline
+
+Fluxo Básico & \mbox{}
+\textbf{FB01:} Redefinição de senha por e-mail
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item O usuário acessa a tela de login e seleciona ``Esqueci minha senha''.
+    \item O usuário informa o e-mail cadastrado.
+    \item O sistema exibe mensagem informando que, se o e-mail estiver cadastrado, um link de redefinição será enviado.
+    \item O sistema verifica se o e-mail corresponde a uma conta existente.
+    \item O sistema gera um token único e temporário e o armazena de forma protegida, associado à conta [include: Gerenciar Notificações do Sistema].
+    \item O sistema envia ao endereço cadastrado uma mensagem contendo o link de redefinição.
+    \item O usuário acessa o link recebido.
+    \item O sistema valida o token quanto à existência, ao prazo de validade e ao uso prévio.
+    \item O usuário define a nova senha e a repete no campo de confirmação.
+    \item O sistema valida a nova senha e a armazena de forma criptografada.
+    \item O sistema invalida o token e encerra as sessões ativas anteriores do usuário.
+    \item O sistema redireciona o usuário para a tela de login com mensagem de sucesso.
+\end{enumerate}
+\mbox{} \\ \hline
+
+Fluxos Alternativos & \mbox{}
+\textbf{FA01:} E-mail não cadastrado
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 4 do FB01, o sistema identifica que o e-mail informado não corresponde a nenhuma conta.
+    \item O sistema não envia mensagem alguma, mas mantém a mesma resposta exibida no passo 3, de modo a não revelar quais endereços estão cadastrados.
+    \item O caso de uso é encerrado.
+\end{enumerate}
+
+\textbf{FA02:} Token expirado
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 8 do FB01, o sistema identifica que o token ultrapassou o prazo de 24 horas.
+    \item O sistema exibe mensagem informando que o link não é mais válido.
+    \item O sistema oferece a opção de solicitar um novo link, retornando ao passo 2 do FB01.
+\end{enumerate}
+
+\textbf{FA03:} Token já utilizado
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 8 do FB01, o sistema identifica que o token já foi usado em uma redefinição anterior.
+    \item O sistema exibe mensagem informando que o link não é mais válido.
+    \item O sistema oferece a opção de solicitar um novo link, retornando ao passo 2 do FB01.
+\end{enumerate}
+
+\textbf{FA04:} Nova senha inválida ou divergente
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 10 do FB01, o sistema identifica que a nova senha tem menos de 8 caracteres ou não coincide com a confirmação.
+    \item O sistema exibe mensagem indicando a regra não atendida.
+    \item O sistema retorna ao passo 9 do FB01, mantendo o token válido.
+\end{enumerate}
+\mbox{} \\ \hline
+
+Requisitos Especiais & RNF-03 - O token deve ser gerado com entropia suficiente e armazenado de forma protegida; a nova senha nunca deve trafegar em texto plano. RNF-02 - O envio da mensagem deve ser disparado em até 3 segundos. \\ \hline
+
+Condições Prévias & O usuário não deve estar autenticado. O usuário deve possuir uma conta cadastrada (RF-01) e acesso ao e-mail informado no cadastro. \\ \hline
+
+Pós-Condições & A senha é atualizada em forma criptografada. O token utilizado é invalidado e não pode ser reaproveitado. As sessões ativas anteriores são encerradas, exigindo nova autenticação. \\ \hline
 
 Pontos de Extensão & Nenhum ponto de extensão identificado para este caso de uso. \\
 \end{longtable}
@@ -2132,6 +2298,84 @@ Pontos de Extensão & E01 - Associar Layout à Coleção (estende o passo 7 do F
 \FloatBarrier
 
 
+\subsubsection{Gerenciar Privacidade da Coleção}
+
+\renewcommand{\arraystretch}{1.3}
+\FloatBarrier
+\begin{longtable}{ >{\raggedright}p{2.8cm} | >{\raggedright\arraybackslash}p{10.7cm} }
+\caption{Especificação do Caso de Uso: Gerenciar Privacidade da Coleção} \label{tab:especGerenciarPrivacidade} \\
+\hline
+\textbf{Item} & \textbf{Descrição} \\ \hline
+\endfirsthead
+\multicolumn{2}{c}{\tablename\ \thetable\ -- Continuação da página anterior} \\
+\hline
+\textbf{Item} & \textbf{Descrição} \\ \hline
+\endhead
+\hline \multicolumn{2}{r}{Continua na próxima página} \\
+\endfoot
+\hline
+\multicolumn{2}{l}{\textbf{Fonte:} Elaborada pelo autor} \\
+\endlastfoot
+
+Nome do Caso de Uso & Gerenciar Privacidade da Coleção \\ \hline
+
+Descrição Resumida & Este caso de uso permite que o usuário defina quem pode visualizar e acompanhar cada uma de suas coleções, escolhendo entre os níveis pública, somente amigos e privada. A privacidade é configurada no nível da coleção; a categoria não possui nível próprio (RF-08 e RF-06). \\ \hline
+
+Fluxo Básico & \mbox{}
+\textbf{FB01:} Alteração do nível de privacidade
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item O usuário acessa uma coleção de sua propriedade.
+    \item O usuário seleciona a opção de edição da coleção.
+    \item O sistema exibe o nível de privacidade vigente entre as três opções disponíveis.
+    \item O usuário seleciona o novo nível desejado.
+    \item O usuário confirma a alteração.
+    \item O sistema atualiza a privacidade da coleção.
+    \item O sistema avalia os acompanhamentos existentes e encerra os que deixaram de ser permitidos [E01].
+    \item O sistema exibe mensagem de sucesso e atualiza o indicador de privacidade exibido no \textit{card} da coleção.
+\end{enumerate}
+\mbox{} \\ \hline
+
+Fluxos Alternativos & \mbox{}
+\textbf{FA01:} Restrição para privada
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 7 do FB01, o novo nível escolhido é ``privada''.
+    \item O sistema encerra o acompanhamento de todos os seguidores da coleção.
+    \item O sistema remove os eventos dessa coleção dos \textit{feeds} em que apareciam e oculta as notificações relacionadas (RF-22 e RF-24).
+    \item O fluxo continua no passo 8 do FB01.
+\end{enumerate}
+
+\textbf{FA02:} Restrição de pública para somente amigos
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 7 do FB01, a coleção passa de ``pública'' para ``somente amigos''.
+    \item O sistema mantém o acompanhamento dos seguidores com amizade confirmada.
+    \item O sistema encerra o acompanhamento dos demais seguidores (RF-21).
+    \item O fluxo continua no passo 8 do FB01.
+\end{enumerate}
+
+\textbf{FA03:} Ampliação da visibilidade
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 7 do FB01, a coleção passa a um nível mais permissivo, como de ``privada'' para ``pública''.
+    \item O sistema não restaura acompanhamentos encerrados anteriormente; a coleção volta a poder ser seguida, mas cada usuário precisa segui-la novamente.
+    \item O fluxo continua no passo 8 do FB01.
+\end{enumerate}
+\mbox{} \\ \hline
+
+Requisitos Especiais & RNF-03 - As regras de visibilidade devem ser aplicadas no servidor, de modo que uma coleção restrita não seja acessível nem por link direto. RNF-02 - A alteração deve ser concluída em até 3 segundos. \\ \hline
+
+Condições Prévias & O usuário deve estar autenticado e ser o proprietário da coleção. \\ \hline
+
+Pós-Condições & A coleção passa a ter o novo nível de privacidade. Os acompanhamentos incompatíveis com o novo nível são encerrados, e os eventos correspondentes deixam de ser exibidos nos \textit{feeds} dos usuários afetados. \\ \hline
+
+Pontos de Extensão & E01 - Encerrar Acompanhamentos (estende o passo 7 do FB01, conforme RF-21 -- executado apenas quando a mudança restringe a visibilidade). \\
+\end{longtable}
+\renewcommand{\arraystretch}{1}
+\FloatBarrier
+
+
 \subsubsection{Criar Item}
 
 \renewcommand{\arraystretch}{1.3}
@@ -2220,6 +2464,90 @@ Condições Prévias & O usuário deve estar autenticado. A coleção de destino
 Pós-Condições & Um novo item é criado e vinculado à coleção. O item herda o layout aplicável. A ficha individual do item é gerada automaticamente (RF-11). O item aparece na visualização da coleção. A contagem de itens da coleção e da categoria pai é atualizada. \\ \hline
 
 Pontos de Extensão & E01 - Exibir Ficha do Item (estende o passo 12 do FB01, referente ao RF-11). E02 - Associar Imagem ao Item (estende o passo 7 do FB01). \\
+\end{longtable}
+\renewcommand{\arraystretch}{1}
+\FloatBarrier
+
+
+\subsubsection{Visualizar Itens da Coleção}
+
+\renewcommand{\arraystretch}{1.3}
+\FloatBarrier
+\begin{longtable}{ >{\raggedright}p{2.8cm} | >{\raggedright\arraybackslash}p{10.7cm} }
+\caption{Especificação do Caso de Uso: Visualizar Itens da Coleção} \label{tab:especVisualizarItens} \\
+\hline
+\textbf{Item} & \textbf{Descrição} \\ \hline
+\endfirsthead
+\multicolumn{2}{c}{\tablename\ \thetable\ -- Continuação da página anterior} \\
+\hline
+\textbf{Item} & \textbf{Descrição} \\ \hline
+\endhead
+\hline \multicolumn{2}{r}{Continua na próxima página} \\
+\endfoot
+\hline
+\multicolumn{2}{l}{\textbf{Fonte:} Elaborada pelo autor} \\
+\endlastfoot
+
+Nome do Caso de Uso & Visualizar Itens da Coleção \\ \hline
+
+Descrição Resumida & Este caso de uso permite que o usuário visualize todos os itens de uma coleção, aplicando critérios de ordenação e de filtro. Os filtros disponíveis dependem dos Elementos presentes no layout aplicável àquela coleção (RF-12). \\ \hline
+
+Fluxo Básico & \mbox{}
+\textbf{FB01:} Visualização dos itens
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item O usuário acessa uma coleção a partir da categoria correspondente.
+    \item O sistema recupera os itens vinculados à coleção.
+    \item O sistema identifica o layout aplicável e, a partir dos Elementos que o compõem, determina os critérios de filtro disponíveis.
+    \item O sistema exibe os itens na grade, aplicando a ordenação previamente escolhida pelo usuário.
+    \item O usuário pode alterar o critério de ordenação [E01].
+    \item O usuário pode aplicar filtros sobre o conteúdo dos Elementos [E02].
+    \item O sistema atualiza a listagem conforme os critérios aplicados.
+    \item O usuário seleciona um item para abrir sua ficha [include: Exibir Ficha de Item em Modo Leitura].
+\end{enumerate}
+\mbox{} \\ \hline
+
+Fluxos Alternativos & \mbox{}
+\textbf{FA01:} Coleção sem itens
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 2 do FB01, o sistema identifica que a coleção não possui itens.
+    \item O sistema exibe mensagem informativa e um atalho para o cadastro do primeiro item.
+    \item O caso de uso é encerrado.
+\end{enumerate}
+
+\textbf{FA02:} Nenhum item corresponde aos filtros
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 7 do FB01, nenhum item satisfaz a combinação de filtros aplicada.
+    \item O sistema exibe mensagem informando que não há resultados e oferece a opção de limpar os filtros.
+    \item O sistema retorna ao passo 6 do FB01.
+\end{enumerate}
+
+\textbf{FA03:} Coleção sem layout associado
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 3 do FB01, o sistema identifica que a coleção não possui layout associado.
+    \item O sistema disponibiliza apenas os critérios de ordenação e filtro baseados nos campos padrão.
+    \item O fluxo continua no passo 4 do FB01.
+\end{enumerate}
+
+\textbf{FA04:} Saída da coleção
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item O usuário navega para fora da coleção.
+    \item O sistema descarta os filtros aplicados, que são válidos apenas durante a permanência na coleção.
+    \item O sistema preserva o critério de ordenação, que vale para todas as coleções até ser alterado.
+\end{enumerate}
+\mbox{} \\ \hline
+
+Requisitos Especiais & RNF-02 - A listagem deve ser carregada em até 3 segundos, com carregamento progressivo acima de 20 itens. RNF-04 - A grade deve permanecer legível em diferentes resoluções de tela. \\ \hline
+
+Condições Prévias & O usuário deve estar autenticado. A coleção deve existir e ser visível para ele, seja por ser de sua propriedade, seja pelo nível de privacidade configurado (RF-08). \\ \hline
+
+Pós-Condições & O usuário visualiza os itens da coleção conforme os critérios aplicados. O critério de ordenação escolhido é persistido para as demais coleções; os filtros são descartados ao sair da coleção. \\ \hline
+
+Pontos de Extensão & E01 - Ordenar Itens (estende o passo 5 do FB01, conforme RF-12). E02 - Filtrar Itens (estende o passo 6 do FB01, conforme RF-12 -- critérios derivados dos Elementos do layout aplicável). \\
 \end{longtable}
 \renewcommand{\arraystretch}{1}
 \FloatBarrier
@@ -2403,6 +2731,93 @@ Pontos de Extensão & E01 - Editar Layout Base (durante a criação, permite mod
 \FloatBarrier
 
 
+\subsubsection{Compartilhar Layout}
+
+\renewcommand{\arraystretch}{1.3}
+\FloatBarrier
+\begin{longtable}{ >{\raggedright}p{2.8cm} | >{\raggedright\arraybackslash}p{10.7cm} }
+\caption{Especificação do Caso de Uso: Compartilhar Layout} \label{tab:especCompartilharLayout} \\
+\hline
+\textbf{Item} & \textbf{Descrição} \\ \hline
+\endfirsthead
+\multicolumn{2}{c}{\tablename\ \thetable\ -- Continuação da página anterior} \\
+\hline
+\textbf{Item} & \textbf{Descrição} \\ \hline
+\endhead
+\hline \multicolumn{2}{r}{Continua na próxima página} \\
+\endfoot
+\hline
+\multicolumn{2}{l}{\textbf{Fonte:} Elaborada pelo autor} \\
+\endlastfoot
+
+Nome do Caso de Uso & Compartilhar Layout \\ \hline
+
+Descrição Resumida & Este caso de uso permite que um usuário compartilhe um layout de sua biblioteca com outra pessoa, por meio de um link que contém o identificador do layout, e que o destinatário o importe, recebendo uma cópia independente em sua própria biblioteca (RF-16). \\ \hline
+
+Fluxo Básico & \mbox{}
+\textbf{FB01:} Compartilhamento e importação
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item O usuário proprietário acessa sua biblioteca de layouts.
+    \item O usuário seleciona o layout desejado e escolhe a opção de compartilhar.
+    \item O sistema apresenta o link de compartilhamento, contendo o identificador do layout.
+    \item O usuário envia o link ao destinatário pelo meio que preferir, externo à plataforma.
+    \item O destinatário, autenticado, acessa o link recebido.
+    \item O sistema verifica se o layout existe e se não pertence ao próprio destinatário.
+    \item O sistema exibe uma prévia da estrutura do layout e solicita confirmação da importação.
+    \item O destinatário confirma a importação.
+    \item O sistema cria, na biblioteca do destinatário, uma cópia integral da estrutura do layout, incluindo Elementos, conteúdo, estilos, posições e tamanhos.
+    \item O sistema registra a cópia com a finalidade de \textit{template} importado e guarda a referência ao layout de origem.
+    \item O sistema exibe mensagem de sucesso e apresenta o layout importado na biblioteca do destinatário.
+\end{enumerate}
+\mbox{} \\ \hline
+
+Fluxos Alternativos & \mbox{}
+\textbf{FA01:} Layout de origem inexistente
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 6 do FB01, o sistema identifica que o layout foi excluído pelo proprietário.
+    \item O sistema exibe mensagem informando que o layout não está mais disponível.
+    \item O caso de uso é encerrado.
+\end{enumerate}
+
+\textbf{FA02:} Importação do próprio layout
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 6 do FB01, o sistema identifica que o layout já pertence ao usuário que acessou o link.
+    \item O sistema informa que, para obter outra cópia de um layout próprio, deve-se utilizar a duplicação (RF-14).
+    \item O caso de uso é encerrado.
+\end{enumerate}
+
+\textbf{FA03:} Nome de layout já existente na biblioteca do destinatário
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 9 do FB01, o sistema identifica que o destinatário já possui um layout com o mesmo nome.
+    \item O sistema solicita um nome alternativo para a cópia.
+    \item O fluxo continua no passo 9 do FB01.
+\end{enumerate}
+
+\textbf{FA04:} Alteração posterior no layout de origem
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item Após a importação, o proprietário altera ou exclui o layout de origem.
+    \item As cópias já importadas permanecem inalteradas, pois são independentes.
+    \item Na exclusão, o sistema apenas zera a referência à origem, preservando a cópia.
+\end{enumerate}
+\mbox{} \\ \hline
+
+Requisitos Especiais & RNF-03 - A importação deve exigir usuário autenticado, e o compartilhamento não deve expor dados do proprietário além da estrutura do layout. RNF-02 - A cópia deve ser concluída em até 3 segundos. \\ \hline
+
+Condições Prévias & Ambos os usuários devem estar cadastrados. O layout de origem deve existir e pertencer a quem compartilha. Não é exigido vínculo de amizade entre os dois. \\ \hline
+
+Pós-Condições & Uma cópia independente do layout passa a existir na biblioteca do destinatário, utilizável e editável como se tivesse sido criada por ele. O layout de origem permanece inalterado, e nenhum item ou personalização individual do proprietário é compartilhado. \\ \hline
+
+Pontos de Extensão & E01 - Visualizar Prévia do Layout (estende o passo 7 do FB01 -- exibe a estrutura antes de confirmar a importação). \\
+\end{longtable}
+\renewcommand{\arraystretch}{1}
+\FloatBarrier
+
+
 \subsubsection{Adicionar Amigo}
 
 \renewcommand{\arraystretch}{1.3}
@@ -2574,12 +2989,12 @@ Pontos de Extensão & Nenhum ponto de extensão identificado para este caso de u
 \FloatBarrier
 
 
-\subsubsection{Visualizar Perfil de Amigo}
+\subsubsection{Visualizar Perfil de Usuário}
 
 \renewcommand{\arraystretch}{1.3}
 \FloatBarrier
 \begin{longtable}{ >{\raggedright}p{2.8cm} | >{\raggedright\arraybackslash}p{10.7cm} }
-\caption{Especificação do Caso de Uso: Visualizar Perfil de Amigo} \label{tab:especVisualizarPerfil} \\
+\caption{Especificação do Caso de Uso: Visualizar Perfil de Usuário} \label{tab:especVisualizarPerfil} \\
 \hline
 \textbf{Item} & \textbf{Descrição} \\ \hline
 \endfirsthead
@@ -2593,7 +3008,7 @@ Pontos de Extensão & Nenhum ponto de extensão identificado para este caso de u
 \multicolumn{2}{l}{\textbf{Fonte:} Elaborada pelo autor} \\
 \endlastfoot
 
-Nome do Caso de Uso & Visualizar Perfil de Amigo \\ \hline
+Nome do Caso de Uso & Visualizar Perfil de Usuário \\ \hline
 
 Descrição Resumida & Este caso de uso permite que o usuário acesse o perfil público de outro usuário (amigo ou não), visualizando suas informações básicas e as coleções disponíveis conforme o nível de privacidade configurado em cada uma delas. As coleções visíveis são agrupadas pelas respectivas categorias, e a navegação nas coleções e itens do usuário visitado é restrita ao modo somente leitura (RF-23 e RF-08). \\ \hline
 
