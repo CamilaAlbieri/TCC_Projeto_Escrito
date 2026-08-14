@@ -1298,3 +1298,151 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 **Pós-condições:** O usuário visualiza o perfil e as coleções acessíveis do usuário visitado, agrupadas por categoria. Nenhuma alteração é feita nos dados do usuário visitado. O usuário pode iniciar o fluxo de seguir uma coleção a partir desta tela.
 
 **Requisitos especiais:** RNF03 - A privacidade das coleções deve ser respeitada rigorosamente em toda a navegação. RNF02 - O perfil deve ser carregado em até 3 segundos. RNF04 - A visualização deve ser responsiva em dispositivos móveis.
+
+---
+
+# Anexo de trabalho — ajustes a aplicar no documento
+
+> **Este anexo não faz parte da monografia.** Ele é a lista do que a implementação decidiu
+> diferente do que está escrito acima, com o texto novo já pronto para colar. Cada item traz
+> **onde**, **o que muda** e **por quê**. Apague o anexo inteiro depois de aplicar tudo.
+>
+> Os requisitos foram escritos antes de o sistema existir. Quando a construção mostrou que algum
+> estava errado, pequeno demais ou impossível de cumprir como estava, a decisão foi mudar o
+> requisito — e registrar aqui.
+
+## 1. RF-06 — o nome da categoria tem 100 caracteres
+
+**Onde:** RF-06, seção **Atributos**.
+**O que muda:** nada no texto. É registro de que o código estava errado e foi corrigido.
+**Por quê:** o `CreateCategoryDto` aceitava 150 caracteres; o requisito pedia 100. O DTO foi
+ajustado para 100. A coluna do banco continua `VarChar(150)`, com folga, para evitar uma migration
+só por isso.
+
+## 2. RF-06 — a lista de temas é sugestão, não enumeração
+
+**Onde:** RF-06, seção **Atributos**, no trecho "tipo/tema (livros, filmes, séries, jogos,
+músicas, personalizado)".
+
+**Texto novo:**
+
+> tipo/tema (texto livre de até 50 caracteres, com "livros", "filmes", "séries", "jogos" e
+> "músicas" oferecidos como sugestão; o usuário pode definir o seu próprio)
+
+**Por quê:** lido como enumeração, "personalizado" virava um tema chamado "personalizado", e o
+usuário nunca escrevia o tema dele — o oposto da intenção. Com cinco temas fixos, além disso, a
+busca por tema (item 6 deste anexo) encontraria sempre as mesmas cinco coisas e não haveria nada a
+descobrir.
+
+**Acrescentar às Regras / Restrições do RF-06:**
+
+> 8. O tema é gravado em letras minúsculas, sem espaços nas extremidades e sem acentuação, de
+>    modo que grafias diferentes da mesma palavra sejam tratadas como o mesmo tema. A exibição
+>    apresenta a primeira letra em maiúscula.
+
+## 3. RF-06 — o ícone pode ser emoji ou imagem, e ganha cor de fundo
+
+**Onde:** RF-06, seção **Atributos**.
+
+**Texto novo:**
+
+> ícone (emoji Unicode **ou** imagem JPEG/PNG de até 2 MB, opcional), cor de fundo do cartão
+> (hexadecimal, opcional)
+
+**Por quê:** o atributo já previa as duas formas de ícone, mas não havia rota de upload — ela foi
+criada (`POST` e `DELETE /category/:id/icon`). A cor de fundo é acréscimo: ela é o que dá
+identidade visual ao cartão quando não há imagem. Não há risco de contraste, porque o nome da
+categoria fica **abaixo** da área colorida e o emoji é decorativo — nenhum texto assenta sobre a
+cor.
+
+**Acrescentar às Regras / Restrições do RF-06:**
+
+> 9. O ícone aceita uma única forma por vez: escolher uma imagem substitui o emoji, e escolher um
+>    emoji descarta a imagem.
+> 10. Categoria sem ícone é exibida apenas com a cor de fundo, sem símbolo padrão.
+
+## 4. RF-07 — a coleção precisa dos mesmos campos visuais
+
+**Onde:** RF-07, seção **Atributos**.
+
+**Texto novo:**
+
+> ícone (emoji Unicode ou imagem JPEG/PNG de até 2 MB, opcional), cor de fundo do cartão
+> (hexadecimal, opcional)
+
+**Por quê:** o RF-07 já listava "ícone (opcional)", mas o campo **nunca existiu** no modelo de
+dados da coleção. Foi acrescentado, junto com a cor de fundo, pelo mesmo motivo da categoria.
+
+## 5. RF-09 — o item ganha cor de fundo
+
+**Onde:** RF-09, seção **Atributos**.
+
+**Texto novo:** acrescentar
+
+> cor de fundo do cartão (hexadecimal, opcional)
+
+**Por quê:** o item já tem `thumbnail` e imagem de capa, então não recebe campo de ícone — seria um
+terceiro campo de imagem. A cor serve ao item **sem** thumbnail, que hoje apareceria como um
+retângulo vazio na listagem.
+
+## 6. RF-13 §2 e §3 — o resumo de privacidade sai do cartão de categoria
+
+**Onde:** RF-13, Regras / Restrições, itens 2 e 3; e o passo 5 do caso de uso "Visualizar
+Dashboard de Categorias".
+
+**Texto novo para o item 2:**
+
+> 2. Cada categoria deve exibir nome, ícone e as contagens de coleções e de itens.
+
+**Texto novo para o passo 5 do caso de uso:**
+
+> 5. Para cada categoria, o sistema exibe: nome, ícone, contagem de coleções e contagem total de
+>    itens (somando todas as coleções).
+
+**Remover o item 3** (que explicava o resumo de privacidade da categoria). O **item 4 permanece**:
+é ele que põe o indicador no cartão de cada coleção, que é onde a privacidade de fato existe.
+
+**Por quê:** os dois trechos já se contradiziam — o item 2 e o passo 5 pediam coisas diferentes
+entre si, e o passo 5 ainda pedia "descrição resumida", que o item 2 nunca listou. A privacidade é
+atributo da coleção (RF-08), então o indicador pertence ao cartão dela. E a descrição passa a
+aparecer ao abrir a categoria, não no cartão: o cartão é índice visual, a descrição é contexto de
+quem já entrou.
+
+## 7. RF-12 — as tags não existem no modelo de dados
+
+**Onde:** RF-12, seção **Atributos**, onde os critérios de filtro citam "tags".
+
+**O que muda:** ou se acrescenta o conceito de tag ao modelo de dados, ou se remove a palavra do
+requisito.
+
+**Por quê:** o RF-12 promete filtrar itens por tag, mas **não existe entidade de tag** em lugar
+nenhum do sistema — nem tabela, nem campo no item. É lacuna do documento, identificada durante a
+implementação. Se as tags entrarem, viram entidade própria com relação muitos-para-muitos com o
+item, porque um item tem várias.
+
+## 8. Requisito novo — busca por tema
+
+**Onde:** grupo "Coleção" ou "Social", a definir.
+
+**Texto proposto:**
+
+> **RF-XX — Buscar Coleções por Tema**
+>
+> - **Grupo:** Social · **Ação:** Buscar · **Objeto:** Coleções públicas de outros usuários
+> - **Prioridade:** Importante · **Operação:** Saída · **Ator:** Usuário
+>
+> **Atributos:** termo de busca, tema da categoria, lista de coleções públicas correspondentes
+> (nome, ícone, categoria de origem, autor).
+>
+> **Regras / Restrições:**
+>
+> 1. A busca retorna apenas coleções com privacidade "pública".
+> 2. Um tema só integra o vocabulário compartilhado se pertencer a uma categoria que contenha ao
+>    menos uma coleção pública. Temas de categorias sem coleções visíveis permanecem privados ao
+>    seu autor, pela mesma regra do RF-20 §4.
+> 3. O vocabulário de temas é comum a todos os usuários: temas iguais, escritos por pessoas
+>    diferentes, agrupam-se automaticamente.
+
+**Por quê:** é o que dá mecanismo à dimensão social do sistema sem depender de chat. Um rótulo
+pessoal vira eixo de navegação: "quem mais coleciona isto?". A regra 2 existe para que o nome de
+uma categoria particular não vaze como sugestão para estranhos.
