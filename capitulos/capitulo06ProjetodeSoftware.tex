@@ -195,12 +195,27 @@ Sustenta o fluxo de recuperação de senha (RF-04). Armazena-se o \textit{hash} 
     type & Varch.(50) &  &  &  &  &  &  \\ \hline
     description & Text &  &  &  &  &  &  \\ \hline
     icon & Varch.(100) &  &  &  &  &  &  \\ \hline
+    background\_color & Varch.(7) &  &  &  &  &  &  \\ \hline
     created\_at & Time. & X &  &  &  &  &  \\ \hline
     user\_id & UUID & X &  & users & id\_user & UK\_01 & 2 \\ \hline
 \end{tabularx}
 \vspace{0.1cm} \\ \textbf{Fonte:} Elaborada pelo autor
 \label{tab:tabelaCategoryDetalhado}
 \end{table}
+
+Dois campos desta tabela envolvem decisões que a leitura isolada do esquema não revelaria. O
+\texttt{icon} guarda \textbf{ou} um emoji Unicode \textbf{ou} o caminho de uma imagem enviada pelo
+usuário, em coluna única; quem lê distingue os dois casos pela barra inicial do caminho. Optou-se
+por uma coluna só porque as duas formas são mutuamente exclusivas: escolher uma descarta a outra,
+conforme o RF-06.
+
+Já o \texttt{background\_color} guarda a cor em notação hexadecimal, e não como índice de uma
+paleta do sistema. A consequência é que a cor pertence ao usuário, e não ao tema: ela permanece a
+mesma na alternância entre os modos claro e escuro, comportamento adotado também por ferramentas
+como o Notion e o Trello nas cores de etiqueta. Cabe registrar que essa liberdade de escolha não
+compromete o RNF-09, porque nenhum texto assenta sobre a cor --- o nome da categoria fica
+\textit{abaixo} da área colorida do cartão, e o emoji é decorativo. Não há, portanto, combinação
+de cores capaz de reprovar no critério de contraste.
 
 % 4. LAYOUTS
 \FloatBarrier
@@ -238,6 +253,9 @@ Dois campos desta tabela sustentam requisitos do Editor de Layout. O \texttt{pur
     name & Varch.(150) & X &  &  &  &  &  \\ \hline
     description & Text &  &  &  &  &  &  \\ \hline
     privacy & Enum & X &  &  &  &  &  \\ \hline
+    icon & Varch.(100) &  &  &  &  &  &  \\ \hline
+    background\_color & Varch.(7) &  &  &  &  &  &  \\ \hline
+    created\_at & Time. & X &  &  &  &  &  \\ \hline
     category\_id & UUID & X &  & categories & id\_cat. &  &  \\ \hline
     layout\_id & UUID &  &  & layouts & id\_lay. &  &  \\ \hline
 \end{tabularx}
@@ -291,6 +309,7 @@ Esta é a tabela central do diferencial da plataforma. Nela reside não apenas a
     name & Varch.(255) & X &  &  &  &  &  \\ \hline
     thumbnail & Varch.(500) &  &  &  &  &  &  \\ \hline
     cover\_image & Varch.(500) &  &  &  &  &  &  \\ \hline
+    background\_color & Varch.(7) &  &  &  &  &  &  \\ \hline
     notes & Text &  &  &  &  &  &  \\ \hline
     created\_at & Time. & X &  &  &  &  &  \\ \hline
     collection\_id & UUID & X &  & collections & id\_coll. &  &  \\ \hline
@@ -299,6 +318,11 @@ Esta é a tabela central do diferencial da plataforma. Nela reside não apenas a
 \vspace{0.1cm} \\ \textbf{Fonte:} Elaborada pelo autor
 \label{tab:tabelaItemDetalhado}
 \end{table}
+
+O item é a única das três entidades que recebe cor de fundo sem receber \texttt{icon}: já dispõe
+de \texttt{thumbnail} e \texttt{cover\_image} para imagem, e um terceiro campo de imagem seria
+repetição. A cor atende justamente ao item sem miniatura, que de outro modo apareceria como um
+retângulo vazio na listagem da coleção.
 
 % 9. NOTIFICATIONS
 \FloatBarrier

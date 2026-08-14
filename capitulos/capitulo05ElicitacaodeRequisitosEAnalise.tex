@@ -464,7 +464,7 @@ Usuário altera o e-mail para `cami.mattos@gmail.com'; o sistema envia um link d
 
 \textbf{Objeto:} Categoria (agrupador temático de alto nível que reúne coleções relacionadas)
 
-\textbf{Atributos:} nome (100 caracteres), tipo/tema (livros, filmes, séries, jogos, músicas, personalizado), ícone (emoji Unicode ou imagem JPEG/PNG, máx. 2 MB), descrição (300 caracteres), data de criação (gerada automaticamente).
+\textbf{Atributos:} nome (100 caracteres), tipo/tema (texto livre de até 50 caracteres, com `livros', `filmes', `séries', `jogos' e `músicas' oferecidos como sugestão; o usuário pode definir o seu próprio), ícone (emoji Unicode \textbf{ou} imagem JPEG/PNG de até 2 MB, opcional), cor de fundo do cartão (hexadecimal, opcional), descrição (300 caracteres), data de criação (gerada automaticamente).
 
 \textbf{Exemplos:} Usuário Camila cria a categoria `Livros' com ícone personalizado e descrição `Tudo que leio ou pretendo ler'; a categoria é criada vazia, pronta para receber coleções.
 Camila edita a categoria, renomeando para `Biblioteca Pessoal'.
@@ -479,6 +479,9 @@ Camila exclui a categoria `Jogos Antigos' e confirma a exclusão permanente no d
   \item A categoria não possui nível de privacidade próprio; a privacidade é configurada individualmente em cada coleção (RF-08).
   \item A exclusão deve exibir diálogo de confirmação alertando que todas as coleções e itens vinculados serão removidos permanentemente.
   \item A data de criação é gerada automaticamente pelo sistema e não pode ser editada.
+  \item O tema é gravado em letras minúsculas, sem espaços nas extremidades e sem acentuação, de modo que grafias diferentes da mesma palavra sejam tratadas como o mesmo tema. A exibição apresenta a primeira letra em maiúscula.
+  \item O ícone aceita uma única forma por vez: escolher uma imagem substitui o emoji, e escolher um emoji descarta a imagem.
+  \item Categoria sem ícone é exibida apenas com a cor de fundo, sem símbolo padrão.
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Essencial \\ \hline
 \textbf{Operação}    & Entrada \\ \hline
@@ -501,7 +504,7 @@ Camila exclui a categoria `Jogos Antigos' e confirma a exclusão permanente no d
 
 \textbf{Objeto:} Coleção (subdivisão estruturada que pertence a uma categoria e agrupa itens)
 
-\textbf{Atributos:} nome (100 caracteres), categoria pai (referência obrigatória), ícone (opcional), descrição (300 caracteres), layout associado (referência opcional a um layout do usuário), nível de privacidade (pública, somente amigos ou privada), data de criação (gerada automaticamente).
+\textbf{Atributos:} nome (100 caracteres), categoria pai (referência obrigatória), ícone (emoji Unicode ou imagem JPEG/PNG de até 2 MB, opcional), cor de fundo do cartão (hexadecimal, opcional), descrição (300 caracteres), layout associado (referência opcional a um layout do usuário), nível de privacidade (pública, somente amigos ou privada), data de criação (gerada automaticamente).
 
 \textbf{Exemplos:} Usuário cria a coleção `Lidos' dentro da categoria `Livros', definindo a privacidade como `pública'; a coleção passa a aceitar itens.
 Camila edita a coleção `Lidos' para associar o layout `Card de Mangá', que passa a valer para os itens dessa coleção.
@@ -575,7 +578,7 @@ Camila define `Favoritos' como `somente amigos'; apenas amigos confirmados passa
 
 \textbf{Objeto:} Item dentro de uma coleção
 
-\textbf{Atributos:} nome (200 caracteres), coleção pai (referência obrigatória), layout visual efetivo do item, Elementos herdados ou personalizados (Texto Fixo, Campo de Texto, Imagem, GIF, Forma, Ícone, Classificação, Data e Lista), conteúdo e estilo armazenados nos próprios Elementos, data de criação (gerada automaticamente).
+\textbf{Atributos:} nome (200 caracteres), coleção pai (referência obrigatória), cor de fundo do cartão (hexadecimal, opcional), layout visual efetivo do item, Elementos herdados ou personalizados (Texto Fixo, Campo de Texto, Imagem, GIF, Forma, Ícone, Classificação, Data e Lista), conteúdo e estilo armazenados nos próprios Elementos, data de criação (gerada automaticamente).
 
 \textbf{Exemplos:} Camila cria o item `Duna' na coleção `Lidos' (dentro da categoria `Livros'); o item abre com o layout aplicável e Camila edita visualmente os textos, imagens, datas, classificação e listas que aparecem na ficha, como faria em um canvas.
 Camila adiciona individualmente um Elemento de GIF e um texto extra `Personagem Favorito: Paul Atreides', sem afetar os demais itens nem os layouts da coleção e da categoria.
@@ -720,9 +723,9 @@ Camila visualiza a coleção `Favoritos' usando o mesmo filtro; o sistema manté
 
 \textbf{Objeto:} Tela principal (dashboard) de categorias do usuário
 
-\textbf{Atributos:} lista de categorias do usuário autenticado (nome, ícone, contagem total de coleções, contagem total de itens somados entre todas as coleções), resumo de privacidade das coleções da categoria (ex.: ``3 públicas, 1 amigos, 2 privadas''), modo de exibição (grade ou lista), critérios de ordenação (nome A--Z, nome Z--A, data de criação crescente, data de criação decrescente), critérios de filtro (tipo/tema da categoria), atalhos de navegação para coleções e itens.
+\textbf{Atributos:} lista de categorias do usuário autenticado (nome, ícone, cor de fundo do cartão, contagem total de coleções, contagem total de itens somados entre todas as coleções), modo de exibição (grade ou lista), critérios de ordenação (nome A--Z, nome Z--A, data de criação crescente, data de criação decrescente), critérios de filtro (tipo/tema da categoria), atalhos de navegação para coleções e itens.
 
-\textbf{Exemplos:} Ao fazer login, Camila vê na tela inicial os cartões `Livros (2 coleções, 20 itens)', `Filmes (2 coleções, 30 itens)' e `Cafés (1 coleção, 7 itens)' em modo grade, cada um exibindo um resumo das privacidades das coleções que contém.
+\textbf{Exemplos:} Ao fazer login, Camila vê na tela inicial os cartões `Livros (2 coleções, 20 itens)', `Filmes (2 coleções, 30 itens)' e `Cafés (1 coleção, 7 itens)' em modo grade.
 Camila clica em `Livros' e visualiza as coleções `Lidos (20, pública)', `Para Ler (30, somente amigos)' e `Diário (2, privada)', podendo navegar para os itens de cada uma.
 Camila alterna para o modo lista e ordena as categorias por data de criação decrescente; a preferência é mantida na próxima sessão.
 Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão `Criar primeira categoria'.
@@ -730,9 +733,8 @@ Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão `Criar prim
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
   \item A tela deve exibir todas as categorias do usuário autenticado em uma única tela dedicada.
-  \item Cada categoria deve exibir nome, ícone, contagem de coleções, contagem total de itens e resumo de privacidade das coleções que contém.
-  \item A categoria em si não possui nível de privacidade; o resumo apresentado é uma contagem das privacidades de suas coleções (RF-08).
-  \item O indicador individual de privacidade aparece no card de cada coleção dentro da categoria, e não no card da categoria.
+  \item Cada categoria deve exibir nome, ícone e as contagens de coleções e de itens.
+  \item A categoria não possui nível de privacidade próprio; o indicador individual de privacidade aparece no \textit{card} de cada coleção dentro da categoria, e não no \textit{card} da categoria (RF-08).
   \item A navegação até as coleções de uma categoria deve ser acessível com um único clique ou toque; a navegação até um item, com no máximo três.
   \item Usuários sem categorias devem ver mensagem de boas-vindas com atalho para criação da primeira categoria.
   \item Ao acessar uma categoria vazia (sem coleções), o sistema deve exibir mensagem informativa e atalho para criação da primeira coleção.
@@ -741,6 +743,7 @@ Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão `Criar prim
   \item O usuário deve poder ordenar as categorias por pelo menos quatro critérios: nome crescente, nome decrescente, data de criação crescente e data de criação decrescente.
   \item A ordenação padrão é por data de criação decrescente (mais recentes primeiro).
   \item Os filtros e a ordenação aplicados devem ser persistidos entre sessões do mesmo usuário.
+  \item O filtro por tema opera sobre o texto livre definido pelo usuário (RF-06), comparando os valores já normalizados, de modo que grafias diferentes da mesma palavra sejam tratadas como o mesmo tema.
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Essencial \\ \hline
 \textbf{Operação}    & Saída \\ \hline
@@ -2164,7 +2167,7 @@ Fluxo Básico & \mbox{}
 	\item O usuário insere o nome da categoria.
 	\item O usuário seleciona um ícone para representar a categoria (opcional).
 	\item O usuário insere uma descrição para a categoria (opcional).
-	\item O usuário seleciona o tipo/tema (opcional).
+	\item O usuário informa o tipo/tema (opcional), podendo escolher uma das sugestões oferecidas ou digitar o seu próprio.
 	\item O usuário confirma a criação da categoria.
 	\item O sistema valida os dados inseridos.
 	\item O sistema cria a categoria vazia no banco de dados.
@@ -2577,7 +2580,7 @@ Pontos de Extensão & E01 - Ordenar Itens (estende o passo 5 do FB01, conforme R
 
 Nome do Caso de Uso & Visualizar Dashboard de Categorias \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário visualize todas as suas categorias em uma tela dedicada, com informações resumidas de cada uma (nome, ícone, número de coleções, número total de itens e resumo das privacidades de suas coleções) e acesso rápido às coleções que pertencem a cada categoria. O dashboard é o ponto central de navegação do sistema e permite alternar entre modos de visualização, aplicar filtros e ordenações (RF-13). \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário visualize todas as suas categorias em uma tela dedicada, com informações resumidas de cada uma (nome, ícone, número de coleções e número total de itens) e acesso rápido às coleções que pertencem a cada categoria. O dashboard é o ponto central de navegação do sistema e permite alternar entre modos de visualização, aplicar filtros e ordenações (RF-13). \\ \hline
 
 Fluxo Básico & \mbox{}
 \textbf{FB01:} Visualização do dashboard
@@ -2587,7 +2590,7 @@ Fluxo Básico & \mbox{}
 	\item O usuário seleciona a opção ``Minhas Categorias'' ou equivalente.
 	\item O sistema recupera todas as categorias do usuário no banco de dados.
 	\item O sistema exibe o dashboard com cards de todas as categorias, aplicando as preferências de visualização previamente salvas (modo, ordenação e filtros).
-	\item Para cada categoria, o sistema exibe: nome, ícone, descrição resumida, contagem de coleções, contagem total de itens (somando todas as coleções) e resumo das privacidades de suas coleções; o indicador individual de privacidade aparece no card de cada coleção, e não no da categoria (RF-13).
+	\item Para cada categoria, o sistema exibe: nome, ícone, contagem de coleções e contagem total de itens (somando todas as coleções).
 	\item O usuário pode alternar entre modo grade e modo lista [E01].
 	\item O usuário pode aplicar filtros e ordenações (por nome, data de criação ou tipo/tema da categoria) [E02].
 	\item O usuário clica em uma categoria para acessar suas coleções.
