@@ -246,6 +246,10 @@ Camila exclui a coleção "Rascunhos" e confirma no diálogo a remoção de todo
 5. Toda coleção pode ter um layout associado, que determina os elementos exibidos e preenchíveis nos itens dessa coleção; um mesmo layout pode ser reutilizado por diferentes coleções (RF-15).
 6. A exclusão deve exibir diálogo de confirmação alertando que todos os itens vinculados serão removidos permanentemente.
 7. A data de criação é gerada automaticamente pelo sistema e não pode ser editada.
+8. O usuário deve poder alternar entre os modos de visualização "grade" e "lista" a qualquer momento; o modo padrão é "grade" e a escolha deve ser persistida entre sessões.
+9. O usuário deve poder ordenar as coleções por pelo menos quatro critérios: nome crescente, nome decrescente, data de criação crescente e data de criação decrescente.
+10. A ordenação padrão é por data de criação decrescente (mais recentes primeiro).
+11. O usuário deve poder filtrar as coleções por nível de privacidade (RF-08); a ordenação e o filtro aplicados devem ser persistidos entre sessões.
 
 ### RF-08 — Gerenciar Privacidade da Coleção
 
