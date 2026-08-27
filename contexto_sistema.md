@@ -327,9 +327,9 @@ Camila move um item para uma coleção que usa um layout diferente e o sistema a
 - **Objeto:** Ficha individual de item
 - **Prioridade:** Essencial · **Operação:** Saída · **Ator:** Sistema
 
-**Atributos:** composição visual efetiva do item, elementos visuais com conteúdo e estilo, data de criação do item, modo de acesso (dono — com opções de editar e excluir; visitante — somente leitura).
+**Atributos:** composição visual efetiva do item, elementos visuais com conteúdo e estilo, data de criação do item, modo de acesso (dono — com acesso à edição da composição; visitante — somente leitura).
 
-**Exemplos:** Camila acessa a ficha do item "Duna" da coleção "Lidos" e visualiza todos os elementos visuais com os botões de editar e excluir disponíveis.
+**Exemplos:** Camila acessa a ficha do item "Duna" da coleção "Lidos" e visualiza todos os elementos visuais, com a opção de editar a composição disponível.
 Um amigo visita a categoria pública "Livros" de Camila, abre a coleção "Lidos", acessa a ficha do item "Duna" e visualiza os mesmos elementos, porém sem nenhuma opção de edição.
 Elementos não preenchidos continuam visíveis para visitantes com indicação visual de que estão vazios, sem permitir edição.
 
@@ -337,7 +337,7 @@ Elementos não preenchidos continuam visíveis para visitantes com indicação v
 
 1. A ficha exibe os elementos da composição visual efetiva do item; quando existir personalização individual, ela prevalece sobre o layout da coleção.
 2. Elementos sem conteúdo devem ser exibidos para dono e visitantes com indicação visual de que estão vazios; isso não concede permissão de edição ao visitante.
-3. Para o dono do item, a ficha deve oferecer acesso direto às ações de editar e excluir.
+3. Para o dono do item, a ficha deve oferecer acesso direto à edição da **própria ficha**, isto é, da composição visual do item (RF-17). As ações de alterar os dados do item e de excluí-lo não ficam na ficha: elas pertencem ao menu de ações do item na listagem da coleção, de onde valem para qualquer item sem precisar abri-lo.
 4. Para visitantes, a ficha é estritamente somente leitura, sem nenhuma opção de edição visível.
 5. A ficha deve respeitar a aparência (tema e cores) configurada pelo dono (RF-18).
 6. O sistema deve fornecer ao front-end as informações necessárias para exibir a ficha final do item em modo leitura, diferenciando visualmente o acesso do dono e de visitantes.
