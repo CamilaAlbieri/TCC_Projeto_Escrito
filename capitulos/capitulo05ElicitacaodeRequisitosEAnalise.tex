@@ -592,7 +592,7 @@ Posteriormente edita a classificação de 5 para 4 estrelas e, por fim, exclui o
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
   \item O nome do item é obrigatório; todos os demais campos são opcionais.
   \item Todo item deve pertencer a uma coleção existente (RF-07); não é possível criar itens diretamente em uma categoria.
-  \item Ao ser criado, o item adota automaticamente a estrutura visual do layout associado à sua coleção (RF-15); caso a coleção não tenha layout, o item utiliza uma visualização básica com campos padrão.
+  \item Ao ser criado, o item adota automaticamente a estrutura visual do layout associado à sua coleção (RF-15); caso a coleção não tenha layout, a ficha do item começa vazia e o próprio usuário monta sua composição (RF-17). A ``visualização básica com campos padrão'' é esse esqueleto montado pelo usuário, e não uma tela fixa oferecida pelo sistema.
   \item O usuário pode adicionar, remover ou reposicionar Elementos individualmente no item sem afetar os layouts da coleção ou da categoria, nem os demais itens (RF-17).
   \item Não podem existir dois itens com o mesmo nome dentro da mesma coleção.
   \item Imagens enviadas devem estar em formato JPEG ou PNG com tamanho máximo de 5 MB por arquivo.
@@ -824,7 +824,7 @@ Camila troca o layout da coleção `Mangás' para `Card de Mangá'; os novos ite
   \item O layout é associado no nível da coleção; a categoria não recebe layout (RF-06).
   \item Uma coleção pode ter, no máximo, um layout ativo por vez.
   \item Um mesmo layout pode ser associado a várias coleções simultaneamente, sendo reutilizado como template.
-  \item O layout aplicável a um item é o da sua coleção; na ausência de layout associado, o item utiliza um formulário básico com campos padrão. Modificações individuais por item são tratadas como \textit{override} (RF-17).
+  \item O layout aplicável a um item é o da sua coleção; na ausência de layout associado, o item pode receber uma composição própria, montada na ficha. Modificações individuais por item são tratadas como \textit{override} (RF-17).
   \item A troca ou remoção do layout da coleção não altera os dados nem os Elementos individuais (\textit{override}) dos itens já cadastrados (RF-17).
   \item Ao associar um layout, o sistema deve exibir prévia de como os novos itens serão criados.
   \item O usuário pode remover a associação de layout da coleção a qualquer momento.
@@ -894,11 +894,11 @@ Depois da personalização, o item mantém sua própria composição visual, sem
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
-  \item Todo item, ao ser criado, adota o layout da sua coleção como ponto de partida (RF-09 e RF-15).
+  \item Todo item, ao ser criado, adota o layout da sua coleção como ponto de partida (RF-09 e RF-15). Caso a coleção não possua layout, o item começa sem composição, e o usuário pode montá-la a partir da própria ficha.
   \item O usuário pode adicionar, remover ou reposicionar Elementos no item sem afetar o layout da coleção, o da categoria ou os demais itens.
   \item O layout aplicável deve ser exibido como referência visual durante a edição individual do item.
   \item As modificações individuais são exclusivas do item; nenhuma alteração feita no item reflete nos layouts da coleção ou da categoria.
-  \item Ao iniciar a edição visual individual, o sistema deve criar uma cópia própria do layout da coleção para aquele item, preservando Elementos, conteúdo e estilos como ponto de partida.
+  \item Ao iniciar a edição visual individual, o sistema deve criar uma cópia própria do layout da coleção para aquele item, preservando Elementos, conteúdo e estilos como ponto de partida. Não havendo layout na coleção, a cópia é criada vazia: a existência de um layout na coleção não é pré-requisito para personalizar a ficha de um item.
   \item Após a criação da cópia individual, alterações de conteúdo, estilo, posição, tamanho, adição ou remoção de Elementos devem afetar apenas aquele item, sem modificar o layout da coleção nem os demais itens.
   \item Depois de personalizado, o item mantém sua composição visual própria, mesmo que o layout da coleção seja alterado posteriormente.
 \end{enumerate} \\ \hline

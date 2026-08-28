@@ -291,7 +291,7 @@ Posteriormente edita a classificação de 5 para 4 estrelas e, por fim, exclui o
 
 1. O nome do item é obrigatório; todos os demais campos são opcionais.
 2. Todo item deve pertencer a uma coleção existente (RF-07); não é possível criar itens diretamente em uma categoria.
-3. Ao ser criado, o item adota automaticamente a estrutura visual do layout associado à sua coleção (RF-15); caso a coleção não tenha layout, o item utiliza uma visualização básica com campos padrão.
+3. Ao ser criado, o item adota automaticamente a estrutura visual do layout associado à sua coleção (RF-15); caso a coleção não tenha layout, a ficha do item começa vazia e o próprio usuário monta sua composição (RF-17). A "visualização básica com campos padrão" é esse esqueleto montado pelo usuário, e não uma tela fixa oferecida pelo sistema.
 4. O usuário pode adicionar, remover ou reposicionar elementos individualmente no item sem afetar os layouts da coleção ou da categoria, nem os demais itens (RF-17).
 5. Não podem existir dois itens com o mesmo nome dentro da mesma coleção.
 6. Imagens enviadas devem estar em formato JPEG ou PNG com tamanho máximo de 5 MB por arquivo.
@@ -439,7 +439,7 @@ Camila troca o layout da coleção "Mangás" para "Card de Mangá"; os novos ite
 2. O layout é associado no nível da coleção; a categoria não recebe layout (RF-06).
 3. Uma coleção pode ter, no máximo, um layout ativo por vez.
 4. Um mesmo layout pode ser associado a várias coleções simultaneamente, sendo reutilizado como template.
-5. O layout aplicável a um item é o da sua coleção; na ausência de layout associado, o item utiliza um formulário básico com campos padrão. Modificações individuais por item são tratadas como _override_ (RF-17).
+5. O layout aplicável a um item é o da sua coleção; na ausência de layout associado, o item pode receber uma composição própria, montada na ficha. Modificações individuais por item são tratadas como _override_ (RF-17).
 6. A troca ou remoção do layout da coleção não altera os dados nem os elementos individuais (_override_) dos itens já cadastrados (RF-17).
 7. Ao associar um layout, o sistema deve exibir prévia de como os novos itens serão criados.
 8. O usuário pode remover a associação de layout da coleção a qualquer momento.
@@ -481,11 +481,11 @@ Depois da personalização, o item mantém sua própria composição visual, sem
 
 **Regras / Restrições:**
 
-1. Todo item, ao ser criado, adota o layout da sua coleção como ponto de partida (RF-09 e RF-15).
+1. Todo item, ao ser criado, adota o layout da sua coleção como ponto de partida (RF-09 e RF-15). Caso a coleção não possua layout, o item começa sem composição, e o usuário pode montá-la a partir da própria ficha.
 2. O usuário pode adicionar, remover ou reposicionar elementos no item sem afetar o layout da coleção, o da categoria ou os demais itens.
 3. O layout aplicável deve ser exibido como referência visual durante a edição individual do item.
 4. As modificações individuais são exclusivas do item; nenhuma alteração feita no item reflete nos layouts da coleção ou da categoria.
-5. Ao iniciar a edição visual individual, o sistema deve criar uma cópia própria do layout da coleção para aquele item, preservando elementos, conteúdo e estilos como ponto de partida.
+5. Ao iniciar a edição visual individual, o sistema deve criar uma cópia própria do layout da coleção para aquele item, preservando elementos, conteúdo e estilos como ponto de partida. Não havendo layout na coleção, a cópia é criada vazia: a existência de um layout na coleção não é pré-requisito para personalizar a ficha de um item.
 6. Após a criação da cópia individual, alterações de conteúdo, estilo, posição, tamanho, adição ou remoção de elementos devem afetar apenas aquele item, sem modificar o layout da coleção nem os demais itens.
 7. Depois de personalizado, o item mantém sua composição visual própria, mesmo que o layout da coleção seja alterado posteriormente.
 
