@@ -22,8 +22,8 @@ a aparência das fichas de cada item por meio de um editor visual, no estilo de 
 O editor funciona como o Canva: o usuário arrasta elementos para uma tela, redimensiona e posiciona.
 A diferença é que a tela montada é um **modelo reutilizável** por vários itens.
 
-- **Element** — Componente visual reutilizável utilizado para compor layouts, como textos, imagens, classificações, datas, listas, ícones, entre outros. Cada elemento possui tipo, posição, tamanho, conteúdo opcional e propriedades visuais próprias (fonte, tamanho da fonte, peso, alinhamento, cor e cor de fundo).
-- **ElementType** — Conjunto fixo e predefinido de categorias de elemento que o usuário pode arrastar para o editor, à semelhança dos elementos básicos de ferramentas como o Canva. Compreende: texto fixo, campo de texto, imagem, gif, forma, ícone, classificação, data e lista. É representado por uma enumeração, pois constitui um conjunto estável que faz parte das capacidades do próprio editor.
+- **Element** — Componente visual reutilizável utilizado para compor layouts, como textos, imagens, classificações, datas e ícones. Cada elemento possui tipo, posição, tamanho, camada de sobreposição, conteúdo opcional e um conjunto extensível de propriedades visuais próprias (fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento, nível de título, cor, cor de fundo, arredondamento, opacidade, rotação, borda, formato e ajuste de imagem, e apresentação em lista).
+- **ElementType** — Conjunto fixo e predefinido de categorias de elemento que o usuário pode arrastar para o editor, à semelhança dos elementos básicos de ferramentas como o Canva. Compreende: texto, imagem, gif, forma, ícone, classificação e data. É representado por uma enumeração, pois constitui um conjunto estável que faz parte das capacidades do próprio editor.
 - **Layout** — Estrutura personalizada que define quais elementos compõem a ficha de um item e como eles se organizam visualmente. Funciona como um _template_ reutilizável, associado a uma coleção; um mesmo layout pode ser reutilizado por diferentes coleções. Todos os itens de uma coleção compartilham o layout dela.
 - **Item** — Unidade individual de conteúdo cadastrada pelo usuário (por exemplo, um livro, filme ou jogo específico). Todo item pertence a uma coleção e adota, por padrão, o layout associado a essa coleção, podendo receber uma versão visual própria conforme RF-17.
 
@@ -33,7 +33,7 @@ A diferença é que a tela montada é um **modelo reutilizável** por vários it
 o mesmo layout, e um mesmo layout pode ser reutilizado por coleções diferentes. Um item pode ter
 _override_ individual (adicionar/remover elementos só para ele), sem afetar a coleção nem os demais itens.
 
-**ElementType (tipos fixos de elemento):** texto fixo, campo de texto, imagem, gif, forma, ícone, classificação, data e lista.
+**ElementType (tipos fixos de elemento):** texto, imagem, gif, forma, ícone, classificação e data.
 
 ## Atores
 
@@ -283,7 +283,7 @@ Camila define "Favoritos" como "somente amigos"; apenas amigos confirmados passa
 
 **Atributos:** nome (200 caracteres), coleção pai (referência obrigatória), cor de fundo do cartão (hexadecimal, opcional), layout visual efetivo do item, elementos visuais herdados ou personalizados (Texto, Campo de Texto, Imagem, GIF, Forma, Ícone, Classificação, Data e Lista), conteúdo e estilo armazenados nos próprios elementos, data de criação (gerada automaticamente).
 
-**Exemplos:** Camila cria o item "Duna" na coleção "Lidos" (dentro da categoria "Livros"); o item abre com o layout aplicável e Camila edita visualmente os textos, imagens, datas, classificação e listas que aparecem na ficha, como faria em um canvas.
+**Exemplos:** Camila cria o item "Duna" na coleção "Lidos" (dentro da categoria "Livros"); o item abre com o layout aplicável e Camila edita visualmente os textos, imagens, datas e classificações que aparecem na ficha, como faria em um canvas.
 Camila adiciona individualmente um elemento de GIF e um texto extra "Personagem Favorito: Paul Atreides", sem afetar os demais itens nem os layouts da coleção e da categoria.
 Posteriormente edita a classificação de 5 para 4 estrelas e, por fim, exclui o item "Duna — Rascunho" confirmando no diálogo de confirmação.
 
@@ -399,7 +399,7 @@ Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão "Criar prim
 - **Objeto:** Layout personalizado (template)
 - **Prioridade:** Importante · **Operação:** Entrada · **Ator:** Usuário
 
-**Atributos:** nome do layout (100 caracteres), elementos disponíveis (conforme os tipos fixos definidos pela enumeração ElementType: texto fixo, campo de texto, imagem, gif, forma, ícone, classificação, data e lista), conteúdo textual opcional do elemento, propriedades visuais do elemento (fonte, tamanho, peso, estilo, alinhamento, cor e cor de fundo), posição e tamanho de cada elemento na área de edição, layout de origem (referência opcional, preenchida apenas na operação de duplicação).
+**Atributos:** nome do layout (100 caracteres), elementos disponíveis (conforme os tipos fixos definidos pela enumeração ElementType: texto, imagem, gif, forma, ícone, classificação e data), conteúdo textual opcional do elemento, propriedades visuais do elemento (fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento, nível de título, cor, cor de fundo, arredondamento, opacidade, rotação, borda, formato e ajuste de imagem, e apresentação em lista), camada de sobreposição, posição e tamanho de cada elemento na área de edição, layout de origem (referência opcional, preenchida apenas na operação de duplicação).
 
 **Exemplos:** Camila cria o layout "Card de Livro" com elemento de Imagem para capa, textos livres como "Autor: Frank Herbert", Classificação de 1 a 5 estrelas, dois elementos de Data (início e fim de leitura) e área de Texto para notas.
 Camila reposiciona o elemento de Classificação via _drag-and-drop_ e visualiza o resultado em tempo real na prévia.
@@ -410,7 +410,7 @@ Camila exclui o layout "Card Antigo" que não está associado a nenhuma coleçã
 
 1. O nome do layout é obrigatório e deve ser único por usuário.
 2. Pelo menos um elemento deve ser adicionado para que o layout possa ser salvo.
-3. Os tipos de elemento disponíveis para inclusão são os definidos pela enumeração ElementType (texto fixo, campo de texto, imagem, gif, forma, ícone, classificação, data e lista), à semelhança dos elementos fixos oferecidos por editores visuais como o Canva.
+3. Os tipos de elemento disponíveis para inclusão são os definidos pela enumeração ElementType (texto, imagem, gif, forma, ícone, classificação e data), à semelhança dos elementos fixos oferecidos por editores visuais como o Canva.
 4. Elementos podem armazenar conteúdo visual próprio em `content`, como "Autor:" ou "Autor: Frank Herbert", além de propriedades de fonte, cor e alinhamento.
 5. Elementos podem ser reposicionados e redimensionados via arrastar e soltar (_drag-and-drop_).
 6. Alterações devem ser refletidas em tempo real na prévia do editor, sem recarregar a página.
