@@ -35,10 +35,9 @@ Uma analogia complementar, mais próxima da estrutura de dados, é a de um \text
 um formulário em branco, definindo quais elementos existem, sua posição e seu tamanho; os elementos são os campos ou objetos visuais em si; e o \textit{Item} é a unidade que utiliza esse modelo dentro de uma coleção. Quando necessário, um item pode receber uma versão visual própria por meio de \textit{override}, sem alterar o layout da coleção nem os demais itens.
 
 Em termos práticos, considere um exemplo concreto. Suponha que o usuário crie um Layout chamado \textit{``Card de Livro''} contendo quatro elementos: 
-um de \textit{Imagem} para a capa, um \textit{campo de texto} para o autor, um elemento de \textit{Classificação} de um a cinco estrelas e uma área de \textit{Texto} 
-para notas pessoais. Cada elemento possui posição e tamanho próprios dentro da área de edição do layout. Ao cadastrar o item \textit{``Duna''}, o sistema gera 
-os elementos visuais correspondentes para preenchimento e leitura: para o elemento \textit{Imagem}, a capa; para o \textit{campo de texto}, 
-o autor \textit{``Frank Herbert''}; para o elemento \textit{Classificação}, o valor \textit{5}; e para o elemento \textit{Texto}, a nota 
+um de \textit{Imagem} para a capa, um de \textit{Texto} para o autor, um elemento de \textit{Classificação} de um a cinco estrelas e
+outro de \textit{Texto} para notas pessoais. Cada elemento possui posição e tamanho próprios dentro da área de edição do layout. Ao cadastrar o item \textit{``Duna''}, o sistema gera 
+os elementos visuais correspondentes para preenchimento e leitura: para o elemento \textit{Imagem}, a capa; para o primeiro \textit{Texto}, o autor \textit{``Frank Herbert''}; para o elemento \textit{Classificação}, o valor \textit{5}; e para o elemento \textit{Texto}, a nota 
 \textit{``Obra-prima do gênero''}. Desse modo, o Layout e seus elementos permanecem reutilizáveis por diferentes itens da coleção, enquanto cada 
  item preserva sua própria ficha visual.
 
@@ -58,8 +57,8 @@ O Quadro~\ref{quad:glossario_dominio} apresenta, de forma resumida, a definiçã
 \begin{tabular}{|p{3.5cm}|p{11.5cm}|}
 \hline
 \textbf{Conceito} & \textbf{Descrição} \\ \hline
-Elemento & Componente visual reutilizável utilizado para compor layouts, como textos, imagens, classificações, datas, listas, ícones, entre outros. Cada elemento possui tipo, posição, tamanho, conteúdo opcional e propriedades visuais próprias, como fonte, tamanho da fonte, peso, alinhamento, cor e cor de fundo. \\ \hline
-TipoElemento & Conjunto fixo e predefinido de categorias de elemento que o usuário pode arrastar para o editor, à semelhança dos elementos básicos de ferramentas como o Canva. Compreende: texto fixo, campo de texto, imagem, gif, forma, ícone, classificação, data e lista. É representado por uma enumeração, pois constitui um conjunto estável que faz parte das capacidades do próprio editor. \\ \hline
+Elemento & Componente visual reutilizável utilizado para compor layouts, como textos, imagens, classificações, datas e ícones. Cada elemento possui tipo, posição, tamanho, camada de sobreposição, conteúdo opcional e um conjunto extensível de propriedades visuais próprias, como fonte, tamanho, peso, itálico, sublinhado, alinhamento, nível de título, cor, cor de fundo, arredondamento, opacidade, rotação, borda e formato de imagem. \\ \hline
+TipoElemento & Conjunto fixo e predefinido de categorias de elemento que o usuário pode arrastar para o editor, à semelhança dos elementos básicos de ferramentas como o Canva. Compreende: texto, imagem, gif, forma, ícone, classificação e data. É representado por uma enumeração, pois constitui um conjunto estável que faz parte das capacidades do próprio editor. \\ \hline
 Layout & Estrutura personalizada que define quais elementos compõem a ficha de um item e como eles se organizam visualmente. Funciona como um \textit{template} reutilizável, associado a uma coleção; um mesmo layout pode ser reutilizado por diferentes coleções. Todos os itens de uma coleção compartilham o layout dela. \\ \hline
 Item & Unidade individual de conteúdo cadastrada pelo usuário (por exemplo, um livro, filme ou jogo específico). Todo item pertence a uma coleção e adota, por padrão, o layout associado a essa coleção, podendo receber uma versão visual própria conforme RF-17. \\ \hline
 \end{tabular}
@@ -72,11 +71,17 @@ e não um cadastro gerido em tempo de execução. Essa decisão segue o modelo d
 --- isto é, quantos elementos quiser, arrastando, redimensionando e posicionando-os na tela. A eventual inclusão de um tipo inteiramente novo (por exemplo, vídeo incorporado) 
 caracteriza uma evolução do próprio editor, e não um dado a ser cadastrado pelo usuário final.
 
-Em segundo lugar, é importante distinguir os tipos \textit{texto fixo} e \textit{campo de texto}, que visualmente se assemelham, mas têm naturezas distintas. 
-O \textbf{texto fixo} é um rótulo definido uma única vez no layout e idêntico em todos os itens que o utilizam (por exemplo, o rótulo ``Autor:''). 
-Já o \textbf{campo de texto} é um espaço cujo conteúdo varia de item para item e é preenchido pelo usuário ao editar cada item (por exemplo, o valor ``Rick Riordan''). 
-Em termos de modelo, o texto fixo reside no Layout (compartilhado por todos os itens), ao passo que o valor de um campo de texto varia conforme a ficha do item. 
-É essa separação que permite reaproveitar um mesmo layout em centenas de itens, cada qual com seus próprios valores.
+Em segundo lugar, cabe registrar que \textbf{há um único tipo de texto}, e não dois. O modelo previa originalmente os tipos
+\textit{texto fixo} --- um rótulo idêntico em todos os itens, como ``Autor:'' --- e \textit{campo de texto} --- um valor variável de item
+para item, como ``Frank Herbert''. A distinção pressupunha que o Elemento residisse apenas no Layout compartilhado, de modo que somente o
+segundo tipo pudesse variar. Ela deixou de se sustentar quando se decidiu que a personalização individual cria uma \textbf{cópia própria}
+dos Elementos para aquele item (RF-17): a partir daí todo texto passou a ser editável item a item, e os dois tipos tornaram-se
+indistinguíveis em comportamento. Mantê-los apenas obrigaria o usuário a escolher entre duas peças idênticas, sem critério que orientasse a
+escolha. O reaproveitamento de um mesmo layout em centenas de itens continua garantido pela cópia, e não pela separação de tipos.
+
+Pela mesma razão, \textit{lista} deixou de ser um tipo próprio. Uma lista não é uma categoria de elemento, mas uma forma de
+\textbf{apresentar} um texto --- tratá-la como tipo impediria converter em lista um parágrafo já escrito sem recriá-lo. Ela passou a ser uma
+propriedade visual do texto, ao lado do negrito e do alinhamento.
 
 \subsection{Organização em Pacotes}
 \label{subsec:pacotes_dominio}
@@ -102,8 +107,8 @@ evidencia suas fronteiras conceituais e favorece o raciocínio modular sobre o s
   \item \textbf{Editor de Layout} --- agrupa as entidades responsáveis pela
   personalização visual das fichas de itens, incluindo Layout, Elemento e a
   enumeração TipoElemento, que define o conjunto fixo de tipos de elemento
-  disponíveis no editor (texto fixo, campo de texto, imagem, gif, forma, ícone,
-  classificação, data e lista). É este pacote que sustenta o diferencial de
+  disponíveis no editor (texto, imagem, gif, forma, ícone, classificação e
+  data). É este pacote que sustenta o diferencial de
   customização da plataforma.
 
   \item \textbf{Interação Social} --- concentra as entidades ligadas aos
@@ -770,7 +775,7 @@ Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão `Criar prim
 
 \textbf{Objeto:} Layout personalizado (template)
 
-\textbf{Atributos:} nome do layout (100 caracteres), Elementos disponíveis (conforme os tipos fixos definidos pela enumeração TipoElemento: texto fixo, campo de texto, imagem, gif, forma, ícone, classificação, data e lista), conteúdo textual opcional do Elemento, propriedades visuais do Elemento (fonte, tamanho, peso, estilo, alinhamento, cor e cor de fundo), posição e tamanho de cada Elemento na área de edição, layout de origem (referência opcional, preenchida apenas na operação de duplicação).
+\textbf{Atributos:} nome do layout (100 caracteres), Elementos disponíveis (conforme os tipos fixos definidos pela enumeração TipoElemento: texto, imagem, gif, forma, ícone, classificação e data), conteúdo textual opcional do Elemento, propriedades visuais do Elemento (fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento, nível de título, cor, cor de fundo, arredondamento, opacidade, rotação, borda, formato e ajuste de imagem, e apresentação em lista), camada de sobreposição, posição e tamanho de cada Elemento na área de edição, layout de origem (referência opcional, preenchida apenas na operação de duplicação).
 
 \textbf{Exemplos:} Camila cria o layout `Card de Livro' com Elemento de Imagem para capa, textos livres como `Autor: Frank Herbert', Classificação de 1 a 5 estrelas, dois Elementos de Data (início e fim de leitura) e área de Texto para notas.
 Camila reposiciona o Elemento de Classificação via \textit{drag-and-drop} e visualiza o resultado em tempo real na prévia.
@@ -781,7 +786,7 @@ Camila exclui o layout `Card Antigo' que não está associado a nenhuma coleçã
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
   \item O nome do layout é obrigatório e deve ser único por usuário.
   \item Pelo menos um Elemento deve ser adicionado para que o layout possa ser salvo.
-  \item Os tipos de Elemento disponíveis para inclusão são os definidos pela enumeração TipoElemento (texto fixo, campo de texto, imagem, gif, forma, ícone, classificação, data e lista), à semelhança dos elementos fixos oferecidos por editores visuais como o Canva.
+  \item Os tipos de Elemento disponíveis para inclusão são os definidos pela enumeração TipoElemento (texto, imagem, gif, forma, ícone, classificação e data), à semelhança dos elementos fixos oferecidos por editores visuais como o Canva.
   \item Elementos podem armazenar conteúdo visual próprio, como `Autor:' ou `Autor: Frank Herbert', além de propriedades de fonte, cor e alinhamento.
   \item Elementos podem ser reposicionados e redimensionados via arrastar e soltar (\textit{drag-and-drop}).
   \item Alterações devem ser refletidas em tempo real na prévia do editor, sem recarregar a página.
