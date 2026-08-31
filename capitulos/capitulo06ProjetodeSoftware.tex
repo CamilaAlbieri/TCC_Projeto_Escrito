@@ -6,13 +6,115 @@ Este capítulo apresenta a arquitetura técnica e as especificações de projeto
 \section{Projeto de Interface}
 As interfaces do sistema foram projetadas na ferramenta \textbf{Figma} e adotam um partido visual deliberadamente simples, construído sobre poucos componentes reutilizáveis, uma tipografia única e uma paleta reduzida, ancorada em um tom de roxo. A escolha é coerente com a proposta do produto: como o conteúdo das fichas é inteiramente definido pelo usuário no editor de \textit{layouts}, a interface que o cerca deve permanecer discreta, para não competir visualmente com aquilo que o próprio usuário compôs. Convém registrar que os protótipos aqui descritos foram elaborados na fase de concepção, antes da implementação, e representam a intenção de projeto: definem a organização e o comportamento pretendidos para as telas, e não seu resultado final, que pode incorporar ajustes decorrentes do desenvolvimento.
 
-O sistema divide-se em duas regiões visualmente distintas. Antes da autenticação --- na página inicial, no cadastro e nas telas de \textit{login} e de recuperação de senha ---, o conteúdo aparece centralizado e isolado, sem elementos de navegação, já que ainda não há acervo a percorrer. Após a autenticação, as telas passam a compartilhar uma mesma moldura: uma barra lateral fixa, que dá acesso às categorias do usuário e à área social; uma barra superior, que reúne a identificação da tela atual, o acesso às notificações e o menu do usuário; e a área central, onde o conteúdo é efetivamente apresentado.
+Os esquemas de tela elaborados nessa fase são apresentados nas Figuras~\ref{fig:telaInicial} a~\ref{fig:telaConfiguracoes}. Eles registram a organização pretendida para cada tela e serviram de base para o desenvolvimento, sem a pretensão de corresponder ponto a ponto à interface final.
 
-A navegação pela hierarquia de três níveis é o eixo da área central. Categorias, coleções e itens são exibidos em uma grade de \textit{cards}, e uma trilha de navegação no topo indica a posição do usuário --- por exemplo, ``Categorias > Livros > Lidos'' ---, permitindo retornar a qualquer nível anterior com um clique. Os \textit{cards} adaptam-se ao que representam: os de coleção exibem o indicador de privacidade e a contagem de itens, enquanto os de item privilegiam a imagem de capa. Acima da grade situam-se os controles de modo de exibição, ordenação e filtro previstos nos requisitos, e um botão flutuante, no canto inferior, cria um novo registro no contexto em que o usuário se encontra.
+O sistema divide-se em duas regiões visualmente distintas. Antes da autenticação, na página inicial, no cadastro e nas telas de \textit{login} e de recuperação de senha, o conteúdo aparece centralizado e isolado, sem elementos de navegação, já que ainda não há acervo a percorrer. A Figura~\ref{fig:telaInicial} mostra esse arranjo na tela de entrada, reduzida à identidade da plataforma e às duas ações possíveis. Após a autenticação, as telas passam a compartilhar uma mesma moldura: uma barra lateral fixa, que dá acesso às categorias do usuário e à área social; uma barra superior, que reúne a identificação da tela atual, o acesso às notificações e o menu do usuário; e a área central, onde o conteúdo é efetivamente apresentado.
 
-O editor de \textit{layouts} recebeu tratamento próprio, por ser a tela em que a proposta da plataforma se materializa. Sua composição divide-se entre uma área de edição, que representa a ficha em construção, e um painel lateral com os tipos de Elemento disponíveis --- imagens, textos, classificações, datas, listas e formas ---, que o usuário arrasta para a área de edição e ali posiciona e redimensiona livremente. Uma alternância entre os modos de edição e de prévia permite verificar, sem sair da tela, como a ficha será exibida em modo leitura.
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Esquema da tela inicial}
+	\includegraphics[width=0.75\textwidth]{imagens/Telas_esquema/1_Tela_Inicial.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:telaInicial}
+\end{figure}
+\FloatBarrier
 
-As telas de interação social seguem a mesma moldura. A área de amigos separa, em abas, os vínculos já estabelecidos e as solicitações pendentes, e oferece a busca por código de usuário ou por nome prevista no RF-20. No perfil de outro usuário, exibem-se os dados públicos e as coleções visíveis conforme o vínculo existente, cada uma acompanhada da ação de seguir ou deixar de seguir.
+A navegação pela hierarquia de três níveis é o eixo da área central. Categorias, coleções e itens são exibidos em uma grade de \textit{cards}, e uma trilha de navegação no topo indica a posição do usuário, por exemplo ``Categorias > Livros > Lidos'', permitindo retornar a qualquer nível anterior com um clique. Os \textit{cards} adaptam-se ao que representam: os de coleção exibem o indicador de privacidade e a contagem de itens, enquanto os de item privilegiam a imagem de capa. Acima da grade situam-se os controles de modo de exibição, ordenação e filtro previstos nos requisitos, e um botão flutuante, no canto inferior, cria um novo registro no contexto em que o usuário se encontra.
+
+A Figura~\ref{fig:telaColecoes} apresenta o esquema da tela que reúne as coleções do usuário, agrupadas sob as categorias a que pertencem, com a barra lateral dando acesso direto a cada uma delas. A Figura~\ref{fig:telaColecao}, por sua vez, mostra a listagem de itens de uma coleção, com a grade de \textit{cards} ocupando a área central e o botão flutuante de criação no canto inferior direito.
+
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Esquema da tela de coleções do usuário}
+	\includegraphics[width=0.85\textwidth]{imagens/Telas_esquema/2_Minhas_Coleções.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:telaColecoes}
+\end{figure}
+
+\begin{figure}[!htbp]
+	\centering
+	\caption{Esquema da listagem de itens de uma coleção}
+	\includegraphics[width=0.85\textwidth]{imagens/Telas_esquema/3_Coleção_1.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:telaColecao}
+\end{figure}
+\FloatBarrier
+
+A biblioteca de layouts, apresentada na Figura~\ref{fig:telaLayouts}, reúne em uma única tela os layouts disponíveis ao usuário, cada um identificado pelo nome que ele lhe deu e acompanhado do atalho para edição.
+
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Esquema da biblioteca de layouts}
+	\includegraphics[width=0.85\textwidth]{imagens/Telas_esquema/4_Todos_Templates.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:telaLayouts}
+\end{figure}
+\FloatBarrier
+
+O editor de \textit{layouts} recebeu tratamento próprio, por ser a tela em que a proposta da plataforma se materializa. Divide-se entre uma área de edição, que representa a ficha em construção, e um painel lateral com os tipos de Elemento disponíveis. O usuário acrescenta a peça à área de edição pelo painel e, uma vez ali, posiciona e redimensiona o Elemento livremente, escrevendo seu conteúdo sobre ele próprio. O editor não possui botão de gravação: cada alteração concluída é gravada automaticamente, e um indicador informa o estado da gravação, cabendo ao desfazer e ao refazer o papel de reverter uma alteração indesejada. Uma alternância entre os modos de edição e de prévia permite verificar, sem sair da tela, como a ficha será exibida em modo leitura.
+
+As Figuras~\ref{fig:telaEditorVazio} e~\ref{fig:telaEditorMontado} mostram as duas situações do editor. Na primeira, a área de edição está vazia, como no início da montagem de um layout; na segunda, ela exibe uma ficha de livro já composta, com Elementos de imagem, texto, data, classificação e gif dispostos livremente. Cabe observar que o painel lateral desses esquemas reflete o conjunto de peças cogitado na concepção, anterior à definição dos sete tipos consolidados no Capítulo~\ref{cap:05}.
+
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Esquema do editor de layout com a área de edição vazia}
+	\includegraphics[width=0.85\textwidth]{imagens/Telas_esquema/6_Novo_Template.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:telaEditorVazio}
+\end{figure}
+
+\begin{figure}[!htbp]
+	\centering
+	\caption{Esquema do editor de layout com uma ficha composta}
+	\includegraphics[width=0.85\textwidth]{imagens/Telas_esquema/5_Template_1.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:telaEditorMontado}
+\end{figure}
+\FloatBarrier
+
+As telas de interação social seguem a mesma moldura. A área de amigos, na Figura~\ref{fig:telaAmigos}, separa em abas os vínculos já estabelecidos e as solicitações pendentes, e oferece a busca por código de usuário ou por nome prevista no RF-20. No perfil de outro usuário, na Figura~\ref{fig:telaPerfilAmigo}, exibem-se os dados públicos e as coleções visíveis conforme o vínculo existente, cada uma acompanhada da ação de seguir ou deixar de seguir.
+
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Esquema da tela de amigos}
+	\includegraphics[width=0.85\textwidth]{imagens/Telas_esquema/7_Meus_Amigos.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:telaAmigos}
+\end{figure}
+
+\begin{figure}[!htbp]
+	\centering
+	\caption{Esquema do perfil de outro usuário}
+	\includegraphics[width=0.8\textwidth]{imagens/Telas_esquema/8_Página_Amigo.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:telaPerfilAmigo}
+\end{figure}
+\FloatBarrier
+
+Completam o conjunto as telas de conta e de aparência. O perfil do próprio usuário, na Figura~\ref{fig:telaConta}, reúne a foto, o nome e os demais dados de identificação, com o atalho para edição no canto superior. A tela de configurações, na Figura~\ref{fig:telaConfiguracoes}, concentra a personalização visual global prevista nos RF-18 e RF-19: a alternância entre os temas claro e escuro e o ajuste de tipografia e de cores da interface.
+
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Esquema do perfil do próprio usuário}
+	\includegraphics[width=0.85\textwidth]{imagens/Telas_esquema/9_Minha_Conta.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:telaConta}
+\end{figure}
+
+\begin{figure}[!htbp]
+	\centering
+	\caption{Esquema da tela de configurações de aparência}
+	\includegraphics[width=0.85\textwidth]{imagens/Telas_esquema/10_Configuraçoes.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:telaConfiguracoes}
+\end{figure}
+\FloatBarrier
 
 \section{Projeto de Dados}
 A persistência de informações utiliza o Sistema Gerenciador de Banco de Dados (SGBD) \textbf{PostgreSQL 16}, executado em ambiente isolado através de \textbf{Docker}. A manipulação e a administração dos dados são realizadas por meio do \textbf{DBeaver}, cliente gráfico de administração de bancos de dados relacionais.
@@ -33,7 +135,7 @@ O banco de dados foi estruturado para suportar tipos de dados modernos e perform
 O mapeamento entre o modelo de domínio (TypeScript) e o modelo relacional (PostgreSQL) é gerenciado pelo \textbf{Prisma ORM}. Para garantir a integridade dos dados e a fidelidade aos requisitos, adotaram-se as seguintes regras de mapeamento:
 
 \begin{itemize}
-    \item \textbf{Idioma dos identificadores:} Os nomes conceituais empregados no texto desta monografia estão em português (Elemento, TipoElemento, Categoria, Coleção), ao passo que os identificadores do código e do banco permanecem em inglês (\texttt{Element}, \texttt{ElementType}, \texttt{categories}, \texttt{collections}). A correspondência entre uns e outros é direta, e adotou-se essa separação para que o texto permaneça legível em português sem divergir dos nomes efetivamente encontrados no código-fonte;
+    \item \textbf{Idioma dos identificadores:} Os nomes conceituais empregados no texto desta monografia estão em português (Elemento, EstiloDeElemento, TipoElemento, Categoria, Coleção), ao passo que os identificadores do código e do banco permanecem em inglês (\texttt{Element}, \texttt{ElementStyle}, \texttt{ElementType}, \texttt{categories}, \texttt{collections}). A correspondência entre uns e outros é direta, e adotou-se essa separação para que o texto permaneça legível em português sem divergir dos nomes efetivamente encontrados no código-fonte;
     \item \textbf{Nomenclatura:} As entidades em \textit{camelCase} no código são mapeadas para tabelas em \textit{snake\_case} no banco de dados através da diretiva \texttt{@@map};
     \item \textbf{Tipos Físicos:} Os atributos do tipo \texttt{String} no Prisma são explicitamente mapeados para os tipos físicos \texttt{VARCHAR(n)} ou \texttt{TEXT} no PostgreSQL através das diretivas \texttt{@db.VarChar(n)} e \texttt{@db.Text}, conforme o tamanho esperado do conteúdo;
     \item \textbf{Chaves Primárias:} Todos os modelos possuem um identificador único do tipo UUID gerado automaticamente;
@@ -57,10 +159,10 @@ Nesta seção, descreve-se o padrão adotado para a nomenclatura dos objetos do 
     \begin{tabularx}{\textwidth}{ | c | X | }
         \hline
         \textbf{Objeto} & \textbf{Padrão Adotado (com exemplo)} \\ \hline
-        Chave Primária & nome\_da\_tabela\_pkey --- ex.: \texttt{users\_pkey} \\ \hline
-        Chave Estrangeira & nome\_da\_tabela\_nome\_do\_campo\_fkey --- ex.: \texttt{elements\_layout\_id\_fkey} \\ \hline
-        Chave Única (Unique) & nome\_da\_tabela\_nome\_do\_campo\_key --- ex.: \texttt{users\_email\_key} \\ \hline
-        Índices & nome\_da\_tabela\_nome\_do\_campo\_idx --- ex.: \texttt{elements\_layout\_id\_idx} \\ \hline
+        Chave Primária & nome\_da\_tabela\_pkey (ex.: \texttt{users\_pkey}) \\ \hline
+        Chave Estrangeira & nome\_da\_tabela\_nome\_do\_campo\_fkey (ex.: \texttt{elements\_layout\_id\_fkey}) \\ \hline
+        Chave Única (Unique) & nome\_da\_tabela\_nome\_do\_campo\_key (ex.: \texttt{users\_email\_key}) \\ \hline
+        Índices & nome\_da\_tabela\_nome\_do\_campo\_idx (ex.: \texttt{elements\_layout\_id\_idx}) \\ \hline
     \end{tabularx}
     \\ \vspace{0.2cm}
     \textbf{Fonte:} Elaborada pelo autor
@@ -213,7 +315,7 @@ Já o \texttt{background\_color} guarda a cor em notação hexadecimal, e não c
 paleta do sistema. A consequência é que a cor pertence ao usuário, e não ao tema: ela permanece a
 mesma na alternância entre os modos claro e escuro, comportamento adotado também por ferramentas
 como o Notion e o Trello nas cores de etiqueta. Cabe registrar que essa liberdade de escolha não
-compromete o RNF-09, porque nenhum texto assenta sobre a cor --- o nome da categoria fica
+compromete o RNF-09, porque nenhum texto assenta sobre a cor: o nome da categoria fica
 \textit{abaixo} da área colorida do cartão, e o emoji é decorativo. Não há, portanto, combinação
 de cores capaz de reprovar no critério de contraste.
 
@@ -239,6 +341,10 @@ de cores capaz de reprovar no critério de contraste.
 \end{table}
 
 Dois campos desta tabela sustentam requisitos do Editor de Layout. O \texttt{purpose} distingue as três finalidades que um \textit{layout} pode ter: \textit{template} reutilizável, criado pelo próprio usuário; \textit{template} importado, resultante do compartilhamento (RF-16); e cópia individual de item, gerada quando o usuário personaliza a ficha de um item específico (RF-17). Já o \texttt{source\_layout\_id} registra de qual \textit{layout} a cópia se originou, tanto na duplicação (RF-14) quanto na importação, sem criar dependência entre os dois: a regra \textit{set null} faz com que excluir o original apenas zere a referência.
+
+Como \texttt{user\_id} é obrigatório, um \textit{layout} não existe sem dono, e é isso que define onde vivem os \textit{layouts} padrão oferecidos pelo sistema: eles são criados na biblioteca de cada usuário no momento do cadastro (RF-01), com a finalidade de \textit{template} reutilizável, do mesmo modo que a configuração de aparência padrão (RF-18). A partir daí comportam-se como qualquer outro \textit{layout} do usuário, podendo ser associados a coleções, editados ou duplicados.
+
+Apenas os \textit{layouts} de finalidade \textit{template}, próprios ou importados, aparecem na biblioteca e podem ser associados a coleções. As cópias individuais de item ficam de fora dessa listagem, pois pertencem à ficha de um item específico e não fazem sentido como modelo a reutilizar.
 
 % 5. COLLECTIONS
 \FloatBarrier
@@ -278,15 +384,10 @@ Dois campos desta tabela sustentam requisitos do Editor de Layout. O \texttt{pur
     content & Text &  &  &  &  &  &  \\ \hline
     pos\_x & Int & X &  &  &  &  &  \\ \hline
     pos\_y & Int & X &  &  &  &  &  \\ \hline
-    width & Varch.(20) & X &  &  &  &  &  \\ \hline
-    height & Varch.(20) & X &  &  &  &  &  \\ \hline
-    font\_family & Varch.(100) &  &  &  &  &  &  \\ \hline
-    font\_size & Int &  &  &  &  &  &  \\ \hline
-    font\_weight & Varch.(20) &  &  &  &  &  &  \\ \hline
-    font\_style & Varch.(20) &  &  &  &  &  &  \\ \hline
-    text\_align & Varch.(20) &  &  &  &  &  &  \\ \hline
-    color & Varch.(20) &  &  &  &  &  &  \\ \hline
-    background\_color & Varch.(20) &  &  &  &  &  &  \\ \hline
+    width & Int & X &  &  &  &  &  \\ \hline
+    height & Int & X &  &  &  &  &  \\ \hline
+    layer & Int & X &  &  &  &  &  \\ \hline
+    style & JSONB &  &  &  &  &  &  \\ \hline
     source\_element\_id & UUID &  &  & elements & id\_element &  &  \\ \hline
     layout\_id & UUID & X &  & layouts & id\_layout &  &  \\ \hline
 \end{tabularx}
@@ -294,7 +395,15 @@ Dois campos desta tabela sustentam requisitos do Editor de Layout. O \texttt{pur
 \label{tab:tabelaElementDetalhado}
 \end{table}
 
-Esta é a tabela central do diferencial da plataforma. Nela reside não apenas a geometria de cada Elemento --- posição e dimensões ---, mas também o conteúdo exibido, em \texttt{content}, e todas as propriedades tipográficas e cromáticas que definem sua aparência. Essa concentração é o que permite tratar o Elemento como objeto visual editável, à maneira de um editor gráfico, em vez de separar a estrutura do dado que a preenche. O campo \texttt{type} corresponde à enumeração TipoElemento, com os nove valores fixos definidos no Capítulo~\ref{cap:05}.
+Esta é a tabela central do diferencial da plataforma. Nela residem a geometria de cada Elemento (\texttt{pos\_x}, \texttt{pos\_y}, \texttt{width} e \texttt{height}), a camada em que ele se sobrepõe aos demais (\texttt{layer}), o conteúdo exibido (\texttt{content}) e toda a sua aparência (\texttt{style}). Essa concentração é o que permite tratar o Elemento como objeto visual editável, à maneira de um editor gráfico, em vez de separar a estrutura do dado que a preenche. O campo \texttt{type} corresponde à enumeração TipoElemento, com os sete valores fixos definidos no Capítulo~\ref{cap:05}.
+
+A coluna \texttt{style} corresponde ao \textbf{EstiloDeElemento} do modelo de domínio, apresentado na Seção~\ref{sec:modelo_dominio}. Ali ele aparece como uma classe de valor composta no Elemento, com uma propriedade visual por atributo, o que torna visível o que o editor oferece; aqui ele é gravado como um único documento \texttt{JSONB}. A correspondência é direta, e os nomes das propriedades no documento são os mesmos atributos da classe.
+
+A divisão entre coluna e \texttt{JSONB} obedece a um critério: é coluna aquilo que o banco precisa consultar, ordenar ou indexar, e é \texttt{JSONB} aquilo que ele apenas guarda e devolve, cabendo ao navegador interpretar. Por esse critério, \texttt{content} é coluna, pois a ordenação de itens por classificação (RF-12) lê o valor dali, ao passo que a cor de fundo de um Elemento não é: nenhuma consulta pergunta quais Elementos são azuis. Uma coluna por propriedade traria o inconveniente oposto: o editor cresce em propriedades visuais, e cada nova opção exigiria alterar o esquema do banco. Ser \texttt{JSONB} não afrouxa a validação: o objeto é validado atributo a atributo na camada de aplicação, e uma chave desconhecida faz a requisição ser rejeitada como qualquer outra.
+
+A geometria é expressa em inteiros porque a unidade não é o \textit{pixel}, e sim a milésima parte da largura do quadro da ficha. Como a ficha ocupa a largura disponível e escala junto com ela, uma medida absoluta significaria coisas diferentes em cada tela; com a unidade relativa, mudar a largura disponível altera apenas a escala, e nenhum Elemento se reposiciona.
+
+O campo \texttt{layer} não acompanha \texttt{pos\_x} e \texttt{pos\_y} como uma terceira coordenada, e por isso não se chama \texttt{pos\_z}: a ficha é plana, e o que ele determina é a ordem de pintura entre Elementos que ocupam a mesma região. Sem ele, essa ordem viria da ordem de retorno da consulta, que o SGBD não garante, e dois Elementos sobrepostos poderiam trocar de posição entre um carregamento e outro.
 
 % 7. ITEMS
 \FloatBarrier
@@ -349,7 +458,7 @@ retângulo vazio na listagem da coleção.
 \label{tab:tabelaNotificationDetalhado}
 \end{table}
 
-A tabela distingue dois papéis de usuário: \texttt{user\_id} é o destinatário da notificação e \texttt{author\_id} é quem originou o evento, campo que permite compor mensagens como ``João Silva enviou uma solicitação de amizade''. As chaves \texttt{friendship\_id} e \texttt{event\_log\_id} vinculam a notificação ao fato que a gerou, conforme o tipo. Quanto ao estado de leitura, \texttt{is\_read} indica a situação atual, \texttt{read\_at} registra o instante em que a leitura ocorreu e \texttt{cleared\_at} marca as notificações que o usuário optou por limpar da listagem --- ocultando-as de sua área sem excluir o registro, o que preserva o histórico (RF-24).
+A tabela distingue dois papéis de usuário: \texttt{user\_id} é o destinatário da notificação e \texttt{author\_id} é quem originou o evento, campo que permite compor mensagens como ``João Silva enviou uma solicitação de amizade''. As chaves \texttt{friendship\_id} e \texttt{event\_log\_id} vinculam a notificação ao fato que a gerou, conforme o tipo. Quanto ao estado de leitura, \texttt{is\_read} indica a situação atual, \texttt{read\_at} registra o instante em que a leitura ocorreu e \texttt{cleared\_at} marca as notificações que o usuário optou por limpar da listagem, ocultando-as de sua área sem excluir o registro, o que preserva o histórico (RF-24).
 
 % 10. EVENT_LOGS
 \FloatBarrier

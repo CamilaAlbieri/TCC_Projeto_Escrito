@@ -17,7 +17,7 @@ a aparência das fichas de cada item por meio de um editor visual, no estilo de 
 - **Coleção** — subdivisão de uma categoria, onde os itens são efetivamente cadastrados (ex.: "Lidos", "Para Ler"). É o nível onde se configuram a **privacidade** e o **layout**.
 - **Item** — unidade individual de conteúdo (ex.: o livro "Duna"). Pertence a uma coleção.
 
-## Conceitos centrais do editor (Element, Layout, Item)
+## Conceitos centrais do editor (Element, ElementType, Layout, Item)
 
 O editor funciona como o Canva: o usuário arrasta elementos para uma tela, redimensiona e posiciona.
 A diferença é que a tela montada é um **modelo reutilizável** por vários itens.
@@ -104,6 +104,7 @@ Usuário tenta cadastrar com o email "camilamattos.mila@gmail.com", que já exis
 6. O código de usuário é gerado automaticamente pelo sistema no momento do cadastro, deve ser único em toda a plataforma e não pode ser alterado posteriormente.
 7. O código de usuário é o identificador público utilizado para buscas e envio de solicitações de amizade.
 8. Ao concluir o cadastro, o sistema cria automaticamente para o usuário uma configuração de aparência padrão (tema claro, esquema neutro preto e branco), conforme RF-18.
+9. Ao concluir o cadastro, o sistema também disponibiliza na biblioteca de layouts do usuário os layouts padrão que oferece, prontos para serem associados a coleções, editados ou duplicados (RF-14 e RF-15).
 
 ### RF-02 — Autenticar Usuário (Login e Logout)
 
@@ -281,18 +282,18 @@ Camila define "Favoritos" como "somente amigos"; apenas amigos confirmados passa
 - **Objeto:** Item dentro de uma coleção
 - **Prioridade:** Essencial · **Operação:** Entrada · **Ator:** Usuário
 
-**Atributos:** nome (200 caracteres), coleção pai (referência obrigatória), cor de fundo do cartão (hexadecimal, opcional), layout visual efetivo do item, elementos visuais herdados ou personalizados (Texto, Campo de Texto, Imagem, GIF, Forma, Ícone, Classificação, Data e Lista), conteúdo e estilo armazenados nos próprios elementos, data de criação (gerada automaticamente).
+**Atributos:** nome (200 caracteres), coleção pai (referência obrigatória), cor de fundo do cartão (hexadecimal, opcional), layout visual efetivo do item, elementos visuais herdados ou personalizados (Texto, Imagem, GIF, Forma, Ícone, Classificação e Data), conteúdo e estilo armazenados nos próprios elementos, data de criação (gerada automaticamente).
 
 **Exemplos:** Camila cria o item "Duna" na coleção "Lidos" (dentro da categoria "Livros"); o item abre com o layout aplicável e Camila edita visualmente os textos, imagens, datas e classificações que aparecem na ficha, como faria em um canvas.
-Camila adiciona individualmente um elemento de GIF e um texto extra "Personagem Favorito: Paul Atreides", sem afetar os demais itens nem os layouts da coleção e da categoria.
+Camila adiciona individualmente um elemento de GIF e um texto extra "Personagem Favorito: Paul Atreides", sem afetar os demais itens nem o layout da coleção.
 Posteriormente edita a classificação de 5 para 4 estrelas e, por fim, exclui o item "Duna — Rascunho" confirmando no diálogo de confirmação.
 
 **Regras / Restrições:**
 
 1. O nome do item é obrigatório; todos os demais campos são opcionais.
 2. Todo item deve pertencer a uma coleção existente (RF-07); não é possível criar itens diretamente em uma categoria.
-3. Ao ser criado, o item adota automaticamente a estrutura visual do layout associado à sua coleção (RF-15); caso a coleção não tenha layout, a ficha do item começa vazia e o próprio usuário monta sua composição (RF-17). A "visualização básica com campos padrão" é esse esqueleto montado pelo usuário, e não uma tela fixa oferecida pelo sistema.
-4. O usuário pode adicionar, remover ou reposicionar elementos individualmente no item sem afetar os layouts da coleção ou da categoria, nem os demais itens (RF-17).
+3. Ao ser criado, o item adota automaticamente a estrutura visual do layout associado à sua coleção (RF-15); caso a coleção não tenha layout, a ficha do item começa vazia e o próprio usuário monta o layout desse item (RF-17). O sistema não desenha uma ficha padrão: o que ele oferece são os layouts padrão da biblioteca, que o usuário pode associar à coleção quando não quiser compor do zero (RF-15).
+4. O usuário pode adicionar, remover ou reposicionar elementos individualmente no item sem afetar o layout da coleção nem os demais itens (RF-17).
 5. Não podem existir dois itens com o mesmo nome dentro da mesma coleção.
 6. Imagens enviadas devem estar em formato JPEG ou PNG com tamanho máximo de 5 MB por arquivo.
 7. A exclusão deve exibir diálogo de confirmação informando que a ação é irreversível.
@@ -316,7 +317,7 @@ Camila move um item para uma coleção que usa um layout diferente e o sistema a
 1. Um item pode pertencer a apenas uma coleção por vez.
 2. A movimentação deve ser concluída com no máximo três comandos (ex.: arrastar, soltar e confirmar).
 3. Se a coleção de destino usa o mesmo layout da coleção de origem, todos os dados e a estrutura de elementos são preservados automaticamente.
-4. Se o item ainda usa o layout da coleção, ao ser movido ele passa a seguir o layout da coleção de destino; se já possui composição visual própria, essa composição é preservada.
+4. Se o item ainda usa o layout da coleção, ao ser movido ele passa a seguir o layout da coleção de destino; se já possui layout próprio, esse layout é preservado.
 5. A operação deve ser reversível via ação de desfazer (Ctrl+Z ou botão equivalente) em até 30 segundos após a confirmação.
 6. As contagens de itens das coleções de origem e destino devem ser atualizadas imediatamente.
 
@@ -327,17 +328,17 @@ Camila move um item para uma coleção que usa um layout diferente e o sistema a
 - **Objeto:** Ficha individual de item
 - **Prioridade:** Essencial · **Operação:** Saída · **Ator:** Sistema
 
-**Atributos:** composição visual efetiva do item, elementos visuais com conteúdo e estilo, data de criação do item, modo de acesso (dono — com acesso à edição da composição; visitante — somente leitura).
+**Atributos:** layout efetivo do item, elementos visuais com conteúdo e estilo, data de criação do item, modo de acesso (dono, com acesso à edição do layout do item; visitante, somente leitura).
 
-**Exemplos:** Camila acessa a ficha do item "Duna" da coleção "Lidos" e visualiza todos os elementos visuais, com a opção de editar a composição disponível.
+**Exemplos:** Camila acessa a ficha do item "Duna" da coleção "Lidos" e visualiza todos os elementos visuais, com a opção de editar o layout do item disponível.
 Um amigo visita a categoria pública "Livros" de Camila, abre a coleção "Lidos", acessa a ficha do item "Duna" e visualiza os mesmos elementos, porém sem nenhuma opção de edição.
 Elementos não preenchidos continuam visíveis para visitantes com indicação visual de que estão vazios, sem permitir edição.
 
 **Regras / Restrições:**
 
-1. A ficha exibe os elementos da composição visual efetiva do item; quando existir personalização individual, ela prevalece sobre o layout da coleção.
+1. A ficha exibe os elementos do layout efetivo do item; quando existir layout próprio do item, ele prevalece sobre o layout da coleção.
 2. Elementos sem conteúdo devem ser exibidos para dono e visitantes com indicação visual de que estão vazios; isso não concede permissão de edição ao visitante.
-3. Para o dono do item, a ficha deve oferecer acesso direto à edição da **própria ficha**, isto é, da composição visual do item (RF-17). As ações de alterar os dados do item e de excluí-lo não ficam na ficha: elas pertencem ao menu de ações do item na listagem da coleção, de onde valem para qualquer item sem precisar abri-lo.
+3. Para o dono do item, a ficha deve oferecer acesso direto à edição da **própria ficha**, isto é, do layout do item (RF-17). As ações de alterar os dados do item e de excluí-lo não ficam na ficha: elas pertencem ao menu de ações do item na listagem da coleção, de onde valem para qualquer item sem precisar abri-lo.
 4. Para visitantes, a ficha é estritamente somente leitura, sem nenhuma opção de edição visível.
 5. A ficha deve respeitar a aparência (tema e cores) configurada pelo dono (RF-18).
 6. O sistema deve fornecer ao front-end as informações necessárias para exibir a ficha final do item em modo leitura, diferenciando visualmente o acesso do dono e de visitantes.
@@ -409,16 +410,17 @@ Camila exclui o layout "Card Antigo" que não está associado a nenhuma coleçã
 **Regras / Restrições:**
 
 1. O nome do layout é obrigatório e deve ser único por usuário.
-2. Pelo menos um elemento deve ser adicionado para que o layout possa ser salvo.
-3. Os tipos de elemento disponíveis para inclusão são os definidos pela enumeração ElementType (texto, imagem, gif, forma, ícone, classificação e data), à semelhança dos elementos fixos oferecidos por editores visuais como o Canva.
-4. Elementos podem armazenar conteúdo visual próprio em `content`, como "Autor:" ou "Autor: Frank Herbert", além de propriedades de fonte, cor e alinhamento.
-5. Elementos podem ser reposicionados e redimensionados via arrastar e soltar (_drag-and-drop_).
-6. Alterações devem ser refletidas em tempo real na prévia do editor, sem recarregar a página.
-7. A duplicação deve copiar integralmente a estrutura de elementos (tipo, conteúdo, estilo, posição, tamanho e propriedades) do layout de origem.
-8. Na duplicação, o sistema sugere automaticamente o nome original acrescido de "(cópia)", podendo ser editado antes de salvar.
-9. Alterações no layout duplicado não devem refletir no layout de origem.
-10. O usuário pode excluir um layout somente se ele não estiver associado a nenhuma coleção ativa (RF-15).
-11. A data de criação do layout duplicado é a data da operação, e não a do layout de origem.
+2. A biblioteca de layouts do usuário reúne três origens: os layouts que ele mesmo cria, os layouts padrão oferecidos pelo sistema desde o cadastro (RF-01) e os layouts importados de outros usuários (RF-16). Todos podem ser igualmente editados, duplicados e associados a coleções.
+3. Pelo menos um elemento deve ser adicionado para que o layout possa ser salvo.
+4. Os tipos de elemento disponíveis para inclusão são os definidos pela enumeração ElementType (texto, imagem, gif, forma, ícone, classificação e data), à semelhança dos elementos fixos oferecidos por editores visuais como o Canva.
+5. Elementos podem armazenar conteúdo visual próprio em `content`, como "Autor:" ou "Autor: Frank Herbert", além de propriedades de fonte, cor e alinhamento.
+6. Elementos podem ser reposicionados e redimensionados via arrastar e soltar (_drag-and-drop_).
+7. Alterações devem ser refletidas em tempo real na prévia do editor, sem recarregar a página.
+8. A duplicação deve copiar integralmente a estrutura de elementos (tipo, conteúdo, estilo, posição, tamanho e propriedades) do layout de origem.
+9. Na duplicação, o sistema sugere automaticamente o nome original acrescido de "(cópia)", podendo ser editado antes de salvar.
+10. Alterações no layout duplicado não devem refletir no layout de origem.
+11. O usuário pode excluir um layout somente se ele não estiver associado a nenhuma coleção ativa (RF-15).
+12. A data de criação do layout duplicado é a data da operação, e não a do layout de origem.
 
 ### RF-15 — Associar Layout a Coleção
 
@@ -427,22 +429,24 @@ Camila exclui o layout "Card Antigo" que não está associado a nenhuma coleçã
 - **Objeto:** Layout (template) a uma coleção
 - **Prioridade:** Importante · **Operação:** Entrada · **Ator:** Usuário
 
-**Atributos:** coleção de destino (existente, pertencente ao usuário), layout selecionado (pertencente ao usuário, podendo já estar associado a outras coleções).
+**Atributos:** coleção de destino (existente, pertencente ao usuário), layout selecionado na biblioteca do usuário (criado por ele, padrão do sistema ou importado de outro usuário, podendo já estar associado a outras coleções).
 
 **Exemplos:** Camila associa o layout "Card de Livro" à coleção "Lidos"; todos os itens dessa coleção passam a usar esse layout.
 Camila associa o mesmo layout "Card de Livro" também à coleção "Para Ler"; as duas coleções reutilizam o mesmo template, de forma independente.
+Camila associa à coleção "Mangás" um layout padrão oferecido pelo sistema, por não desejar compor a ficha do zero.
 Camila troca o layout da coleção "Mangás" para "Card de Mangá"; os novos itens passam a usar o novo layout, e os itens já existentes mantêm seus dados (RF-17).
 
 **Regras / Restrições:**
 
 1. Um layout só pode ser associado a coleções existentes e pertencentes ao mesmo usuário.
 2. O layout é associado no nível da coleção; a categoria não recebe layout (RF-06).
-3. Uma coleção pode ter, no máximo, um layout ativo por vez.
-4. Um mesmo layout pode ser associado a várias coleções simultaneamente, sendo reutilizado como template.
-5. O layout aplicável a um item é o da sua coleção; na ausência de layout associado, o item pode receber uma composição própria, montada na ficha. Modificações individuais por item são tratadas como _override_ (RF-17).
-6. A troca ou remoção do layout da coleção não altera os dados nem os elementos individuais (_override_) dos itens já cadastrados (RF-17).
-7. Ao associar um layout, o sistema deve exibir prévia de como os novos itens serão criados.
-8. O usuário pode remover a associação de layout da coleção a qualquer momento.
+3. A associação é opcional. O usuário pode escolher qualquer layout de sua biblioteca, seja criado por ele, padrão do sistema ou importado de outro usuário (RF-14 e RF-16); nenhum layout é aplicado automaticamente.
+4. Uma coleção pode ter, no máximo, um layout ativo por vez.
+5. Um mesmo layout pode ser associado a várias coleções simultaneamente, sendo reutilizado como template.
+6. O layout aplicável a um item é o da sua coleção; na ausência de layout associado, a ficha do item nasce sem elementos e ele pode receber um layout próprio, montado ali mesmo. Modificações individuais por item são tratadas como _override_ (RF-17).
+7. A troca ou remoção do layout da coleção não altera os dados nem os elementos individuais (_override_) dos itens já cadastrados (RF-17).
+8. Ao associar um layout, o sistema deve exibir prévia de como os novos itens serão criados.
+9. O usuário pode remover a associação de layout da coleção a qualquer momento.
 
 ### RF-16 — Compartilhar Layout
 
@@ -476,18 +480,18 @@ Camila altera o layout original depois do compartilhamento; as cópias já impor
 **Atributos:** elementos herdados do layout aplicável ao item (base de partida), conteúdo e estilo dos elementos, elementos adicionados pelo usuário no item (_override_), elementos removidos pelo usuário no item (_override_), elementos reposicionados ou redimensionados no item (_override_).
 
 **Exemplos:** Camila cria o item "Harry Potter e a Pedra Filosofal" na coleção "Lidos" (categoria "Livros"); o item abre com o layout aplicável herdado; Camila adiciona elemento extra de texto "Data de Início de Leitura" apenas nesse item.
-Camila remove o elemento de GIF de um item específico pois não se aplica, sem afetar o layout da coleção, o da categoria nem os outros itens.
-Depois da personalização, o item mantém sua própria composição visual, sem alterar o layout usado pela coleção.
+Camila remove o elemento de GIF de um item específico pois não se aplica, sem afetar o layout da coleção nem os outros itens.
+Depois da personalização, o item mantém seu próprio layout, sem alterar o layout usado pela coleção.
 
 **Regras / Restrições:**
 
-1. Todo item, ao ser criado, adota o layout da sua coleção como ponto de partida (RF-09 e RF-15). Caso a coleção não possua layout, o item começa sem composição, e o usuário pode montá-la a partir da própria ficha.
-2. O usuário pode adicionar, remover ou reposicionar elementos no item sem afetar o layout da coleção, o da categoria ou os demais itens.
+1. Todo item, ao ser criado, adota o layout da sua coleção como ponto de partida (RF-09 e RF-15). Caso a coleção não possua layout, o item começa sem layout, e o usuário pode montá-lo a partir da própria ficha.
+2. O usuário pode adicionar, remover ou reposicionar elementos no item sem afetar o layout da coleção ou os demais itens.
 3. O layout aplicável deve ser exibido como referência visual durante a edição individual do item.
-4. As modificações individuais são exclusivas do item; nenhuma alteração feita no item reflete nos layouts da coleção ou da categoria.
+4. As modificações individuais são exclusivas do item; nenhuma alteração feita no item reflete no layout da coleção.
 5. Ao iniciar a edição visual individual, o sistema deve criar uma cópia própria do layout da coleção para aquele item, preservando elementos, conteúdo e estilos como ponto de partida. Não havendo layout na coleção, a cópia é criada vazia: a existência de um layout na coleção não é pré-requisito para personalizar a ficha de um item.
 6. Após a criação da cópia individual, alterações de conteúdo, estilo, posição, tamanho, adição ou remoção de elementos devem afetar apenas aquele item, sem modificar o layout da coleção nem os demais itens.
-7. Depois de personalizado, o item mantém sua composição visual própria, mesmo que o layout da coleção seja alterado posteriormente.
+7. Depois de personalizado, o item mantém seu layout próprio, mesmo que o layout da coleção seja alterado posteriormente.
 
 ### RF-18 — Gerenciar Aparência (Tema e Cores)
 
@@ -950,13 +954,13 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 - O sistema retorna à categoria pai.
 - O caso de uso é encerrado.
 
-**Pós-condições:** Uma nova coleção é criada vinculada à categoria pai, com sua privacidade individual configurada. A coleção está pronta para receber itens. Caso um layout tenha sido associado, os itens dessa coleção passam a adotá-lo; caso contrário, utilizam um formulário básico. A contagem de coleções da categoria é atualizada. Se a privacidade configurada for "pública" ou "somente amigos", a coleção poderá ser seguida por amigos (RF-21).
+**Pós-condições:** Uma nova coleção é criada vinculada à categoria pai, com sua privacidade individual configurada. A coleção está pronta para receber itens. Caso um layout tenha sido associado, os itens dessa coleção passam a adotá-lo; caso contrário, a ficha de cada item nasce sem elementos e o usuário monta o layout de cada um no editor (RF-17). A contagem de coleções da categoria é atualizada. Se a privacidade configurada for "pública" ou "somente amigos", a coleção poderá ser seguida por amigos (RF-21).
 
 **Requisitos especiais:** RNF01 - A interface deve ser intuitiva. RNF02 - A coleção deve ser criada em até 3 segundos.
 
 ### Caso de uso: Criar Item
 
-**Descrição:** Este caso de uso permite que o usuário cadastre um novo item dentro de uma coleção específica. O item adota automaticamente o layout associado à coleção; caso a coleção não tenha layout, utiliza um formulário básico (RF-09 e RF-15).
+**Descrição:** Este caso de uso permite que o usuário cadastre um novo item dentro de uma coleção específica. O item adota automaticamente o layout associado à coleção; caso a coleção não tenha layout, a ficha do item nasce sem elementos e o próprio usuário monta o layout desse item (RF-09, RF-15 e RF-17).
 
 **Condições prévias:** O usuário deve estar autenticado. A coleção de destino deve existir dentro de uma categoria válida.
 
@@ -964,8 +968,8 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 
 1. O usuário acessa uma coleção específica (dentro de uma categoria).
 2. O usuário seleciona a opção "Adicionar Item".
-3. O sistema determina o layout aplicável ao item: o layout associado à coleção, se houver; caso contrário, um formulário básico com campos padrão.
-4. O sistema exibe o formulário de criação de item baseado no layout aplicável [E01].
+3. O sistema determina o layout aplicável ao item: o layout associado à coleção, se houver; caso contrário, nenhum, e a ficha do item nasce sem elementos.
+4. O sistema exibe a ficha do item com os elementos do layout aplicável [E01].
 5. O usuário insere o nome do item.
 6. O usuário preenche os elementos disponíveis no layout (autor, ano, gênero, avaliação, etc.).
 7. O usuário associa uma imagem ao item (opcional) [E02].
@@ -978,7 +982,7 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 **Fluxos alternativos / exceções:**
 
 - No passo 3 do FB01, o sistema identifica que a coleção não possui layout associado.
-- O sistema exibe formulário básico com campos padrão (nome, descrição, imagem).
+- O sistema exibe a ficha do item sem elementos e disponibiliza o editor para que o usuário monte o layout desse item (RF-17).
 - O fluxo continua no passo 5 do FB01.
 - No passo 9 do FB01, o sistema identifica que já existe um item com o mesmo nome na coleção.
 - O sistema exibe mensagem de alerta: "Já existe um item com este nome nesta coleção. Deseja criar mesmo assim?"
@@ -996,7 +1000,7 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 
 **Requisitos especiais:** RNF01 - A interface deve ser intuitiva. RNF02 - O sistema deve criar o item em até 3 segundos. RNF07 - Alterações devem refletir em tempo real.
 
-### Caso de uso: Criar Layout Base
+### Caso de uso: Criar Layout
 
 **Descrição:** Este caso de uso permite que o usuário crie um layout personalizado através de um editor de elementos, definindo quais campos e elementos visuais farão parte da estrutura de fichas de itens. O layout pode ser criado do zero ou por duplicação de um layout já existente e, posteriormente, associado a uma ou mais coleções, conforme RF-14 e RF-15.
 
@@ -1005,13 +1009,13 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 **Fluxo básico:**
 
 1. O usuário acessa a área de gerenciamento de layouts.
-2. O usuário seleciona a opção "Criar Layout Base".
+2. O usuário seleciona a opção "Criar Layout".
 3. O sistema exibe o editor de layout com uma área de trabalho vazia.
 4. O usuário insere um nome para o layout.
 5. O usuário insere uma descrição para o layout (opcional).
-6. O usuário adiciona elementos à área de trabalho (texto, imagem, avaliação, nota, campo personalizado, etc.) [E01].
-7. O usuário configura as propriedades de cada elemento (nome do campo, tipo de dado, obrigatoriedade, etc.).
-8. O usuário organiza visualmente os elementos na área de trabalho (posicionamento, tamanho, ordem).
+6. O usuário acrescenta elementos à área de edição pelo painel, escolhendo entre os sete tipos disponíveis: texto, imagem, gif, forma, ícone, classificação e data [E01].
+7. O usuário posiciona e redimensiona cada elemento arrastando-o pela área de edição e ajustando sua alça, e define a camada em que ele se sobrepõe aos demais.
+8. O usuário escreve o conteúdo de um elemento diretamente sobre ele, e ajusta suas propriedades visuais.
 9. O sistema exibe prévia do layout em tempo real conforme as modificações.
 10. O usuário confirma a criação do layout.
 11. O sistema valida a estrutura do layout.
