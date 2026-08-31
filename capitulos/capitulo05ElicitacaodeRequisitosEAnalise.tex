@@ -20,19 +20,29 @@ Requisitos de usuário são declarações, em linguagem natural com diagramas, d
 com as quais ele deve operar \cite{Sommerville2011}. \citeauthorandyear{pressman2016} destacam que um documento de requisitos de sistema precisa ser claro, 
 consistente e completo, pois servirá de referência para desenvolvedores, gerentes de projeto e engenheiros de testes ao longo de todo o ciclo de vida do software.
 
-Antes de apresentar os requisitos propriamente ditos, é importante compreender três conceitos centrais que estruturam a forma como os dados do sistema se 
-relacionam: \textbf{Elemento}, \textbf{Layout} e \textbf{Item}. Para facilitar o entendimento, vale partir de uma ferramenta já conhecida: 
-editores visuais como o \textit{Canva}. Neles, o usuário monta uma tela arrastando elementos --- caixas de texto, imagens, formas, ícones --- e ajustando livremente 
-a posição e o tamanho de cada um. A plataforma proposta segue essa mesma ideia, mas com um diferencial: a tela montada não é uma arte isolada, e sim um 
-\textbf{modelo} que pode ser reaproveitado por dezenas ou centenas de itens de uma coleção, cada um com seus próprios dados.
+Antes de apresentar os requisitos propriamente ditos, é importante compreender os \textbf{quatro} conceitos centrais que estruturam a modelagem de dados da
+plataforma proposta: \textbf{Elemento}, \textbf{TipoElemento}, \textbf{Layout} e \textbf{Item}. Para facilitar a compreensão do papel de cada um no sistema,
+vale partir de uma analogia com ferramentas de edição visual consolidadas no mercado, como o \textit{Canva}. Nesses editores, o usuário monta uma tela de
+forma livre, acrescentando componentes gráficos a partir de uma paleta, como caixas de texto, imagens e ícones, e ajustando em seguida a posição e o tamanho
+de cada um. A plataforma proposta adota essa mesma dinâmica de montagem visual, mas com um diferencial fundamental: a tela montada pelo usuário não é uma
+arte gráfica isolada, e sim um \textbf{modelo de dados reutilizável}, que pode ser compartilhado por dezenas ou centenas de itens de uma coleção,
+preservando a individualidade das informações de cada um.
 
-A partir dessa analogia, os conceitos podem ser entendidos assim: o \textbf{Elemento} é cada peça que o usuário arrasta para a tela 
-(uma caixa de texto, uma imagem, uma classificação por estrelas); o \textbf{TipoElemento} é o conjunto fixo de tipos de elemento disponíveis no editor; o \textbf{Layout} é a tela montada, isto é, o conjunto de elementos (\textit{Elementos})
- organizados visualmente, funcionando como um \textit{modelo} reutilizável; e o \textbf{Item} é uma unidade concreta do acervo do usuário que adota esse modelo
-  (por exemplo, o livro ``Duna''). O conteúdo exibido pode estar diretamente nos elementos textuais, como em ``Autor:'' ou ``Autor: Frank Herbert'', e o usuário pode separar rótulos e valores criando elementos independentes quando desejar.
+A partir dessa analogia, os quatro conceitos podem ser entendidos na mesma ordem. O \textbf{Elemento} é cada peça que o usuário acrescenta à tela, como uma
+caixa de texto, uma imagem ou uma classificação por estrelas. É nele que residem tanto o conteúdo exibido quanto os atributos que determinam onde ele
+aparece: posição, largura, altura e camada de sobreposição. O modo como ele aparece fica a cargo do \textbf{EstiloDeElemento}, conjunto de propriedades
+visuais associado a cada Elemento, tratado adiante. O \textbf{TipoElemento} é a classificação desse Elemento dentro
+do conjunto fixo de tipos que o editor oferece. Trata-se de uma enumeração, e não de uma entidade com atributos próprios, de modo que dois Elementos do
+mesmo tipo, como ``Autor'' e ``Gênero'', ambos de texto, são registros distintos, cada um com suas próprias coordenadas. O \textbf{Layout} é a tela montada,
+isto é, o conjunto de Elementos organizados visualmente, funcionando como um modelo reutilizável associado a uma coleção. E o \textbf{Item} é uma unidade
+concreta do acervo do usuário, por exemplo o livro ``Duna'', que parte desse modelo e pode manter um layout próprio. O conteúdo exibido pode estar
+diretamente nos Elementos textuais, como em ``Autor:'' ou ``Autor: Frank Herbert'', e o usuário pode separar rótulos e valores criando Elementos
+independentes quando desejar.
 
-Uma analogia complementar, mais próxima da estrutura de dados, é a de um \textbf{formulário visual reutilizável}. O \textit{Layout} funciona como 
-um formulário em branco, definindo quais elementos existem, sua posição e seu tamanho; os elementos são os campos ou objetos visuais em si; e o \textit{Item} é a unidade que utiliza esse modelo dentro de uma coleção. Quando necessário, um item pode receber uma versão visual própria por meio de \textit{override}, sem alterar o layout da coleção nem os demais itens.
+Uma analogia complementar, mais próxima da estrutura de dados, é a de um \textbf{molde reutilizável}. O \textit{Layout} funciona como um molde já
+desenhado, que define quais Elementos existem, sua posição e seu tamanho, mas não o que cada um exibe; os Elementos são as peças desenhadas nesse molde; e o
+\textit{Item} é a unidade que parte dele dentro de uma coleção. Quando necessário, um item pode receber um layout próprio por meio de
+\textit{override}, sem alterar o layout da coleção nem os demais itens.
 
 Em termos práticos, considere um exemplo concreto. Suponha que o usuário crie um Layout chamado \textit{``Card de Livro''} contendo quatro elementos: 
 um de \textit{Imagem} para a capa, um de \textit{Texto} para o autor, um elemento de \textit{Classificação} de um a cinco estrelas e
@@ -47,9 +57,9 @@ Essa separação traz três benefícios diretos para o projeto:
 
 (ii) viabiliza que cada item preserve valores distintos, respeitando a individualidade de cada obra cadastrada; e 
 
-(iii) permite modificações individuais em um item específico --- por exemplo, adicionar um elemento extra apenas a um único livro --- sem afetar o layout original nem os demais itens (RF-17).
+(iii) permite modificações individuais em um item específico, como adicionar um Elemento extra apenas a um único livro, sem afetar o layout original nem os demais itens (RF-17).
 
-O Quadro~\ref{quad:glossario_dominio} apresenta, de forma resumida, a definição desses conceitos centrais.
+O Quadro~\ref{quad:glossario_dominio} apresenta, de forma resumida, a definição dos quatro conceitos centrais e de dois termos que deles derivam e são usados ao longo do texto: o EstiloDeElemento, que reúne as propriedades visuais de um Elemento, e o layout padrão, oferecido pelo sistema.
 
 \begin{quadro}[h!]
 \caption{Conceitos centrais do modelo de domínio}
@@ -57,31 +67,28 @@ O Quadro~\ref{quad:glossario_dominio} apresenta, de forma resumida, a definiçã
 \begin{tabular}{|p{3.5cm}|p{11.5cm}|}
 \hline
 \textbf{Conceito} & \textbf{Descrição} \\ \hline
-Elemento & Componente visual reutilizável utilizado para compor layouts, como textos, imagens, classificações, datas e ícones. Cada elemento possui tipo, posição, tamanho, camada de sobreposição, conteúdo opcional e um conjunto extensível de propriedades visuais próprias, como fonte, tamanho, peso, itálico, sublinhado, alinhamento, nível de título, cor, cor de fundo, arredondamento, opacidade, rotação, borda e formato de imagem. \\ \hline
-TipoElemento & Conjunto fixo e predefinido de categorias de elemento que o usuário pode arrastar para o editor, à semelhança dos elementos básicos de ferramentas como o Canva. Compreende: texto, imagem, gif, forma, ícone, classificação e data. É representado por uma enumeração, pois constitui um conjunto estável que faz parte das capacidades do próprio editor. \\ \hline
-Layout & Estrutura personalizada que define quais elementos compõem a ficha de um item e como eles se organizam visualmente. Funciona como um \textit{template} reutilizável, associado a uma coleção; um mesmo layout pode ser reutilizado por diferentes coleções. Todos os itens de uma coleção compartilham o layout dela. \\ \hline
-Item & Unidade individual de conteúdo cadastrada pelo usuário (por exemplo, um livro, filme ou jogo específico). Todo item pertence a uma coleção e adota, por padrão, o layout associado a essa coleção, podendo receber uma versão visual própria conforme RF-17. \\ \hline
+Elemento & Componente visual reutilizável utilizado para compor layouts, como textos, imagens, classificações, datas e ícones. Cada elemento possui nome, tipo, conteúdo opcional, posição, largura, altura e camada de sobreposição, além do seu EstiloDeElemento. \\ \hline
+EstiloDeElemento & Conjunto de propriedades visuais que define a aparência de um Elemento, sem interferir na sua posição nem no seu conteúdo. Reúne, para o texto, fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento, nível de título, entrelinha, espaçamento entre letras e apresentação em lista; para a imagem e o gif, formato e ajuste; para a classificação, nota máxima e ícone; e, para qualquer tipo, cor, cor de fundo, arredondamento, opacidade, rotação e borda. É um conjunto extensível: novas propriedades acompanham a evolução do editor, sem alterar os demais conceitos. \\ \hline
+TipoElemento & Conjunto fixo e predefinido de categorias de elemento que o usuário pode acrescentar no editor, à semelhança dos elementos básicos de ferramentas como o Canva. Compreende: texto, imagem, gif, forma, ícone, classificação e data. É representado por uma enumeração, e não por uma entidade com atributos próprios, pois constitui um conjunto estável que faz parte das capacidades do próprio editor. \\ \hline
+Layout & Estrutura personalizada que define quais elementos compõem a ficha de um item e como eles se organizam visualmente, sem guardar o conteúdo de nenhum item em particular. Funciona como um \textit{template} reutilizável, que pode ser associado a uma coleção; um mesmo layout pode ser reutilizado por diferentes coleções. A associação é opcional: os itens de uma coleção que possui layout partem dele, e os de uma coleção sem layout partem de uma ficha vazia. \\ \hline
+Layout padrão & Layout já montado, oferecido pelo sistema na biblioteca de layouts do usuário desde o cadastro (RF-01). Serve de facilitador para quem não deseja compor uma ficha do zero: pode ser associado a uma coleção como qualquer outro layout, e igualmente editado ou duplicado (RF-14 e RF-15). Não é aplicado automaticamente. \\ \hline
+Item & Unidade individual de conteúdo cadastrada pelo usuário (por exemplo, um livro, filme ou jogo específico). Todo item pertence a uma coleção e parte do layout associado a ela, quando existe, podendo receber um layout próprio conforme RF-17. \\ \hline
 \end{tabular}
 \fonte{Elaborada pelo autor}
 \end{quadro}
 
-Cabe esclarecer dois pontos sobre os tipos de elemento. Em primeiro lugar, o conjunto de tipos é \textbf{fixo} e definido por uma enumeração (TipoElemento), 
+Cabe esclarecer dois pontos antes de apresentar os requisitos. Em primeiro lugar, o conjunto de tipos de elemento é \textbf{fixo} e definido por uma enumeração (TipoElemento),
 e não um cadastro gerido em tempo de execução. Essa decisão segue o modelo de editores visuais consolidados, como o Canva, nos quais os \textit{tipos} de elemento 
-(texto, imagem, formas, entre outros) fazem parte das capacidades nativas da ferramenta, enquanto o que o usuário cria livremente são \textit{instâncias} desses tipos 
---- isto é, quantos elementos quiser, arrastando, redimensionando e posicionando-os na tela. A eventual inclusão de um tipo inteiramente novo (por exemplo, vídeo incorporado) 
+(texto, imagem, formas, entre outros) fazem parte das capacidades nativas da ferramenta, enquanto o que o usuário cria livremente são \textit{instâncias} desses tipos:
+quantos elementos quiser, acrescentando-os pela paleta e depois posicionando-os e redimensionando-os na tela. A eventual inclusão de um tipo inteiramente novo (por exemplo, vídeo incorporado)
 caracteriza uma evolução do próprio editor, e não um dado a ser cadastrado pelo usuário final.
 
-Em segundo lugar, cabe registrar que \textbf{há um único tipo de texto}, e não dois. O modelo previa originalmente os tipos
-\textit{texto fixo} --- um rótulo idêntico em todos os itens, como ``Autor:'' --- e \textit{campo de texto} --- um valor variável de item
-para item, como ``Frank Herbert''. A distinção pressupunha que o Elemento residisse apenas no Layout compartilhado, de modo que somente o
-segundo tipo pudesse variar. Ela deixou de se sustentar quando se decidiu que a personalização individual cria uma \textbf{cópia própria}
-dos Elementos para aquele item (RF-17): a partir daí todo texto passou a ser editável item a item, e os dois tipos tornaram-se
-indistinguíveis em comportamento. Mantê-los apenas obrigaria o usuário a escolher entre duas peças idênticas, sem critério que orientasse a
-escolha. O reaproveitamento de um mesmo layout em centenas de itens continua garantido pela cópia, e não pela separação de tipos.
-
-Pela mesma razão, \textit{lista} deixou de ser um tipo próprio. Uma lista não é uma categoria de elemento, mas uma forma de
-\textbf{apresentar} um texto --- tratá-la como tipo impediria converter em lista um parágrafo já escrito sem recriá-lo. Ela passou a ser uma
-propriedade visual do texto, ao lado do negrito e do alinhamento.
+Em segundo lugar, cabe registrar onde reside o conteúdo de cada item, pois é disso que depende a relação entre o Layout e o Item. O conteúdo não é guardado
+em uma entidade à parte: fica no próprio Elemento, ao lado da posição, do tamanho e das propriedades visuais. O Layout associado a uma coleção define apenas
+quais Elementos existem e como se organizam, sem guardar o que qualquer item exibe. A individualização ocorre em outro nível: o Item recebe um
+\textbf{layout próprio}, gerado a partir do layout da coleção quando ela possui um, ou vazio quando não possui (RF-17). Cada Item passa a ter, dessa forma,
+seus próprios Elementos, nos quais conteúdo, posição e estilo permanecem indissociáveis. Chama-se \textbf{layout efetivo} de um item o seu layout próprio,
+quando existe, ou, na falta dele, o layout da coleção.
 
 \subsection{Organização em Pacotes}
 \label{subsec:pacotes_dominio}
@@ -93,30 +100,31 @@ evidencia suas fronteiras conceituais e favorece o raciocínio modular sobre o s
 \begin{itemize}[nosep,leftmargin=1.5em,topsep=4pt,partopsep=0pt,
                parsep=2pt,itemsep=4pt]
 
-  \item \textbf{Usuário} --- concentra a entidade central da plataforma,
+  \item \textbf{Usuário:} concentra a entidade central da plataforma,
   responsável pelos dados de identificação e pelo vínculo com todas as demais
   entidades do sistema. Foi isolada em um pacote próprio por atuar como ponto
   de referência para os demais agrupamentos.
 
-  \item \textbf{Coleções} --- reúne as entidades que compõem a estrutura de
+  \item \textbf{Coleções:} reúne as entidades que compõem a estrutura de
   organização do acervo em três níveis hierárquicos: Categoria, Coleção e
   Item. Inclui também a enumeração de
   privacidade. Representa o núcleo de domínio da aplicação, pois é nele que
   o usuário efetivamente cadastra e organiza seu conteúdo.
 
-  \item \textbf{Editor de Layout} --- agrupa as entidades responsáveis pela
-  personalização visual das fichas de itens, incluindo Layout, Elemento e a
+  \item \textbf{Editor de Layout:} agrupa as entidades responsáveis pela
+  personalização visual das fichas de itens, incluindo Layout, Elemento, o
+  EstiloDeElemento, que reúne as propriedades visuais de cada Elemento, e a
   enumeração TipoElemento, que define o conjunto fixo de tipos de elemento
   disponíveis no editor (texto, imagem, gif, forma, ícone, classificação e
   data). É este pacote que sustenta o diferencial de
   customização da plataforma.
 
-  \item \textbf{Interação Social} --- concentra as entidades ligadas aos
+  \item \textbf{Interação Social:} concentra as entidades ligadas aos
   vínculos entre usuários, como as solicitações de amizade (Amizade e
   StatusAmizade) e o acompanhamento de coleções de outros usuários
   (Seguir Coleção).
 
-  \item \textbf{Notificações} --- reúne as entidades responsáveis pelo
+  \item \textbf{Notificações:} reúne as entidades responsáveis pelo
   registro e pela exibição de eventos relevantes ao usuário: a própria
   entidade Notificação, a enumeração TipoNotificacao, a entidade
   AtualizaçãoEvento e a enumeração TipoEvento. A separação deste pacote
@@ -125,11 +133,11 @@ evidencia suas fronteiras conceituais e favorece o raciocínio modular sobre o s
   além de isolar a lógica de geração e exibição de notificações para
   facilitar futuras extensões do sistema.
 
-  \item \textbf{Aparência} --- reúne as entidades que definem a configuração
+  \item \textbf{Aparência:} reúne as entidades que definem a configuração
   visual global da interface, como paletas de cores, tipografia e seleção de
   tema claro ou escuro.
 
-  \item \textbf{Sistema} --- reúne as entidades de apoio à operação da
+  \item \textbf{Sistema:} reúne as entidades de apoio à operação da
   plataforma, que não pertencem ao domínio do acervo nem às interações entre
   usuários: a sessão de usuário, que permite revogar o acesso no momento do
   logout, e o token de redefinição de senha, de uso único e com prazo de
@@ -298,6 +306,7 @@ Usuário tenta cadastrar com o email `camilamattos.mila@gmail.com', que já exis
   \item O código de usuário é gerado automaticamente pelo sistema no momento do cadastro, deve ser único em toda a plataforma e não pode ser alterado posteriormente.
   \item O código de usuário é o identificador público utilizado para buscas e envio de solicitações de amizade.
   \item Ao concluir o cadastro, o sistema cria automaticamente para o usuário uma configuração de aparência padrão (tema claro, esquema neutro preto e branco), conforme RF-18.
+  \item Ao concluir o cadastro, o sistema também disponibiliza na biblioteca de layouts do usuário os layouts padrão que oferece, prontos para serem associados a coleções, editados ou duplicados (RF-14 e RF-15).
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Essencial \\ \hline
 \textbf{Operação}    & Entrada \\ \hline
@@ -587,18 +596,18 @@ Camila define `Favoritos' como `somente amigos'; apenas amigos confirmados passa
 
 \textbf{Objeto:} Item dentro de uma coleção
 
-\textbf{Atributos:} nome (200 caracteres), coleção pai (referência obrigatória), cor de fundo do cartão (hexadecimal, opcional), layout visual efetivo do item, Elementos herdados ou personalizados (Texto Fixo, Campo de Texto, Imagem, GIF, Forma, Ícone, Classificação, Data e Lista), conteúdo e estilo armazenados nos próprios Elementos, data de criação (gerada automaticamente).
+\textbf{Atributos:} nome (200 caracteres), coleção pai (referência obrigatória), cor de fundo do cartão (hexadecimal, opcional), layout visual efetivo do item, Elementos herdados ou personalizados (Texto, Imagem, GIF, Forma, Ícone, Classificação e Data), conteúdo e estilo armazenados nos próprios Elementos, data de criação (gerada automaticamente).
 
-\textbf{Exemplos:} Camila cria o item `Duna' na coleção `Lidos' (dentro da categoria `Livros'); o item abre com o layout aplicável e Camila edita visualmente os textos, imagens, datas, classificação e listas que aparecem na ficha, como faria em um canvas.
-Camila adiciona individualmente um Elemento de GIF e um texto extra `Personagem Favorito: Paul Atreides', sem afetar os demais itens nem os layouts da coleção e da categoria.
+\textbf{Exemplos:} Camila cria o item `Duna' na coleção `Lidos' (dentro da categoria `Livros'); o item abre com o layout aplicável e Camila edita visualmente os textos, imagens, datas e a classificação que aparecem na ficha, como faria em um canvas.
+Camila adiciona individualmente um Elemento de GIF e um texto extra `Personagem Favorito: Paul Atreides', sem afetar os demais itens nem o layout da coleção.
 Posteriormente edita a classificação de 5 para 4 estrelas e, por fim, exclui o item `Duna -- Rascunho' confirmando no diálogo de confirmação.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
   \item O nome do item é obrigatório; todos os demais campos são opcionais.
   \item Todo item deve pertencer a uma coleção existente (RF-07); não é possível criar itens diretamente em uma categoria.
-  \item Ao ser criado, o item adota automaticamente a estrutura visual do layout associado à sua coleção (RF-15); caso a coleção não tenha layout, a ficha do item começa vazia e o próprio usuário monta sua composição (RF-17). A ``visualização básica com campos padrão'' é esse esqueleto montado pelo usuário, e não uma tela fixa oferecida pelo sistema.
-  \item O usuário pode adicionar, remover ou reposicionar Elementos individualmente no item sem afetar os layouts da coleção ou da categoria, nem os demais itens (RF-17).
+  \item Ao ser criado, o item adota automaticamente a estrutura visual do layout associado à sua coleção (RF-15); caso a coleção não tenha layout, a ficha do item começa vazia e o próprio usuário monta o layout desse item (RF-17). O sistema não desenha uma ficha padrão: o que ele oferece são os layouts padrão da biblioteca, que o usuário pode associar à coleção quando não quiser compor do zero (RF-15).
+  \item O usuário pode adicionar, remover ou reposicionar Elementos individualmente no item sem afetar o layout da coleção nem os demais itens (RF-17).
   \item Não podem existir dois itens com o mesmo nome dentro da mesma coleção.
   \item Imagens enviadas devem estar em formato JPEG ou PNG com tamanho máximo de 5 MB por arquivo.
   \item A exclusão deve exibir diálogo de confirmação informando que a ação é irreversível.
@@ -629,14 +638,14 @@ Posteriormente edita a classificação de 5 para 4 estrelas e, por fim, exclui o
 
 \textbf{Exemplos:} Camila arrasta `A Metamorfose' da coleção `Para Ler' para `Lidos', ambas na categoria `Livros'; como as duas coleções usam o mesmo layout, o item some da origem e aparece no destino imediatamente, sem mudança de estrutura.
 Camila move `O Hobbit' da coleção `Lidos' para a coleção `Releituras Planejadas'.
-Camila move um item para uma coleção que usa um layout diferente e o sistema avisa que a estrutura de elementos pode mudar, exibindo prévia dos campos preservados.
+Camila move um item para uma coleção que usa um layout diferente e o sistema avisa que a estrutura de elementos pode mudar, exibindo prévia dos Elementos preservados.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
   \item Um item pode pertencer a apenas uma coleção por vez.
   \item A movimentação deve ser concluída com no máximo três comandos (ex.: arrastar, soltar e confirmar).
   \item Se a coleção de destino usa o mesmo layout da coleção de origem, todos os dados e a estrutura de elementos são preservados automaticamente.
-  \item Se o item ainda usa o layout da coleção, ao ser movido ele passa a seguir o layout da coleção de destino; se já possui composição visual própria, essa composição é preservada (RF-17).
+  \item Se o item ainda usa o layout da coleção, ao ser movido ele passa a seguir o layout da coleção de destino; se já possui layout próprio, esse layout é preservado (RF-17).
   \item A operação deve ser reversível via ação de desfazer (Ctrl+Z ou botão equivalente) em até 30 segundos após a confirmação.
   \item As contagens de itens das coleções de origem e destino devem ser atualizadas imediatamente.
 \end{enumerate} \\ \hline
@@ -661,17 +670,17 @@ Camila move um item para uma coleção que usa um layout diferente e o sistema a
 
 \textbf{Objeto:} Ficha individual de item
 
-\textbf{Atributos:} composição visual efetiva do item, Elementos com conteúdo e estilo, data de criação do item, modo de acesso (dono -- com acesso à edição da composição; visitante -- somente leitura).
+\textbf{Atributos:} layout efetivo do item, Elementos com conteúdo e estilo, data de criação do item, modo de acesso (dono, com acesso à edição do layout do item; visitante, somente leitura).
 
-\textbf{Exemplos:} Camila acessa a ficha do item `Duna' da coleção `Lidos' e visualiza todos os Elementos visuais, com a opção de editar a composição disponível.
+\textbf{Exemplos:} Camila acessa a ficha do item `Duna' da coleção `Lidos' e visualiza todos os Elementos visuais, com a opção de editar o layout do item disponível.
 Um amigo visita a categoria pública `Livros' de Camila, abre a coleção `Lidos', acessa a ficha do item `Duna' e visualiza os mesmos Elementos, porém sem nenhuma opção de edição.
 Elementos não preenchidos continuam visíveis para visitantes com indicação visual de que estão vazios, sem permitir edição.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
-  \item A ficha exibe os Elementos da composição visual efetiva do item; quando existir personalização individual, ela prevalece sobre o layout da coleção (RF-17).
+  \item A ficha exibe os Elementos do layout efetivo do item; quando existir layout próprio do item, ele prevalece sobre o layout da coleção (RF-17).
   \item Elementos sem conteúdo devem ser exibidos para dono e visitantes com indicação visual de que estão vazios; isso não concede permissão de edição ao visitante.
-  \item Para o dono do item, a ficha deve oferecer acesso direto à edição da própria ficha, isto é, da composição visual do item (RF-17). As ações de alterar os dados do item e de excluí-lo não ficam na ficha: elas pertencem ao menu de ações do item na listagem da coleção, de onde valem para qualquer item sem precisar abri-lo.
+  \item Para o dono do item, a ficha deve oferecer acesso direto à edição da própria ficha, isto é, do layout do item (RF-17). As ações de alterar os dados do item e de excluí-lo não ficam na ficha: elas pertencem ao menu de ações do item na listagem da coleção, de onde valem para qualquer item sem precisar abri-lo.
   \item Para visitantes, a ficha é estritamente somente leitura, sem nenhuma opção de edição visível.
   \item A ficha deve respeitar a aparência (tema e cores) configurada pelo dono (RF-18).
   \item O sistema deve fornecer ao \textit{front-end} as informações necessárias para exibir a ficha final do item em modo leitura, diferenciando visualmente o acesso do dono e o de visitantes.
@@ -697,17 +706,17 @@ Elementos não preenchidos continuam visíveis para visitantes com indicação v
 
 \textbf{Objeto:} Itens de uma coleção
 
-\textbf{Atributos:} lista de itens da coleção selecionada, critérios de ordenação (nome A--Z, nome Z--A, data de criação crescente, data de criação decrescente, avaliação crescente, avaliação decrescente), critérios de filtro (conteúdo dos Elementos visuais e campos personalizados do layout aplicável).
+\textbf{Atributos:} lista de itens da coleção selecionada, critérios de ordenação (nome A--Z, nome Z--A, data de criação crescente, data de criação decrescente, classificação crescente, classificação decrescente), critérios de filtro (conteúdo dos Elementos do layout efetivo de cada item).
 
 \textbf{Exemplos:} Camila abre a coleção `Lidos' da categoria `Livros' e visualiza todos os 30 itens ordenados por data de criação decrescente.
-Camila ordena por avaliação decrescente e filtra por gênero `Ficção Científica', vendo apenas os livros desse gênero do melhor ao pior avaliado.
+Camila ordena por classificação decrescente e filtra por gênero `Ficção Científica', vendo apenas os livros desse gênero do melhor ao pior classificado.
 Camila visualiza a coleção `Favoritos' usando o mesmo filtro; o sistema mantém a preferência de ordenação, mas os filtros são independentes por coleção.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
   \item A visualização deve exibir todos os itens da coleção selecionada.
   \item A ordenação padrão é por data de criação decrescente (mais recentes primeiro).
-  \item Os critérios de filtro disponíveis dependem dos Elementos presentes no layout aplicável à coleção.
+  \item Os critérios de filtro disponíveis derivam dos Elementos presentes no layout efetivo dos itens, isto é, o layout da coleção ou, havendo personalização individual, o layout próprio do item (RF-17).
   \item A ordenação aplicada deve ser persistida por usuário e válida para todas as coleções até ser alterada.
   \item Os filtros aplicados são mantidos durante a navegação dentro da mesma coleção e reiniciados ao sair dela.
 \end{enumerate} \\ \hline
@@ -775,7 +784,7 @@ Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão `Criar prim
 
 \textbf{Objeto:} Layout personalizado (template)
 
-\textbf{Atributos:} nome do layout (100 caracteres), Elementos disponíveis (conforme os tipos fixos definidos pela enumeração TipoElemento: texto, imagem, gif, forma, ícone, classificação e data), conteúdo textual opcional do Elemento, propriedades visuais do Elemento (fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento, nível de título, cor, cor de fundo, arredondamento, opacidade, rotação, borda, formato e ajuste de imagem, e apresentação em lista), camada de sobreposição, posição e tamanho de cada Elemento na área de edição, layout de origem (referência opcional, preenchida apenas na operação de duplicação).
+\textbf{Atributos:} nome do layout (100 caracteres), Elementos disponíveis (conforme os tipos fixos definidos pela enumeração TipoElemento: texto, imagem, gif, forma, ícone, classificação e data), conteúdo textual opcional do Elemento, EstiloDeElemento de cada Elemento (fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento, nível de título, entrelinha, espaçamento entre letras, cor, cor de fundo, arredondamento, opacidade, rotação, borda, formato e ajuste de imagem, apresentação em lista, nota máxima e ícone da classificação), camada de sobreposição, posição e tamanho de cada Elemento na área de edição, layout de origem (referência opcional, preenchida apenas na operação de duplicação).
 
 \textbf{Exemplos:} Camila cria o layout `Card de Livro' com Elemento de Imagem para capa, textos livres como `Autor: Frank Herbert', Classificação de 1 a 5 estrelas, dois Elementos de Data (início e fim de leitura) e área de Texto para notas.
 Camila reposiciona o Elemento de Classificação via \textit{drag-and-drop} e visualiza o resultado em tempo real na prévia.
@@ -785,6 +794,7 @@ Camila exclui o layout `Card Antigo' que não está associado a nenhuma coleçã
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
   \item O nome do layout é obrigatório e deve ser único por usuário.
+  \item A biblioteca de layouts do usuário reúne três origens: os layouts que ele mesmo cria, os layouts padrão oferecidos pelo sistema desde o cadastro (RF-01) e os layouts importados de outros usuários (RF-16). Todos podem ser igualmente editados, duplicados e associados a coleções.
   \item Pelo menos um Elemento deve ser adicionado para que o layout possa ser salvo.
   \item Os tipos de Elemento disponíveis para inclusão são os definidos pela enumeração TipoElemento (texto, imagem, gif, forma, ícone, classificação e data), à semelhança dos elementos fixos oferecidos por editores visuais como o Canva.
   \item Elementos podem armazenar conteúdo visual próprio, como `Autor:' ou `Autor: Frank Herbert', além de propriedades de fonte, cor e alinhamento.
@@ -817,19 +827,21 @@ Camila exclui o layout `Card Antigo' que não está associado a nenhuma coleçã
 
 \textbf{Objeto:} Layout (template) a uma coleção
 
-\textbf{Atributos:} coleção de destino (existente, pertencente ao usuário), layout selecionado (pertencente ao usuário, podendo já estar associado a outras coleções).
+\textbf{Atributos:} coleção de destino (existente, pertencente ao usuário), layout selecionado na biblioteca do usuário (criado por ele, padrão do sistema ou importado de outro usuário, podendo já estar associado a outras coleções).
 
 \textbf{Exemplos:} Camila associa o layout `Card de Livro' à coleção `Lidos'; todos os itens dessa coleção passam a usar esse layout.
 Camila associa o mesmo layout `Card de Livro' também à coleção `Para Ler'; as duas coleções reutilizam o mesmo template, de forma independente.
+Camila associa à coleção `Mangás' um layout padrão oferecido pelo sistema, por não desejar compor a ficha do zero.
 Camila troca o layout da coleção `Mangás' para `Card de Mangá'; os novos itens passam a usar o novo layout, e os itens já existentes mantêm seus dados (RF-17).
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
   \item Um layout só pode ser associado a coleções existentes e pertencentes ao mesmo usuário.
   \item O layout é associado no nível da coleção; a categoria não recebe layout (RF-06).
+  \item A associação é opcional. O usuário pode escolher qualquer layout de sua biblioteca, seja criado por ele, padrão do sistema ou importado de outro usuário (RF-14 e RF-16); nenhum layout é aplicado automaticamente.
   \item Uma coleção pode ter, no máximo, um layout ativo por vez.
   \item Um mesmo layout pode ser associado a várias coleções simultaneamente, sendo reutilizado como template.
-  \item O layout aplicável a um item é o da sua coleção; na ausência de layout associado, o item pode receber uma composição própria, montada na ficha. Modificações individuais por item são tratadas como \textit{override} (RF-17).
+  \item O layout aplicável a um item é o da sua coleção; na ausência de layout associado, a ficha do item nasce vazia e ele pode receber um layout próprio, montado ali mesmo. Modificações individuais por item são tratadas como \textit{override} (RF-17).
   \item A troca ou remoção do layout da coleção não altera os dados nem os Elementos individuais (\textit{override}) dos itens já cadastrados (RF-17).
   \item Ao associar um layout, o sistema deve exibir prévia de como os novos itens serão criados.
   \item O usuário pode remover a associação de layout da coleção a qualquer momento.
@@ -894,18 +906,18 @@ Camila altera o layout original depois do compartilhamento; as cópias já impor
 \textbf{Atributos:} Elementos herdados do layout aplicável ao item (base de partida), conteúdo e estilo dos Elementos, Elementos adicionados pelo usuário no item (\textit{override}), Elementos removidos pelo usuário no item (\textit{override}), Elementos reposicionados ou redimensionados no item (\textit{override}).
 
 \textbf{Exemplos:} Camila cria o item `Harry Potter e a Pedra Filosofal' na coleção `Lidos' (categoria `Livros'); o item abre com o layout aplicável herdado; Camila adiciona Elemento extra de texto `Data de Início de Leitura' apenas nesse item.
-Camila remove o Elemento de GIF de um item específico pois não se aplica, sem afetar o layout da coleção, o da categoria nem os outros itens.
-Depois da personalização, o item mantém sua própria composição visual, sem alterar o layout usado pela coleção.
+Camila remove o Elemento de GIF de um item específico pois não se aplica, sem afetar o layout da coleção nem os outros itens.
+Depois da personalização, o item mantém seu próprio layout, sem alterar o layout usado pela coleção.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
-  \item Todo item, ao ser criado, adota o layout da sua coleção como ponto de partida (RF-09 e RF-15). Caso a coleção não possua layout, o item começa sem composição, e o usuário pode montá-la a partir da própria ficha.
-  \item O usuário pode adicionar, remover ou reposicionar Elementos no item sem afetar o layout da coleção, o da categoria ou os demais itens.
+  \item Todo item, ao ser criado, adota o layout da sua coleção como ponto de partida (RF-09 e RF-15). Caso a coleção não possua layout, o item começa sem layout, e o usuário pode montá-lo a partir da própria ficha.
+  \item O usuário pode adicionar, remover ou reposicionar Elementos no item sem afetar o layout da coleção ou os demais itens.
   \item O layout aplicável deve ser exibido como referência visual durante a edição individual do item.
-  \item As modificações individuais são exclusivas do item; nenhuma alteração feita no item reflete nos layouts da coleção ou da categoria.
+  \item As modificações individuais são exclusivas do item; nenhuma alteração feita no item reflete no layout da coleção.
   \item Ao iniciar a edição visual individual, o sistema deve criar uma cópia própria do layout da coleção para aquele item, preservando Elementos, conteúdo e estilos como ponto de partida. Não havendo layout na coleção, a cópia é criada vazia: a existência de um layout na coleção não é pré-requisito para personalizar a ficha de um item.
   \item Após a criação da cópia individual, alterações de conteúdo, estilo, posição, tamanho, adição ou remoção de Elementos devem afetar apenas aquele item, sem modificar o layout da coleção nem os demais itens.
-  \item Depois de personalizado, o item mantém sua composição visual própria, mesmo que o layout da coleção seja alterado posteriormente.
+  \item Depois de personalizado, o item mantém seu layout próprio, mesmo que o layout da coleção seja alterado posteriormente.
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Desejável \\ \hline
 \textbf{Operação}    & Entrada \\ \hline
@@ -1576,7 +1588,7 @@ Dada a quantidade de casos de uso identificados, o diagrama foi dividido por ár
 \FloatBarrier
 \begin{figure}[!htbp]
 	\centering
-	\caption{Criar Layout Personalizado}
+	\caption{Layout e Templates}
 	%scale redimensiona a figura.
 	%1.5 = 150% do tamanho original
 	%1 = 100% do tamanho original
@@ -1635,12 +1647,12 @@ Uma especificação de caso de uso fornece a descrição textual detalhada do co
 como as funcionalidades são executadas e quais resultados são esperados. As especificações apresentam os fluxos principais, fluxos alternativos, condições prévias 
 e pós-condições associadas a cada interação.
 
-Neste trabalho, foram elaboradas dezoito especificações textuais, cobrindo os casos de uso que possuem fluxo próprio e alternativas relevantes. Os demais casos de uso presentes nos diagramas não receberam especificação por representarem variações, detalhamentos ou funcionalidades já incluídas nos fluxos básicos aqui descritos --- é o caso, por exemplo, das operações de edição e exclusão, cujo fluxo espelha o de criação com a diferença do registro previamente selecionado. O modelo adotado para a especificação dos casos de uso é apresentado nos Quadros~\ref{tab:especFazerLogin}
+Neste trabalho, foram elaboradas dezenove especificações textuais, cobrindo os casos de uso que possuem fluxo próprio e alternativas relevantes. Os demais casos de uso presentes nos diagramas não receberam especificação por representarem variações, detalhamentos ou funcionalidades já incluídas nos fluxos básicos aqui descritos, como é o caso das operações de edição e exclusão, cujo fluxo espelha o de criação com a diferença do registro previamente selecionado. O modelo adotado para a especificação dos casos de uso é apresentado nos Quadros~\ref{tab:especFazerLogin}
 a~\ref{tab:especVisualizarFeed}, adaptado da IBM.
 
-Cabe destacar a estrutura hierárquica adotada pelo sistema, que organiza os dados em três níveis: \textbf{Categoria} (agrupador temático de alto nível, ex.: ``Livros''), 
-\textbf{Coleção} (subdivisão de uma categoria onde os itens são efetivamente cadastrados e onde o layout é associado, ex.: ``Lidos'', ``Para Ler'') e \textbf{Item} 
-unidade individual de conteúdo, ex.: o livro ``Duna''). Essa separação permite que o usuário organize seu acervo em duas camadas antes de cadastrar qualquer item, 
+Cabe destacar a estrutura hierárquica adotada pelo sistema, que organiza os dados em três níveis: \textbf{Categoria} (agrupador temático de alto nível, ex.: ``Livros''),
+\textbf{Coleção} (subdivisão de uma categoria onde os itens são efetivamente cadastrados e onde o layout é associado, ex.: ``Lidos'', ``Para Ler'') e \textbf{Item}
+(unidade individual de conteúdo, ex.: o livro ``Duna''). Essa separação permite que o usuário organize seu acervo em duas camadas antes de cadastrar qualquer item,
 facilitando a categorização e a personalização por meio do layout definido em cada coleção.
 
 A seguir, são apresentadas as especificações detalhadas dos casos de uso principais identificados no sistema.
@@ -2302,7 +2314,7 @@ Requisitos Especiais & RNF-01 - A interface deve ser intuitiva. RNF-02 - A cole�
 
 Condições Prévias & O usuário deve estar autenticado. A categoria pai deve existir e pertencer ao usuário. \\ \hline
 
-Pós-Condições & Uma nova coleção é criada vinculada à categoria pai, com sua privacidade individual configurada. A coleção está pronta para receber itens. Caso um layout tenha sido associado, os itens dessa coleção passam a adotá-lo; caso contrário, utilizam um formulário básico. A contagem de coleções da categoria é atualizada. Se a privacidade configurada for `pública' ou `somente amigos', a coleção poderá ser seguida por amigos (RF-21). \\ \hline
+Pós-Condições & Uma nova coleção é criada vinculada à categoria pai, com sua privacidade individual configurada. A coleção está pronta para receber itens. Caso um layout tenha sido associado, os itens dessa coleção passam a adotá-lo; caso contrário, a ficha de cada item nasce vazia e o usuário monta o layout de cada um no editor (RF-17). A contagem de coleções da categoria é atualizada. Se a privacidade configurada for `pública' ou `somente amigos', a coleção poderá ser seguida por amigos (RF-21). \\ \hline
 
 Pontos de Extensão & E01 - Associar Layout à Coleção (estende o passo 7 do FB01, conforme RF-15). E02 - Configurar Privacidade da Coleção (estende o passo 8 do FB01, conforme RF-08; padrão pública, alterável para privada ou somente amigos). \\
 \end{longtable}
@@ -2412,7 +2424,7 @@ Pontos de Extensão & E01 - Encerrar Acompanhamentos (estende o passo 7 do FB01,
 
 Nome do Caso de Uso & Criar Item \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário cadastre um novo item dentro de uma coleção específica. O item adota automaticamente o layout associado à coleção; caso a coleção não tenha layout, utiliza um formulário básico (RF-09 e RF-15). \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário cadastre um novo item dentro de uma coleção específica. O item adota automaticamente o layout associado à coleção; caso a coleção não tenha layout, a ficha do item nasce vazia e o próprio usuário monta o layout desse item (RF-09, RF-15 e RF-17). \\ \hline
 
 Fluxo Básico & \mbox{}
 \textbf{FB01:} Criação de item
@@ -2420,16 +2432,16 @@ Fluxo Básico & \mbox{}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
 	\item O usuário acessa uma coleção específica (dentro de uma categoria).
 	\item O usuário seleciona a opção ``Adicionar Item''.
-	\item O sistema determina o layout aplicável ao item: o layout associado à coleção, se houver; caso contrário, um formulário básico com campos padrão.
-	\item O sistema exibe o formulário de criação de item baseado no layout aplicável [E01].
+	\item O sistema determina o layout aplicável ao item: o layout associado à coleção, se houver; caso contrário, nenhum, e a ficha do item nasce vazia.
+	\item O sistema exibe a ficha do item com os Elementos do layout aplicável.
 	\item O usuário insere o nome do item.
-	\item O usuário preenche os elementos disponíveis no layout (autor, ano, gênero, avaliação, etc.).
+	\item O usuário altera na ficha os Elementos que desejar, escrevendo sobre eles diretamente, como nos Elementos de Texto, de Data e de Classificação.
 	\item O usuário associa uma imagem ao item (opcional) [E02].
 	\item O usuário confirma a criação do item.
 	\item O sistema valida os dados inseridos.
 	\item O sistema cria o item e o vincula à coleção.
 	\item O sistema exibe mensagem de sucesso.
-	\item O sistema exibe a ficha completa do item criado.
+	\item O sistema exibe a ficha completa do item criado [E01].
 \end{enumerate}
 \mbox{} \\ \hline
 
@@ -2438,7 +2450,7 @@ Fluxos Alternativos & \mbox{}
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
 	\item No passo 3 do FB01, o sistema identifica que a coleção não possui layout associado.
-	\item O sistema exibe formulário básico com campos padrão (nome, descrição, imagem).
+	\item O sistema exibe a ficha do item sem Elementos e disponibiliza o editor para que o usuário monte o layout desse item (RF-17).
 	\item O fluxo continua no passo 5 do FB01.
 \end{enumerate}
 
@@ -2473,9 +2485,84 @@ Requisitos Especiais & RNF-01 - A interface deve ser intuitiva. RNF-02 - O siste
 
 Condições Prévias & O usuário deve estar autenticado. A coleção de destino deve existir dentro de uma categoria válida. \\ \hline
 
-Pós-Condições & Um novo item é criado e vinculado à coleção. O item herda o layout aplicável. A ficha individual do item é gerada automaticamente (RF-11). O item aparece na visualização da coleção. A contagem de itens da coleção e da categoria pai é atualizada. \\ \hline
+Pós-Condições & Um novo item é criado e vinculado à coleção. O item adota o layout da coleção ou, não havendo layout associado, permanece com a ficha vazia, cabendo ao usuário montar o layout do item (RF-17). A ficha individual do item passa a ser exibida em modo leitura (RF-11). O item aparece na visualização da coleção. A contagem de itens da coleção e da categoria pai é atualizada. \\ \hline
 
-Pontos de Extensão & E01 - Exibir Ficha do Item (estende o passo 12 do FB01, referente ao RF-11). E02 - Associar Imagem ao Item (estende o passo 7 do FB01). \\
+Pontos de Extensão & E01 - Exibir Ficha de Item em Modo Leitura (estende o passo 12 do FB01, conforme RF-11). E02 - Associar Imagem ao Item (estende o passo 7 do FB01). \\
+\end{longtable}
+\renewcommand{\arraystretch}{1}
+\FloatBarrier
+
+
+\subsubsection{Exibir Ficha de Item em Modo Leitura}
+
+\renewcommand{\arraystretch}{1.3}
+\FloatBarrier
+\begin{longtable}{ >{\raggedright}p{2.8cm} | >{\raggedright\arraybackslash}p{10.7cm} }
+\caption{Especificação do Caso de Uso: Exibir Ficha de Item em Modo Leitura} \label{tab:especExibirFicha} \\
+\hline
+\textbf{Item} & \textbf{Descrição} \\ \hline
+\endfirsthead
+\multicolumn{2}{c}{\tablename\ \thetable\ -- Continuação da página anterior} \\
+\hline
+\textbf{Item} & \textbf{Descrição} \\ \hline
+\endhead
+\hline \multicolumn{2}{r}{Continua na próxima página} \\
+\endfoot
+\hline
+\multicolumn{2}{l}{\textbf{Fonte:} Elaborada pelo autor} \\
+\endlastfoot
+
+Nome do Caso de Uso & Exibir Ficha de Item em Modo Leitura \\ \hline
+
+Descrição Resumida & Este caso de uso descreve a exibição da ficha individual de um item, com os Elementos do seu layout efetivo, tanto para o dono do acervo quanto para visitantes. A ficha é a tela de leitura do item: para o dono, é dela que se acessa a edição do layout do próprio item; para o visitante, ela é estritamente somente leitura (RF-11 e RF-17). \\ \hline
+
+Fluxo Básico & \mbox{}
+\textbf{FB01:} Exibição da ficha para o dono
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item O usuário seleciona um item na listagem da coleção.
+    \item O sistema determina o layout efetivo do item, nesta ordem: o layout próprio do item, quando ele foi modificado individualmente (RF-17); na falta dele, o layout associado à sua coleção (RF-15); e, na falta dos dois, nenhum layout, restando à ficha apenas o nome e a data de criação do item.
+    \item O sistema recupera os Elementos desse layout, com seu conteúdo, posição, tamanho, camada e propriedades visuais.
+    \item O sistema exibe a ficha, desenhando cada Elemento na posição e com a aparência definidas, e respeitando a aparência global configurada pelo dono (RF-18).
+    \item O sistema marca os Elementos sem conteúdo, identificando cada um pelo seu nome.
+    \item O sistema disponibiliza ao dono o acesso à edição do layout do item [E01].
+    \item O usuário retorna à listagem da coleção.
+\end{enumerate}
+\mbox{} \\ \hline
+
+Fluxos Alternativos & \mbox{}
+\textbf{FA01:} Item sem layout efetivo
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 2 do FB01, o sistema identifica que o item não possui layout próprio e que sua coleção também não possui layout associado.
+    \item O sistema exibe a ficha sem Elementos, apresentando apenas o nome e a data de criação do item.
+    \item O fluxo segue no passo 6 do FB01.
+\end{enumerate}
+
+\textbf{FA02:} Acesso por visitante
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 1 do FB01, quem acessa a ficha não é o dono do item.
+    \item O sistema verifica a privacidade da coleção a que o item pertence e o vínculo entre os dois usuários (RF-08).
+    \item Sendo o acesso permitido, o sistema exibe os mesmos Elementos do FB01, inclusive os vazios, e omite o passo 6: nenhuma opção de edição é apresentada.
+\end{enumerate}
+
+\textbf{FA03:} Acesso não permitido
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 2 do FA02, o sistema identifica que a privacidade da coleção não permite o acesso àquele visitante.
+    \item O sistema informa que o conteúdo não está disponível e não exibe a ficha.
+    \item O caso de uso é encerrado.
+\end{enumerate}
+\mbox{} \\ \hline
+
+Requisitos Especiais & RNF-02 - A ficha deve ser carregada em até 3 segundos. RNF-03 - A verificação de privacidade ocorre no servidor, e não apenas na interface. RNF-04 - A ficha deve permanecer legível em diferentes resoluções de tela, preservando as posições relativas entre os Elementos. \\ \hline
+
+Condições Prévias & O item deve existir. O acesso à coleção a que ele pertence deve ser permitido a quem visualiza, seja por ser o dono, seja pelo nível de privacidade configurado (RF-08). \\ \hline
+
+Pós-Condições & A ficha do item é exibida em modo leitura, com os Elementos do seu layout efetivo. Nenhum dado do item é alterado. Para o dono, o acesso à edição do layout do item fica disponível; para o visitante, nenhuma ação de edição é oferecida. As ações de alterar os dados do item e de excluí-lo permanecem no menu de ações da listagem da coleção, e não na ficha. \\ \hline
+
+Pontos de Extensão & E01 - Modificar Layout do Item (estende o passo 6 do FB01, conforme RF-17; disponível apenas para o dono do item). \\
 \end{longtable}
 \renewcommand{\arraystretch}{1}
 \FloatBarrier
@@ -2502,7 +2589,7 @@ Pontos de Extensão & E01 - Exibir Ficha do Item (estende o passo 12 do FB01, re
 
 Nome do Caso de Uso & Visualizar Itens da Coleção \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário visualize todos os itens de uma coleção, aplicando critérios de ordenação e de filtro. Os filtros disponíveis dependem dos Elementos presentes no layout aplicável àquela coleção (RF-12). \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário visualize todos os itens de uma coleção, aplicando critérios de ordenação e de filtro. Os filtros disponíveis derivam dos Elementos presentes no layout efetivo dos itens, isto é, o layout da coleção ou, havendo personalização individual, o layout próprio do item (RF-12 e RF-17). \\ \hline
 
 Fluxo Básico & \mbox{}
 \textbf{FB01:} Visualização dos itens
@@ -2510,7 +2597,7 @@ Fluxo Básico & \mbox{}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
     \item O usuário acessa uma coleção a partir da categoria correspondente.
     \item O sistema recupera os itens vinculados à coleção.
-    \item O sistema identifica o layout aplicável e, a partir dos Elementos que o compõem, determina os critérios de filtro disponíveis.
+    \item O sistema identifica o layout efetivo de cada item e, a partir dos Elementos que o compõem, determina os critérios de filtro disponíveis.
     \item O sistema exibe os itens na grade, aplicando a ordenação previamente escolhida pelo usuário.
     \item O usuário pode alterar o critério de ordenação [E01].
     \item O usuário pode aplicar filtros sobre o conteúdo dos Elementos [E02].
@@ -2540,7 +2627,7 @@ Fluxos Alternativos & \mbox{}
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
     \item No passo 3 do FB01, o sistema identifica que a coleção não possui layout associado.
-    \item O sistema disponibiliza apenas os critérios de ordenação e filtro baseados nos campos padrão.
+    \item O sistema disponibiliza os critérios derivados dos Elementos dos layouts próprios dos itens; não havendo Elementos, restam apenas o nome e a data de criação.
     \item O fluxo continua no passo 4 do FB01.
 \end{enumerate}
 
@@ -2559,7 +2646,7 @@ Condições Prévias & O usuário deve estar autenticado. A coleção deve exist
 
 Pós-Condições & O usuário visualiza os itens da coleção conforme os critérios aplicados. O critério de ordenação escolhido é persistido para as demais coleções; os filtros são descartados ao sair da coleção. \\ \hline
 
-Pontos de Extensão & E01 - Ordenar Itens (estende o passo 5 do FB01, conforme RF-12). E02 - Filtrar Itens (estende o passo 6 do FB01, conforme RF-12 -- critérios derivados dos Elementos do layout aplicável). \\
+Pontos de Extensão & E01 - Ordenar Itens (estende o passo 5 do FB01, conforme RF-12). E02 - Filtrar Itens (estende o passo 6 do FB01, conforme RF-12; os critérios derivam dos Elementos do layout efetivo de cada item). \\
 \end{longtable}
 \renewcommand{\arraystretch}{1}
 \FloatBarrier
@@ -2646,12 +2733,12 @@ Pontos de Extensão & E01 - Alternar modo de visualização (grade/lista, confor
 \FloatBarrier
 
 
-\subsubsection{Criar Layout Base}
+\subsubsection{Criar Layout}
 
 \renewcommand{\arraystretch}{1.3}
 \FloatBarrier
 \begin{longtable}{ >{\raggedright}p{2.8cm} | >{\raggedright\arraybackslash}p{10.7cm} }
-\caption{Especificação do Caso de Uso: Criar Layout Base} \label{tab:especCriarLayout} \\
+\caption{Especificação do Caso de Uso: Criar Layout} \label{tab:especCriarLayout} \\
 \hline
 \textbf{Item} & \textbf{Descrição} \\ \hline
 \endfirsthead
@@ -2668,28 +2755,26 @@ Pontos de Extensão & E01 - Alternar modo de visualização (grade/lista, confor
 \multicolumn{2}{l}{\textbf{Fonte:} Elaborada pelo autor} \\
 \endlastfoot
 
-Nome do Caso de Uso & Criar Layout Base \\ \hline
+Nome do Caso de Uso & Criar Layout \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário crie um layout personalizado através de um editor de elementos, definindo quais campos e elementos visuais farão parte da estrutura de fichas de itens. O layout pode ser criado do zero ou por duplicação de um layout já existente e, posteriormente, associado a uma ou mais coleções, conforme RF-14 e RF-15. \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário crie um layout personalizado no editor visual, acrescentando à área de edição os Elementos que comporão a ficha dos itens e definindo a posição, o tamanho e a aparência de cada um. O layout pode ser criado do zero ou por duplicação de um layout já existente na biblioteca e, posteriormente, associado a uma ou mais coleções, conforme RF-14 e RF-15. \\ \hline
 
 Fluxo Básico & \mbox{}
-\textbf{FB01:} Criação de layout base
+\textbf{FB01:} Criação de layout
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
 	\item O usuário acessa a área de gerenciamento de layouts.
-	\item O usuário seleciona a opção ``Criar Layout Base''.
-	\item O sistema exibe o editor de layout com uma área de trabalho vazia.
+	\item O usuário seleciona a opção ``Criar Layout''.
+	\item O sistema exibe o editor com a área de edição vazia e o painel de Elementos ao lado.
 	\item O usuário insere um nome para o layout.
 	\item O usuário insere uma descrição para o layout (opcional).
-	\item O usuário adiciona elementos à área de trabalho (texto, imagem, avaliação, nota, campo personalizado, etc.) [E01].
-	\item O usuário configura as propriedades de cada elemento (nome do campo, tipo de dado, obrigatoriedade, etc.).
-	\item O usuário organiza visualmente os elementos na área de trabalho (posicionamento, tamanho, ordem).
-	\item O sistema exibe prévia do layout em tempo real conforme as modificações.
-	\item O usuário confirma a criação do layout.
-	\item O sistema valida a estrutura do layout.
-	\item O sistema salva o layout no banco de dados.
-	\item O sistema exibe mensagem de sucesso.
-	\item O sistema retorna à lista de layouts disponíveis, exibindo o novo layout criado.
+	\item O usuário acrescenta Elementos à área de edição pelo painel, escolhendo entre os sete tipos disponíveis: texto, imagem, gif, forma, ícone, classificação e data [E01].
+	\item O usuário posiciona e redimensiona cada Elemento arrastando-o pela área de edição e ajustando sua alça, e define a camada em que ele se sobrepõe aos demais.
+	\item O usuário escreve o conteúdo de um Elemento diretamente sobre ele, na própria área de edição.
+	\item O usuário ajusta as propriedades visuais do Elemento selecionado: no texto, fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento, nível de título, entrelinha, espaçamento entre letras e apresentação em lista; na imagem e no gif, formato e ajuste; na classificação, nota máxima e ícone; e, em qualquer Elemento, cor, cor de fundo, arredondamento, opacidade, rotação e borda.
+	\item O sistema grava cada alteração concluída automaticamente, sem exigir confirmação, e indica o estado da gravação [E03].
+	\item O usuário alterna para o modo de prévia e verifica como a ficha será exibida em modo leitura.
+	\item O usuário retorna à lista de layouts, na qual o novo layout já aparece disponível para associação a coleções (RF-15).
 \end{enumerate}
 \mbox{} \\ \hline
 
@@ -2697,16 +2782,16 @@ Fluxos Alternativos & \mbox{}
 \textbf{FA01:} Nome do layout já existe
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item No passo 11 do FB01, o sistema identifica que já existe um layout com o mesmo nome.
+	\item No passo 4 do FB01, o sistema identifica que já existe um layout com o mesmo nome na biblioteca do usuário.
 	\item O sistema exibe mensagem de erro: ``Já existe um layout com este nome. Por favor, escolha outro nome.''
 	\item O sistema retorna ao passo 4 do FB01.
 \end{enumerate}
 
-\textbf{FA02:} Layout sem elementos
+\textbf{FA02:} Layout sem Elementos
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item No passo 11 do FB01, o sistema identifica que nenhum elemento foi adicionado ao layout.
-	\item O sistema exibe mensagem de erro: ``O layout deve conter pelo menos um elemento.''
+	\item No passo 12 do FB01, o sistema identifica que nenhum Elemento foi acrescentado ao layout.
+	\item O sistema informa que o layout precisa de ao menos um Elemento para ser associado a uma coleção.
 	\item O sistema retorna ao passo 6 do FB01.
 \end{enumerate}
 
@@ -2714,30 +2799,30 @@ Fluxos Alternativos & \mbox{}
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
 	\item No passo 2 do FB01, o usuário pode optar por ``Duplicar Layout Existente'' [E02].
-	\item O sistema exibe a lista de layouts disponíveis do usuário.
+	\item O sistema exibe a biblioteca de layouts do usuário, que reúne os layouts criados por ele, os layouts padrão oferecidos pelo sistema e os layouts importados de outros usuários (RF-16).
 	\item O usuário seleciona um layout para duplicar.
 	\item O sistema carrega a estrutura do layout selecionado no editor, pré-preenchendo o nome com o original acrescido de ``(cópia)''.
 	\item O fluxo continua no passo 4 do FB01, com o usuário podendo renomear e ajustar a cópia livremente.
 	\item Alterações realizadas no layout duplicado não refletem no layout de origem.
 \end{enumerate}
 
-\textbf{FA04:} Cancelamento da operação
+\textbf{FA04:} Desfazer uma alteração
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item Em qualquer momento entre os passos 4 e 10 do FB01, o usuário pode selecionar ``Cancelar''.
-	\item O sistema exibe mensagem de confirmação: ``Deseja descartar as alterações?''
-	\item Se o usuário confirmar, o sistema descarta as informações e retorna à lista de layouts.
-	\item Se o usuário cancelar, o sistema retorna ao editor mantendo as informações.
+	\item Em qualquer momento entre os passos 6 e 11 do FB01, o usuário pode desfazer a última alteração, e também refazê-la.
+	\item O sistema restaura o estado anterior da área de edição e o grava, percorrendo o histórico de alterações da sessão de edição.
+	\item O fluxo retorna ao passo em que o usuário estava.
+	\item Caso o usuário feche a página havendo alterações ainda não gravadas, o sistema o avisa antes de sair.
 \end{enumerate}
 \mbox{} \\ \hline
 
-Requisitos Especiais & RNF-01 - O editor deve ser intuitivo e facilitar a personalização. RNF-07 - As alterações devem refletir em tempo real na prévia, sem travamentos. RNF-04 - Compatibilidade com navegadores modernos. \\ \hline
+Requisitos Especiais & RNF-01 - O editor deve ser intuitivo e facilitar a personalização. RNF-07 - As alterações devem ser gravadas e refletidas na prévia sem recarregar a página e sem travamentos. RNF-04 - Compatibilidade com navegadores modernos. \\ \hline
 
-Condições Prévias & O usuário deve estar autenticado. Para duplicação (FA03), deve existir ao menos um layout prévio de propriedade do usuário. \\ \hline
+Condições Prévias & O usuário deve estar autenticado. Para duplicação (FA03), deve existir ao menos um layout na biblioteca do usuário. \\ \hline
 
-Pós-Condições & Um novo layout é criado e armazenado no banco de dados. O layout está disponível para associação a uma ou mais coleções, conforme RF-15. O layout aparece na lista de layouts do usuário. Se criado por duplicação, o layout de origem permanece inalterado. \\ \hline
+Pós-Condições & Um novo layout é criado e armazenado no banco de dados, com os Elementos acrescentados pelo usuário, suas posições, tamanhos, camadas, conteúdos e propriedades visuais. O layout está disponível para associação a uma ou mais coleções, conforme RF-15, e aparece na biblioteca de layouts do usuário. Se criado por duplicação, o layout de origem permanece inalterado. \\ \hline
 
-Pontos de Extensão & E01 - Editar Layout Base (durante a criação, permite modificações em tempo real, conforme RF-14). E02 - Duplicar Layout Base (permite criar novo layout baseado em existente, conforme RF-14). \\
+Pontos de Extensão & E01 - Editar Layout (estende o passo 6 do FB01, permitindo acrescentar, alterar e remover Elementos a qualquer momento, conforme RF-14). E02 - Duplicar Layout (estende o passo 2 do FB01, permitindo criar um layout a partir de outro já existente na biblioteca, conforme RF-14). E03 - Visualizar Prévia (estende o passo 10 do FB01, exibindo a ficha como ela aparecerá em modo leitura). \\
 \end{longtable}
 \renewcommand{\arraystretch}{1}
 \FloatBarrier
