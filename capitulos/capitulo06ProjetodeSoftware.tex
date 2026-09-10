@@ -233,6 +233,7 @@ Nesta subseção, apresenta-se o detalhamento físico das 13 tabelas que compõe
         profile\_photo & Varch.(500) & & & & & & \\ \hline
         bio & Varch.(500) & & & & & & \\ \hline
         registered\_at & Time. & X & & & & & \\ \hline
+        default\_layouts\_at & Time. & & & & & & \\ \hline
     \end{tabularx}
 
     \vspace{0.2cm}
@@ -240,6 +241,8 @@ Nesta subseção, apresenta-se o detalhamento físico das 13 tabelas que compõe
 \end{table}
 
 O campo \texttt{user\_code} merece destaque: trata-se do identificador público do usuário, gerado automaticamente no cadastro (RF-01) e imutável, utilizado nas buscas e nas solicitações de amizade (RF-20). Sua unicidade é garantida em toda a plataforma, de modo independente da unicidade do endereço de e-mail.
+
+Já o \texttt{default\_layouts\_at} registra o momento em que o usuário recebeu os \textit{layouts} padrão oferecidos pelo sistema (RF-01), e não é registro histórico: existe para que a entrega aconteça uma única vez. Contas criadas antes dessa funcionalidade recebem os modelos na primeira abertura da biblioteca, e a marca impede que um \textit{layout} padrão excluído de propósito reapareça na listagem seguinte --- o que aconteceria caso a verificação se apoiasse na simples presença dos modelos pelo nome.
 
 % 2. USER_SESSIONS
 \FloatBarrier
@@ -332,6 +335,7 @@ de cores capaz de reprovar no critério de contraste.
     name & Varch.(150) & X &  &  &  & UK\_01 & 2 \\ \hline
     description & Text &  &  &  &  &  &  \\ \hline
     purpose & Enum & X &  &  &  &  &  \\ \hline
+    background & Varch.(24) &  &  &  &  &  &  \\ \hline
     created\_at & Time. & X &  &  &  &  &  \\ \hline
     source\_layout\_id & UUID &  &  & layouts & id\_layout &  &  \\ \hline
     user\_id & UUID & X &  & users & id\_user & UK\_01 & 1 \\ \hline
@@ -340,7 +344,9 @@ de cores capaz de reprovar no critério de contraste.
 \label{tab:tabelaLayoutDetalhado}
 \end{table}
 
-Dois campos desta tabela sustentam requisitos do Editor de Layout. O \texttt{purpose} distingue as três finalidades que um \textit{layout} pode ter: \textit{template} reutilizável, criado pelo próprio usuário; \textit{template} importado, resultante do compartilhamento (RF-16); e cópia individual de item, gerada quando o usuário personaliza a ficha de um item específico (RF-17). Já o \texttt{source\_layout\_id} registra de qual \textit{layout} a cópia se originou, tanto na duplicação (RF-14) quanto na importação, sem criar dependência entre os dois: a regra \textit{set null} faz com que excluir o original apenas zere a referência.
+Três campos desta tabela sustentam requisitos do Editor de Layout. O \texttt{purpose} distingue as três finalidades que um \textit{layout} pode ter: \textit{template} reutilizável, criado pelo próprio usuário; \textit{template} importado, resultante do compartilhamento (RF-16); e cópia individual de item, gerada quando o usuário personaliza a ficha de um item específico (RF-17). Já o \texttt{source\_layout\_id} registra de qual \textit{layout} a cópia se originou, tanto na duplicação (RF-14) quanto na importação, sem criar dependência entre os dois: a regra \textit{set null} faz com que excluir o original apenas zere a referência.
+
+O terceiro é o \texttt{background}, que guarda o fundo da ficha: a folha sobre a qual todos os Elementos são desenhados. É coluna do \textit{layout}, e não chave no \texttt{style} de um Elemento, justamente por não pertencer a Elemento nenhum; e é uma coluna só porque a cópia individual de item é uma linha desta mesma tabela, de modo que o \textit{template} reutilizável e a ficha de cada item ficam cobertos de uma vez. Guarda uma cor em \texttt{\#rrggbb} ou, quando o fundo é um degradê, duas cores com um ângulo e um ponto de início, na forma \texttt{\#rrggbb..\#rrggbb@graus,inicio}. Não se grava ali a regra de estilo pronta: uma declaração de degradê aceita como texto livre seria injeção de código na página de quem visita a ficha, e impediria o cálculo descrito adiante. Cabe ao \textit{front-end} compor a regra a partir dos valores validados.
 
 Como \texttt{user\_id} é obrigatório, um \textit{layout} não existe sem dono, e é isso que define onde vivem os \textit{layouts} padrão oferecidos pelo sistema: eles são criados na biblioteca de cada usuário no momento do cadastro (RF-01), com a finalidade de \textit{template} reutilizável, do mesmo modo que a configuração de aparência padrão (RF-18). A partir daí comportam-se como qualquer outro \textit{layout} do usuário, podendo ser associados a coleções, editados ou duplicados.
 
@@ -395,7 +401,7 @@ Apenas os \textit{layouts} de finalidade \textit{template}, próprios ou importa
 \label{tab:tabelaElementDetalhado}
 \end{table}
 
-Esta é a tabela central do diferencial da plataforma. Nela residem a geometria de cada Elemento (\texttt{pos\_x}, \texttt{pos\_y}, \texttt{width} e \texttt{height}), a camada em que ele se sobrepõe aos demais (\texttt{layer}), o conteúdo exibido (\texttt{content}) e toda a sua aparência (\texttt{style}). Essa concentração é o que permite tratar o Elemento como objeto visual editável, à maneira de um editor gráfico, em vez de separar a estrutura do dado que a preenche. O campo \texttt{type} corresponde à enumeração TipoElemento, com os sete valores fixos definidos no Capítulo~\ref{cap:05}.
+Esta é a tabela central do diferencial da plataforma. Nela residem a geometria de cada Elemento (\texttt{pos\_x}, \texttt{pos\_y}, \texttt{width} e \texttt{height}), a camada em que ele se sobrepõe aos demais (\texttt{layer}), o conteúdo exibido (\texttt{content}) e toda a sua aparência (\texttt{style}). Essa concentração é o que permite tratar o Elemento como objeto visual editável, à maneira de um editor gráfico, em vez de separar a estrutura do dado que a preenche. O campo \texttt{type} corresponde à enumeração TipoElemento, com os seis valores fixos definidos no Capítulo~\ref{cap:05}.
 
 A coluna \texttt{style} corresponde ao \textbf{EstiloDeElemento} do modelo de domínio, apresentado na Seção~\ref{sec:modelo_dominio}. Ali ele aparece como uma classe de valor composta no Elemento, com uma propriedade visual por atributo, o que torna visível o que o editor oferece; aqui ele é gravado como um único documento \texttt{JSONB}. A correspondência é direta, e os nomes das propriedades no documento são os mesmos atributos da classe.
 
