@@ -784,7 +784,7 @@ Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão `Criar prim
 
 \textbf{Objeto:} Layout personalizado (template)
 
-\textbf{Atributos:} nome do layout (100 caracteres), Elementos disponíveis (conforme os tipos fixos definidos pela enumeração TipoElemento: texto, imagem, forma, ícone, classificação e data), conteúdo textual opcional do Elemento, EstiloDeElemento de cada Elemento (fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento, nível de título, entrelinha, espaçamento entre letras, cor, cor de fundo, arredondamento, opacidade, rotação, borda, formato e ajuste de imagem, apresentação em lista, nota máxima e ícone da classificação), camada de sobreposição, posição e tamanho de cada Elemento na área de edição, layout de origem (referência opcional, preenchida apenas na operação de duplicação).
+\textbf{Atributos:} nome do layout (100 caracteres), fundo da ficha (uma cor hexadecimal ou um degradê de duas cores, com ângulo e ponto de início; opcional), Elementos disponíveis (conforme os tipos fixos definidos pela enumeração TipoElemento: texto, imagem, forma, ícone, classificação e data), conteúdo textual opcional do Elemento, EstiloDeElemento de cada Elemento (fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento, nível de título, entrelinha, espaçamento entre letras, cor, cor de fundo, arredondamento, opacidade, rotação, borda, formato e ajuste de imagem, apresentação em lista, nota máxima e ícone da classificação), camada de sobreposição, posição e tamanho de cada Elemento na área de edição, layout de origem (referência opcional, preenchida apenas na operação de duplicação).
 
 \textbf{Exemplos:} Camila cria o layout `Card de Livro' com Elemento de Imagem para capa, textos livres como `Autor: Frank Herbert', Classificação de 1 a 5 estrelas, dois Elementos de Data (início e fim de leitura) e área de Texto para notas.
 Camila reposiciona o Elemento de Classificação via \textit{drag-and-drop} e visualiza o resultado em tempo real na prévia.
@@ -799,6 +799,8 @@ Camila exclui o layout `Card Antigo' que não está associado a nenhuma coleçã
   \item Os tipos de Elemento disponíveis para inclusão são os definidos pela enumeração TipoElemento (texto, imagem, forma, ícone, classificação e data), à semelhança dos elementos fixos oferecidos por editores visuais como o Canva.
   \item Elementos podem armazenar conteúdo visual próprio, como `Autor:' ou `Autor: Frank Herbert', além de propriedades de fonte, cor e alinhamento.
   \item Elementos podem ser reposicionados e redimensionados via arrastar e soltar (\textit{drag-and-drop}).
+  \item O fundo da ficha é escolhido pelo usuário, como cor única ou como degradê entre duas cores, e vale para o layout inteiro, e não para um Elemento em particular.
+  \item A tinta padrão dos Elementos acompanha o fundo escolhido, por razão de contraste: sobre um fundo escuro, o Elemento que não define cor própria é desenhado em tom claro, e vice-versa. A escolha explícita de cor em um Elemento prevalece sobre esse padrão.
   \item Alterações devem ser refletidas em tempo real na prévia do editor, sem recarregar a página.
   \item A duplicação deve copiar integralmente a estrutura de Elementos (tipo, conteúdo, estilo, posição, tamanho e propriedades) do layout de origem.
   \item Na duplicação, o sistema sugere automaticamente o nome original acrescido de `(cópia)', podendo ser editado antes de salvar.
