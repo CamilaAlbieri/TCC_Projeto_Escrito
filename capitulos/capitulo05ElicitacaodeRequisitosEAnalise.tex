@@ -68,8 +68,8 @@ O Quadro~\ref{quad:glossario_dominio} apresenta, de forma resumida, a definiçã
 \hline
 \textbf{Conceito} & \textbf{Descrição} \\ \hline
 Elemento & Componente visual reutilizável utilizado para compor layouts, como textos, imagens, classificações, datas e ícones. Cada elemento possui nome, tipo, conteúdo opcional, posição, largura, altura e camada de sobreposição, além do seu EstiloDeElemento. \\ \hline
-EstiloDeElemento & Conjunto de propriedades visuais que define a aparência de um Elemento, sem interferir na sua posição nem no seu conteúdo. Reúne, para o texto, fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento, nível de título, entrelinha, espaçamento entre letras e apresentação em lista; para a imagem e o gif, formato e ajuste; para a classificação, nota máxima e ícone; e, para qualquer tipo, cor, cor de fundo, arredondamento, opacidade, rotação e borda. É um conjunto extensível: novas propriedades acompanham a evolução do editor, sem alterar os demais conceitos. \\ \hline
-TipoElemento & Conjunto fixo e predefinido de categorias de elemento que o usuário pode acrescentar no editor, à semelhança dos elementos básicos de ferramentas como o Canva. Compreende: texto, imagem, gif, forma, ícone, classificação e data. É representado por uma enumeração, e não por uma entidade com atributos próprios, pois constitui um conjunto estável que faz parte das capacidades do próprio editor. \\ \hline
+EstiloDeElemento & Conjunto de propriedades visuais que define a aparência de um Elemento, sem interferir na sua posição nem no seu conteúdo. Reúne, para o texto, fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento, nível de título, entrelinha, espaçamento entre letras e apresentação em lista; para a imagem, formato e ajuste; para a classificação, nota máxima e ícone; e, para qualquer tipo, cor, cor de fundo, arredondamento, opacidade, rotação e borda. É um conjunto extensível: novas propriedades acompanham a evolução do editor, sem alterar os demais conceitos. \\ \hline
+TipoElemento & Conjunto fixo e predefinido de categorias de elemento que o usuário pode acrescentar no editor, à semelhança dos elementos básicos de ferramentas como o Canva. Compreende: texto, imagem, forma, ícone, classificação e data. É representado por uma enumeração, e não por uma entidade com atributos próprios, pois constitui um conjunto estável que faz parte das capacidades do próprio editor. \\ \hline
 Layout & Estrutura personalizada que define quais elementos compõem a ficha de um item e como eles se organizam visualmente, sem guardar o conteúdo de nenhum item em particular. Funciona como um \textit{template} reutilizável, que pode ser associado a uma coleção; um mesmo layout pode ser reutilizado por diferentes coleções. A associação é opcional: os itens de uma coleção que possui layout partem dele, e os de uma coleção sem layout partem de uma ficha vazia. \\ \hline
 Layout padrão & Layout já montado, oferecido pelo sistema na biblioteca de layouts do usuário desde o cadastro (RF-01). Serve de facilitador para quem não deseja compor uma ficha do zero: pode ser associado a uma coleção como qualquer outro layout, e igualmente editado ou duplicado (RF-14 e RF-15). Não é aplicado automaticamente. \\ \hline
 Item & Unidade individual de conteúdo cadastrada pelo usuário (por exemplo, um livro, filme ou jogo específico). Todo item pertence a uma coleção e parte do layout associado a ela, quando existe, podendo receber um layout próprio conforme RF-17. \\ \hline
@@ -115,7 +115,7 @@ evidencia suas fronteiras conceituais e favorece o raciocínio modular sobre o s
   personalização visual das fichas de itens, incluindo Layout, Elemento, o
   EstiloDeElemento, que reúne as propriedades visuais de cada Elemento, e a
   enumeração TipoElemento, que define o conjunto fixo de tipos de elemento
-  disponíveis no editor (texto, imagem, gif, forma, ícone, classificação e
+  disponíveis no editor (texto, imagem, forma, ícone, classificação e
   data). É este pacote que sustenta o diferencial de
   customização da plataforma.
 
@@ -596,10 +596,10 @@ Camila define `Favoritos' como `somente amigos'; apenas amigos confirmados passa
 
 \textbf{Objeto:} Item dentro de uma coleção
 
-\textbf{Atributos:} nome (200 caracteres), coleção pai (referência obrigatória), cor de fundo do cartão (hexadecimal, opcional), layout visual efetivo do item, Elementos herdados ou personalizados (Texto, Imagem, GIF, Forma, Ícone, Classificação e Data), conteúdo e estilo armazenados nos próprios Elementos, data de criação (gerada automaticamente).
+\textbf{Atributos:} nome (200 caracteres), coleção pai (referência obrigatória), cor de fundo do cartão (hexadecimal, opcional), layout visual efetivo do item, Elementos herdados ou personalizados (Texto, Imagem, Forma, Ícone, Classificação e Data), conteúdo e estilo armazenados nos próprios Elementos, data de criação (gerada automaticamente).
 
 \textbf{Exemplos:} Camila cria o item `Duna' na coleção `Lidos' (dentro da categoria `Livros'); o item abre com o layout aplicável e Camila edita visualmente os textos, imagens, datas e a classificação que aparecem na ficha, como faria em um canvas.
-Camila adiciona individualmente um Elemento de GIF e um texto extra `Personagem Favorito: Paul Atreides', sem afetar os demais itens nem o layout da coleção.
+Camila adiciona individualmente um Elemento de Imagem e um texto extra `Personagem Favorito: Paul Atreides', sem afetar os demais itens nem o layout da coleção.
 Posteriormente edita a classificação de 5 para 4 estrelas e, por fim, exclui o item `Duna -- Rascunho' confirmando no diálogo de confirmação.
 
 \textbf{Restrições:}
@@ -784,7 +784,7 @@ Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão `Criar prim
 
 \textbf{Objeto:} Layout personalizado (template)
 
-\textbf{Atributos:} nome do layout (100 caracteres), Elementos disponíveis (conforme os tipos fixos definidos pela enumeração TipoElemento: texto, imagem, gif, forma, ícone, classificação e data), conteúdo textual opcional do Elemento, EstiloDeElemento de cada Elemento (fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento, nível de título, entrelinha, espaçamento entre letras, cor, cor de fundo, arredondamento, opacidade, rotação, borda, formato e ajuste de imagem, apresentação em lista, nota máxima e ícone da classificação), camada de sobreposição, posição e tamanho de cada Elemento na área de edição, layout de origem (referência opcional, preenchida apenas na operação de duplicação).
+\textbf{Atributos:} nome do layout (100 caracteres), Elementos disponíveis (conforme os tipos fixos definidos pela enumeração TipoElemento: texto, imagem, forma, ícone, classificação e data), conteúdo textual opcional do Elemento, EstiloDeElemento de cada Elemento (fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento, nível de título, entrelinha, espaçamento entre letras, cor, cor de fundo, arredondamento, opacidade, rotação, borda, formato e ajuste de imagem, apresentação em lista, nota máxima e ícone da classificação), camada de sobreposição, posição e tamanho de cada Elemento na área de edição, layout de origem (referência opcional, preenchida apenas na operação de duplicação).
 
 \textbf{Exemplos:} Camila cria o layout `Card de Livro' com Elemento de Imagem para capa, textos livres como `Autor: Frank Herbert', Classificação de 1 a 5 estrelas, dois Elementos de Data (início e fim de leitura) e área de Texto para notas.
 Camila reposiciona o Elemento de Classificação via \textit{drag-and-drop} e visualiza o resultado em tempo real na prévia.
@@ -796,7 +796,7 @@ Camila exclui o layout `Card Antigo' que não está associado a nenhuma coleçã
   \item O nome do layout é obrigatório e deve ser único por usuário.
   \item A biblioteca de layouts do usuário reúne três origens: os layouts que ele mesmo cria, os layouts padrão oferecidos pelo sistema desde o cadastro (RF-01) e os layouts importados de outros usuários (RF-16). Todos podem ser igualmente editados, duplicados e associados a coleções.
   \item Pelo menos um Elemento deve ser adicionado para que o layout possa ser salvo.
-  \item Os tipos de Elemento disponíveis para inclusão são os definidos pela enumeração TipoElemento (texto, imagem, gif, forma, ícone, classificação e data), à semelhança dos elementos fixos oferecidos por editores visuais como o Canva.
+  \item Os tipos de Elemento disponíveis para inclusão são os definidos pela enumeração TipoElemento (texto, imagem, forma, ícone, classificação e data), à semelhança dos elementos fixos oferecidos por editores visuais como o Canva.
   \item Elementos podem armazenar conteúdo visual próprio, como `Autor:' ou `Autor: Frank Herbert', além de propriedades de fonte, cor e alinhamento.
   \item Elementos podem ser reposicionados e redimensionados via arrastar e soltar (\textit{drag-and-drop}).
   \item Alterações devem ser refletidas em tempo real na prévia do editor, sem recarregar a página.
@@ -906,7 +906,7 @@ Camila altera o layout original depois do compartilhamento; as cópias já impor
 \textbf{Atributos:} Elementos herdados do layout aplicável ao item (base de partida), conteúdo e estilo dos Elementos, Elementos adicionados pelo usuário no item (\textit{override}), Elementos removidos pelo usuário no item (\textit{override}), Elementos reposicionados ou redimensionados no item (\textit{override}).
 
 \textbf{Exemplos:} Camila cria o item `Harry Potter e a Pedra Filosofal' na coleção `Lidos' (categoria `Livros'); o item abre com o layout aplicável herdado; Camila adiciona Elemento extra de texto `Data de Início de Leitura' apenas nesse item.
-Camila remove o Elemento de GIF de um item específico pois não se aplica, sem afetar o layout da coleção nem os outros itens.
+Camila remove o Elemento de Forma de um item específico pois não se aplica, sem afetar o layout da coleção nem os outros itens.
 Depois da personalização, o item mantém seu próprio layout, sem alterar o layout usado pela coleção.
 
 \textbf{Restrições:}
@@ -1485,7 +1485,7 @@ Camila exclui acidentalmente uma coleção; o sistema solicita confirmação ant
   \item Backups automáticos devem ser realizados diariamente e armazenados em localização separada do servidor principal.
   \item Operações de exclusão devem ser registradas em log de auditoria com identificação do usuário, data e hora.
   \item O sistema deve utilizar transações atômicas para garantir que operações de escrita não resultem em dados inconsistentes.
-  \item Arquivos de mídia (imagens, GIFs) devem ser armazenados com redundância para evitar perda.
+  \item Arquivos de mídia (imagens) devem ser armazenados com redundância para evitar perda.
 \end{enumerate} \\ \hline
 \textbf{Prioridade} & Essencial \\ \hline
 \textbf{Operação}   & Processamento \\ \hline
@@ -2768,12 +2768,11 @@ Fluxo Básico & \mbox{}
 	\item O sistema exibe o editor com a área de edição vazia e o painel de Elementos ao lado.
 	\item O usuário insere um nome para o layout.
 	\item O usuário insere uma descrição para o layout (opcional).
-	\item O usuário acrescenta Elementos à área de edição pelo painel, escolhendo entre os sete tipos disponíveis: texto, imagem, gif, forma, ícone, classificação e data [E01].
+	\item O usuário acrescenta Elementos à área de edição pelo painel, escolhendo entre os seis tipos disponíveis: texto, imagem, forma, ícone, classificação e data [E01].
 	\item O usuário posiciona e redimensiona cada Elemento arrastando-o pela área de edição e ajustando sua alça, e define a camada em que ele se sobrepõe aos demais.
 	\item O usuário escreve o conteúdo de um Elemento diretamente sobre ele, na própria área de edição.
-	\item O usuário ajusta as propriedades visuais do Elemento selecionado: no texto, fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento, nível de título, entrelinha, espaçamento entre letras e apresentação em lista; na imagem e no gif, formato e ajuste; na classificação, nota máxima e ícone; e, em qualquer Elemento, cor, cor de fundo, arredondamento, opacidade, rotação e borda.
-	\item O sistema grava cada alteração concluída automaticamente, sem exigir confirmação, e indica o estado da gravação [E03].
-	\item O usuário alterna para o modo de prévia e verifica como a ficha será exibida em modo leitura.
+	\item O usuário ajusta as propriedades visuais do Elemento selecionado: no texto, fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento, nível de título, entrelinha, espaçamento entre letras e apresentação em lista; na imagem, formato e ajuste; na classificação, nota máxima e ícone; e, em qualquer Elemento, cor, cor de fundo, arredondamento, opacidade, rotação e borda.
+	\item O sistema grava cada alteração concluída automaticamente, sem exigir confirmação, e avisa o usuário caso ele tente sair da página com alteração ainda por gravar.
 	\item O usuário retorna à lista de layouts, na qual o novo layout já aparece disponível para associação a coleções (RF-15).
 \end{enumerate}
 \mbox{} \\ \hline
@@ -2790,7 +2789,7 @@ Fluxos Alternativos & \mbox{}
 \textbf{FA02:} Layout sem Elementos
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item No passo 12 do FB01, o sistema identifica que nenhum Elemento foi acrescentado ao layout.
+	\item No passo 11 do FB01, o sistema identifica que nenhum Elemento foi acrescentado ao layout.
 	\item O sistema informa que o layout precisa de ao menos um Elemento para ser associado a uma coleção.
 	\item O sistema retorna ao passo 6 do FB01.
 \end{enumerate}
@@ -2809,7 +2808,7 @@ Fluxos Alternativos & \mbox{}
 \textbf{FA04:} Desfazer uma alteração
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item Em qualquer momento entre os passos 6 e 11 do FB01, o usuário pode desfazer a última alteração, e também refazê-la.
+	\item Em qualquer momento entre os passos 6 e 10 do FB01, o usuário pode desfazer a última alteração, e também refazê-la.
 	\item O sistema restaura o estado anterior da área de edição e o grava, percorrendo o histórico de alterações da sessão de edição.
 	\item O fluxo retorna ao passo em que o usuário estava.
 	\item Caso o usuário feche a página havendo alterações ainda não gravadas, o sistema o avisa antes de sair.
@@ -2822,7 +2821,7 @@ Condições Prévias & O usuário deve estar autenticado. Para duplicação (FA0
 
 Pós-Condições & Um novo layout é criado e armazenado no banco de dados, com os Elementos acrescentados pelo usuário, suas posições, tamanhos, camadas, conteúdos e propriedades visuais. O layout está disponível para associação a uma ou mais coleções, conforme RF-15, e aparece na biblioteca de layouts do usuário. Se criado por duplicação, o layout de origem permanece inalterado. \\ \hline
 
-Pontos de Extensão & E01 - Editar Layout (estende o passo 6 do FB01, permitindo acrescentar, alterar e remover Elementos a qualquer momento, conforme RF-14). E02 - Duplicar Layout (estende o passo 2 do FB01, permitindo criar um layout a partir de outro já existente na biblioteca, conforme RF-14). E03 - Visualizar Prévia (estende o passo 10 do FB01, exibindo a ficha como ela aparecerá em modo leitura). \\
+Pontos de Extensão & E01 - Editar Layout (estende o passo 6 do FB01, permitindo acrescentar, alterar e remover Elementos a qualquer momento, conforme RF-14). E02 - Duplicar Layout (estende o passo 2 do FB01, permitindo criar um layout a partir de outro já existente na biblioteca, conforme RF-14). \\
 \end{longtable}
 \renewcommand{\arraystretch}{1}
 \FloatBarrier
