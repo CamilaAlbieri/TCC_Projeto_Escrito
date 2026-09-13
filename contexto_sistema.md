@@ -103,7 +103,7 @@ Usuário tenta cadastrar com o email "camilamattos.mila@gmail.com", que já exis
 5. A senha deve ser armazenada de forma criptografada (RNF-03).
 6. O código de usuário é gerado automaticamente pelo sistema no momento do cadastro, deve ser único em toda a plataforma e não pode ser alterado posteriormente.
 7. O código de usuário é o identificador público utilizado para buscas e envio de solicitações de amizade.
-8. Ao concluir o cadastro, o sistema cria automaticamente para o usuário uma configuração de aparência padrão (tema claro, esquema neutro preto e branco), conforme RF-18.
+8. Ao concluir o cadastro, o sistema disponibiliza na biblioteca de aparência do usuário as paletas predefinidas que oferece — três claras e três escuras —, deixando em uso a paleta clara padrão, conforme RF-18.
 9. Ao concluir o cadastro, o sistema também disponibiliza na biblioteca de layouts do usuário os layouts padrão que oferece, prontos para serem associados a coleções, editados ou duplicados (RF-14 e RF-15).
 
 ### RF-02 — Autenticar Usuário (Login e Logout)
@@ -497,23 +497,28 @@ Depois da personalização, o item mantém seu próprio layout, sem alterar o la
 
 - **Grupo:** Aparência
 - **Ação:** Gerenciar aparência
-- **Objeto:** Configuração visual global da interface do usuário
+- **Objeto:** Paletas de aparência do usuário e configuração visual global da interface
 - **Prioridade:** Desejável · **Operação:** Entrada · **Ator:** Usuário
 
-**Atributos:** cor primária (hex), subcores (até 4 valores hex), paletas predefinidas (lista do sistema), paletas personalizadas (nome de até 50 caracteres), estilo global (claro / escuro / automático conforme sistema operacional).
+**Atributos:** cor primária (hex), subcores (7 valores hex: fundo da página, cartões, títulos, texto, barra lateral, cabeçalho e modais), paletas predefinidas (lista do sistema), paletas personalizadas (nome de até 50 caracteres), paleta em uso, estilo global (claro / escuro / automático conforme sistema operacional).
 
-**Exemplos:** No momento do cadastro (RF-01), o sistema cria para o usuário uma aparência padrão: tema claro, com esquema neutro em preto e branco.
-Camila seleciona a paleta predefinida "Outono" com tons terrosos e estilo escuro; toda a interface é atualizada em tempo real.
-Camila cria a paleta personalizada "Meu Rosa" com cor primária #E91E8C, aplica e salva no perfil.
+**Exemplos:** No momento do cadastro (RF-01), o sistema disponibiliza ao usuário seis paletas predefinidas — "Claro", "Escuro", "Outono", "Oceano", "Floresta" e "Lavanda" —, com a paleta "Claro" em uso.
+Camila seleciona a paleta predefinida "Oceano", de tons azulados e estilo escuro; toda a interface é atualizada imediatamente.
+Camila cria a paleta personalizada "Meu Rosa" a partir da paleta em uso, altera a cor primária para #E91E8C, confere o resultado na área de prévia e salva.
+Com a paleta clara "Meu Rosa" em uso, Camila muda o estilo global para escuro; as cores da paleta passam a ser exibidas com a claridade invertida, preservando os tons.
 
 **Regras / Restrições:**
 
-1. Todo usuário recém-cadastrado recebe uma configuração de aparência padrão (tema claro, esquema neutro preto e branco), criada automaticamente no cadastro (RF-01).
-2. O usuário pode alterar a aparência a qualquer momento; as mudanças sobrescrevem a configuração existente.
-3. O tema selecionado deve ser aplicado globalmente a todas as telas do sistema de forma imediata.
-4. Paletas predefinidas podem ser editadas diretamente nas configurações.
-5. As configurações de aparência devem ser salvas no perfil e persistidas entre sessões e dispositivos.
-6. As alterações devem ser exibidas em área de prévia antes de o usuário confirmar a aplicação.
+1. Todo usuário recém-cadastrado recebe as paletas predefinidas do sistema, com a paleta clara padrão em uso (RF-01).
+2. O usuário pode criar, editar, duplicar, renomear e excluir paletas, e selecionar a paleta em uso a qualquer momento. As paletas predefinidas pertencem ao usuário e podem ser editadas e excluídas como as personalizadas.
+3. A paleta em uso deve ser aplicada globalmente a todas as telas do sistema de forma imediata.
+4. A paleta em uso não pode ser excluída, o que garante que o usuário tenha sempre ao menos uma paleta.
+5. Uma paleta é sempre completa: a cor primária e todas as subcores devem estar preenchidas.
+6. O sistema classifica cada paleta como clara ou escura a partir da cor de fundo. Quando o estilo global em vigor é o oposto ao da paleta em uso, as cores são exibidas com a claridade invertida, preservando os tons.
+7. As paletas e a paleta em uso devem ser salvas no perfil e persistidas entre sessões e dispositivos.
+8. As alterações feitas em uma paleta devem ser exibidas em área de prévia antes de o usuário confirmar, sem modificar a interface enquanto são feitas.
+9. O sistema deve alertar o usuário quando uma combinação de cores não atender ao contraste mínimo (RNF-09), sem impedir a escolha.
+10. A biblioteca de paletas pode ser exibida em grade ou em lista e filtrada por paletas claras ou escuras.
 
 ### RF-19 — Gerenciar Tipografia Global
 
@@ -522,15 +527,15 @@ Camila cria a paleta personalizada "Meu Rosa" com cor primária #E91E8C, aplica 
 - **Objeto:** Tipografia e aparência textual global
 - **Prioridade:** Desejável · **Operação:** Entrada · **Ator:** Usuário
 
-**Atributos:** família de fonte (lista predefinida com no mínimo 5 opções), tamanho base em px (mínimo 12 px, máximo 24 px), espaço entre linhas (1.0 a 2.0), espaço entre letras.
+**Atributos:** família de fonte (lista predefinida com no mínimo 5 opções), tamanho base em px (mínimo 12 px, máximo 24 px), tamanho de título em px (mínimo 16 px, máximo 48 px), espaço entre linhas (1.0 a 2.0), espaço entre letras, peso da fonte (300 a 800), itálico.
 
-**Exemplos:** Camila altera a fonte para "Georgia", tamanho base para 16 px e espaço de linha para 1.6; a prévia reflete as mudanças antes da confirmação.
+**Exemplos:** Camila edita a paleta "Meu Rosa" e altera a fonte para "Georgia", o tamanho base para 16 px e o espaço de linha para 1.6; a prévia reflete as mudanças antes da confirmação.
 
 **Regras / Restrições:**
 
 1. As fontes disponíveis devem incluir ao menos cinco opções tipográficas distintas (ex.: serif, sans-serif, monospace).
 2. As alterações devem ser exibidas em área de prévia antes de o usuário confirmar a aplicação.
-3. As configurações de tipografia devem ser aplicadas globalmente e persistidas entre sessões.
+3. A tipografia faz parte de cada paleta (RF-18): é aplicada globalmente junto com a paleta em uso e persistida entre sessões e dispositivos.
 
 ### RF-20 — Gerenciar Amizade
 
@@ -1130,38 +1135,45 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 
 ### Caso de uso: Personalizar Interface
 
-**Descrição:** Este caso de uso permite que o usuário configure a aparência visual global da plataforma, incluindo cores, subcores, tipografia e tema do sistema (claro, escuro ou automático). As alterações são exibidas em prévia antes de serem confirmadas e persistem entre sessões e dispositivos (RF-18 e RF-19).
+**Descrição:** Este caso de uso permite que o usuário gerencie a aparência visual global da plataforma por meio de paletas: selecionar a paleta em uso e criar, editar, duplicar, renomear e excluir paletas, cada uma com cor primária, subcores e tipografia. O estilo global (claro, escuro ou automático) é escolhido no menu da conta. As alterações em uma paleta são exibidas em prévia antes de serem confirmadas, e tudo persiste entre sessões e dispositivos (RF-18 e RF-19).
 
 **Condições prévias:** O usuário deve estar autenticado no sistema.
 
 **Fluxo básico:**
 
-1. O usuário acessa a área de configurações da plataforma.
-2. O usuário seleciona a opção "Personalizar Interface".
-3. O sistema exibe o painel de personalização com as configurações atuais e uma área de prévia.
-4. O usuário seleciona ou modifica as configurações desejadas (cores, tipografia, tema) [E01][E02][E03].
-5. O sistema atualiza a área de prévia em tempo real conforme as alterações.
-6. O usuário confirma as alterações clicando em "Aplicar".
-7. O sistema salva as configurações no perfil do usuário.
-8. O sistema aplica as alterações globalmente a todas as telas do sistema de forma imediata.
-9. O sistema exibe mensagem de sucesso: "Configurações visuais aplicadas com sucesso."
+1. O usuário seleciona a opção "Aparência" no menu da conta.
+2. O sistema exibe a biblioteca de paletas do usuário, com a paleta em uso destacada.
+3. O usuário seleciona uma paleta da biblioteca.
+4. O sistema define a paleta selecionada como paleta em uso, adotando o estilo global associado a ela.
+5. O sistema aplica a paleta globalmente a todas as telas do sistema de forma imediata.
 
 **Fluxos alternativos / exceções:**
 
-- No passo 4 do FB01, o usuário seleciona uma paleta predefinida disponível no sistema (ex.: "Outono", "Oceano").
-- O sistema preenche automaticamente os campos de cor primária e subcores com os valores da paleta selecionada.
-- O sistema atualiza a prévia em tempo real.
-- O fluxo continua no passo 6 do FB01.
-- Em qualquer momento entre os passos 4 e 6 do FB01, o usuário seleciona "Cancelar".
-- O sistema descarta as alterações não salvas.
-- O sistema mantém as configurações visuais anteriores.
-- O sistema retorna ao painel de configurações.
-- No passo 4 do FB01, o usuário seleciona "Restaurar Configuração Padrão".
-- O sistema exibe mensagem de confirmação: "Deseja restaurar todas as configurações visuais para o padrão?"
-- Se o usuário confirmar, o sistema restaura os valores padrão e atualiza a prévia.
-- O fluxo continua no passo 6 do FB01.
+- No passo 3 do FB01, o usuário seleciona "Nova paleta".
+- O sistema exibe o editor de paleta com as cores e a tipografia da paleta em uso e uma área de prévia.
+- O usuário informa o nome e modifica cores e tipografia; o sistema atualiza a área de prévia a cada alteração, sem modificar a interface [E03].
+- O usuário clica em "Salvar" [E02].
+- O sistema classifica a paleta como clara ou escura pela cor de fundo, salva-a na biblioteca e retorna ao passo 2 do FB01.
+- No passo 3 do FB01, o usuário seleciona "Editar" no menu de uma paleta.
+- O sistema exibe o editor de paleta com os valores atuais da paleta e uma área de prévia.
+- O usuário modifica nome, cores e tipografia e clica em "Salvar" [E02][E03].
+- O sistema salva a paleta; se ela for a paleta em uso, as alterações são aplicadas globalmente de forma imediata. O fluxo retorna ao passo 2 do FB01.
+- Em qualquer momento no editor de paleta, antes de salvar, o usuário seleciona "Cancelar".
+- Havendo alterações não salvas, o sistema exibe mensagem de confirmação: "Sair sem salvar?"
+- Se o usuário confirmar, o sistema descarta as alterações e retorna ao passo 2 do FB01; caso contrário, permanece no editor.
+- No passo 3 do FB01, o usuário seleciona "Duplicar" no menu de uma paleta.
+- O sistema cria uma cópia da paleta, com "(cópia)" no nome, e a exibe na biblioteca.
+- No passo 3 do FB01, o usuário seleciona "Renomear" no menu de uma paleta, informa o novo nome e confirma [E02].
+- O sistema salva o novo nome e atualiza a biblioteca.
+- No passo 3 do FB01, o usuário seleciona "Excluir" no menu de uma paleta [E01].
+- O sistema exibe mensagem de confirmação; se o usuário confirmar, o sistema remove a paleta da biblioteca.
+- Em qualquer momento, o usuário altera o estilo global (claro, escuro ou automático) no menu da conta.
+- O sistema aplica o estilo e o salva na paleta em uso; se o estilo em vigor for o oposto ao da paleta, as cores são exibidas com a claridade invertida, preservando os tons.
+- E01 — A paleta selecionada para exclusão é a paleta em uso: o sistema recusa a exclusão e informa que outra paleta deve ser selecionada antes.
+- E02 — Já existe uma paleta com o nome informado: o sistema informa o conflito e mantém o editor aberto para correção.
+- E03 — Uma combinação de cores não atende ao contraste mínimo (RNF-09): o sistema exibe um alerta junto à cor, sem impedir o salvamento.
 
-**Pós-condições:** As configurações visuais são salvas no perfil do usuário. As alterações são aplicadas globalmente e imediatamente a todas as telas. As configurações persistem em futuras sessões e em outros dispositivos.
+**Pós-condições:** As paletas e a paleta em uso são salvas no perfil do usuário. A paleta em uso é aplicada globalmente e imediatamente a todas as telas, e persiste em futuras sessões e em outros dispositivos.
 
 **Requisitos especiais:** RNF01 - O painel de personalização deve ser intuitivo e acessível. RNF07 - As alterações devem ser refletidas na prévia em tempo real, sem recarregar a página. RNF04 - As configurações devem ser persistidas entre sessões e dispositivos.
 
