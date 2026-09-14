@@ -96,7 +96,7 @@ As telas de interação social seguem a mesma moldura. A área de amigos, na Fig
 \end{figure}
 \FloatBarrier
 
-Completam o conjunto as telas de conta e de aparência. O perfil do próprio usuário, na Figura~\ref{fig:telaConta}, reúne a foto, o nome e os demais dados de identificação, com o atalho para edição no canto superior. A tela de configurações, na Figura~\ref{fig:telaConfiguracoes}, concentra a personalização visual global prevista nos RF-18 e RF-19: a alternância entre os temas claro e escuro e o ajuste de tipografia e de cores da interface.
+Completam o conjunto as telas de conta e de aparência. O perfil do próprio usuário, na Figura~\ref{fig:telaConta}, reúne a foto, o nome e os demais dados de identificação, com o atalho para edição no canto superior. A tela de configurações, na Figura~\ref{fig:telaConfiguracoes}, concentra a personalização visual global prevista nos RF-18 e RF-19: a alternância entre os temas claro e escuro e o ajuste de tipografia e de cores da interface. Na especificação consolidada no Capítulo~\ref{cap:05}, essa personalização passou a se organizar como uma biblioteca de paletas, cada uma com cores e tipografia próprias, e a escolha do estilo claro, escuro ou automático foi deslocada para o menu da conta; o esquema registra a concepção inicial.
 
 \FloatBarrier
 \begin{figure}[!htbp]
@@ -332,6 +332,7 @@ de cores capaz de reprovar no critério de contraste.
     name & Varch.(150) & X &  &  &  & UK\_01 & 2 \\ \hline
     description & Text &  &  &  &  &  &  \\ \hline
     purpose & Enum & X &  &  &  &  &  \\ \hline
+    background & Varch.(24) &  &  &  &  &  &  \\ \hline
     created\_at & Time. & X &  &  &  &  &  \\ \hline
     source\_layout\_id & UUID &  &  & layouts & id\_layout &  &  \\ \hline
     user\_id & UUID & X &  & users & id\_user & UK\_01 & 1 \\ \hline
@@ -340,9 +341,11 @@ de cores capaz de reprovar no critério de contraste.
 \label{tab:tabelaLayoutDetalhado}
 \end{table}
 
-Dois campos desta tabela sustentam requisitos do Editor de Layout. O \texttt{purpose} distingue as três finalidades que um \textit{layout} pode ter: \textit{template} reutilizável, criado pelo próprio usuário; \textit{template} importado, resultante do compartilhamento (RF-16); e cópia individual de item, gerada quando o usuário personaliza a ficha de um item específico (RF-17). Já o \texttt{source\_layout\_id} registra de qual \textit{layout} a cópia se originou, tanto na duplicação (RF-14) quanto na importação, sem criar dependência entre os dois: a regra \textit{set null} faz com que excluir o original apenas zere a referência.
+Três campos desta tabela sustentam requisitos do Editor de Layout. O \texttt{purpose} distingue as três finalidades que um \textit{layout} pode ter: \textit{template} reutilizável, criado pelo próprio usuário; \textit{template} importado, resultante do compartilhamento (RF-16); e cópia individual de item, gerada quando o usuário personaliza a ficha de um item específico (RF-17). Já o \texttt{source\_layout\_id} registra de qual \textit{layout} a cópia se originou, tanto na duplicação (RF-14) quanto na importação, sem criar dependência entre os dois: a regra \textit{set null} faz com que excluir o original apenas zere a referência.
 
-Como \texttt{user\_id} é obrigatório, um \textit{layout} não existe sem dono, e é isso que define onde vivem os \textit{layouts} padrão oferecidos pelo sistema: eles são criados na biblioteca de cada usuário no momento do cadastro (RF-01), com a finalidade de \textit{template} reutilizável, do mesmo modo que a configuração de aparência padrão (RF-18). A partir daí comportam-se como qualquer outro \textit{layout} do usuário, podendo ser associados a coleções, editados ou duplicados.
+Por fim, o \texttt{background} guarda o fundo da ficha (RF-14): uma cor hexadecimal ou um degradê de duas cores com ângulo e ponto de início, gravado em formato compacto e validado, e nunca como CSS livre, o que abriria espaço para injeção de estilo na página de quem visita a ficha. É coluna do \textit{layout}, e não propriedade de um Elemento, porque não pertence a nenhum deles: é a superfície sobre a qual todos são desenhados. Como a ficha própria de um item também é um registro desta tabela (RF-17), a mesma coluna atende aos dois casos, e o valor nulo corresponde ao fundo branco padrão.
+
+Como \texttt{user\_id} é obrigatório, um \textit{layout} não existe sem dono, e é isso que define onde vivem os \textit{layouts} padrão oferecidos pelo sistema: eles são criados na biblioteca de cada usuário no momento do cadastro (RF-01), com a finalidade de \textit{template} reutilizável, do mesmo modo que as paletas predefinidas de aparência (RF-18). A partir daí comportam-se como qualquer outro \textit{layout} do usuário, podendo ser associados a coleções, editados ou duplicados.
 
 Apenas os \textit{layouts} de finalidade \textit{template}, próprios ou importados, aparecem na biblioteca e podem ser associados a coleções. As cópias individuais de item ficam de fora dessa listagem, pois pertencem à ficha de um item específico e não fazem sentido como modelo a reutilizar.
 
@@ -395,7 +398,7 @@ Apenas os \textit{layouts} de finalidade \textit{template}, próprios ou importa
 \label{tab:tabelaElementDetalhado}
 \end{table}
 
-Esta é a tabela central do diferencial da plataforma. Nela residem a geometria de cada Elemento (\texttt{pos\_x}, \texttt{pos\_y}, \texttt{width} e \texttt{height}), a camada em que ele se sobrepõe aos demais (\texttt{layer}), o conteúdo exibido (\texttt{content}) e toda a sua aparência (\texttt{style}). Essa concentração é o que permite tratar o Elemento como objeto visual editável, à maneira de um editor gráfico, em vez de separar a estrutura do dado que a preenche. O campo \texttt{type} corresponde à enumeração TipoElemento, com os sete valores fixos definidos no Capítulo~\ref{cap:05}.
+Esta é a tabela central do diferencial da plataforma. Nela residem a geometria de cada Elemento (\texttt{pos\_x}, \texttt{pos\_y}, \texttt{width} e \texttt{height}), a camada em que ele se sobrepõe aos demais (\texttt{layer}), o conteúdo exibido (\texttt{content}) e toda a sua aparência (\texttt{style}). Essa concentração é o que permite tratar o Elemento como objeto visual editável, à maneira de um editor gráfico, em vez de separar a estrutura do dado que a preenche. O campo \texttt{type} corresponde à enumeração TipoElemento, com os seis valores fixos definidos no Capítulo~\ref{cap:05}.
 
 A coluna \texttt{style} corresponde ao \textbf{EstiloDeElemento} do modelo de domínio, apresentado na Seção~\ref{sec:modelo_dominio}. Ali ele aparece como uma classe de valor composta no Elemento, com uma propriedade visual por atributo, o que torna visível o que o editor oferece; aqui ele é gravado como um único documento \texttt{JSONB}. A correspondência é direta, e os nomes das propriedades no documento são os mesmos atributos da classe.
 
@@ -546,6 +549,8 @@ A unicidade desta tabela recai sobre \texttt{pair\_key} e não sobre o par \text
     text\_size & Float & X &  &  &  &  &  \\ \hline
     line\_height & Float & X &  &  &  &  &  \\ \hline
     letter\_spacing & Float & X &  &  &  &  &  \\ \hline
+    font\_weight & Int & X &  &  &  &  &  \\ \hline
+    font\_italic & Bool & X &  &  &  &  &  \\ \hline
     is\_active & Bool & X &  &  &  &  &  \\ \hline
     is\_default & Bool & X &  &  &  &  &  \\ \hline
     created\_at & Time. & X &  &  &  &  &  \\ \hline
@@ -556,7 +561,7 @@ A unicidade desta tabela recai sobre \texttt{pair\_key} e não sobre o par \text
 \label{tab:tabelaAppearancePresetDetalhado}
 \end{table}
 
-Cada paleta pertence a um usuário e tem nome único dentro de sua conta. O campo \texttt{subcolors} emprega o tipo JSONB, adequado por armazenar uma lista de tamanho variável de cores secundárias sem exigir tabela própria. Os dois indicadores booleanos têm papéis distintos: \texttt{is\_active} aponta a paleta em vigor no momento, e \texttt{is\_default} assinala a configuração neutra criada automaticamente no cadastro (RF-01), que serve de ponto de retorno quando o usuário deseja restaurar a aparência original.
+Cada paleta pertence a um usuário, e seu nome não se repete entre as paletas da mesma conta, o que a chave única composta por \texttt{user\_id} e \texttt{name} garante; usuários diferentes podem ter paletas de mesmo nome. O campo \texttt{subcolors} emprega o tipo JSONB para guardar as sete subcores em ordem fixa, na qual cada posição corresponde a uma região da interface (fundo da página, cartões, títulos, texto, barra lateral, cabeçalho e modais); a quantidade exata é garantida pela validação na camada de aplicação, pois uma paleta é sempre completa (RF-18). O \texttt{system\_theme} guarda o estilo em vigor enquanto a paleta está em uso: nasce do lado para o qual ela foi desenhada e é atualizado quando o usuário altera o estilo no menu da conta. A tipografia (\texttt{font\_family}, \texttt{title\_size}, \texttt{text\_size}, \texttt{line\_height}, \texttt{letter\_spacing}, \texttt{font\_weight} e \texttt{font\_italic}) também é gravada em cada paleta (RF-19). Os dois indicadores booleanos têm papéis distintos: \texttt{is\_active} aponta a paleta em uso, e um índice único parcial garante uma única por usuário; \texttt{is\_default} indica apenas que a paleta foi oferecida pelo sistema no cadastro (RF-01), sem protegê-la de edição ou exclusão. No cadastro, fica ativa a paleta `Claro' ou a `Escuro', conforme o tema do sistema operacional naquele momento, e a conta nunca fica sem paleta porque a paleta em uso não pode ser excluída.
 \FloatBarrier
 
 

@@ -68,7 +68,7 @@ O Quadro~\ref{quad:glossario_dominio} apresenta, de forma resumida, a definiçã
 \hline
 \textbf{Conceito} & \textbf{Descrição} \\ \hline
 Elemento & Componente visual reutilizável utilizado para compor layouts, como textos, imagens, classificações, datas e ícones. Cada elemento possui nome, tipo, conteúdo opcional, posição, largura, altura e camada de sobreposição, além do seu EstiloDeElemento. \\ \hline
-EstiloDeElemento & Conjunto de propriedades visuais que define a aparência de um Elemento, sem interferir na sua posição nem no seu conteúdo. Reúne, para o texto, fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento, nível de título, entrelinha, espaçamento entre letras e apresentação em lista; para a imagem, formato e ajuste; para a classificação, nota máxima e ícone; e, para qualquer tipo, cor, cor de fundo, arredondamento, opacidade, rotação e borda. É um conjunto extensível: novas propriedades acompanham a evolução do editor, sem alterar os demais conceitos. \\ \hline
+EstiloDeElemento & Conjunto de propriedades visuais que define a aparência de um Elemento, sem interferir na sua posição nem no seu conteúdo. Reúne, para o texto, fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento horizontal e vertical, nível de título, entrelinha, espaçamento entre letras e apresentação em lista; para a forma e a imagem, forma do elemento, arredondamento e borda (cor, espessura e traço); para a forma, ainda, curva e ponta da linha; para a imagem, ajuste; para a classificação, nota máxima e ícone; para a data, formato e estética; e, para qualquer tipo, cor, cor de fundo, opacidade e rotação. É um conjunto extensível: novas propriedades acompanham a evolução do editor, sem alterar os demais conceitos. \\ \hline
 TipoElemento & Conjunto fixo e predefinido de categorias de elemento que o usuário pode acrescentar no editor, à semelhança dos elementos básicos de ferramentas como o Canva. Compreende: texto, imagem, forma, ícone, classificação e data. É representado por uma enumeração, e não por uma entidade com atributos próprios, pois constitui um conjunto estável que faz parte das capacidades do próprio editor. \\ \hline
 Layout & Estrutura personalizada que define quais elementos compõem a ficha de um item e como eles se organizam visualmente, sem guardar o conteúdo de nenhum item em particular. Funciona como um \textit{template} reutilizável, que pode ser associado a uma coleção; um mesmo layout pode ser reutilizado por diferentes coleções. A associação é opcional: os itens de uma coleção que possui layout partem dele, e os de uma coleção sem layout partem de uma ficha vazia. \\ \hline
 Layout padrão & Layout já montado, oferecido pelo sistema na biblioteca de layouts do usuário desde o cadastro (RF-01). Serve de facilitador para quem não deseja compor uma ficha do zero: pode ser associado a uma coleção como qualquer outro layout, e igualmente editado ou duplicado (RF-14 e RF-15). Não é aplicado automaticamente. \\ \hline
@@ -134,8 +134,8 @@ evidencia suas fronteiras conceituais e favorece o raciocínio modular sobre o s
   facilitar futuras extensões do sistema.
 
   \item \textbf{Aparência:} reúne as entidades que definem a configuração
-  visual global da interface, como paletas de cores, tipografia e seleção de
-  tema claro ou escuro.
+  visual global da interface: a biblioteca de paletas do usuário, cada uma
+  com suas cores, sua tipografia e seu estilo claro ou escuro.
 
   \item \textbf{Sistema:} reúne as entidades de apoio à operação da
   plataforma, que não pertencem ao domínio do acervo nem às interações entre
@@ -153,8 +153,8 @@ sustenta o cadastro e o perfil (RF-01 e RF-05), enquanto as do pacote
 senha (RF-02 a RF-04); as classes do pacote \textit{Coleções} sustentam os
 requisitos funcionais de gestão de conteúdo (RF-06 a RF-13); as do pacote
 \textit{Editor de Layout} suportam os requisitos de personalização estrutural
-(RF-14 a RF-17); as do pacote \textit{Aparência} viabilizam a configuração
-visual global criada no cadastro e ajustável pelo usuário (RF-18 e RF-19); as
+(RF-14 a RF-17); as do pacote \textit{Aparência} viabilizam a biblioteca de
+paletas oferecida no cadastro e gerenciada pelo usuário (RF-18 e RF-19); as
 do pacote \textit{Interação Social} dão suporte às funcionalidades de rede
 entre usuários (RF-20 a RF-23); e as do pacote \textit{Notificações} sustentam
 o mecanismo de comunicação de eventos do sistema ao usuário (RF-24).
@@ -195,7 +195,7 @@ Para padronizar a especificação dos requisitos, adotou-se o verbo \textbf{gere
 sempre que aplicável. Essa padronização reduz a repetição textual e torna a descrição dos requisitos mais objetiva.
 
 Os requisitos funcionais estão organizados em seis grupos, apresentados de forma sequencial e seguindo uma ordem lógica de dependência entre funcionalidades, 
-alinhada à jornada natural do usuário no sistema: iniciam pelo \textbf{Acesso ao Sistema} (cadastro, autenticação, recuperação e alteração de senha e gerenciamento de perfil); prosseguem com a \textbf{Coleção}, núcleo do sistema (categorias, coleções, privacidade, itens, suas fichas e formas de visualização); avançam para o \textbf{Editor de Layout} (criação de layouts, associação a coleções, compartilhamento entre usuários e personalização individual); seguem para a \textbf{Aparência}, camada de personalização visual que se aplica sobre o conteúdo já organizado (tema, cores e tipografia); contemplam a \textbf{Interação Social} (amizade, acompanhamento de coleções e visualização de perfis); e culminam na \textbf{Notificação}, mecanismo de comunicação de eventos ao usuário.
+alinhada à jornada natural do usuário no sistema: iniciam pelo \textbf{Acesso ao Sistema} (cadastro, autenticação, recuperação e alteração de senha e gerenciamento de perfil); prosseguem com a \textbf{Coleção}, núcleo do sistema (categorias, coleções, privacidade, itens, suas fichas e formas de visualização); avançam para o \textbf{Editor de Layout} (criação de layouts, associação a coleções, compartilhamento entre usuários e personalização individual); seguem para a \textbf{Aparência}, camada de personalização visual que se aplica sobre o conteúdo já organizado (paletas de cores e tipografia, com estilo claro ou escuro); contemplam a \textbf{Interação Social} (amizade, acompanhamento de coleções e visualização de perfis); e culminam na \textbf{Notificação}, mecanismo de comunicação de eventos ao usuário.
 Os quadros~\ref{quad:descricao_campos} a~\ref{quad:atores} apresentam a definição dos campos e das classificações utilizadas na especificação, e os requisitos funcionais 
 identificados para este sistema estão apresentados nos Quadros~\ref{quad:rf01} a~\ref{quad:rf24}.
 
@@ -225,7 +225,7 @@ Ator & Entidade responsável pela execução ou interação (Usuário ou Sistema
 Acesso ao Sistema & Cadastro, autenticação, recuperação e alteração de senha e gerenciamento do perfil do usuário. \\ \hline
 Coleção & Gerenciamento de categorias, coleções, privacidade, itens e respectivas formas de visualização. \\ \hline
 Editor de Layout & Criação, associação, compartilhamento e personalização de layouts e Elementos. \\ \hline
-Aparência & Configuração visual global da interface, incluindo tema, cores e tipografia. \\ \hline
+Aparência & Configuração visual global da interface por meio de paletas de cores e tipografia, com estilo claro ou escuro. \\ \hline
 Interação Social & Vínculos de amizade, acompanhamento de coleções e visualização de perfis de outros usuários. \\ \hline
 Notificação & Geração, exibição e gerenciamento das notificações enviadas ao usuário. \\ \hline
 \end{tabular}
@@ -305,7 +305,7 @@ Usuário tenta cadastrar com o email `camilamattos.mila@gmail.com', que já exis
   \item A senha deve ser armazenada de forma criptografada (RNF-03).
   \item O código de usuário é gerado automaticamente pelo sistema no momento do cadastro, deve ser único em toda a plataforma e não pode ser alterado posteriormente.
   \item O código de usuário é o identificador público utilizado para buscas e envio de solicitações de amizade.
-  \item Ao concluir o cadastro, o sistema cria automaticamente para o usuário uma configuração de aparência padrão (tema claro, esquema neutro preto e branco), conforme RF-18.
+  \item Ao concluir o cadastro, o sistema disponibiliza na biblioteca de aparência do usuário as paletas predefinidas que oferece, três claras e três escuras, deixando em uso a paleta `Claro' ou a paleta `Escuro', conforme o tema do sistema operacional no momento do cadastro (RF-18).
   \item Ao concluir o cadastro, o sistema também disponibiliza na biblioteca de layouts do usuário os layouts padrão que oferece, prontos para serem associados a coleções, editados ou duplicados (RF-14 e RF-15).
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Essencial \\ \hline
@@ -784,7 +784,7 @@ Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão `Criar prim
 
 \textbf{Objeto:} Layout personalizado (template)
 
-\textbf{Atributos:} nome do layout (100 caracteres), Elementos disponíveis (conforme os tipos fixos definidos pela enumeração TipoElemento: texto, imagem, forma, ícone, classificação e data), conteúdo textual opcional do Elemento, EstiloDeElemento de cada Elemento (fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento, nível de título, entrelinha, espaçamento entre letras, cor, cor de fundo, arredondamento, opacidade, rotação, borda, formato e ajuste de imagem, apresentação em lista, nota máxima e ícone da classificação), camada de sobreposição, posição e tamanho de cada Elemento na área de edição, layout de origem (referência opcional, preenchida apenas na operação de duplicação).
+\textbf{Atributos:} nome do layout (100 caracteres), fundo da ficha (uma cor hexadecimal, ou um degradê de duas cores com um ângulo e um ponto de início), Elementos disponíveis (conforme os tipos fixos definidos pela enumeração TipoElemento: texto, imagem, forma, ícone, classificação e data), conteúdo textual opcional do Elemento, EstiloDeElemento de cada Elemento (fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento horizontal e vertical, nível de título, entrelinha, espaçamento entre letras, cor, cor de fundo, arredondamento, opacidade, rotação, borda (cor, espessura e traço), forma do elemento, curva e ponta da linha, ajuste de imagem, apresentação em lista, nota máxima e ícone da classificação, formato e estética da data), camada de sobreposição, posição e tamanho de cada Elemento na área de edição, layout de origem (referência opcional, preenchida apenas na operação de duplicação).
 
 \textbf{Exemplos:} Camila cria o layout `Card de Livro' com Elemento de Imagem para capa, textos livres como `Autor: Frank Herbert', Classificação de 1 a 5 estrelas, dois Elementos de Data (início e fim de leitura) e área de Texto para notas.
 Camila reposiciona o Elemento de Classificação via \textit{drag-and-drop} e visualiza o resultado em tempo real na prévia.
@@ -938,23 +938,27 @@ Depois da personalização, o item mantém seu próprio layout, sem alterar o la
 \textbf{Descrição}   &
 \textbf{Ação:} Gerenciar aparência
 
-\textbf{Objeto:} Configuração visual global da interface do usuário
+\textbf{Objeto:} Paletas de aparência do usuário e configuração visual global da interface
 
-\textbf{Atributos:} cor primária (hex), subcores (até 4 valores hex), paletas predefinidas (lista do sistema), paletas personalizadas (nome de até 50 caracteres), estilo global (claro / escuro / automático conforme sistema operacional).
+\textbf{Atributos:} cor primária (hex), subcores (7 valores hex: fundo da página, cartões, títulos, texto, barra lateral, cabeçalho e modais), paletas predefinidas (lista do sistema), paletas personalizadas (nome de até 50 caracteres), paleta em uso, estilo global (claro / escuro / automático conforme sistema operacional).
 
-\textbf{Exemplos:} No momento do cadastro (RF-01), o sistema cria para o usuário uma aparência padrão: tema claro, com esquema neutro em preto e branco.
-Camila seleciona a paleta predefinida `Outono' com tons terrosos e estilo escuro; toda a interface é atualizada em tempo real.
-Camila cria a paleta personalizada `Meu Rosa' com cor primária \#E91E8C, aplica e salva no perfil.
+\textbf{Exemplos:} No momento do cadastro (RF-01), o sistema disponibiliza ao usuário seis paletas predefinidas (`Claro', `Escuro', `Outono', `Oceano', `Floresta' e `Lavanda'); como o sistema operacional de Camila está no tema escuro, a paleta `Escuro' já nasce em uso.
+Camila seleciona a paleta predefinida `Oceano', de tons azulados e estilo escuro; toda a interface é atualizada imediatamente.
+Camila cria a paleta personalizada `Meu Rosa' a partir da paleta em uso, altera a cor primária para \#E91E8C, confere o resultado na área de prévia e salva.
+Com a paleta clara `Meu Rosa' em uso, Camila muda o estilo global para escuro; as cores da paleta passam a ser exibidas com a claridade invertida, preservando os tons.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
-  \item Todo usuário recém-cadastrado recebe uma configuração de aparência padrão (tema claro, esquema neutro preto e branco), criada automaticamente no cadastro (RF-01).
-  \item O usuário pode alterar a aparência a qualquer momento; as mudanças sobrescrevem a configuração existente.
-  \item O tema selecionado deve ser aplicado globalmente a todas as telas do sistema de forma imediata.
-  \item Paletas predefinidas podem ser editadas diretamente nas configurações.
-  \item As configurações de aparência devem ser salvas no perfil e persistidas entre sessões e dispositivos.
-  \item As alterações devem ser exibidas em área de prévia antes de o usuário confirmar a aplicação.
-  \item As paletas pertencem ao usuário e seus nomes são únicos por usuário; uma delas permanece marcada como ativa, e a criada no cadastro é assinalada como padrão.
+  \item Todo usuário recém-cadastrado recebe as paletas predefinidas do sistema (RF-01). Nasce em uso a paleta `Escuro' se o sistema operacional estiver no tema escuro no momento do cadastro, e a paleta `Claro' nos demais casos; mudanças posteriores no sistema operacional não trocam a paleta em uso.
+  \item O usuário pode criar, editar, duplicar, renomear e excluir paletas, e selecionar a paleta em uso a qualquer momento. As paletas predefinidas pertencem ao usuário e podem ser editadas e excluídas como as personalizadas. O nome de uma paleta não pode se repetir entre as paletas do mesmo usuário, mas pode coincidir com o de paletas de outros usuários.
+  \item A paleta em uso deve ser aplicada globalmente a todas as telas do sistema de forma imediata.
+  \item A paleta em uso não pode ser excluída, o que garante que o usuário tenha sempre ao menos uma paleta.
+  \item Uma paleta é sempre completa: a cor primária e todas as subcores devem estar preenchidas.
+  \item O sistema classifica cada paleta como clara ou escura a partir da cor de fundo. Quando o estilo global em vigor é o oposto ao da paleta em uso, as cores são exibidas com a claridade invertida, preservando os tons.
+  \item As paletas e a paleta em uso devem ser salvas no perfil e persistidas entre sessões e dispositivos.
+  \item As alterações feitas em uma paleta devem ser exibidas em área de prévia antes de o usuário confirmar, sem modificar a interface enquanto são feitas.
+  \item O sistema deve alertar o usuário quando uma combinação de cores não atender ao contraste mínimo (RNF-09), sem impedir a escolha.
+  \item A biblioteca de paletas pode ser exibida em grade ou em lista e filtrada por paletas claras ou escuras.
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Desejável \\ \hline
 \textbf{Operação}    & Entrada \\ \hline
@@ -977,15 +981,15 @@ Camila cria a paleta personalizada `Meu Rosa' com cor primária \#E91E8C, aplica
 
 \textbf{Objeto:} Tipografia e aparência textual global
 
-\textbf{Atributos:} família de fonte (lista predefinida com no mínimo 5 opções), tamanho base em px (mínimo 12 px, máximo 24 px), espaço entre linhas (1.0 a 2.0), espaço entre letras.
+\textbf{Atributos:} família de fonte (lista predefinida com no mínimo 5 opções), tamanho base em px (mínimo 12 px, máximo 24 px), tamanho de título em px (mínimo 16 px, máximo 48 px), espaço entre linhas (1.0 a 2.0), espaço entre letras, peso da fonte (300 a 800), itálico.
 
-\textbf{Exemplos:} Camila altera a fonte para `Georgia', tamanho base para 16 px e espaço de linha para 1.6; a prévia reflete as mudanças antes da confirmação.
+\textbf{Exemplos:} Camila edita a paleta `Meu Rosa' e altera a fonte para `Georgia', o tamanho base para 16 px e o espaço de linha para 1.6; a prévia reflete as mudanças antes da confirmação.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
   \item As fontes disponíveis devem incluir ao menos cinco opções tipográficas distintas (ex.: serif, sans-serif, monospace).
   \item As alterações devem ser exibidas em área de prévia antes de o usuário confirmar a aplicação.
-  \item As configurações de tipografia devem ser aplicadas globalmente e persistidas entre sessões.
+  \item A tipografia faz parte de cada paleta (RF-18): é aplicada globalmente junto com a paleta em uso e persistida entre sessões e dispositivos.
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Desejável \\ \hline
 \textbf{Operação}    & Entrada \\ \hline
@@ -2090,50 +2094,97 @@ Pontos de Extensão & E01 - Personalizar Informações (permite modificar foto, 
 
 Nome do Caso de Uso & Personalizar Interface \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário configure a aparência visual global da plataforma, incluindo cores, subcores, tipografia e tema do sistema (claro, escuro ou automático). As alterações são exibidas em prévia antes de serem confirmadas e persistem entre sessões e dispositivos (RF-18 e RF-19). \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário gerencie a aparência visual global da plataforma por meio de paletas: selecionar a paleta em uso e criar, editar, duplicar, renomear e excluir paletas, cada uma com cor primária, subcores e tipografia. O estilo global (claro, escuro ou automático) é escolhido no menu da conta. As alterações em uma paleta são exibidas em prévia antes de serem confirmadas, e tudo persiste entre sessões e dispositivos (RF-18 e RF-19). \\ \hline
 
 Fluxo Básico & \mbox{}
-\textbf{FB01:} Personalização da interface
+\textbf{FB01:} Seleção da paleta em uso
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-    \item O usuário acessa a área de configurações da plataforma.
-    \item O usuário seleciona a opção ``Personalizar Interface''.
-    \item O sistema exibe o painel de personalização com as configurações atuais e uma área de prévia.
-    \item O usuário seleciona ou modifica as configurações desejadas (cores, tipografia, tema) [E01][E02][E03].
-    \item O sistema atualiza a área de prévia em tempo real conforme as alterações.
-    \item O usuário confirma as alterações clicando em ``Aplicar''.
-    \item O sistema salva as configurações no perfil do usuário.
-    \item O sistema aplica as alterações globalmente a todas as telas do sistema de forma imediata.
-    \item O sistema exibe mensagem de sucesso: ``Configurações visuais aplicadas com sucesso.''
+    \item O usuário seleciona a opção ``Aparência'' no menu da conta.
+    \item O sistema exibe a biblioteca de paletas do usuário, com a paleta em uso destacada.
+    \item O usuário seleciona uma paleta da biblioteca.
+    \item O sistema define a paleta selecionada como paleta em uso, adotando o estilo global associado a ela.
+    \item O sistema aplica a paleta globalmente a todas as telas do sistema de forma imediata.
 \end{enumerate}
 \mbox{} \\ \hline
 
 Fluxos Alternativos & \mbox{}
-\textbf{FA01:} Seleção de paleta predefinida
+\textbf{FA01:} Criação de paleta
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-    \item No passo 4 do FB01, o usuário seleciona uma paleta predefinida disponível no sistema (ex.: ``Outono'', ``Oceano'').
-    \item O sistema preenche automaticamente os campos de cor primária e subcores com os valores da paleta selecionada.
-    \item O sistema atualiza a prévia em tempo real.
-    \item O fluxo continua no passo 6 do FB01.
+    \item No passo 3 do FB01, o usuário seleciona ``Nova paleta''.
+    \item O sistema exibe o editor de paleta com as cores e a tipografia da paleta em uso e uma área de prévia.
+    \item O usuário informa o nome e modifica cores e tipografia [E01][E02]; o sistema atualiza a área de prévia a cada alteração, sem modificar a interface.
+    \item O usuário clica em ``Salvar''.
+    \item O sistema classifica a paleta como clara ou escura pela cor de fundo, salva-a na biblioteca e retorna ao passo 2 do FB01.
 \end{enumerate}
 
-\textbf{FA02:} Cancelamento da operação
+\textbf{FA02:} Edição de paleta
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-    \item Em qualquer momento entre os passos 4 e 6 do FB01, o usuário seleciona ``Cancelar''.
-    \item O sistema descarta as alterações não salvas.
-    \item O sistema mantém as configurações visuais anteriores.
-    \item O sistema retorna ao painel de configurações.
+    \item No passo 3 do FB01, o usuário seleciona ``Editar'' no menu de uma paleta.
+    \item O sistema exibe o editor de paleta com os valores atuais da paleta e uma área de prévia.
+    \item O usuário modifica nome, cores e tipografia [E01][E02] e clica em ``Salvar''.
+    \item O sistema salva a paleta; se ela for a paleta em uso, as alterações são aplicadas globalmente de forma imediata.
+    \item O fluxo retorna ao passo 2 do FB01.
 \end{enumerate}
 
-\textbf{FA03:} Restaurar configurações padrão
+\textbf{FA03:} Cancelamento da edição
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-    \item No passo 4 do FB01, o usuário seleciona ``Restaurar Configuração Padrão''.
-    \item O sistema exibe mensagem de confirmação: ``Deseja restaurar todas as configurações visuais para o padrão?''
-    \item Se o usuário confirmar, o sistema restaura os valores padrão e atualiza a prévia.
-    \item O fluxo continua no passo 6 do FB01.
+    \item Em qualquer momento no editor de paleta, antes de salvar, o usuário seleciona ``Cancelar''.
+    \item Havendo alterações não salvas, o sistema exibe mensagem de confirmação: ``Sair sem salvar?''
+    \item Se o usuário confirmar, o sistema descarta as alterações e retorna ao passo 2 do FB01; caso contrário, permanece no editor.
+\end{enumerate}
+
+\textbf{FA04:} Duplicação de paleta
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 3 do FB01, o usuário seleciona ``Duplicar'' no menu de uma paleta.
+    \item O sistema cria uma cópia da paleta, com ``(cópia)'' no nome, e a exibe na biblioteca.
+\end{enumerate}
+
+\textbf{FA05:} Renomeação de paleta
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 3 do FB01, o usuário seleciona ``Renomear'' no menu de uma paleta, informa o novo nome e confirma.
+    \item O sistema salva o novo nome e atualiza a biblioteca.
+\end{enumerate}
+
+\textbf{FA06:} Exclusão de paleta
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 3 do FB01, o usuário seleciona ``Excluir'' no menu de uma paleta.
+    \item O sistema exibe mensagem de confirmação; se o usuário confirmar, o sistema remove a paleta da biblioteca.
+\end{enumerate}
+
+\textbf{FA07:} Alteração do estilo global
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item Em qualquer momento, o usuário altera o estilo global (claro, escuro ou automático) no menu da conta.
+    \item O sistema aplica o estilo e o salva na paleta em uso; se o estilo em vigor for o oposto ao da paleta, as cores são exibidas com a claridade invertida, preservando os tons.
+\end{enumerate}
+
+\textbf{FA08:} Exclusão da paleta em uso
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No FA06, a paleta selecionada para exclusão é a paleta em uso.
+    \item O sistema recusa a exclusão e informa que outra paleta deve ser selecionada antes.
+    \item O fluxo retorna ao passo 2 do FB01.
+\end{enumerate}
+
+\textbf{FA09:} Nome já usado em outra paleta do usuário
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No FA01, no FA02 ou no FA05, o nome informado já pertence a outra paleta do mesmo usuário.
+    \item O sistema informa que o usuário já possui uma paleta com esse nome e mantém o editor aberto para correção.
+\end{enumerate}
+
+\textbf{FA10:} Contraste insuficiente
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No FA01 ou no FA02, uma combinação de cores não atende ao contraste mínimo (RNF-09).
+    \item O sistema exibe um alerta junto à cor, sem impedir o salvamento.
 \end{enumerate}
 \mbox{} \\ \hline
 
@@ -2141,12 +2192,11 @@ Requisitos Especiais & RNF-01 - O painel de personalização deve ser intuitivo 
 
 Condições Prévias & O usuário deve estar autenticado no sistema. \\ \hline
 
-Pós-Condições & As configurações visuais são salvas no perfil do usuário. As alterações são aplicadas globalmente e imediatamente a todas as telas. As configurações persistem em futuras sessões e em outros dispositivos. \\ \hline
+Pós-Condições & As paletas e a paleta em uso são salvas no perfil do usuário. A paleta em uso é aplicada globalmente e imediatamente a todas as telas, e persiste em futuras sessões e em outros dispositivos. \\ \hline
 
 Pontos de Extensão &
-E01 - Modificar Cores (estende o passo 4 do FB01, conforme RF-18).
-E02 - Modificar Fontes (estende o passo 4 do FB01, conforme RF-19).
-E03 - Visualizar Prévia (estende o passo 4 do FB01 — exibe prévia em tempo real das alterações antes de aplicar). \\
+E01 - Modificar Cores (estende o FA01 e o FA02, conforme RF-18).
+E02 - Modificar Fontes (estende o FA01 e o FA02, conforme RF-19). \\
 \end{longtable}
 \renewcommand{\arraystretch}{1}
 \FloatBarrier
@@ -2771,7 +2821,7 @@ Fluxo Básico & \mbox{}
 	\item O usuário acrescenta Elementos à área de edição pelo painel, escolhendo entre os seis tipos disponíveis: texto, imagem, forma, ícone, classificação e data [E01].
 	\item O usuário posiciona e redimensiona cada Elemento arrastando-o pela área de edição e ajustando sua alça, e define a camada em que ele se sobrepõe aos demais.
 	\item O usuário escreve o conteúdo de um Elemento diretamente sobre ele, na própria área de edição.
-	\item O usuário ajusta as propriedades visuais do Elemento selecionado: no texto, fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento, nível de título, entrelinha, espaçamento entre letras e apresentação em lista; na imagem, formato e ajuste; na classificação, nota máxima e ícone; e, em qualquer Elemento, cor, cor de fundo, arredondamento, opacidade, rotação e borda.
+	\item O usuário ajusta as propriedades visuais do Elemento selecionado: no texto, fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento horizontal e vertical, nível de título, entrelinha, espaçamento entre letras e apresentação em lista; na forma e na imagem, forma do elemento, arredondamento e borda (cor, espessura e traço); na forma, ainda, curva e ponta da linha; na imagem, ajuste; na classificação, nota máxima e ícone; na data, formato e estética; e, em qualquer Elemento, cor, cor de fundo, opacidade e rotação.
 	\item O sistema grava cada alteração concluída automaticamente, sem exigir confirmação, e avisa o usuário caso ele tente sair da página com alteração ainda por gravar.
 	\item O usuário retorna à lista de layouts, na qual o novo layout já aparece disponível para associação a coleções (RF-15).
 \end{enumerate}

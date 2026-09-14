@@ -103,7 +103,7 @@ Usuário tenta cadastrar com o email "camilamattos.mila@gmail.com", que já exis
 5. A senha deve ser armazenada de forma criptografada (RNF-03).
 6. O código de usuário é gerado automaticamente pelo sistema no momento do cadastro, deve ser único em toda a plataforma e não pode ser alterado posteriormente.
 7. O código de usuário é o identificador público utilizado para buscas e envio de solicitações de amizade.
-8. Ao concluir o cadastro, o sistema disponibiliza na biblioteca de aparência do usuário as paletas predefinidas que oferece — três claras e três escuras —, deixando em uso a paleta clara padrão, conforme RF-18.
+8. Ao concluir o cadastro, o sistema disponibiliza na biblioteca de aparência do usuário as paletas predefinidas que oferece — três claras e três escuras —, deixando em uso a paleta "Claro" ou a paleta "Escuro", conforme o tema do sistema operacional no momento do cadastro (RF-18).
 9. Ao concluir o cadastro, o sistema também disponibiliza na biblioteca de layouts do usuário os layouts padrão que oferece, prontos para serem associados a coleções, editados ou duplicados (RF-14 e RF-15).
 
 ### RF-02 — Autenticar Usuário (Login e Logout)
@@ -502,14 +502,14 @@ Depois da personalização, o item mantém seu próprio layout, sem alterar o la
 
 **Atributos:** cor primária (hex), subcores (7 valores hex: fundo da página, cartões, títulos, texto, barra lateral, cabeçalho e modais), paletas predefinidas (lista do sistema), paletas personalizadas (nome de até 50 caracteres), paleta em uso, estilo global (claro / escuro / automático conforme sistema operacional).
 
-**Exemplos:** No momento do cadastro (RF-01), o sistema disponibiliza ao usuário seis paletas predefinidas — "Claro", "Escuro", "Outono", "Oceano", "Floresta" e "Lavanda" —, com a paleta "Claro" em uso.
+**Exemplos:** No momento do cadastro (RF-01), o sistema disponibiliza ao usuário seis paletas predefinidas — "Claro", "Escuro", "Outono", "Oceano", "Floresta" e "Lavanda" —; como o sistema operacional de Camila está no tema escuro, a paleta "Escuro" já nasce em uso.
 Camila seleciona a paleta predefinida "Oceano", de tons azulados e estilo escuro; toda a interface é atualizada imediatamente.
 Camila cria a paleta personalizada "Meu Rosa" a partir da paleta em uso, altera a cor primária para #E91E8C, confere o resultado na área de prévia e salva.
 Com a paleta clara "Meu Rosa" em uso, Camila muda o estilo global para escuro; as cores da paleta passam a ser exibidas com a claridade invertida, preservando os tons.
 
 **Regras / Restrições:**
 
-1. Todo usuário recém-cadastrado recebe as paletas predefinidas do sistema, com a paleta clara padrão em uso (RF-01).
+1. Todo usuário recém-cadastrado recebe as paletas predefinidas do sistema (RF-01). Nasce em uso a paleta "Escuro" se o sistema operacional estiver no tema escuro no momento do cadastro, e a paleta "Claro" nos demais casos; mudanças posteriores no sistema operacional não trocam a paleta em uso.
 2. O usuário pode criar, editar, duplicar, renomear e excluir paletas, e selecionar a paleta em uso a qualquer momento. As paletas predefinidas pertencem ao usuário e podem ser editadas e excluídas como as personalizadas.
 3. A paleta em uso deve ser aplicada globalmente a todas as telas do sistema de forma imediata.
 4. A paleta em uso não pode ser excluída, o que garante que o usuário tenha sempre ao menos uma paleta.
