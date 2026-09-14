@@ -1,78 +1,278 @@
 \chapter{Teste}
 \label{cap:08}
 
-Descrever nesse capítulo quais e como foram os testes realizados. Os testes podem ser apresentados na forma de casos de teste. Um caso de teste consiste em conjunto de detalhes necessários para se realizar um teste de software.
+Este capítulo apresenta os testes realizados para verificar as regras de negócio do sistema, conforme a estratégia descrita no Capítulo~\ref{cap:03}. A verificação automatizada concentra-se no \textit{backend}, onde residem as regras de acesso, privacidade, sessão e consistência dos dados, e foi conduzida por meio de testes de unidade. São descritos o ambiente em que os testes são executados, uma visão geral do conjunto de testes por módulo, a especificação dos principais casos de teste e os resultados obtidos.
 
-A seguir encontra-se um modelo para especificação de um caso de teste (CEDRO, 2021):
+\section{Ambiente e Execução dos Testes}
 
-\begin{center}
-\begin{tabular}{ | p{15cm} | } 
-    \hline
-    \textbf{Título} \\
-    O título do caso de teste deverá ser sucinto, simples e autoexplicativo com informações para que o Analista de Teste saiba a validação a qual o teste se propõe. Exemplos:
-    \begin{itemize}
-        \item Validar upload de arquivo;
-        \item Validar cadastro de usuário com perfil administrador;
-        \item Validar envio de ordem de compra.
-    \end{itemize}\\[-0.5em] % <--- AJUSTADO AQUI
-    \hline
-    
-    \textbf{Objetivo} \\
-    O objetivo do caso de teste é descrever o que será executado, fornecendo uma visão geral do teste que será realizado. Exemplos:
-    \begin{itemize}
-        \item Verificar se realiza o upload do arquivo com as extensões permitidas;
-        \item Verificar se o cadastro é efetivado após preencher as informações corretamente;
-        \item Verificar se a ordem de compra é enviada informando o ativo, quantidade e preço.
-    \end{itemize}\\[-0.5em] % <--- AJUSTADO AQUI
-    \hline
-    
-    \textbf{Pré-Condição} \\
-    São condições necessárias para que o caso de teste consiga ser executado. Evitar que não tenha alguma informação necessária (Exemplo: solicitar a edição de um usuário em específico e na pré-condição não informar que o usuário deve estar cadastrado). Exemplos:
-    \begin{itemize}
-        \item Usuário cadastrado e autenticado no sistema;
-        \item Ordem de compra enviada e executada;
-        \item Usuário com perfil Administrador.
-    \end{itemize}\\[-0.5em] % <--- AJUSTADO AQUI
-    \hline 
+Os testes foram escritos com o \textit{framework} Jest, na versão 30, com o \textit{ts-jest} responsável por interpretar o código TypeScript. Cada arquivo de teste fica ao lado do código que verifica e é identificado pelo sufixo \texttt{.spec.ts}, e o conjunto completo é executado pelo comando \texttt{pnpm test}, na raiz do projeto do \textit{backend}.
+
+Os testes são de unidade: cada um exercita uma parte do sistema de forma isolada. Para isso, as dependências externas, como o serviço de acesso ao banco de dados e o serviço de armazenamento de arquivos, são substituídas por objetos simulados, cujas respostas são definidas pelo próprio teste. Essa abordagem permite reproduzir situações difíceis de obter manualmente, como duas requisições concorrentes sobre o mesmo registro, e dispensa um banco de dados em execução. Em contrapartida, o teste verifica as chamadas que a regra de negócio faz ao banco, e não o resultado dessas chamadas em um banco real.
+
+Os testes se dividem em três alvos. Os testes de serviços verificam as regras de negócio propriamente ditas. Os testes de controladores verificam que cada operação é executada em nome do usuário da sessão autenticada, e não de um identificador enviado na requisição. Os testes de DTOs verificam a validação dos dados de entrada, como formatos, limites e campos obrigatórios.
+
+\section{Visão Geral dos Testes}
+
+O Quadro~\ref{quad:resumoTestes} apresenta a distribuição dos testes pelos módulos do \textit{backend}, com os requisitos funcionais a que cada módulo se relaciona. Os módulos \texttt{storage} e \texttt{common} não correspondem a um requisito específico, pois reúnem funcionalidades transversais: o armazenamento de arquivos e a validação dos Elementos e das imagens enviadas.
+
+\begin{quadro}[h!]
+\caption{Distribuição dos testes automatizados por módulo}
+\label{quad:resumoTestes}
+\begin{tabular}{|p{3.9cm}|p{5.6cm}|p{1.9cm}|p{1.6cm}|}
+\hline
+\textbf{Módulo} & \textbf{Requisitos relacionados} & \textbf{Arquivos} & \textbf{Testes} \\ \hline
+\texttt{social} & RF-20 a RF-23 & 17 & 92 \\ \hline
+\texttt{item} & RF-09, RF-10, RF-12, RF-17 e RF-22 & 4 & 30 \\ \hline
+\texttt{common} & Transversal (validação de Elementos e de imagens) & 2 & 28 \\ \hline
+\texttt{appearance-preset} & RF-18 e RF-19 & 3 & 23 \\ \hline
+\texttt{notification} & RF-24 & 3 & 23 \\ \hline
+\texttt{layout} & RF-14 e RF-16 & 3 & 19 \\ \hline
+\texttt{user} & RF-01, RF-03 e RF-05 & 3 & 19 \\ \hline
+\texttt{category} & RF-06 e RF-13 & 3 & 14 \\ \hline
+\texttt{auth} & RF-02 e RF-04 & 4 & 12 \\ \hline
+\texttt{storage} & Transversal (armazenamento de arquivos) & 2 & 10 \\ \hline
+\texttt{collection} & RF-07, RF-08 e RF-15 & 1 & 7 \\ \hline
+\textbf{Total} &  & \textbf{45} & \textbf{277} \\ \hline
 \end{tabular}
-\end{center}
+\fonte{Elaborada pelo autor}
+\end{quadro}
 
-\begin{center}
-\begin{tabular}{ | p{15cm} | } 
-    \hline
-    \textbf{Passos} \\
-    Os passos são necessários para descrever todas as ações que o analista deve seguir durante a execução para chegar ao resultado esperado. Devendo iniciar com um verbo infinitivo (acessar, preencher, clicar, verificar) ou imperativo (acesse, preencha, clique, verifique). Exemplos:
-    \begin{itemize}
-        \item Acessar a tela Negociação > Boleta;
-        \item Clicar no botão “Entrar”;
-        \item Verificar se a edição foi salva no banco de dados;
-        \item Preencher os campos do cadastro.
-    \end{itemize}\\[-0.5em] % <--- AJUSTADO AQUI
-    \hline 
-    \textbf{Resultados Esperados} \\
-    Descrever o comportamento esperado do sistema após executar os passos detalhados. Informar os verbos no presente (valida, apresenta, recupera, retorna). Evitar frases como “O sistema \textbf{deve} retornar a mensagem…”, prefira usar “O sistema retorna a mensagem…” para não deixar nenhuma dúvida do resultado esperado. Exemplos:
-    \begin{itemize}
-        \item Sistema apresenta a tela de edição com os campos preenchidos.;
-        \item A ordem é enviada e executada com o preço informado;
-        \item O cadastro é salvo no banco de dados.
-    \end{itemize}\\[-0.5em] % <--- AJUSTADO AQUI
-    \hline 
+O módulo social concentra o maior número de testes porque reúne as regras com mais combinações possíveis: o que cada usuário pode ver e acompanhar depende, ao mesmo tempo, do nível de privacidade da coleção e da existência de uma amizade aceita com o dono. Parte desses testes é parametrizada, isto é, um mesmo teste é executado para cada combinação de nível de acesso e privacidade, o que garante que nenhuma delas fique sem verificação.
+
+\section{Casos de Teste}
+
+Os casos de teste a seguir foram especificados segundo a estrutura proposta por \citeonline{marques2018}, composta por título, objetivo, pré-condição, passos e resultados esperados. Como os casos são executados automaticamente pelo Jest, os passos descrevem as ações realizadas pelo teste automatizado: preparar o estado simulado, acionar a operação e verificar o retorno. Os resultados esperados descrevem o comportamento do sistema com verbos no presente, conforme recomenda o autor. Ao final de cada caso, são indicados os testes automatizados que o implementam, identificados pelo nome registrado no código. Foram selecionadas as regras de maior impacto sobre a segurança e a consistência dos dados.
+
+% ═══════════════════════════════════════════════════════════════
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Caso de teste CT01: validar a revogação da sessão no \textit{logout}}
+\label{quad:ct01}
+\begin{tabular}{|p{\dimexpr\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
+\hline
+\textbf{Objetivo:} Verificar se o \textit{logout} revoga a sessão atual e se um \textit{token} associado a uma sessão revogada deixa de ser aceito (RF-02). \\ \hline
+\textbf{Pré-condição:} Usuário cadastrado, com uma sessão ativa registrada no banco e um \textit{token} de acesso que referencia essa sessão. \\ \hline
+\textbf{Passos:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item Acionar o \textit{logout} informando o usuário e a sessão atual.
+  \item Verificar a atualização enviada à tabela de sessões.
+  \item Validar um \textit{token} cuja sessão está ativa.
+  \item Validar um \textit{token} cuja sessão não existe ou foi revogada.
+\end{enumerate} \\ \hline
+\textbf{Resultados esperados:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item O sistema registra a data de revogação somente na sessão atual do usuário, e apenas se ela ainda não estiver revogada.
+  \item O sistema aceita o \textit{token} da sessão ativa e devolve os dados do usuário autenticado.
+  \item O sistema recusa o \textit{token} da sessão inexistente ou revogada, respondendo como acesso não autorizado.
+\end{enumerate} \\ \hline
+\textbf{Testes automatizados:} \texttt{auth.service.spec.ts}: ``revokes only the current session on logout''; \texttt{jwt.strategy.spec.ts}: ``accepts an active session'' e ``rejects a missing or revoked session''. \\ \hline
 \end{tabular}
-\end{center}
+\fonte{Elaborada pelo autor}
+\end{quadro}
 
-Os casos de teste podem ser especificados usando uma ferramenta de software. Caso este seja o caso, esta seção deve apresentar qual a ferramenta e foi utilizada no desenvolvimento deste trabalho. A Figura~\ref{fig:exemploDeCasoDeTeste} apresenta um exemplo de caso de teste especificado usando a ferramenta Testlink.
-
-
+% ═══════════════════════════════════════════════════════════════
 \FloatBarrier
-\begin{figure}[!htbp]
-    \centering
-    \caption{Exemplo de Caso de Teste Elaborado na Ferramenta Testlink}
-    %scale redimensiona a figura.
-    %1.5 = 150% do tamanho original
-    %1 = 100% do tamanho original
-    %0.20 = 20% do tamanho original
-    \includegraphics[scale=1.0]{imagens/ExcemplodeCasodeTeste.png}
-    \\\textbf{Fonte:} Elaborada pelo autor
-    \label{fig:exemploDeCasoDeTeste}
-\end{figure}
+\begin{quadro}[h!]
+\caption{Caso de teste CT02: validar a redefinição de senha por \textit{token} temporário}
+\label{quad:ct02}
+\begin{tabular}{|p{\dimexpr\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
+\hline
+\textbf{Objetivo:} Verificar se a recuperação de senha gera um \textit{token} temporário armazenado de forma protegida, não revela se um e-mail está cadastrado e invalida o \textit{token} e as sessões após o uso (RF-04). \\ \hline
+\textbf{Pré-condição:} Usuário cadastrado com e-mail conhecido. \\ \hline
+\textbf{Passos:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item Solicitar a recuperação de senha para o e-mail cadastrado.
+  \item Solicitar a recuperação de senha para um e-mail não cadastrado.
+  \item Redefinir a senha com um \textit{token} válido e uma nova senha confirmada.
+  \item Redefinir a senha com um \textit{token} inválido ou expirado.
+\end{enumerate} \\ \hline
+\textbf{Resultados esperados:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item O sistema envia por e-mail um \textit{token} de 64 caracteres, grava no banco apenas o seu \textit{hash} SHA-256, com data de expiração, e responde com uma mensagem neutra, iniciada por ``Se o e-mail estiver cadastrado''.
+  \item O sistema responde com a mesma mensagem neutra, sem criar \textit{token} e sem enviar e-mail.
+  \item O sistema grava a nova senha criptografada com bcrypt, marca o \textit{token} como utilizado somente se ele ainda não tiver sido usado nem expirado, e revoga todas as sessões ativas do usuário.
+  \item O sistema recusa a requisição como inválida e não altera a senha.
+\end{enumerate} \\ \hline
+\textbf{Testes automatizados:} \texttt{auth.service.spec.ts}: ``creates a hashed, temporary password reset token'', ``uses the same response without creating a token for an unknown email'', ``resets the password, consumes the token and revokes all sessions'' e ``rejects an invalid or expired reset token''. \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+
+% ═══════════════════════════════════════════════════════════════
 \FloatBarrier
+\begin{quadro}[h!]
+\caption{Caso de teste CT03: validar o encerramento de acompanhamentos ao restringir a privacidade}
+\label{quad:ct03}
+\begin{tabular}{|p{\dimexpr\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
+\hline
+\textbf{Objetivo:} Verificar se, ao tornar uma coleção mais restrita, o sistema encerra os acompanhamentos dos usuários que perderam acesso a ela, preservando os demais (RF-08 e RF-21). \\ \hline
+\textbf{Pré-condição:} Coleção pertencente ao usuário autenticado, com acompanhamentos ativos de outros usuários. \\ \hline
+\textbf{Passos:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item Alterar a privacidade da coleção para privada.
+  \item Alterar a privacidade da coleção para somente amigos.
+  \item Alterar a privacidade de uma coleção somente para amigos para pública.
+  \item Verificar, em cada caso, as atualizações enviadas às tabelas de coleções e de acompanhamentos.
+\end{enumerate} \\ \hline
+\textbf{Resultados esperados:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item Ao tornar a coleção privada, o sistema altera a privacidade e encerra todos os acompanhamentos ativos na mesma transação, registrando a data de encerramento.
+  \item Ao tornar a coleção somente para amigos, o sistema encerra apenas os acompanhamentos de usuários sem amizade aceita com o dono, mantendo os dos amigos.
+  \item Ao tornar a coleção menos restrita, o sistema altera a privacidade sem modificar nenhum acompanhamento.
+\end{enumerate} \\ \hline
+\textbf{Testes automatizados:} \texttt{collection.service.spec.ts}: ``ends every active follow when a collection becomes private'', ``keeps friend follows and ends non-friend follows when becoming friends-only'' e ``does not touch follows when visibility becomes less restrictive''. \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+
+% ═══════════════════════════════════════════════════════════════
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Caso de teste CT04: validar o acesso a coleções conforme privacidade e amizade}
+\label{quad:ct04}
+\begin{tabular}{|p{\dimexpr\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
+\hline
+\textbf{Objetivo:} Verificar se cada usuário visualiza e acompanha somente as coleções permitidas pelo seu vínculo com o dono e pelo nível de privacidade de cada coleção (RF-08, RF-21 e RF-23). \\ \hline
+\textbf{Pré-condição:} Dois usuários cadastrados: o dono das coleções e um visitante autenticado, com ou sem amizade aceita entre eles. \\ \hline
+\textbf{Passos:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item Determinar o nível de acesso quando o visitante é o próprio dono.
+  \item Determinar o nível de acesso quando há amizade aceita entre visitante e dono.
+  \item Determinar o nível de acesso quando não há amizade, ou quando a solicitação está pendente, recusada ou cancelada.
+  \item Avaliar, para cada nível de acesso, a visualização de coleções públicas, somente para amigos e privadas.
+  \item Solicitar o acompanhamento de uma coleção pública, de uma coleção somente para amigos e de uma coleção do próprio usuário.
+  \item Consultar uma coleção inexistente e uma coleção que o visitante não pode ver.
+\end{enumerate} \\ \hline
+\textbf{Resultados esperados:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item O sistema concede ao dono acesso às três privacidades, sem consultar amizades.
+  \item O sistema concede ao amigo acesso às coleções públicas e somente para amigos.
+  \item O sistema concede aos demais usuários acesso apenas às coleções públicas, inclusive quando a solicitação de amizade não foi aceita.
+  \item O sistema permite que não amigos acompanhem coleções públicas e que amigos acompanhem coleções somente para amigos, e recusa o acompanhamento de uma coleção do próprio usuário.
+  \item O sistema responde que a coleção não foi encontrada tanto quando ela não existe quanto quando o visitante não tem permissão para vê-la, sem revelar a existência de coleções invisíveis.
+\end{enumerate} \\ \hline
+\textbf{Testes automatizados:} \texttt{social-access-policy.service.spec.ts}: todos os testes do arquivo, incluindo as combinações parametrizadas de nível de acesso e privacidade; \texttt{social-content.service.spec.ts}: ``returns not found for a missing or invisible collection''. \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+
+% ═══════════════════════════════════════════════════════════════
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Caso de teste CT05: validar a criação da ficha própria de um item}
+\label{quad:ct05}
+\begin{tabular}{|p{\dimexpr\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
+\hline
+\textbf{Objetivo:} Verificar se a personalização de um item cria uma cópia própria do \textit{layout}, com ou sem \textit{layout} na coleção, e se as alterações afetam somente essa cópia (RF-17). \\ \hline
+\textbf{Pré-condição:} Item pertencente ao usuário autenticado, em uma coleção com \textit{layout} associado ou sem \textit{layout}. \\ \hline
+\textbf{Passos:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item Iniciar a personalização de um item cuja coleção possui \textit{layout} com Elementos.
+  \item Iniciar a personalização de um item cuja coleção não possui \textit{layout}.
+  \item Adicionar um Elemento a um item que já possui ficha própria.
+  \item Tentar alterar um Elemento de um item que ainda não possui ficha própria.
+\end{enumerate} \\ \hline
+\textbf{Resultados esperados:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item O sistema cria um \textit{layout} de uso exclusivo do item, com referência ao \textit{layout} da coleção, copia cada Elemento com seu conteúdo, posição, tamanho, camada e estilo, registrando a referência ao Elemento original, e associa o novo \textit{layout} ao item.
+  \item O sistema cria o \textit{layout} do item vazio, sem referência de origem e sem copiar Elementos, e o associa ao item.
+  \item O sistema grava o novo Elemento somente no \textit{layout} próprio do item.
+  \item O sistema recusa a alteração por conflito de estado e não modifica nenhum Elemento.
+\end{enumerate} \\ \hline
+\textbf{Testes automatizados:} \texttt{item-layout-override.service.spec.ts}: ``creates an editable item layout copy from the collection layout'', ``creates an empty override when the collection has no layout'', ``adds a visual element only to the item override layout'' e ``rejects editing item visual elements before an override exists''. \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+
+% ═══════════════════════════════════════════════════════════════
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Caso de teste CT06: validar a paleta em uso}
+\label{quad:ct06}
+\begin{tabular}{|p{\dimexpr\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
+\hline
+\textbf{Objetivo:} Verificar se o cadastro deixa em uso a paleta correspondente ao tema do sistema operacional, se a troca de paleta mantém uma única paleta em uso e se a paleta em uso não pode ser excluída (RF-01 e RF-18). \\ \hline
+\textbf{Pré-condição:} Para o cadastro, dados válidos de um novo usuário; para as demais operações, usuário autenticado com paletas na biblioteca. \\ \hline
+\textbf{Passos:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item Cadastrar um usuário informando que o sistema operacional está no tema escuro.
+  \item Selecionar como paleta em uso uma paleta do usuário que não está ativa.
+  \item Tentar excluir a paleta em uso.
+  \item Excluir uma paleta predefinida que não está em uso.
+\end{enumerate} \\ \hline
+\textbf{Resultados esperados:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item O sistema cria as paletas predefinidas com exatamente uma em uso, a paleta ``Escuro'', de tema escuro.
+  \item O sistema desativa a paleta anterior e ativa a selecionada em uma única transação.
+  \item O sistema recusa a exclusão por conflito e não remove a paleta.
+  \item O sistema remove a paleta predefinida, que pertence ao usuário como as demais.
+\end{enumerate} \\ \hline
+\textbf{Testes automatizados:} \texttt{user.service.spec.ts}: ``starts the account on the dark palette when the system is dark''; \texttt{appearance-preset.service.spec.ts}: ``activates an owned preset and deactivates the previous one atomically'', ``rejects deleting the active preset'' e ``deletes a system palette that is not in use''. \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+
+% ═══════════════════════════════════════════════════════════════
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Caso de teste CT07: validar a resposta a uma solicitação de amizade}
+\label{quad:ct07}
+\begin{tabular}{|p{\dimexpr\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
+\hline
+\textbf{Objetivo:} Verificar se a resposta a uma solicitação de amizade altera o estado apenas enquanto a solicitação está pendente, notifica o remetente na mesma transação e não produz efeitos duplicados em respostas concorrentes (RF-20 e RF-24). \\ \hline
+\textbf{Pré-condição:} Solicitação de amizade enviada por um usuário ao usuário autenticado. \\ \hline
+\textbf{Passos:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item Aceitar uma solicitação pendente.
+  \item Recusar uma solicitação que já foi cancelada pelo remetente.
+  \item Aceitar uma solicitação pendente que outra requisição simultânea já respondeu.
+\end{enumerate} \\ \hline
+\textbf{Resultados esperados:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item O sistema altera a solicitação para aceita somente se ela ainda estiver pendente e destinada ao usuário autenticado, registra a data da resposta e cria, na mesma transação, a notificação ``João aceitou sua solicitação de amizade.'' para o remetente.
+  \item O sistema recusa a operação por conflito, sem alterar a solicitação e sem criar notificação.
+  \item O sistema identifica que nenhum registro foi alterado, recusa a operação por conflito e não cria notificação.
+\end{enumerate} \\ \hline
+\textbf{Testes automatizados:} \texttt{friendship.service.spec.ts}: ``accepts a pending request and notifies its sender transactionally'', ``rejects a request that is no longer pending'' e ``rejects a concurrent second response without creating a notification''. \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+
+% ═══════════════════════════════════════════════════════════════
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Caso de teste CT08: validar o formato real da imagem enviada}
+\label{quad:ct08}
+\begin{tabular}{|p{\dimexpr\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
+\hline
+\textbf{Objetivo:} Verificar se o sistema identifica o formato de uma imagem pelo seu conteúdo, e não pelo nome ou pelo tipo declarado, e se recusa arquivos que apenas aparentam ser imagens (RF-09). \\ \hline
+\textbf{Pré-condição:} Item pertencente ao usuário autenticado, sem imagem de capa. \\ \hline
+\textbf{Passos:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item Verificar o formato de arquivos que começam com as assinaturas de JPEG e de PNG.
+  \item Verificar o formato de um arquivo de texto renomeado como imagem.
+  \item Enviar como imagem de capa do item um arquivo cujo conteúdo é texto.
+\end{enumerate} \\ \hline
+\textbf{Resultados esperados:}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
+  \item O sistema reconhece os formatos JPEG e PNG pelas assinaturas no início do arquivo.
+  \item O sistema não reconhece o arquivo de texto como imagem.
+  \item O sistema recusa o envio como requisição inválida e não grava nenhum arquivo no armazenamento.
+\end{enumerate} \\ \hline
+\textbf{Testes automatizados:} \texttt{imagem-real.validator.spec.ts}: ``recognizes JPEG and PNG by their signature'' e ``rejects content that only claims to be an image''; \texttt{item.service.spec.ts}: ``rejects a file whose bytes are not JPEG or PNG''. \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
+\section{Resultados e Limitações}
+
+Na execução realizada em 13 de setembro de 2026, os 45 conjuntos de testes, com 277 testes no total, foram aprovados, em aproximadamente 14 segundos. Todos os casos de teste especificados na seção anterior obtiveram, portanto, os resultados esperados.
+
+A estratégia adotada possui limitações que devem ser consideradas na interpretação desses resultados:
+
+\begin{itemize}
+    \item \textbf{Ausência de testes de integração:} como o acesso ao banco é simulado, os testes verificam as operações que a regra de negócio solicita ao banco, mas não o comportamento dessas operações em um banco PostgreSQL real, como a aplicação das restrições de unicidade.
+    \item \textbf{Ausência de testes de ponta a ponta:} não há testes que percorram a API a partir de requisições HTTP, verificando em conjunto a autenticação, a validação e as respostas de cada rota.
+    \item \textbf{Escopo da verificação automatizada:} os testes automatizados concentram-se nas regras de negócio do \textit{backend} e não abrangem os aspectos visuais e de interação da aplicação cliente.
+\end{itemize}

@@ -500,7 +500,7 @@ Depois da personalização, o item mantém seu próprio layout, sem alterar o la
 - **Objeto:** Paletas de aparência do usuário e configuração visual global da interface
 - **Prioridade:** Desejável · **Operação:** Entrada · **Ator:** Usuário
 
-**Atributos:** cor primária (hex), subcores (7 valores hex: fundo da página, cartões, títulos, texto, barra lateral, cabeçalho e modais), paletas predefinidas (lista do sistema), paletas personalizadas (nome de até 50 caracteres), paleta em uso, estilo global (claro / escuro / automático conforme sistema operacional).
+**Atributos:** cor primária (hex), subcores (11 valores hex: fundo da página, cartões, títulos, barra lateral, cabeçalho, modais e um texto para cada superfície — texto no fundo, nos cartões, na barra lateral, no cabeçalho e nos modais), paletas predefinidas (lista do sistema), paletas personalizadas (nome de até 50 caracteres), paleta em uso, estilo global (claro / escuro / automático conforme sistema operacional).
 
 **Exemplos:** No momento do cadastro (RF-01), o sistema disponibiliza ao usuário seis paletas predefinidas — "Claro", "Escuro", "Outono", "Oceano", "Floresta" e "Lavanda" —; como o sistema operacional de Camila está no tema escuro, a paleta "Escuro" já nasce em uso.
 Camila seleciona a paleta predefinida "Oceano", de tons azulados e estilo escuro; toda a interface é atualizada imediatamente.
@@ -513,10 +513,10 @@ Com a paleta clara "Meu Rosa" em uso, Camila muda o estilo global para escuro; a
 2. O usuário pode criar, editar, duplicar, renomear e excluir paletas, e selecionar a paleta em uso a qualquer momento. As paletas predefinidas pertencem ao usuário e podem ser editadas e excluídas como as personalizadas.
 3. A paleta em uso deve ser aplicada globalmente a todas as telas do sistema de forma imediata.
 4. A paleta em uso não pode ser excluída, o que garante que o usuário tenha sempre ao menos uma paleta.
-5. Uma paleta é sempre completa: a cor primária e todas as subcores devem estar preenchidas.
+5. Uma paleta é sempre completa: a cor primária e todas as subcores devem estar preenchidas. Cada superfície (fundo da página, cartões, barra lateral, cabeçalho e modais) tem sua própria cor de texto, escolhida pelo usuário; o sistema exibe exatamente a cor escolhida, sem substituí-la.
 6. O sistema classifica cada paleta como clara ou escura a partir da cor de fundo. Quando o estilo global em vigor é o oposto ao da paleta em uso, as cores são exibidas com a claridade invertida, preservando os tons.
 7. As paletas e a paleta em uso devem ser salvas no perfil e persistidas entre sessões e dispositivos.
-8. As alterações feitas em uma paleta devem ser exibidas em área de prévia antes de o usuário confirmar, sem modificar a interface enquanto são feitas.
+8. As alterações feitas em uma paleta devem ser exibidas em área de prévia antes de o usuário confirmar, sem modificar a interface enquanto são feitas. A prévia pode ser alternada entre os estilos claro e escuro, para mostrar como a paleta fica quando o estilo global em vigor é o oposto ao dela.
 9. O sistema deve alertar o usuário quando uma combinação de cores não atender ao contraste mínimo (RNF-09), sem impedir a escolha.
 10. A biblioteca de paletas pode ser exibida em grade ou em lista e filtrada por paletas claras ou escuras.
 
@@ -1151,7 +1151,7 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 
 - No passo 3 do FB01, o usuário seleciona "Nova paleta".
 - O sistema exibe o editor de paleta com as cores e a tipografia da paleta em uso e uma área de prévia.
-- O usuário informa o nome e modifica cores e tipografia; o sistema atualiza a área de prévia a cada alteração, sem modificar a interface [E03].
+- O usuário informa o nome e modifica cores e tipografia; o sistema atualiza a área de prévia a cada alteração, sem modificar a interface [E03]. O usuário pode alternar a prévia entre claro e escuro para conferir a paleta nos dois estilos.
 - O usuário clica em "Salvar" [E02].
 - O sistema classifica a paleta como clara ou escura pela cor de fundo, salva-a na biblioteca e retorna ao passo 2 do FB01.
 - No passo 3 do FB01, o usuário seleciona "Editar" no menu de uma paleta.
