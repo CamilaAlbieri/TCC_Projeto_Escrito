@@ -232,10 +232,12 @@ Camila exclui a categoria "Jogos Antigos" e confirma a exclusão permanente no d
 - **Objeto:** Coleção (subdivisão estruturada que pertence a uma categoria e agrupa itens)
 - **Prioridade:** Essencial · **Operação:** Entrada · **Ator:** Usuário
 
-**Atributos:** nome (100 caracteres), categoria pai (referência obrigatória), ícone (emoji Unicode ou imagem JPEG/PNG de até 2 MB, opcional), cor de fundo do cartão (hexadecimal, opcional), descrição (300 caracteres), layout associado (referência opcional a um layout do usuário), nível de privacidade (pública, somente amigos ou privada), data de criação (gerada automaticamente).
+**Atributos:** nome (100 caracteres), categoria pai (referência obrigatória), ícone (emoji Unicode ou imagem JPEG/PNG de até 2 MB, opcional), cor de fundo do cartão (hexadecimal, opcional), descrição (300 caracteres), layout associado (referência opcional a um layout do usuário), nível de privacidade (pública, somente amigos ou privada), tags (de nenhuma a dez, texto livre de até 30 caracteres cada, opcionais), data de criação (gerada automaticamente).
 
 **Exemplos:** Usuário cria a coleção "Lidos" dentro da categoria "Livros", definindo a privacidade como "pública"; a coleção passa a aceitar itens.
 Camila edita a coleção "Lidos" para associar o layout "Card de Mangá", que passa a valer para os itens dessa coleção.
+Camila marca as coleções "Lidos" e "Relidos" com a tag "fantasia" e, clicando nela, vê as duas reunidas, ainda que pertençam a categorias diferentes.
+Ao escrever uma tag no formulário, Camila recebe como sugestão "ficcao cientifica", palavra já utilizada por outro usuário do sistema.
 Camila exclui a coleção "Rascunhos" e confirma no diálogo a remoção de todos os itens vinculados.
 
 **Regras / Restrições:**
@@ -251,6 +253,10 @@ Camila exclui a coleção "Rascunhos" e confirma no diálogo a remoção de todo
 9. O usuário deve poder ordenar as coleções por pelo menos quatro critérios: nome crescente, nome decrescente, data de criação crescente e data de criação decrescente.
 10. A ordenação padrão é por data de criação decrescente (mais recentes primeiro).
 11. O usuário deve poder filtrar as coleções por nível de privacidade (RF-08); a ordenação e o filtro aplicados devem ser persistidos entre sessões.
+12. A coleção pode receber até dez tags, opcionais, de texto livre com até 30 caracteres cada. As tags são gravadas em forma canônica — sem espaços nas pontas, em minúsculas e sem acentuação —, de modo que grafias diferentes da mesma palavra correspondam sempre à mesma tag; tags repetidas na mesma coleção são descartadas.
+13. O vocabulário de tags é compartilhado por todos os usuários: cada palavra existe uma única vez no sistema, e o formulário sugere as tags já utilizadas por qualquer conta. O compartilhamento alcança apenas o rótulo — as coleções que o utilizam continuam sujeitas às regras de privacidade do RF-08, e uma tag pode existir no vocabulário sem que o usuário possua qualquer coleção que a use.
+14. Cada tag exibida é um vínculo que leva à relação das coleções do próprio usuário marcadas com ela, independentemente da categoria a que pertençam. O sistema deve oferecer também uma tela de consulta ao vocabulário, com busca por texto.
+15. A tag sobrevive à exclusão das coleções que a utilizavam: o vínculo é desfeito, e a palavra permanece disponível no vocabulário.
 
 ### RF-08 — Gerenciar Privacidade da Coleção
 
@@ -363,6 +369,7 @@ Camila visualiza a coleção "Favoritos" usando o mesmo filtro; o sistema manté
 3. Os critérios de filtro disponíveis dependem dos elementos presentes no layout aplicável à coleção.
 4. A ordenação aplicada deve ser persistida por usuário e válida para todas as coleções até ser alterada.
 5. Os filtros aplicados são mantidos durante a navegação dentro da mesma coleção e reiniciados ao sair dela.
+6. **A tag não é critério de filtro nesta tela.** A especificação original listava tags entre os filtros de itens; elas passaram a pertencer à coleção (RF-07), e não ao item. Como todos os itens de uma mesma coleção compartilhariam as mesmas tags, o filtro não separaria nada — a busca por tag reúne coleções, e está descrita no RF-07.
 
 ### RF-13 — Exibir Tela Principal de Categorias
 
@@ -940,21 +947,22 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 6. O usuário insere uma descrição (opcional).
 7. O usuário associa um layout à coleção (opcional) [E01].
 8. O usuário configura a privacidade da coleção (pública, somente amigos ou privada) [E02].
-9. O usuário confirma a criação da coleção.
-10. O sistema valida os dados inseridos.
-11. O sistema cria a coleção vinculada à categoria pai, com a privacidade configurada.
-12. O sistema exibe mensagem de sucesso.
-13. O sistema redireciona para a visualização da coleção, pronta para receber itens.
+9. O usuário escreve as tags da coleção (opcional), recebendo como sugestão o vocabulário já existente no sistema (RF-07).
+10. O usuário confirma a criação da coleção.
+11. O sistema valida os dados inseridos.
+12. O sistema cria a coleção vinculada à categoria pai, com a privacidade configurada, e vincula as tags informadas ao vocabulário, criando as que ainda não existirem.
+13. O sistema exibe mensagem de sucesso.
+14. O sistema redireciona para a visualização da coleção, pronta para receber itens.
 
 **Fluxos alternativos / exceções:**
 
-- No passo 10 do FB01, o sistema identifica que já existe uma coleção com o mesmo nome na categoria pai.
+- No passo 11 do FB01, o sistema identifica que já existe uma coleção com o mesmo nome na categoria pai.
 - O sistema exibe mensagem de erro: "Já existe uma coleção com este nome nesta categoria. Por favor, escolha outro nome."
 - O sistema retorna ao passo 4 do FB01.
-- No passo 10 do FB01, o sistema identifica que o campo nome não foi preenchido.
+- No passo 11 do FB01, o sistema identifica que o campo nome não foi preenchido.
 - O sistema exibe mensagem de erro: "O nome da coleção é obrigatório."
 - O sistema retorna ao passo 4 do FB01.
-- Em qualquer momento entre os passos 4 e 8 do FB01, o usuário pode selecionar "Cancelar".
+- Em qualquer momento entre os passos 4 e 9 do FB01, o usuário pode selecionar "Cancelar".
 - O sistema descarta as informações inseridas.
 - O sistema retorna à categoria pai.
 - O caso de uso é encerrado.
