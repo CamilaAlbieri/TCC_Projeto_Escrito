@@ -7,6 +7,9 @@ Este capítulo descreve como o sistema especificado nos Capítulos~\ref{cap:05} 
 
 O sistema é composto por dois projetos independentes, versionados em repositórios Git distintos: o \textit{backend}, uma API REST escrita em TypeScript sobre o NestJS, e o \textit{frontend}, uma aplicação de página única escrita em TypeScript com React. Ambos são executados sobre o Node.js e têm suas dependências gerenciadas pelo pnpm, cuja versão fica registrada no próprio arquivo \texttt{package.json} de cada projeto, de modo que qualquer máquina que instale as dependências utilize a mesma versão do gerenciador. O Quadro~\ref{quad:versoes} reúne as principais tecnologias e as versões empregadas.
 
+Durante o desenvolvimento, o sistema é executado localmente por três processos: o contêiner do PostgreSQL, na porta 5432; a API, na porta 3000; e o servidor de desenvolvimento do Vite, na porta 3001. A porta do \textit{frontend} é fixada na configuração do Vite por uma razão funcional, e não de conveniência: é a origem que a API autoriza a realizar requisições pelo navegador, e servir a interface em outra porta faria o navegador bloquear todas as chamadas por violação da política de CORS.
+
+\FloatBarrier
 \begin{quadro}[h!]
 \caption{Tecnologias e versões utilizadas na implementação}
 \label{quad:versoes}
@@ -24,8 +27,7 @@ Qualidade de código & ESLint e Prettier no \textit{backend}; Oxlint no \textit{
 \end{tabular}
 \fonte{Elaborada pelo autor}
 \end{quadro}
-
-Durante o desenvolvimento, o sistema é executado localmente por três processos: o contêiner do PostgreSQL, na porta 5432; a API, na porta 3000; e o servidor de desenvolvimento do Vite, na porta 3001. A porta do \textit{frontend} é fixada na configuração do Vite por uma razão funcional, e não de conveniência: é a origem que a API autoriza a realizar requisições pelo navegador, e servir a interface em outra porta faria o navegador bloquear todas as chamadas por violação da política de CORS.
+\FloatBarrier
 
 A configuração do \textit{backend} é feita por variáveis de ambiente, lidas de um arquivo \texttt{.env}. O repositório inclui o modelo \texttt{.env.example}, que relaciona as variáveis sem seus valores: a cadeia de conexão com o banco (\texttt{DATABASE\_URL}), o segredo de assinatura dos \textit{tokens} (\texttt{JWT\_SECRET}), o endereço do \textit{frontend} (\texttt{FRONTEND\_URL}), os parâmetros do servidor de e-mail (\texttt{SMTP\_*}) e as credenciais do armazenamento em nuvem (\texttt{R2\_*}). Manter esses valores fora do código evita que credenciais sejam versionadas e permite que o mesmo código seja executado em ambientes diferentes apenas com a troca do arquivo de configuração.
 
@@ -62,6 +64,7 @@ O formato das imagens é verificado a partir do conteúdo do arquivo, e não da 
 
 O código do \textit{backend} segue a organização modular do NestJS, conforme o Quadro~\ref{quad:estruturaBackend}. Cada funcionalidade do domínio corresponde a um módulo, e todos os módulos adotam a mesma estrutura interna: um diretório \texttt{controller}, que recebe as requisições HTTP; um diretório \texttt{service}, que concentra as regras de negócio; e um diretório \texttt{dto}, que define e valida os formatos de entrada.
 
+\FloatBarrier
 \begin{quadro}[h!]
 \caption{Estrutura de diretórios do \textit{backend}}
 \label{quad:estruturaBackend}
@@ -94,6 +97,7 @@ prisma/
 \end{minipage}
 \fonte{Elaborada pelo autor}
 \end{quadro}
+\FloatBarrier
 
 Os módulos espelham os pacotes do modelo de domínio descritos na Subseção~\ref{subsec:pacotes_dominio}: o pacote Usuário corresponde ao módulo \texttt{user}; o pacote Sistema, ao módulo \texttt{auth}, que trata de \textit{login}, \textit{logout}, sessões e redefinição de senha; o pacote Coleções, aos módulos \texttt{category}, \texttt{collection} e \texttt{item}; o pacote Editor de Layout, ao módulo \texttt{layout}; o pacote Aparência, ao módulo \texttt{appearance-preset}; o pacote Interação Social, ao módulo \texttt{social}; e o pacote Notificações, ao módulo \texttt{notification}. Os módulos \texttt{storage} e \texttt{infra} não têm correspondente no domínio, pois oferecem infraestrutura, respectivamente o armazenamento de arquivos e o acesso ao banco, a todos os demais. Os arquivos de teste ficam ao lado do código que verificam, identificados pelo sufixo \texttt{.spec.ts}.
 
@@ -105,6 +109,7 @@ A segunda decisão diz respeito ao conteúdo que toda conta recebe no cadastro: 
 
 O \textit{frontend} é uma aplicação de página única, empacotada pelo Vite, cuja estrutura de diretórios é apresentada no Quadro~\ref{quad:estruturaFrontend}. O diretório \texttt{pages} reúne as 13 telas da aplicação, uma por rota: cadastro, \textit{login}, solicitação e redefinição de senha, perfil, categorias, coleções, listagem de itens, ficha do item, biblioteca e editor de \textit{layouts}, e biblioteca e editor de paletas. As partes reutilizáveis dessas telas ficam em \texttt{components}; a lógica de estado compartilhada entre telas, em \texttt{hooks}; as funções puras, como os cálculos de cor e de geometria do editor, em \texttt{lib}; as chamadas à API, em \texttt{api}; e os estilos, em \texttt{styles}, organizados em uma camada de variáveis visuais, uma de estilos base e uma de componentes.
 
+\FloatBarrier
 \begin{quadro}[h!]
 \caption{Estrutura de diretórios do \textit{frontend}}
 \label{quad:estruturaFrontend}
@@ -125,6 +130,7 @@ src/
 \end{minipage}
 \fonte{Elaborada pelo autor}
 \end{quadro}
+\FloatBarrier
 
 \subsection{Comunicação com a API}
 
