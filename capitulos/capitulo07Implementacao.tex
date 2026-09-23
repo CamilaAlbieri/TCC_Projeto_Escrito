@@ -1,4 +1,170 @@
 \chapter{Implementação}
 \label{cap:07}
 
-Descrever nesse capítulo as características do ambiente de desenvolvimento, servidor de aplicação, servidor de dados, pacotes utilizados etc etc etc.
+Este capítulo descreve como o sistema especificado nos Capítulos~\ref{cap:05} e~\ref{cap:06} foi construído. São apresentados o ambiente de desenvolvimento, o servidor de dados, o servidor de aplicação, a organização do código do \textit{backend} e da aplicação cliente, a forma como a implementação foi verificada ao longo do desenvolvimento e as limitações conhecidas da versão atual. As ferramentas empregadas já foram caracterizadas na Seção~\ref{sec:ferramentas}; aqui o foco recai sobre as versões adotadas, a configuração do ambiente e os mecanismos implementados.
+
+\section{Ambiente de Desenvolvimento}
+
+O sistema é composto por dois projetos independentes, versionados em repositórios Git distintos: o \textit{backend}, uma API REST escrita em TypeScript sobre o NestJS, e o \textit{frontend}, uma aplicação de página única escrita em TypeScript com React. Ambos são executados sobre o Node.js e têm suas dependências gerenciadas pelo pnpm, cuja versão fica registrada no próprio arquivo \texttt{package.json} de cada projeto, de modo que qualquer máquina que instale as dependências utilize a mesma versão do gerenciador. O Quadro~\ref{quad:versoes} reúne as principais tecnologias e as versões empregadas.
+
+Durante o desenvolvimento, o sistema é executado localmente por três processos: o contêiner do PostgreSQL, na porta 5432; a API, na porta 3000; e o servidor de desenvolvimento do Vite, na porta 3001. A porta do \textit{frontend} é fixada na configuração do Vite por uma razão funcional, e não de conveniência: é a origem que a API autoriza a realizar requisições pelo navegador, e servir a interface em outra porta faria o navegador bloquear todas as chamadas por violação da política de CORS.
+
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Tecnologias e versões utilizadas na implementação}
+\label{quad:versoes}
+\begin{tabular}{|p{4cm}|p{11cm}|}
+\hline
+\textbf{Camada} & \textbf{Tecnologia e versão} \\ \hline
+Ambiente de execução & Node.js 22.15 e gerenciador de pacotes pnpm 11.20 \\ \hline
+Linguagem & TypeScript 5.7 no \textit{backend} e 6.0 no \textit{frontend} \\ \hline
+Servidor de aplicação & NestJS 11, com Passport e JWT para autenticação, class-validator para validação, \texttt{@nestjs/throttler} para limitação de requisições e Nodemailer para envio de e-mail \\ \hline
+Persistência & PostgreSQL 16, executado em contêiner Docker, e Prisma ORM 7.8 com o adaptador para o \textit{driver} \texttt{pg} \\ \hline
+Armazenamento de arquivos & Disco local ou Cloudflare R2, este acessado pelo SDK S3 da AWS \\ \hline
+Interface & React 19.2, Vite 8, React Router 8, TanStack Query 5 e Axios 1.19 \\ \hline
+Testes & Jest 30 com ts-jest \\ \hline
+Qualidade de código & ESLint e Prettier no \textit{backend}; Oxlint no \textit{frontend} \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
+A configuração do \textit{backend} é feita por variáveis de ambiente, lidas de um arquivo \texttt{.env}. O repositório inclui o modelo \texttt{.env.example}, que relaciona as variáveis sem seus valores: a cadeia de conexão com o banco (\texttt{DATABASE\_URL}), o segredo de assinatura dos \textit{tokens} (\texttt{JWT\_SECRET}), o endereço do \textit{frontend} (\texttt{FRONTEND\_URL}), os parâmetros do servidor de e-mail (\texttt{SMTP\_*}) e as credenciais do armazenamento em nuvem (\texttt{R2\_*}). Manter esses valores fora do código evita que credenciais sejam versionadas e permite que o mesmo código seja executado em ambientes diferentes apenas com a troca do arquivo de configuração.
+
+\section{Servidor de Dados}
+
+O PostgreSQL é provisionado pelo Docker Compose, a partir de um arquivo \texttt{docker-compose.yml} mantido no repositório do \textit{backend}. O arquivo declara um único serviço, baseado na imagem oficial \texttt{postgres:16}, que expõe a porta 5432 e grava os dados em um volume nomeado. O volume desacopla os dados do ciclo de vida do contêiner: recriar ou atualizar o contêiner não apaga o banco. O serviço conta ainda com uma verificação de saúde que executa o utilitário \texttt{pg\_isready} periodicamente, o que permite saber quando o banco está de fato pronto para aceitar conexões, e não apenas quando o contêiner foi iniciado.
+
+O esquema do banco é definido com o Prisma e fica dividido em sete arquivos no diretório \texttt{prisma/schema}: um arquivo principal e seis arquivos por assunto (usuário, coleções, \textit{layout}, aparência, interação social e notificações), que acompanham os pacotes do modelo de domínio apresentados no Capítulo~\ref{cap:05}. Cada alteração no esquema gera uma migração versionada, contendo o SQL correspondente; no momento da redação deste trabalho, o histórico reúne 36 migrações, que reconstroem o banco do zero de forma determinística. Quando uma mudança de modelo afetava dados já existentes, a migração foi escrita para convertê-los em vez de descartá-los. Foi o caso da redução dos tipos de Elemento: como o PostgreSQL não permite remover valores de um tipo enumerado, a migração cria o novo tipo, converte a coluna e só então descarta o tipo antigo, preservando o conteúdo de todos os Elementos.
+
+O cliente do Prisma, que oferece acesso tipado às tabelas, é gerado automaticamente a cada instalação de dependências, por meio do \textit{script} \texttt{postinstall}. Na aplicação, ele é encapsulado em um serviço do NestJS (\texttt{PrismaService}), injetado nos módulos que acessam o banco. As operações que precisam gravar vários registros de forma indivisível são executadas em transações. É o caso da criação da ficha própria de um item (RF-17), que copia o \textit{layout} de origem e todos os seus Elementos: ou a cópia é criada por inteiro, ou nada é gravado. O mapeamento entre o modelo de objetos e as tabelas está detalhado no Capítulo~\ref{cap:06}.
+
+\section{Servidor de Aplicação}
+
+A API é uma aplicação NestJS que atende na porta 3000, sem prefixo de rota. No momento da redação, ela é composta por 16 controladores, que expõem 81 rotas: 27 de consulta (GET), 24 de criação (POST), 15 de alteração parcial (PATCH), uma de substituição (PUT) e 14 de exclusão (DELETE). Toda requisição percorre uma sequência fixa de etapas antes de alcançar a regra de negócio, configurada nos arquivos \texttt{main.ts} e \texttt{app.module.ts}:
+
+\begin{enumerate}
+    \item \textbf{CORS:} somente a origem informada em \texttt{FRONTEND\_URL} é autorizada a chamar a API pelo navegador.
+    \item \textbf{Limitação de requisições:} um \textit{guard} global limita cada endereço de origem a 100 requisições por minuto. As rotas sensíveis sobrescrevem esse limite: o \textit{login} aceita cinco tentativas por minuto, e a solicitação de recuperação de senha, três a cada dez minutos, já que cada chamada dispara um e-mail.
+    \item \textbf{Autenticação:} um segundo \textit{guard} global exige um \textit{token} JWT válido em todas as rotas. Uma rota só fica aberta quando é marcada explicitamente como pública, o que faz com que o esquecimento dessa marcação resulte em uma rota fechada, e não em uma rota exposta sem que ninguém perceba.
+    \item \textbf{Validação da sessão:} além de verificar a assinatura e a validade do \textit{token}, a estratégia de autenticação consulta a tabela de sessões e confirma que a sessão indicada no \textit{token} não foi revogada. Com isso, o \textit{logout} tem efeito imediato: um \textit{token} copiado antes da saída deixa de funcionar no mesmo instante, ao custo de uma consulta ao banco por requisição autenticada.
+    \item \textbf{Validação dos dados:} o corpo, os parâmetros e a consulta de cada requisição são validados contra classes de transferência de dados (DTOs). A validação é estrita: além de rejeitar valores inválidos, ela rejeita qualquer campo não previsto, o que torna visível uma divergência de contrato entre \textit{frontend} e \textit{backend} no momento em que ela surge.
+    \item \textbf{Regra de negócio:} validada a requisição, o controlador repassa a operação ao serviço do módulo, que aplica as regras do domínio e acessa o banco pelo Prisma.
+\end{enumerate}
+
+A ordem entre as etapas 2 e 3 é deliberada. Como os \textit{guards} executam na ordem em que são registrados, a limitação de requisições atua antes da autenticação, de modo que um volume excessivo de chamadas é barrado antes de consumir a consulta ao banco que valida a sessão, que é justamente o recurso que se deseja proteger. Os erros produzidos em qualquer etapa são convertidos em respostas padronizadas por um filtro de exceções global, com mensagens em português que a interface exibe diretamente ao usuário.
+
+\subsection{Armazenamento de Arquivos}
+
+As imagens enviadas pelos usuários não são gravadas no banco de dados: o banco guarda apenas o caminho público do arquivo. O armazenamento em si é definido por uma interface com duas operações, gravar e remover, e por duas implementações dessa interface, uma que grava no disco da máquina e outra que envia o arquivo ao Cloudflare R2, serviço de armazenamento de objetos compatível com a API do Amazon S3. A escolha entre elas é feita em um único ponto, no módulo de armazenamento, a partir das credenciais presentes na configuração: havendo as variáveis do R2, os arquivos seguem para a nuvem; faltando qualquer uma delas, o sistema grava em disco e registra um aviso na inicialização. Como os demais módulos dependem apenas da interface, a troca de destino não exige alteração em nenhum controlador ou serviço.
+
+O formato das imagens é verificado a partir do conteúdo do arquivo, e não da declaração enviada pelo cliente. O cabeçalho \texttt{Content-Type} de um envio é informado pelo próprio navegador ou por quem monta a requisição, e pode ser falsificado trivialmente. Por isso, a aplicação lê a assinatura presente nos primeiros \textit{bytes} do arquivo, que identifica os formatos JPEG e PNG exigidos pelos requisitos, e é essa assinatura que decide se o arquivo é aceito e qual extensão ele recebe. O nome do arquivo gravado é sempre gerado pelo servidor, o que impede que um nome malicioso enviado pelo cliente direcione a gravação para fora do diretório previsto.
+
+\section{Organização do Código do \textit{Backend}}
+
+O código do \textit{backend} segue a organização modular do NestJS, conforme o Quadro~\ref{quad:estruturaBackend}. Cada funcionalidade do domínio corresponde a um módulo, e todos os módulos adotam a mesma estrutura interna: um diretório \texttt{controller}, que recebe as requisições HTTP; um diretório \texttt{service}, que concentra as regras de negócio; e um diretório \texttt{dto}, que define e valida os formatos de entrada.
+
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Estrutura de diretórios do \textit{backend}}
+\label{quad:estruturaBackend}
+\centering
+\begin{minipage}{0.6\textwidth}
+\begin{lstlisting}[numbers=none]
+src/
+  main.ts
+  app.module.ts
+  common/
+    dto/
+    filters/
+    validators/
+  modules/
+    auth/
+    user/
+    category/
+    collection/
+    item/
+    layout/
+    appearance-preset/
+    social/
+    notification/
+    storage/
+    infra/database/prisma/
+prisma/
+  schema/
+    migrations/
+\end{lstlisting}
+\end{minipage}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
+Os módulos espelham os pacotes do modelo de domínio descritos na Subseção~\ref{subsec:pacotes_dominio}: o pacote Usuário corresponde ao módulo \texttt{user}; o pacote Sistema, ao módulo \texttt{auth}, que trata de \textit{login}, \textit{logout}, sessões e redefinição de senha; o pacote Coleções, aos módulos \texttt{category}, \texttt{collection} e \texttt{item}; o pacote Editor de Layout, ao módulo \texttt{layout}; o pacote Aparência, ao módulo \texttt{appearance-preset}; o pacote Interação Social, ao módulo \texttt{social}; e o pacote Notificações, ao módulo \texttt{notification}. Os módulos \texttt{storage} e \texttt{infra} não têm correspondente no domínio, pois oferecem infraestrutura, respectivamente o armazenamento de arquivos e o acesso ao banco, a todos os demais. Os arquivos de teste ficam ao lado do código que verificam, identificados pelo sufixo \texttt{.spec.ts}.
+
+Duas decisões de implementação merecem registro por não serem visíveis no esquema do banco. A primeira diz respeito à ficha própria de um item (RF-17). Ao iniciar a personalização, o serviço responsável cria um novo \textit{layout}, de finalidade exclusiva daquele item, e copia para ele os Elementos do \textit{layout} da coleção, guardando em cada cópia a referência ao original. Quando a coleção não possui \textit{layout}, a cópia é criada vazia, e o usuário monta a ficha a partir do zero. A partir desse momento, qualquer alteração afeta apenas a cópia, e a exclusão do original somente anula a referência, sem apagar as fichas que dele derivaram.
+
+A segunda decisão diz respeito ao conteúdo que toda conta recebe no cadastro: os \textit{layouts} padrão (RF-14) e as paletas predefinidas (RF-18). Esse conteúdo não fica armazenado em registros de um usuário especial do sistema, mas definido no próprio código, nos arquivos \texttt{layouts-padrao.ts} e \texttt{paletas-padrao.ts}, e copiado para cada nova conta na mesma operação que cria o usuário. A razão é a portabilidade: guardados apenas no banco de desenvolvimento, esses modelos não existiriam em nenhuma outra instalação, e a funcionalidade pareceria defeituosa sem estar. Definidos em código, eles acompanham o repositório, e suas alterações ficam registradas no histórico de versões. As cópias, e não referências a um original compartilhado, são o que permite ao usuário editar e excluir esses modelos como os seus próprios, sem afetar os de outras pessoas. Para as contas criadas antes da existência dos \textit{layouts} padrão, a entrega ocorre na primeira abertura da biblioteca, e é controlada por uma atualização condicional no banco, que registra a entrega apenas se ela ainda não tiver sido feita. Assim, duas requisições simultâneas não produzem cópias em duplicidade: o próprio banco decide qual delas realiza a entrega.
+
+\section{Aplicação Cliente}
+
+O \textit{frontend} é uma aplicação de página única, empacotada pelo Vite, cuja estrutura de diretórios é apresentada no Quadro~\ref{quad:estruturaFrontend}. O diretório \texttt{pages} reúne as 13 telas da aplicação, uma por rota: cadastro, \textit{login}, solicitação e redefinição de senha, perfil, categorias, coleções, listagem de itens, ficha do item, biblioteca e editor de \textit{layouts}, e biblioteca e editor de paletas. As partes reutilizáveis dessas telas ficam em \texttt{components}; a lógica de estado compartilhada entre telas, em \texttt{hooks}; as funções puras, como os cálculos de cor e de geometria do editor, em \texttt{lib}; as chamadas à API, em \texttt{api}; e os estilos, em \texttt{styles}, organizados em uma camada de variáveis visuais, uma de estilos base e uma de componentes.
+
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Estrutura de diretórios do \textit{frontend}}
+\label{quad:estruturaFrontend}
+\centering
+\begin{minipage}{0.6\textwidth}
+\begin{lstlisting}[numbers=none]
+src/
+  api/
+  assets/
+  components/
+  dados/
+  hooks/
+  lib/
+  pages/
+  styles/
+  types/
+\end{lstlisting}
+\end{minipage}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
+\subsection{Comunicação com a API}
+
+Toda a comunicação com o \textit{backend} passa por uma única instância do Axios, configurada com dois interceptadores. O primeiro atua antes de cada requisição e acrescenta o \textit{token} de acesso ao cabeçalho \texttt{Authorization}, formato exigido pela estratégia de autenticação da API. O segundo atua sobre as respostas com erro: converte cada falha em uma mensagem exibível, dando preferência à mensagem em português enviada pelo servidor, e, quando a API responde que a sessão expirou ou foi revogada, remove o \textit{token} armazenado e conduz o usuário de volta à tela de \textit{login}. Centralizar esse tratamento evita que cada tela precise repetir a montagem do cabeçalho e a interpretação dos erros.
+
+As leituras de dados são gerenciadas pelo TanStack Query, que guarda em memória as respostas já obtidas, identificadas por uma chave que inclui os parâmetros da consulta. Como a API recebe a ordenação e os filtros como parâmetros, cada combinação corresponde a uma requisição distinta; com a memória por chave, voltar a uma combinação já consultada exibe o resultado imediatamente. As operações de gravação, por sua vez, sinalizam quais consultas ficaram desatualizadas, e as listagens se atualizam sem que a tela precise solicitar os dados novamente. No \textit{logout}, essa memória é esvaziada junto com o \textit{token}, para que nenhum dado da sessão encerrada fique disponível a quem utilizar o mesmo navegador em seguida.
+
+\subsection{Editor de Layouts}
+
+O editor de \textit{layouts} é a parte mais extensa da aplicação cliente, e três decisões de implementação sustentam seu funcionamento. A primeira é a gravação automática. O editor não possui botão de salvar: cada alteração concluída, como soltar um Elemento após arrastá-lo ou terminar de editar um texto, é enviada à API após uma pausa de 400 milissegundos, intervalo que agrupa movimentos feitos em sequência em uma única requisição. A gravação automática só é segura porque vem acompanhada do desfazer e do refazer, acionados pelos atalhos \texttt{Ctrl+Z} e \texttt{Ctrl+Shift+Z} e apoiados em um histórico de 50 passos; sem eles, um movimento equivocado se tornaria permanente no instante em que fosse feito. Enquanto houver alteração ainda não gravada, o navegador avisa o usuário caso ele tente fechar a página.
+
+A segunda decisão é a separação entre a identidade de um Elemento na tela e sua identidade no banco. Durante a edição, cada Elemento recebe um identificador gerado no próprio navegador, que nunca muda, e o identificador do banco é mantido à parte, em um mapa consultado apenas pela sincronização. Essa separação é o que permite desfazer uma exclusão: o Elemento restaurado precisa ser criado novamente no banco, com um novo identificador, mas permanece o mesmo na tela. A sincronização compara o estado da tela com uma cópia do último estado confirmado pelo servidor e envia somente as diferenças: cria os Elementos novos, altera apenas os campos modificados dos existentes e remove os que deixaram de existir. Quando uma requisição falha, a cópia de referência não é atualizada, de modo que a tentativa seguinte reenvia automaticamente o que ficou pendente.
+
+A terceira decisão diz respeito ao desenho dos Elementos do tipo forma, que são construídos como gráficos vetoriais (SVG) em vez de caixas estilizadas por CSS. O SVG permite aplicar preenchimento, cor, espessura e tracejado da borda a qualquer uma das doze silhuetas disponíveis, o que o recorte de caixas por CSS não oferece. A área de desenho de cada forma adota as mesmas dimensões do Elemento, de modo que a espessura do traço é expressa na mesma unidade relativa das posições e dos tamanhos, descrita no Capítulo~\ref{cap:06}, e acompanha a escala da ficha quando a largura disponível muda.
+
+\subsection{Aparência e Tipografia}
+
+A aparência da interface é aplicada por meio de variáveis CSS. Uma função pura converte a paleta em uso no conjunto de variáveis que colore a interface, e a mesma função pinta a área de prévia do editor de paletas e as miniaturas da biblioteca, o que garante que a prévia nunca diverge do resultado aplicado. Quando o estilo global em vigor é o oposto ao da paleta em uso, a claridade de todas as cores é invertida no espaço de cor OKLCH, que, ao contrário do HSL, representa a claridade de acordo com a percepção humana, preservando o matiz e a saturação de cada cor.
+
+A preferência de estilo é persistida no banco, por fazer parte da paleta, e replicada no armazenamento local do navegador. A cópia local atende aos momentos em que a API não pode responder: as telas anteriores ao \textit{login}, que ainda não sabem de qual conta se trata, e o primeiro quadro de cada carregamento da página. Ela é lida por um pequeno \textit{script} no cabeçalho do documento, executado antes do carregamento dos estilos, o que evita que a página seja exibida por um instante com o estilo errado. Havendo divergência entre as duas fontes, prevalece o valor do banco.
+
+As fontes tipográficas oferecidas além das do sistema operacional são servidas pelo próprio site, e não carregadas de serviços externos como o Google Fonts. Carregar uma fonte de um serviço de terceiro faz o navegador de cada visitante enviar a esse serviço seu endereço IP, sem base legal que autorize esse tratamento nos termos da Lei Geral de Proteção de Dados Pessoais. Servindo os arquivos do mesmo domínio, não há terceiro envolvido. O navegador continua baixando cada família apenas quando algum texto exibido a utiliza.
+
+\section{Verificação Durante a Implementação}
+
+A implementação foi acompanhada por testes automatizados no \textit{backend}, escritos com o Jest. No momento da redação deste trabalho, o projeto conta com 45 conjuntos de testes, que somam 277 casos, todos aprovados. Os testes verificam serviços, controladores e DTOs de todos os módulos, substituindo o acesso ao banco e ao armazenamento por objetos simulados, de modo que cada regra de negócio seja exercitada de forma isolada e sem depender de um banco em execução. No \textit{frontend}, a etapa de construção executa a verificação de tipos do TypeScript antes de gerar o pacote de produção, o que impede que uma divergência entre os tipos da interface e os formatos da API passe despercebida. Complementarmente, cada funcionalidade concluída foi verificada manualmente na interface, com apoio do DBeaver para inspecionar o estado do banco. Os procedimentos e os resultados dos testes são detalhados no capítulo dedicado aos testes.
+
+\section{Limitações da Implementação}
+
+A versão atual do sistema possui limitações conhecidas, registradas a seguir:
+
+\begin{itemize}
+    \item \textbf{Limitação de requisições em memória:} os contadores de requisições são mantidos na memória do processo da API. Reiniciar o servidor os zera, e várias instâncias da aplicação não compartilhariam esses contadores. Em uma implantação com múltiplas instâncias, seria necessário um armazenamento compartilhado.
+    \item \textbf{Ausência de comunicação em tempo real:} a API é exclusivamente REST, sem canal de comunicação contínua com o navegador. O \textit{feed} de atualizações e as notificações são obtidos quando a interface os solicita, e não enviados pelo servidor no momento em que os eventos ocorrem.
+    \item \textbf{Ausência de documentação automática da API:} não há documentação no padrão OpenAPI; a referência das rotas é mantida manualmente no repositório do \textit{backend}.
+    \item \textbf{Armazenamento em disco sem credenciais de nuvem:} na ausência das credenciais do R2, os arquivos enviados ficam no disco da máquina que executa a API e não estão disponíveis em outra máquina, perdendo-se em ambientes de hospedagem cujo sistema de arquivos é recriado a cada publicação.
+\end{itemize}
