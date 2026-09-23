@@ -206,7 +206,7 @@ Usuário altera o e-mail para "cami.mattos@gmail.com"; o sistema envia um link d
 - **Objeto:** Categoria (agrupador temático de alto nível que reúne coleções relacionadas)
 - **Prioridade:** Essencial · **Operação:** Entrada · **Ator:** Usuário
 
-**Atributos:** nome (100 caracteres), tipo/tema (texto livre de até 50 caracteres, com "livros", "filmes", "séries", "jogos" e "músicas" oferecidos como sugestão; o usuário pode definir o seu próprio), ícone (emoji Unicode **ou** imagem JPEG/PNG de até 2 MB, opcional), cor de fundo do cartão (hexadecimal, opcional), descrição (300 caracteres), data de criação (gerada automaticamente).
+**Atributos:** nome (100 caracteres), tipo/tema (texto livre de até 50 caracteres, com "livros", "filmes", "séries", "jogos" e "músicas" oferecidos como sugestão; o usuário pode definir o seu próprio), ícone (emoji Unicode, opcional), imagem de capa (JPEG/PNG, opcional; enviada com até 10 MB e enquadrada pelo usuário na proporção do banner, e o recorte gravado tem até 2 MB), imagem original da capa (guardada apenas para permitir o reenquadramento, nunca exibida), área do recorte (posição e tamanho em pixels do original), cor de fundo do cartão (hexadecimal, opcional), descrição (300 caracteres), data de criação (gerada automaticamente).
 
 **Exemplos:** Usuário Camila cria a categoria "Livros" com ícone personalizado e descrição "Tudo que leio ou pretendo ler"; a categoria é criada vazia, pronta para receber coleções.
 Camila edita a categoria, renomeando para "Biblioteca Pessoal".
@@ -222,8 +222,10 @@ Camila exclui a categoria "Jogos Antigos" e confirma a exclusão permanente no d
 6. A exclusão deve exibir diálogo de confirmação alertando que todas as coleções e itens vinculados serão removidos permanentemente.
 7. A data de criação é gerada automaticamente pelo sistema e não pode ser editada.
 8. O tema é gravado em letras minúsculas, sem espaços nas extremidades e sem acentuação, de modo que grafias diferentes da mesma palavra sejam tratadas como o mesmo tema. A exibição apresenta a primeira letra em maiúscula.
-9. O ícone aceita uma única forma por vez: escolher uma imagem substitui o emoji, e escolher um emoji descarta a imagem.
-10. Categoria sem ícone é exibida apenas com a cor de fundo, sem símbolo padrão.
+9. O ícone e a imagem de capa coexistem e são escolhidos separadamente: a capa ocupa o banner do cartão, e o emoji aparece sobre ela e no modo lista. Difere da coleção (RF-07), onde as duas formas são alternativas entre si.
+10. Categoria sem ícone e sem capa é exibida apenas com a cor de fundo, sem símbolo padrão.
+11. A imagem de capa é enquadrada pelo usuário na proporção do banner antes de ser gravada. O sistema guarda o arquivo original junto com a área recortada, de modo que o enquadramento possa ser refeito depois sem novo envio; remover a capa apaga as duas imagens.
+12. O nome da categoria é exibido sobre a capa, e a legibilidade sobre qualquer imagem é responsabilidade da interface, que aplica escurecimento e sombra ao texto (RNF-05).
 
 ### RF-07 — Gerenciar Coleção
 
@@ -232,7 +234,7 @@ Camila exclui a categoria "Jogos Antigos" e confirma a exclusão permanente no d
 - **Objeto:** Coleção (subdivisão estruturada que pertence a uma categoria e agrupa itens)
 - **Prioridade:** Essencial · **Operação:** Entrada · **Ator:** Usuário
 
-**Atributos:** nome (100 caracteres), categoria pai (referência obrigatória), ícone (emoji Unicode ou imagem JPEG/PNG de até 2 MB, opcional), cor de fundo do cartão (hexadecimal, opcional), descrição (300 caracteres), layout associado (referência opcional a um layout do usuário), nível de privacidade (pública, somente amigos ou privada), data de criação (gerada automaticamente).
+**Atributos:** nome (100 caracteres), categoria pai (referência obrigatória), ícone (emoji Unicode ou imagem JPEG/PNG, opcional; a imagem é enviada com até 10 MB e enquadrada pelo usuário, e o recorte gravado tem até 2 MB), imagem original do ícone (guardada apenas para permitir o reenquadramento, nunca exibida), área do recorte (posição e tamanho em pixels do original), cor de fundo do cartão (hexadecimal, opcional), descrição (300 caracteres), layout associado (referência opcional a um layout do usuário), nível de privacidade (pública, somente amigos ou privada), data de criação (gerada automaticamente).
 
 **Exemplos:** Usuário cria a coleção "Lidos" dentro da categoria "Livros", definindo a privacidade como "pública"; a coleção passa a aceitar itens.
 Camila edita a coleção "Lidos" para associar o layout "Card de Mangá", que passa a valer para os itens dessa coleção.
@@ -251,6 +253,8 @@ Camila exclui a coleção "Rascunhos" e confirma no diálogo a remoção de todo
 9. O usuário deve poder ordenar as coleções por pelo menos quatro critérios: nome crescente, nome decrescente, data de criação crescente e data de criação decrescente.
 10. A ordenação padrão é por data de criação decrescente (mais recentes primeiro).
 11. O usuário deve poder filtrar as coleções por nível de privacidade (RF-08); a ordenação e o filtro aplicados devem ser persistidos entre sessões.
+12. O ícone aceita uma única forma por vez: escolher uma imagem substitui o emoji, e escolher um emoji descarta a imagem.
+13. A imagem do ícone é enquadrada pelo usuário em proporção quadrada antes de ser gravada. O sistema guarda o arquivo original junto com a área recortada, de modo que o enquadramento possa ser refeito depois sem novo envio; remover o ícone apaga as duas imagens.
 
 ### RF-08 — Gerenciar Privacidade da Coleção
 
@@ -371,7 +375,7 @@ Camila visualiza a coleção "Favoritos" usando o mesmo filtro; o sistema manté
 - **Objeto:** Tela principal (dashboard) de categorias do usuário
 - **Prioridade:** Essencial · **Operação:** Saída · **Ator:** Sistema
 
-**Atributos:** lista de categorias do usuário autenticado (nome, ícone, cor de fundo do cartão, contagem total de coleções, contagem total de itens somados entre todas as coleções), modo de exibição (grade ou lista), critérios de ordenação (nome A–Z, nome Z–A, data de criação crescente, data de criação decrescente), critérios de filtro (tipo/tema da categoria), atalhos de navegação para coleções e itens.
+**Atributos:** lista de categorias do usuário autenticado (nome, ícone, imagem de capa, cor de fundo do cartão, contagem total de coleções, contagem total de itens somados entre todas as coleções), modo de exibição (grade ou lista), critérios de ordenação (nome A–Z, nome Z–A, data de criação crescente, data de criação decrescente), critérios de filtro (tipo/tema da categoria), atalhos de navegação para coleções e itens.
 
 **Exemplos:** Ao fazer login, Camila vê na tela inicial os cartões "Livros (2 coleções, 20 itens)", "Filmes (2 coleções, 30 itens)" e "Cafés (1 coleção, 7 itens)" em modo grade.
 Camila clica em "Livros" e visualiza as coleções "Lidos (20, pública)", "Para Ler (30, somente amigos)" e "Diário (2, privada)", podendo navegar para os itens de cada uma.
@@ -381,7 +385,7 @@ Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão "Criar prim
 **Regras / Restrições:**
 
 1. A tela deve exibir todas as categorias do usuário autenticado em uma única tela dedicada.
-2. Cada categoria deve exibir nome, ícone e as contagens de coleções e de itens.
+2. Cada categoria deve exibir nome, ícone e as contagens de coleções e de itens. Em modo grade, a imagem de capa (RF-06) ocupa o topo do cartão, com o nome sobre ela.
 3. A categoria não possui nível de privacidade próprio; o indicador individual de privacidade aparece no card de cada coleção dentro da categoria, e não no card da categoria (RF-08).
 4. A navegação até as coleções de uma categoria deve ser acessível com um único clique ou toque; a navegação até um item, com no máximo três.
 5. Usuários sem categorias devem ver mensagem de boas-vindas com atalho para criação da primeira categoria.
