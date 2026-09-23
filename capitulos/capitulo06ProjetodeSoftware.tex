@@ -140,7 +140,7 @@ O mapeamento entre o modelo de domínio (TypeScript) e o modelo relacional (Post
     \item \textbf{Tipos Físicos:} Os atributos do tipo \texttt{String} no Prisma são explicitamente mapeados para os tipos físicos \texttt{VARCHAR(n)} ou \texttt{TEXT} no PostgreSQL através das diretivas \texttt{@db.VarChar(n)} e \texttt{@db.Text}, conforme o tamanho esperado do conteúdo;
     \item \textbf{Chaves Primárias:} Todos os modelos possuem um identificador único do tipo UUID gerado automaticamente;
     \item \textbf{Relações 1:N:} Implementadas via chaves estrangeiras (\textit{foreign keys}) obrigatórias, com integridade referencial garantida por regras de \textit{cascade} ou \textit{set null} conforme a semântica da relação;
-    \item \textbf{Relações N:N:} Implementadas via tabela associativa, como \texttt{collection\_follows}, que vincula usuários às coleções que acompanham e é protegida por chave única composta, impedindo a duplicação do par;
+    \item \textbf{Relações N:N:} Implementadas via tabela associativa, como \texttt{collection\_follows}, que vincula usuários às coleções que acompanham e é protegida por chave única composta, impedindo a duplicação do par, e \texttt{\_CollectionToTag}, que liga as coleções às suas tags;
     \item \textbf{Relações Reflexivas:} Aparecem em dois contextos. Nas interações sociais, a amizade é mapeada como relação nomeada, para distinguir os papéis de remetente e destinatário. No editor de \textit{layouts}, tanto \texttt{layouts} quanto \texttt{elements} referenciam a própria tabela para registrar de qual registro a cópia se originou, com regra \textit{set null}, de modo que excluir o original apenas zera a referência e preserva a cópia;
     \item \textbf{Índices:} Foram criados índices secundários sobre as chaves estrangeiras de maior frequência de consulta, visando a otimização das operações de leitura.
 \end{itemize}
@@ -185,6 +185,7 @@ Para melhor compreensão da arquitetura de dados, as 13 tabelas propostas neste 
         categories & Tabela~\ref{tab:tabelaCategoryDetalhado} \\ \hline
         layouts & Tabela~\ref{tab:tabelaLayoutDetalhado} \\ \hline
         collections & Tabela~\ref{tab:tabelaCollectionDetalhado} \\ \hline
+        tags & Tabela~\ref{tab:tabelaTagDetalhado} \\ \hline
         elements & Tabela~\ref{tab:tabelaElementDetalhado} \\ \hline
         items & Tabela~\ref{tab:tabelaItemDetalhado} \\ \hline
         notifications & Tabela~\ref{tab:tabelaNotificationDetalhado} \\ \hline
@@ -299,7 +300,13 @@ Sustenta o fluxo de recuperação de senha (RF-04). Armazena-se o \textit{hash} 
     name & Varch.(150) & X &  &  &  & UK\_01 & 1 \\ \hline
     type & Varch.(50) &  &  &  &  &  &  \\ \hline
     description & Text &  &  &  &  &  &  \\ \hline
-    icon & Varch.(100) &  &  &  &  &  &  \\ \hline
+    icon & Varch.(500) &  &  &  &  &  &  \\ \hline
+    cover\_image & Varch.(500) &  &  &  &  &  &  \\ \hline
+    cover\_original & Varch.(500) &  &  &  &  &  &  \\ \hline
+    cover\_crop\_x & Int &  &  &  &  &  &  \\ \hline
+    cover\_crop\_y & Int &  &  &  &  &  &  \\ \hline
+    cover\_crop\_width & Int &  &  &  &  &  &  \\ \hline
+    cover\_crop\_height & Int &  &  &  &  &  &  \\ \hline
     background\_color & Varch.(7) &  &  &  &  &  &  \\ \hline
     created\_at & Time. & X &  &  &  &  &  \\ \hline
     user\_id & UUID & X &  & users & id\_user & UK\_01 & 2 \\ \hline
@@ -308,19 +315,24 @@ Sustenta o fluxo de recuperação de senha (RF-04). Armazena-se o \textit{hash} 
 \label{tab:tabelaCategoryDetalhado}
 \end{table}
 
-Dois campos desta tabela envolvem decisões que a leitura isolada do esquema não revelaria. O
-\texttt{icon} guarda \textbf{ou} um emoji Unicode \textbf{ou} o caminho de uma imagem enviada pelo
-usuário, em coluna única; quem lê distingue os dois casos pela barra inicial do caminho. Optou-se
-por uma coluna só porque as duas formas são mutuamente exclusivas: escolher uma descarta a outra,
-conforme o RF-06.
+Alguns campos desta tabela envolvem decisões que a leitura isolada do esquema não revelaria. O
+\texttt{icon} guarda o emoji da categoria, exibido sobre o banner do cartão e no modo lista. A
+imagem do banner tem colunas próprias porque, na categoria, o emoji e a imagem coexistem (RF-06):
+o \texttt{cover\_image} guarda o recorte feito pelo usuário, já na proporção do banner, que é o
+que os cartões carregam, e o \texttt{cover\_original} guarda o arquivo enviado, intacto, que
+nenhuma tela exibe. Os quatro campos \texttt{cover\_crop\_*} registram a área recortada, em pixels
+do original. É esse par, original e área, que permite reabrir o enquadramento onde ele estava e
+refazê-lo sem novo envio; os campos da área ficam nulos quando a capa é anterior ao recorte, e
+nesse caso o enquadramento reabre centralizado. As colunas de arquivo têm 500 caracteres porque
+guardam a URL pública completa do arquivo armazenado.
 
 Já o \texttt{background\_color} guarda a cor em notação hexadecimal, e não como índice de uma
 paleta do sistema. A consequência é que a cor pertence ao usuário, e não ao tema: ela permanece a
 mesma na alternância entre os modos claro e escuro, comportamento adotado também por ferramentas
-como o Notion e o Trello nas cores de etiqueta. Cabe registrar que essa liberdade de escolha não
-compromete o RNF-09, porque nenhum texto assenta sobre a cor: o nome da categoria fica
-\textit{abaixo} da área colorida do cartão, e o emoji é decorativo. Não há, portanto, combinação
-de cores capaz de reprovar no critério de contraste.
+como o Notion e o Trello nas cores de etiqueta. Como o nome da categoria assenta sobre o banner,
+seja sobre a cor, seja sobre a capa, a legibilidade fica a cargo da interface: um escurecimento
+suave na metade inferior do banner e uma sombra discreta no texto branco garantem a leitura sobre
+qualquer fundo (RNF-05), sem desenhar uma faixa sobre a imagem.
 
 % 4. LAYOUTS
 \FloatBarrier
@@ -348,7 +360,7 @@ Três campos desta tabela sustentam requisitos do Editor de Layout. O \texttt{pu
 
 O terceiro é o \texttt{background}, que guarda o fundo da ficha: a folha sobre a qual todos os Elementos são desenhados. É coluna do \textit{layout}, e não chave no \texttt{style} de um Elemento, justamente por não pertencer a Elemento nenhum; e é uma coluna só porque a cópia individual de item é uma linha desta mesma tabela, de modo que o \textit{template} reutilizável e a ficha de cada item ficam cobertos de uma vez. Guarda uma cor em \texttt{\#rrggbb} ou, quando o fundo é um degradê, duas cores com um ângulo e um ponto de início, na forma \texttt{\#rrggbb..\#rrggbb@graus,inicio}. Não se grava ali a regra de estilo pronta: uma declaração de degradê aceita como texto livre seria injeção de código na página de quem visita a ficha, e impediria o cálculo descrito adiante. Cabe ao \textit{front-end} compor a regra a partir dos valores validados.
 
-Como \texttt{user\_id} é obrigatório, um \textit{layout} não existe sem dono, e é isso que define onde vivem os \textit{layouts} padrão oferecidos pelo sistema: eles são criados na biblioteca de cada usuário no momento do cadastro (RF-01), com a finalidade de \textit{template} reutilizável, do mesmo modo que a configuração de aparência padrão (RF-18). A partir daí comportam-se como qualquer outro \textit{layout} do usuário, podendo ser associados a coleções, editados ou duplicados.
+Como \texttt{user\_id} é obrigatório, um \textit{layout} não existe sem dono, e é isso que define onde vivem os \textit{layouts} padrão oferecidos pelo sistema: eles são criados na biblioteca de cada usuário no momento do cadastro (RF-01), com a finalidade de \textit{template} reutilizável, do mesmo modo que as paletas predefinidas de aparência (RF-18). A partir daí comportam-se como qualquer outro \textit{layout} do usuário, podendo ser associados a coleções, editados ou duplicados.
 
 Apenas os \textit{layouts} de finalidade \textit{template}, próprios ou importados, aparecem na biblioteca e podem ser associados a coleções. As cópias individuais de item ficam de fora dessa listagem, pois pertencem à ficha de um item específico e não fazem sentido como modelo a reutilizar.
 
@@ -365,7 +377,12 @@ Apenas os \textit{layouts} de finalidade \textit{template}, próprios ou importa
     name & Varch.(150) & X &  &  &  &  &  \\ \hline
     description & Text &  &  &  &  &  &  \\ \hline
     privacy & Enum & X &  &  &  &  &  \\ \hline
-    icon & Varch.(100) &  &  &  &  &  &  \\ \hline
+    icon & Varch.(500) &  &  &  &  &  &  \\ \hline
+    icon\_original & Varch.(500) &  &  &  &  &  &  \\ \hline
+    icon\_crop\_x & Int &  &  &  &  &  &  \\ \hline
+    icon\_crop\_y & Int &  &  &  &  &  &  \\ \hline
+    icon\_crop\_width & Int &  &  &  &  &  &  \\ \hline
+    icon\_crop\_height & Int &  &  &  &  &  &  \\ \hline
     background\_color & Varch.(7) &  &  &  &  &  &  \\ \hline
     created\_at & Time. & X &  &  &  &  &  \\ \hline
     category\_id & UUID & X &  & categories & id\_cat. &  &  \\ \hline
@@ -374,6 +391,45 @@ Apenas os \textit{layouts} de finalidade \textit{template}, próprios ou importa
 \vspace{0.1cm} \\ \textbf{Fonte:} Elaborada pelo autor
 \label{tab:tabelaCollectionDetalhado}
 \end{table}
+
+Na coleção, o ícone é emoji \textbf{ou} imagem, e escolher uma forma descarta a outra (RF-07). Por
+isso, ao contrário da categoria, não há coluna própria para a imagem: o recorte quadrado feito pelo
+usuário fica no próprio \texttt{icon}, e o \texttt{icon\_original} e os campos
+\texttt{icon\_crop\_*} cumprem o mesmo papel que têm na capa da categoria, permitindo refazer o
+enquadramento sem novo envio.
+
+% 5.1 TAGS
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Tag de Coleção (tags)}
+\footnotesize
+\begin{tabularx}{\textwidth}{ | X | c | c | c | c | c | c | c | }
+    \hline
+    \textbf{Campo} & \textbf{Tipo} & \textbf{Obr.?} & \textbf{PK?} & \textbf{Tab.} & \textbf{Cmp.} & \textbf{Grp.} & \textbf{Ord.}\\ \hline
+    id\_tag & UUID & X & X &  &  &  &  \\ \hline
+    name & Varch.(30) & X &  &  &  & UK\_01 & 1 \\ \hline
+    created\_at & Time. & X &  &  &  &  &  \\ \hline
+\end{tabularx}
+\vspace{0.1cm} \\ \textbf{Fonte:} Elaborada pelo autor
+\label{tab:tabelaTagDetalhado}
+\end{table}
+
+A tabela \texttt{tags} é o vocabulário compartilhado do RF-07: o \texttt{name} é único no sistema
+inteiro, e não por usuário, de modo que a mesma palavra ocupa uma única linha, qualquer que seja a
+conta que a escreveu. É isso que permite ao formulário sugerir as tags já existentes. O nome é
+gravado já na forma canônica (minúsculas, sem espaços nas pontas e sem acentuação), pela mesma
+rotina que normaliza o tema da categoria; gravar a forma original quebraria a unicidade, pois
+`Fantasia' e `fantasia' seriam duas linhas. O limite de 30 caracteres, menor que os 50 do tema,
+reflete o fato de a tag ser um rótulo curto, e várias delas dividirem a largura de um cartão.
+
+A ligação entre coleções e tags é muitos-para-muitos e fica na tabela associativa
+\texttt{\_CollectionToTag}, criada e mantida pelo próprio Prisma, com as colunas \texttt{A}
+(referência a \texttt{collections}) e \texttt{B} (referência a \texttt{tags}). É o único nome do
+esquema fora do padrão \textit{snake\_case}, justamente por ser gerado pelo ORM; em troca, as tags
+de uma coleção são lidas diretamente como lista, sem um nível intermediário de objetos. Excluir uma
+coleção desfaz apenas a ligação: a tag permanece no vocabulário, ao contrário do tema, que é
+derivado das categorias existentes e desaparece com a última que o utilizava.
 
 % 6. ELEMENTS
 \FloatBarrier
@@ -552,6 +608,8 @@ A unicidade desta tabela recai sobre \texttt{pair\_key} e não sobre o par \text
     text\_size & Float & X &  &  &  &  &  \\ \hline
     line\_height & Float & X &  &  &  &  &  \\ \hline
     letter\_spacing & Float & X &  &  &  &  &  \\ \hline
+    font\_weight & Int & X &  &  &  &  &  \\ \hline
+    font\_italic & Bool & X &  &  &  &  &  \\ \hline
     is\_active & Bool & X &  &  &  &  &  \\ \hline
     is\_default & Bool & X &  &  &  &  &  \\ \hline
     created\_at & Time. & X &  &  &  &  &  \\ \hline
@@ -562,7 +620,7 @@ A unicidade desta tabela recai sobre \texttt{pair\_key} e não sobre o par \text
 \label{tab:tabelaAppearancePresetDetalhado}
 \end{table}
 
-Cada paleta pertence a um usuário e tem nome único dentro de sua conta. O campo \texttt{subcolors} emprega o tipo JSONB, adequado por armazenar uma lista de tamanho variável de cores secundárias sem exigir tabela própria. Os dois indicadores booleanos têm papéis distintos: \texttt{is\_active} aponta a paleta em vigor no momento, e \texttt{is\_default} assinala a configuração neutra criada automaticamente no cadastro (RF-01), que serve de ponto de retorno quando o usuário deseja restaurar a aparência original.
+Cada paleta pertence a um usuário e tem nome único dentro de sua conta. O campo \texttt{subcolors} emprega o tipo JSONB e guarda, em lista, as doze subcores da paleta (as cores de cada superfície e o texto de cada uma, conforme o RF-18), sem exigir tabela própria. A tipografia do RF-19 fica na própria paleta: além da família, dos tamanhos e dos espaçamentos, o \texttt{font\_weight} guarda o peso do texto comum, de 300 a 800, do qual os títulos derivam sempre dois degraus acima, e o \texttt{font\_italic}, a inclinação. Os dois indicadores booleanos têm papéis distintos: \texttt{is\_active} aponta a paleta em uso, e \texttt{is\_default} assinala as seis paletas predefinidas que o sistema cria no cadastro (RF-01). Esse indicador marca apenas a origem da paleta, e não a torna imutável: as predefinidas podem ser editadas e excluídas como as demais.
 \FloatBarrier
 
 

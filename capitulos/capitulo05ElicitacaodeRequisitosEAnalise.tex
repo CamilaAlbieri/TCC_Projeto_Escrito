@@ -305,7 +305,7 @@ Usuário tenta cadastrar com o email `camilamattos.mila@gmail.com', que já exis
   \item A senha deve ser armazenada de forma criptografada (RNF-03).
   \item O código de usuário é gerado automaticamente pelo sistema no momento do cadastro, deve ser único em toda a plataforma e não pode ser alterado posteriormente.
   \item O código de usuário é o identificador público utilizado para buscas e envio de solicitações de amizade.
-  \item Ao concluir o cadastro, o sistema cria automaticamente para o usuário uma configuração de aparência padrão (tema claro, esquema neutro preto e branco), conforme RF-18.
+  \item Ao concluir o cadastro, o sistema disponibiliza na biblioteca de aparência do usuário as paletas predefinidas que oferece (três claras e três escuras), deixando em uso a paleta `Claro' ou a paleta `Escuro', conforme o tema do sistema operacional no momento do cadastro (RF-18).
   \item Ao concluir o cadastro, o sistema também disponibiliza na biblioteca de layouts do usuário os layouts padrão que oferece, prontos para serem associados a coleções, editados ou duplicados (RF-14 e RF-15).
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Essencial \\ \hline
@@ -478,7 +478,7 @@ Usuário altera o e-mail para `cami.mattos@gmail.com'; o sistema envia um link d
 
 \textbf{Objeto:} Categoria (agrupador temático de alto nível que reúne coleções relacionadas)
 
-\textbf{Atributos:} nome (100 caracteres), tipo/tema (texto livre de até 50 caracteres, com `livros', `filmes', `séries', `jogos' e `músicas' oferecidos como sugestão; o usuário pode definir o seu próprio), ícone (emoji Unicode \textbf{ou} imagem JPEG/PNG de até 2 MB, opcional), cor de fundo do cartão (hexadecimal, opcional), descrição (300 caracteres), data de criação (gerada automaticamente).
+\textbf{Atributos:} nome (100 caracteres), tipo/tema (texto livre de até 50 caracteres, com `livros', `filmes', `séries', `jogos' e `músicas' oferecidos como sugestão; o usuário pode definir o seu próprio), ícone (emoji Unicode, opcional), imagem de capa (JPEG/PNG, opcional; enviada com até 10 MB e enquadrada pelo usuário na proporção do banner, e o recorte gravado tem até 2 MB), imagem original da capa (guardada apenas para permitir o reenquadramento, nunca exibida), área do recorte (posição e tamanho em pixels do original), cor de fundo do cartão (hexadecimal, opcional), descrição (300 caracteres), data de criação (gerada automaticamente).
 
 \textbf{Exemplos:} Usuário Camila cria a categoria `Livros' com ícone personalizado e descrição `Tudo que leio ou pretendo ler'; a categoria é criada vazia, pronta para receber coleções.
 Camila edita a categoria, renomeando para `Biblioteca Pessoal'.
@@ -486,7 +486,7 @@ Camila exclui a categoria `Jogos Antigos' e confirma a exclusão permanente no d
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
-  \item O nome da categoria é obrigatório; ícone e descrição são opcionais.
+  \item O nome da categoria é obrigatório; ícone, imagem de capa e descrição são opcionais.
   \item Não podem existir duas categorias com o mesmo nome para o mesmo usuário.
   \item A categoria, ao ser criada, permanece vazia e não contém itens diretamente; os itens só podem ser cadastrados dentro de suas coleções (RF-07 e RF-09).
   \item A categoria serve apenas como agrupador temático; a definição de layout ocorre no nível da coleção, e não no da categoria (RF-07 e RF-15).
@@ -494,8 +494,10 @@ Camila exclui a categoria `Jogos Antigos' e confirma a exclusão permanente no d
   \item A exclusão deve exibir diálogo de confirmação alertando que todas as coleções e itens vinculados serão removidos permanentemente.
   \item A data de criação é gerada automaticamente pelo sistema e não pode ser editada.
   \item O tema é gravado em letras minúsculas, sem espaços nas extremidades e sem acentuação, de modo que grafias diferentes da mesma palavra sejam tratadas como o mesmo tema. A exibição apresenta a primeira letra em maiúscula.
-  \item O ícone aceita uma única forma por vez: escolher uma imagem substitui o emoji, e escolher um emoji descarta a imagem.
-  \item Categoria sem ícone é exibida apenas com a cor de fundo, sem símbolo padrão.
+  \item O ícone e a imagem de capa coexistem e são escolhidos separadamente: a capa ocupa o banner do cartão, e o emoji aparece sobre ela e no modo lista. Difere da coleção (RF-07), onde as duas formas são alternativas entre si.
+  \item Categoria sem ícone e sem capa é exibida apenas com a cor de fundo, sem símbolo padrão.
+  \item A imagem de capa é enquadrada pelo usuário na proporção do banner antes de ser gravada. O sistema guarda o arquivo original junto com a área recortada, de modo que o enquadramento possa ser refeito depois sem novo envio; remover a capa apaga as duas imagens.
+  \item O nome da categoria é exibido sobre a capa, e a legibilidade sobre qualquer imagem é responsabilidade da interface, que aplica escurecimento e sombra ao texto (RNF-05).
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Essencial \\ \hline
 \textbf{Operação}    & Entrada \\ \hline
@@ -518,11 +520,13 @@ Camila exclui a categoria `Jogos Antigos' e confirma a exclusão permanente no d
 
 \textbf{Objeto:} Coleção (subdivisão estruturada que pertence a uma categoria e agrupa itens)
 
-\textbf{Atributos:} nome (100 caracteres), categoria pai (referência obrigatória), ícone (emoji Unicode ou imagem JPEG/PNG de até 2 MB, opcional), cor de fundo do cartão (hexadecimal, opcional), descrição (300 caracteres), layout associado (referência opcional a um layout do usuário), nível de privacidade (pública, somente amigos ou privada), data de criação (gerada automaticamente).
+\textbf{Atributos:} nome (100 caracteres), categoria pai (referência obrigatória), ícone (emoji Unicode ou imagem JPEG/PNG, opcional; a imagem é enviada com até 10 MB e enquadrada pelo usuário, e o recorte gravado tem até 2 MB), imagem original do ícone (guardada apenas para permitir o reenquadramento, nunca exibida), área do recorte (posição e tamanho em pixels do original), cor de fundo do cartão (hexadecimal, opcional), descrição (300 caracteres), layout associado (referência opcional a um layout do usuário), nível de privacidade (pública, somente amigos ou privada), tags (de nenhuma a dez, texto livre de até 30 caracteres cada, opcionais), data de criação (gerada automaticamente).
 
 \textbf{Exemplos:} Usuário cria a coleção `Lidos' dentro da categoria `Livros', definindo a privacidade como `pública'; a coleção passa a aceitar itens.
 Camila edita a coleção `Lidos' para associar o layout `Card de Mangá', que passa a valer para os itens dessa coleção.
 Camila exclui a coleção `Rascunhos' e confirma no diálogo a remoção de todos os itens vinculados.
+Camila marca as coleções `Lidos' e `Relidos' com a tag `fantasia' e, clicando nela, vê as duas reunidas, ainda que pertençam a categorias diferentes.
+Ao escrever uma tag no formulário, Camila recebe como sugestão `ficcao cientifica', palavra já utilizada por outro usuário do sistema.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
@@ -537,6 +541,12 @@ Camila exclui a coleção `Rascunhos' e confirma no diálogo a remoção de todo
   \item O usuário deve poder ordenar as coleções por pelo menos quatro critérios: nome crescente, nome decrescente, data de criação crescente e data de criação decrescente.
   \item A ordenação padrão é por data de criação decrescente (mais recentes primeiro).
   \item O usuário deve poder filtrar as coleções por nível de privacidade (RF-08); a ordenação e o filtro aplicados devem ser persistidos entre sessões.
+  \item A coleção pode receber até dez tags, opcionais, de texto livre com até 30 caracteres cada. As tags são gravadas em forma canônica (sem espaços nas pontas, em minúsculas e sem acentuação), de modo que grafias diferentes da mesma palavra correspondam sempre à mesma tag; tags repetidas na mesma coleção são descartadas.
+  \item O vocabulário de tags é compartilhado por todos os usuários: cada palavra existe uma única vez no sistema, e o formulário sugere as tags já utilizadas por qualquer conta. O compartilhamento alcança apenas o rótulo: as coleções que o utilizam continuam sujeitas às regras de privacidade do RF-08, e uma tag pode existir no vocabulário sem que o usuário possua qualquer coleção que a use.
+  \item Cada tag exibida é um vínculo que leva à relação das coleções do próprio usuário marcadas com ela, independentemente da categoria a que pertençam. O sistema oferece também uma tela de consulta ao vocabulário, com busca por texto.
+  \item A tag sobrevive à exclusão das coleções que a utilizavam: o vínculo é desfeito, e a palavra permanece disponível no vocabulário.
+  \item O ícone aceita uma única forma por vez: escolher uma imagem substitui o emoji, e escolher um emoji descarta a imagem. Difere da categoria (RF-06), onde o emoji e a capa coexistem.
+  \item A imagem do ícone é enquadrada pelo usuário em proporção quadrada antes de ser gravada. O sistema guarda o arquivo original junto com a área recortada, de modo que o enquadramento possa ser refeito depois sem novo envio; remover o ícone apaga as duas imagens.
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Essencial \\ \hline
 \textbf{Operação}    & Entrada \\ \hline
@@ -719,6 +729,7 @@ Camila visualiza a coleção `Favoritos' usando o mesmo filtro; o sistema manté
   \item Os critérios de filtro disponíveis derivam dos Elementos presentes no layout efetivo dos itens, isto é, o layout da coleção ou, havendo personalização individual, o layout próprio do item (RF-17).
   \item A ordenação aplicada deve ser persistida por usuário e válida para todas as coleções até ser alterada.
   \item Os filtros aplicados são mantidos durante a navegação dentro da mesma coleção e reiniciados ao sair dela.
+  \item A tag não é critério de filtro nesta tela. A tag pertence à coleção (RF-07), e não ao item: como todos os itens de uma mesma coleção compartilhariam as mesmas tags, o filtro não separaria nada. A busca por tag reúne coleções e está descrita no RF-07.
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Essencial \\ \hline
 \textbf{Operação}    & Saída \\ \hline
@@ -741,7 +752,7 @@ Camila visualiza a coleção `Favoritos' usando o mesmo filtro; o sistema manté
 
 \textbf{Objeto:} Tela principal (dashboard) de categorias do usuário
 
-\textbf{Atributos:} lista de categorias do usuário autenticado (nome, ícone, cor de fundo do cartão, contagem total de coleções, contagem total de itens somados entre todas as coleções), modo de exibição (grade ou lista), critérios de ordenação (nome A--Z, nome Z--A, data de criação crescente, data de criação decrescente), critérios de filtro (tipo/tema da categoria), atalhos de navegação para coleções e itens.
+\textbf{Atributos:} lista de categorias do usuário autenticado (nome, ícone, imagem de capa, cor de fundo do cartão, contagem total de coleções, contagem total de itens somados entre todas as coleções), modo de exibição (grade ou lista), critérios de ordenação (nome A--Z, nome Z--A, data de criação crescente, data de criação decrescente), critérios de filtro (tipo/tema da categoria), atalhos de navegação para coleções e itens.
 
 \textbf{Exemplos:} Ao fazer login, Camila vê na tela inicial os cartões `Livros (2 coleções, 20 itens)', `Filmes (2 coleções, 30 itens)' e `Cafés (1 coleção, 7 itens)' em modo grade.
 Camila clica em `Livros' e visualiza as coleções `Lidos (20, pública)', `Para Ler (30, somente amigos)' e `Diário (2, privada)', podendo navegar para os itens de cada uma.
@@ -751,7 +762,7 @@ Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão `Criar prim
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
   \item A tela deve exibir todas as categorias do usuário autenticado em uma única tela dedicada.
-  \item Cada categoria deve exibir nome, ícone e as contagens de coleções e de itens.
+  \item Cada categoria deve exibir nome, ícone e as contagens de coleções e de itens. Em modo grade, a imagem de capa (RF-06) ocupa o topo do cartão, com o nome sobre ela.
   \item A categoria não possui nível de privacidade próprio; o indicador individual de privacidade aparece no \textit{card} de cada coleção dentro da categoria, e não no \textit{card} da categoria (RF-08).
   \item A navegação até as coleções de uma categoria deve ser acessível com um único clique ou toque; a navegação até um item, com no máximo três.
   \item Usuários sem categorias devem ver mensagem de boas-vindas com atalho para criação da primeira categoria.
@@ -940,23 +951,27 @@ Depois da personalização, o item mantém seu próprio layout, sem alterar o la
 \textbf{Descrição}   &
 \textbf{Ação:} Gerenciar aparência
 
-\textbf{Objeto:} Configuração visual global da interface do usuário
+\textbf{Objeto:} Paletas de aparência do usuário e configuração visual global da interface
 
-\textbf{Atributos:} cor primária (hex), subcores (até 4 valores hex), paletas predefinidas (lista do sistema), paletas personalizadas (nome de até 50 caracteres), estilo global (claro / escuro / automático conforme sistema operacional).
+\textbf{Atributos:} cor primária (hex), subcores (12 valores hex: fundo da página, cartões, títulos, barra lateral, cabeçalho, modais e um texto para cada superfície, isto é, texto no fundo, nos cartões, na barra lateral, no cabeçalho, nos modais e dentro dos botões de destaque), paletas predefinidas (lista do sistema), paletas personalizadas (nome de até 50 caracteres), paleta em uso, estilo global (claro / escuro / automático conforme sistema operacional).
 
-\textbf{Exemplos:} No momento do cadastro (RF-01), o sistema cria para o usuário uma aparência padrão: tema claro, com esquema neutro em preto e branco.
-Camila seleciona a paleta predefinida `Outono' com tons terrosos e estilo escuro; toda a interface é atualizada em tempo real.
-Camila cria a paleta personalizada `Meu Rosa' com cor primária \#E91E8C, aplica e salva no perfil.
+\textbf{Exemplos:} No momento do cadastro (RF-01), o sistema disponibiliza ao usuário seis paletas predefinidas (`Claro', `Escuro', `Outono', `Oceano', `Floresta' e `Lavanda'); como o sistema operacional de Camila está no tema escuro, a paleta `Escuro' já nasce em uso.
+Camila seleciona a paleta predefinida `Oceano', de tons azulados e estilo escuro; toda a interface é atualizada imediatamente.
+Camila cria a paleta personalizada `Meu Rosa' a partir da paleta em uso, altera a cor primária para \#E91E8C, confere o resultado na área de prévia e salva.
+Com a paleta clara `Meu Rosa' em uso, Camila muda o estilo global para escuro; as cores da paleta passam a ser exibidas com a claridade invertida, preservando os tons.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
-  \item Todo usuário recém-cadastrado recebe uma configuração de aparência padrão (tema claro, esquema neutro preto e branco), criada automaticamente no cadastro (RF-01).
-  \item O usuário pode alterar a aparência a qualquer momento; as mudanças sobrescrevem a configuração existente.
-  \item O tema selecionado deve ser aplicado globalmente a todas as telas do sistema de forma imediata.
-  \item Paletas predefinidas podem ser editadas diretamente nas configurações.
-  \item As configurações de aparência devem ser salvas no perfil e persistidas entre sessões e dispositivos.
-  \item As alterações devem ser exibidas em área de prévia antes de o usuário confirmar a aplicação.
-  \item As paletas pertencem ao usuário e seus nomes são únicos por usuário; uma delas permanece marcada como ativa, e a criada no cadastro é assinalada como padrão.
+  \item Todo usuário recém-cadastrado recebe as paletas predefinidas do sistema (RF-01). Nasce em uso a paleta `Escuro' se o sistema operacional estiver no tema escuro no momento do cadastro, e a paleta `Claro' nos demais casos; mudanças posteriores no sistema operacional não trocam a paleta em uso.
+  \item O usuário pode criar, editar, duplicar, renomear e excluir paletas, e selecionar a paleta em uso a qualquer momento. As paletas predefinidas pertencem ao usuário e podem ser editadas e excluídas como as personalizadas.
+  \item A paleta em uso deve ser aplicada globalmente a todas as telas do sistema de forma imediata.
+  \item A paleta em uso não pode ser excluída, o que garante que o usuário tenha sempre ao menos uma paleta.
+  \item Uma paleta é sempre completa: a cor primária e todas as subcores devem estar preenchidas. Cada superfície (fundo da página, cartões, barra lateral, cabeçalho e modais) tem sua própria cor de texto, escolhida pelo usuário; o sistema exibe exatamente a cor escolhida, sem substituí-la.
+  \item O sistema classifica cada paleta como clara ou escura a partir da cor de fundo. Quando o estilo global em vigor é o oposto ao da paleta em uso, as cores são exibidas com a claridade invertida, preservando os tons.
+  \item As paletas e a paleta em uso devem ser salvas no perfil e persistidas entre sessões e dispositivos. Os nomes das paletas são únicos por usuário.
+  \item Enquanto o usuário edita uma paleta, a interface exibe a própria paleta em edição, para que ele veja o resultado exato antes de confirmar. Nada é gravado até que ele salve, e cancelar ou sair devolve a interface à paleta em uso. A paleta é exibida no estilo em que foi desenhada; a inversão para o estilo oposto acontece apenas quando ela está em uso (restrição 6).
+  \item O sistema deve alertar o usuário quando uma combinação de cores não atender ao contraste mínimo (RNF-09), sem impedir a escolha.
+  \item A biblioteca de paletas pode ser exibida em grade ou em lista e filtrada por paletas claras ou escuras.
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Desejável \\ \hline
 \textbf{Operação}    & Entrada \\ \hline
@@ -979,15 +994,15 @@ Camila cria a paleta personalizada `Meu Rosa' com cor primária \#E91E8C, aplica
 
 \textbf{Objeto:} Tipografia e aparência textual global
 
-\textbf{Atributos:} família de fonte (lista predefinida com no mínimo 5 opções), tamanho base em px (mínimo 12 px, máximo 24 px), espaço entre linhas (1.0 a 2.0), espaço entre letras.
+\textbf{Atributos:} família de fonte (lista predefinida com no mínimo 5 opções), tamanho base em px (mínimo 12 px, máximo 24 px), tamanho de título em px (mínimo 16 px, máximo 48 px), espaço entre linhas (1.0 a 2.0), espaço entre letras, peso da fonte (300 a 800), itálico.
 
-\textbf{Exemplos:} Camila altera a fonte para `Georgia', tamanho base para 16 px e espaço de linha para 1.6; a prévia reflete as mudanças antes da confirmação.
+\textbf{Exemplos:} Camila edita a paleta `Meu Rosa' e altera a fonte para `Georgia', o tamanho base para 16 px e o espaço de linha para 1.6; a prévia reflete as mudanças antes da confirmação.
 
 \textbf{Restrições:}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=2pt,partopsep=0pt,parsep=0pt,itemsep=1pt]
   \item As fontes disponíveis devem incluir ao menos cinco opções tipográficas distintas (ex.: serif, sans-serif, monospace).
   \item As alterações devem ser exibidas em área de prévia antes de o usuário confirmar a aplicação.
-  \item As configurações de tipografia devem ser aplicadas globalmente e persistidas entre sessões.
+  \item A tipografia faz parte de cada paleta (RF-18): é aplicada globalmente junto com a paleta em uso e persistida entre sessões e dispositivos.
 \end{enumerate} \\ \hline
 \textbf{Prioridade}  & Desejável \\ \hline
 \textbf{Operação}    & Entrada \\ \hline
@@ -2092,63 +2107,108 @@ Pontos de Extensão & E01 - Personalizar Informações (permite modificar foto, 
 
 Nome do Caso de Uso & Personalizar Interface \\ \hline
 
-Descrição Resumida & Este caso de uso permite que o usuário configure a aparência visual global da plataforma, incluindo cores, subcores, tipografia e tema do sistema (claro, escuro ou automático). As alterações são exibidas em prévia antes de serem confirmadas e persistem entre sessões e dispositivos (RF-18 e RF-19). \\ \hline
+Descrição Resumida & Este caso de uso permite que o usuário gerencie a aparência visual global da plataforma por meio de paletas: selecionar a paleta em uso e criar, editar, duplicar, renomear e excluir paletas, cada uma com cor primária, subcores e tipografia. O estilo global (claro, escuro ou automático) é escolhido no menu da conta. Enquanto uma paleta é editada, a interface passa a exibi-la, para que o usuário veja o resultado exato antes de confirmar; nada é gravado até salvar, e tudo persiste entre sessões e dispositivos (RF-18 e RF-19). \\ \hline
 
 Fluxo Básico & \mbox{}
-\textbf{FB01:} Personalização da interface
+\textbf{FB01:} Seleção da paleta em uso
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-    \item O usuário acessa a área de configurações da plataforma.
-    \item O usuário seleciona a opção ``Personalizar Interface''.
-    \item O sistema exibe o painel de personalização com as configurações atuais e uma área de prévia.
-    \item O usuário seleciona ou modifica as configurações desejadas (cores, tipografia, tema) [E01][E02][E03].
-    \item O sistema atualiza a área de prévia em tempo real conforme as alterações.
-    \item O usuário confirma as alterações clicando em ``Aplicar''.
-    \item O sistema salva as configurações no perfil do usuário.
-    \item O sistema aplica as alterações globalmente a todas as telas do sistema de forma imediata.
-    \item O sistema exibe mensagem de sucesso: ``Configurações visuais aplicadas com sucesso.''
+    \item O usuário seleciona a opção ``Aparência'' no menu da conta.
+    \item O sistema exibe a biblioteca de paletas do usuário, com a paleta em uso destacada.
+    \item O usuário seleciona uma paleta da biblioteca.
+    \item O sistema define a paleta selecionada como paleta em uso, adotando o estilo global associado a ela.
+    \item O sistema aplica a paleta globalmente a todas as telas do sistema de forma imediata.
 \end{enumerate}
 \mbox{} \\ \hline
 
 Fluxos Alternativos & \mbox{}
-\textbf{FA01:} Seleção de paleta predefinida
+\textbf{FA01:} Criação de paleta
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-    \item No passo 4 do FB01, o usuário seleciona uma paleta predefinida disponível no sistema (ex.: ``Outono'', ``Oceano'').
-    \item O sistema preenche automaticamente os campos de cor primária e subcores com os valores da paleta selecionada.
-    \item O sistema atualiza a prévia em tempo real.
-    \item O fluxo continua no passo 6 do FB01.
+    \item No passo 3 do FB01, o usuário seleciona ``Nova paleta''.
+    \item O sistema exibe o editor de paleta com as cores e a tipografia da paleta em uso, e passa a exibir a interface com a paleta em edição.
+    \item O usuário informa o nome e modifica cores e tipografia; a cada alteração o sistema atualiza a interface exibida, sem gravar [E01][E02][E03].
+    \item O usuário clica em ``Salvar''.
+    \item O sistema classifica a paleta como clara ou escura pela cor de fundo, salva-a na biblioteca e retorna ao passo 2 do FB01.
 \end{enumerate}
 
-\textbf{FA02:} Cancelamento da operação
+\textbf{FA02:} Edição de paleta
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-    \item Em qualquer momento entre os passos 4 e 6 do FB01, o usuário seleciona ``Cancelar''.
-    \item O sistema descarta as alterações não salvas.
-    \item O sistema mantém as configurações visuais anteriores.
-    \item O sistema retorna ao painel de configurações.
+    \item No passo 3 do FB01, o usuário seleciona ``Editar'' no menu de uma paleta.
+    \item O sistema exibe o editor de paleta com os valores atuais da paleta, e passa a exibir a interface com a paleta em edição.
+    \item O usuário modifica nome, cores e tipografia e clica em ``Salvar'' [E01][E02][E03].
+    \item O sistema salva a paleta; se ela for a paleta em uso, as alterações são aplicadas globalmente de forma imediata. O fluxo retorna ao passo 2 do FB01.
 \end{enumerate}
 
-\textbf{FA03:} Restaurar configurações padrão
+\textbf{FA03:} Cancelamento da edição
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-    \item No passo 4 do FB01, o usuário seleciona ``Restaurar Configuração Padrão''.
-    \item O sistema exibe mensagem de confirmação: ``Deseja restaurar todas as configurações visuais para o padrão?''
-    \item Se o usuário confirmar, o sistema restaura os valores padrão e atualiza a prévia.
-    \item O fluxo continua no passo 6 do FB01.
+    \item Em qualquer momento no editor de paleta, antes de salvar, o usuário seleciona ``Cancelar''.
+    \item Havendo alterações não salvas, o sistema exibe mensagem de confirmação: ``Sair sem salvar?''
+    \item Se o usuário confirmar, o sistema descarta as alterações, devolve a interface à paleta em uso e retorna ao passo 2 do FB01; caso contrário, permanece no editor.
+\end{enumerate}
+
+\textbf{FA04:} Duplicação de paleta
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 3 do FB01, o usuário seleciona ``Duplicar'' no menu de uma paleta.
+    \item O sistema cria uma cópia da paleta, com ``(cópia)'' no nome, e a exibe na biblioteca.
+\end{enumerate}
+
+\textbf{FA05:} Renomeação de paleta
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 3 do FB01, o usuário seleciona ``Renomear'' no menu de uma paleta, informa o novo nome e confirma.
+    \item O sistema salva o novo nome e atualiza a biblioteca.
+\end{enumerate}
+
+\textbf{FA06:} Exclusão de paleta
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 3 do FB01, o usuário seleciona ``Excluir'' no menu de uma paleta.
+    \item O sistema exibe mensagem de confirmação; se o usuário confirmar, o sistema remove a paleta da biblioteca.
+\end{enumerate}
+
+\textbf{FA07:} Alteração do estilo global
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item Em qualquer momento, o usuário altera o estilo global (claro, escuro ou automático) no menu da conta.
+    \item O sistema aplica o estilo e o salva na paleta em uso; se o estilo em vigor for o oposto ao da paleta, as cores são exibidas com a claridade invertida, preservando os tons.
+\end{enumerate}
+
+\textbf{FA08:} Exclusão da paleta em uso
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No passo 1 do FA06, a paleta selecionada para exclusão é a paleta em uso.
+    \item O sistema recusa a exclusão e informa que outra paleta deve ser selecionada antes.
+\end{enumerate}
+
+\textbf{FA09:} Nome de paleta já existente
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item Ao salvar no FA01 ou no FA02, ou ao confirmar no FA05, já existe uma paleta com o nome informado.
+    \item O sistema informa o conflito e mantém o editor aberto para correção.
+\end{enumerate}
+
+\textbf{FA10:} Contraste insuficiente
+\vspace{2pt}
+\begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
+    \item No editor de paleta, uma combinação de cores não atende ao contraste mínimo (RNF-09).
+    \item O sistema exibe um alerta junto à cor, sem impedir o salvamento.
 \end{enumerate}
 \mbox{} \\ \hline
 
-Requisitos Especiais & RNF-01 - O painel de personalização deve ser intuitivo e acessível. RNF-07 - As alterações devem ser refletidas na prévia em tempo real, sem recarregar a página. RNF-04 - As configurações devem ser persistidas entre sessões e dispositivos. \\ \hline
+Requisitos Especiais & RNF-01 - A biblioteca e o editor de paletas devem ser intuitivos e acessíveis. RNF-07 - As alterações devem ser refletidas na interface em tempo real, sem recarregar a página. RNF-04 - As paletas devem ser persistidas entre sessões e dispositivos. \\ \hline
 
 Condições Prévias & O usuário deve estar autenticado no sistema. \\ \hline
 
-Pós-Condições & As configurações visuais são salvas no perfil do usuário. As alterações são aplicadas globalmente e imediatamente a todas as telas. As configurações persistem em futuras sessões e em outros dispositivos. \\ \hline
+Pós-Condições & As paletas e a paleta em uso são salvas no perfil do usuário. A paleta em uso é aplicada globalmente e imediatamente a todas as telas, e persiste em futuras sessões e em outros dispositivos. \\ \hline
 
 Pontos de Extensão &
-E01 - Modificar Cores (estende o passo 4 do FB01, conforme RF-18).
-E02 - Modificar Fontes (estende o passo 4 do FB01, conforme RF-19).
-E03 - Visualizar Prévia (estende o passo 4 do FB01 — exibe prévia em tempo real das alterações antes de aplicar). \\
+E01 - Modificar Cores (estende o editor de paleta nos FA01 e FA02, conforme RF-18).
+E02 - Modificar Fontes (estende o editor de paleta nos FA01 e FA02, conforme RF-19).
+E03 - Visualizar Prévia (estende o editor de paleta nos FA01 e FA02: a interface exibe a paleta em edição antes de salvar). \\
 \end{longtable}
 \renewcommand{\arraystretch}{1}
 \FloatBarrier
@@ -2277,9 +2337,10 @@ Fluxo Básico & \mbox{}
 	\item O usuário insere uma descrição (opcional).
 	\item O usuário associa um layout à coleção (opcional) [E01].
 	\item O usuário configura a privacidade da coleção (pública, somente amigos ou privada) [E02].
+	\item O usuário escreve as tags da coleção (opcional), recebendo como sugestão o vocabulário já existente no sistema (RF-07).
 	\item O usuário confirma a criação da coleção.
 	\item O sistema valida os dados inseridos.
-	\item O sistema cria a coleção vinculada à categoria pai, com a privacidade configurada.
+	\item O sistema cria a coleção vinculada à categoria pai, com a privacidade configurada, e vincula as tags informadas ao vocabulário, criando as que ainda não existirem.
 	\item O sistema exibe mensagem de sucesso.
 	\item O sistema redireciona para a visualização da coleção, pronta para receber itens.
 \end{enumerate}
@@ -2289,7 +2350,7 @@ Fluxos Alternativos & \mbox{}
 \textbf{FA01:} Nome da coleção já existe na categoria
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item No passo 10 do FB01, o sistema identifica que já existe uma coleção com o mesmo nome na categoria pai.
+	\item No passo 11 do FB01, o sistema identifica que já existe uma coleção com o mesmo nome na categoria pai.
 	\item O sistema exibe mensagem de erro: ``Já existe uma coleção com este nome nesta categoria. Por favor, escolha outro nome.''
 	\item O sistema retorna ao passo 4 do FB01.
 \end{enumerate}
@@ -2297,7 +2358,7 @@ Fluxos Alternativos & \mbox{}
 \textbf{FA02:} Campos obrigatórios não preenchidos
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item No passo 10 do FB01, o sistema identifica que o campo nome não foi preenchido.
+	\item No passo 11 do FB01, o sistema identifica que o campo nome não foi preenchido.
 	\item O sistema exibe mensagem de erro: ``O nome da coleção é obrigatório.''
 	\item O sistema retorna ao passo 4 do FB01.
 \end{enumerate}
@@ -2305,7 +2366,7 @@ Fluxos Alternativos & \mbox{}
 \textbf{FA03:} Cancelamento da operação
 \vspace{2pt}
 \begin{enumerate}[nosep,leftmargin=1.2em,topsep=0pt,partopsep=0pt,parsep=0pt,itemsep=0pt,after=\vspace{2pt}]
-	\item Em qualquer momento entre os passos 4 e 8 do FB01, o usuário pode selecionar ``Cancelar''.
+	\item Em qualquer momento entre os passos 4 e 9 do FB01, o usuário pode selecionar ``Cancelar''.
 	\item O sistema descarta as informações inseridas.
 	\item O sistema retorna à categoria pai.
 	\item O caso de uso é encerrado.
