@@ -103,7 +103,7 @@ Usuário tenta cadastrar com o email "camilamattos.mila@gmail.com", que já exis
 5. A senha deve ser armazenada de forma criptografada (RNF-03).
 6. O código de usuário é gerado automaticamente pelo sistema no momento do cadastro, deve ser único em toda a plataforma e não pode ser alterado posteriormente.
 7. O código de usuário é o identificador público utilizado para buscas e envio de solicitações de amizade.
-8. Ao concluir o cadastro, o sistema cria automaticamente para o usuário uma configuração de aparência padrão (tema claro, esquema neutro preto e branco), conforme RF-18.
+8. Ao concluir o cadastro, o sistema disponibiliza na biblioteca de aparência do usuário as paletas predefinidas que oferece — três claras e três escuras —, deixando em uso a paleta "Claro" ou a paleta "Escuro", conforme o tema do sistema operacional no momento do cadastro (RF-18).
 9. Ao concluir o cadastro, o sistema também disponibiliza na biblioteca de layouts do usuário os layouts padrão que oferece, prontos para serem associados a coleções, editados ou duplicados (RF-14 e RF-15).
 
 ### RF-02 — Autenticar Usuário (Login e Logout)
@@ -234,10 +234,12 @@ Camila exclui a categoria "Jogos Antigos" e confirma a exclusão permanente no d
 - **Objeto:** Coleção (subdivisão estruturada que pertence a uma categoria e agrupa itens)
 - **Prioridade:** Essencial · **Operação:** Entrada · **Ator:** Usuário
 
-**Atributos:** nome (100 caracteres), categoria pai (referência obrigatória), ícone (emoji Unicode ou imagem JPEG/PNG, opcional; a imagem é enviada com até 10 MB e enquadrada pelo usuário, e o recorte gravado tem até 2 MB), imagem original do ícone (guardada apenas para permitir o reenquadramento, nunca exibida), área do recorte (posição e tamanho em pixels do original), cor de fundo do cartão (hexadecimal, opcional), descrição (300 caracteres), layout associado (referência opcional a um layout do usuário), nível de privacidade (pública, somente amigos ou privada), data de criação (gerada automaticamente).
+**Atributos:** nome (100 caracteres), categoria pai (referência obrigatória), ícone (emoji Unicode ou imagem JPEG/PNG, opcional; a imagem é enviada com até 10 MB e enquadrada pelo usuário, e o recorte gravado tem até 2 MB), imagem original do ícone (guardada apenas para permitir o reenquadramento, nunca exibida), área do recorte (posição e tamanho em pixels do original), cor de fundo do cartão (hexadecimal, opcional), descrição (300 caracteres), layout associado (referência opcional a um layout do usuário), nível de privacidade (pública, somente amigos ou privada), tags (de nenhuma a dez, texto livre de até 30 caracteres cada, opcionais), data de criação (gerada automaticamente).
 
 **Exemplos:** Usuário cria a coleção "Lidos" dentro da categoria "Livros", definindo a privacidade como "pública"; a coleção passa a aceitar itens.
 Camila edita a coleção "Lidos" para associar o layout "Card de Mangá", que passa a valer para os itens dessa coleção.
+Camila marca as coleções "Lidos" e "Relidos" com a tag "fantasia" e, clicando nela, vê as duas reunidas, ainda que pertençam a categorias diferentes.
+Ao escrever uma tag no formulário, Camila recebe como sugestão "ficcao cientifica", palavra já utilizada por outro usuário do sistema.
 Camila exclui a coleção "Rascunhos" e confirma no diálogo a remoção de todos os itens vinculados.
 
 **Regras / Restrições:**
@@ -253,8 +255,12 @@ Camila exclui a coleção "Rascunhos" e confirma no diálogo a remoção de todo
 9. O usuário deve poder ordenar as coleções por pelo menos quatro critérios: nome crescente, nome decrescente, data de criação crescente e data de criação decrescente.
 10. A ordenação padrão é por data de criação decrescente (mais recentes primeiro).
 11. O usuário deve poder filtrar as coleções por nível de privacidade (RF-08); a ordenação e o filtro aplicados devem ser persistidos entre sessões.
-12. O ícone aceita uma única forma por vez: escolher uma imagem substitui o emoji, e escolher um emoji descarta a imagem.
-13. A imagem do ícone é enquadrada pelo usuário em proporção quadrada antes de ser gravada. O sistema guarda o arquivo original junto com a área recortada, de modo que o enquadramento possa ser refeito depois sem novo envio; remover o ícone apaga as duas imagens.
+12. A coleção pode receber até dez tags, opcionais, de texto livre com até 30 caracteres cada. As tags são gravadas em forma canônica — sem espaços nas pontas, em minúsculas e sem acentuação —, de modo que grafias diferentes da mesma palavra correspondam sempre à mesma tag; tags repetidas na mesma coleção são descartadas.
+13. O vocabulário de tags é compartilhado por todos os usuários: cada palavra existe uma única vez no sistema, e o formulário sugere as tags já utilizadas por qualquer conta. O compartilhamento alcança apenas o rótulo — as coleções que o utilizam continuam sujeitas às regras de privacidade do RF-08, e uma tag pode existir no vocabulário sem que o usuário possua qualquer coleção que a use.
+14. Cada tag exibida é um vínculo que leva à relação das coleções do próprio usuário marcadas com ela, independentemente da categoria a que pertençam. O sistema deve oferecer também uma tela de consulta ao vocabulário, com busca por texto.
+15. A tag sobrevive à exclusão das coleções que a utilizavam: o vínculo é desfeito, e a palavra permanece disponível no vocabulário.
+16. O ícone aceita uma única forma por vez: escolher uma imagem substitui o emoji, e escolher um emoji descarta a imagem. Difere da categoria (RF-06), onde o emoji e a capa coexistem.
+17. A imagem do ícone é enquadrada pelo usuário em proporção quadrada antes de ser gravada. O sistema guarda o arquivo original junto com a área recortada, de modo que o enquadramento possa ser refeito depois sem novo envio; remover o ícone apaga as duas imagens.
 
 ### RF-08 — Gerenciar Privacidade da Coleção
 
@@ -367,6 +373,7 @@ Camila visualiza a coleção "Favoritos" usando o mesmo filtro; o sistema manté
 3. Os critérios de filtro disponíveis dependem dos elementos presentes no layout aplicável à coleção.
 4. A ordenação aplicada deve ser persistida por usuário e válida para todas as coleções até ser alterada.
 5. Os filtros aplicados são mantidos durante a navegação dentro da mesma coleção e reiniciados ao sair dela.
+6. **A tag não é critério de filtro nesta tela.** A especificação original listava tags entre os filtros de itens; elas passaram a pertencer à coleção (RF-07), e não ao item. Como todos os itens de uma mesma coleção compartilhariam as mesmas tags, o filtro não separaria nada — a busca por tag reúne coleções, e está descrita no RF-07.
 
 ### RF-13 — Exibir Tela Principal de Categorias
 
@@ -501,23 +508,28 @@ Depois da personalização, o item mantém seu próprio layout, sem alterar o la
 
 - **Grupo:** Aparência
 - **Ação:** Gerenciar aparência
-- **Objeto:** Configuração visual global da interface do usuário
+- **Objeto:** Paletas de aparência do usuário e configuração visual global da interface
 - **Prioridade:** Desejável · **Operação:** Entrada · **Ator:** Usuário
 
-**Atributos:** cor primária (hex), subcores (até 4 valores hex), paletas predefinidas (lista do sistema), paletas personalizadas (nome de até 50 caracteres), estilo global (claro / escuro / automático conforme sistema operacional).
+**Atributos:** cor primária (hex), subcores (12 valores hex: fundo da página, cartões, títulos, barra lateral, cabeçalho, modais e um texto para cada superfície — texto no fundo, nos cartões, na barra lateral, no cabeçalho, nos modais e dentro dos botões de destaque), paletas predefinidas (lista do sistema), paletas personalizadas (nome de até 50 caracteres), paleta em uso, estilo global (claro / escuro / automático conforme sistema operacional).
 
-**Exemplos:** No momento do cadastro (RF-01), o sistema cria para o usuário uma aparência padrão: tema claro, com esquema neutro em preto e branco.
-Camila seleciona a paleta predefinida "Outono" com tons terrosos e estilo escuro; toda a interface é atualizada em tempo real.
-Camila cria a paleta personalizada "Meu Rosa" com cor primária #E91E8C, aplica e salva no perfil.
+**Exemplos:** No momento do cadastro (RF-01), o sistema disponibiliza ao usuário seis paletas predefinidas — "Claro", "Escuro", "Outono", "Oceano", "Floresta" e "Lavanda" —; como o sistema operacional de Camila está no tema escuro, a paleta "Escuro" já nasce em uso.
+Camila seleciona a paleta predefinida "Oceano", de tons azulados e estilo escuro; toda a interface é atualizada imediatamente.
+Camila cria a paleta personalizada "Meu Rosa" a partir da paleta em uso, altera a cor primária para #E91E8C, confere o resultado na área de prévia e salva.
+Com a paleta clara "Meu Rosa" em uso, Camila muda o estilo global para escuro; as cores da paleta passam a ser exibidas com a claridade invertida, preservando os tons.
 
 **Regras / Restrições:**
 
-1. Todo usuário recém-cadastrado recebe uma configuração de aparência padrão (tema claro, esquema neutro preto e branco), criada automaticamente no cadastro (RF-01).
-2. O usuário pode alterar a aparência a qualquer momento; as mudanças sobrescrevem a configuração existente.
-3. O tema selecionado deve ser aplicado globalmente a todas as telas do sistema de forma imediata.
-4. Paletas predefinidas podem ser editadas diretamente nas configurações.
-5. As configurações de aparência devem ser salvas no perfil e persistidas entre sessões e dispositivos.
-6. As alterações devem ser exibidas em área de prévia antes de o usuário confirmar a aplicação.
+1. Todo usuário recém-cadastrado recebe as paletas predefinidas do sistema (RF-01). Nasce em uso a paleta "Escuro" se o sistema operacional estiver no tema escuro no momento do cadastro, e a paleta "Claro" nos demais casos; mudanças posteriores no sistema operacional não trocam a paleta em uso.
+2. O usuário pode criar, editar, duplicar, renomear e excluir paletas, e selecionar a paleta em uso a qualquer momento. As paletas predefinidas pertencem ao usuário e podem ser editadas e excluídas como as personalizadas.
+3. A paleta em uso deve ser aplicada globalmente a todas as telas do sistema de forma imediata.
+4. A paleta em uso não pode ser excluída, o que garante que o usuário tenha sempre ao menos uma paleta.
+5. Uma paleta é sempre completa: a cor primária e todas as subcores devem estar preenchidas. Cada superfície (fundo da página, cartões, barra lateral, cabeçalho e modais) tem sua própria cor de texto, escolhida pelo usuário; o sistema exibe exatamente a cor escolhida, sem substituí-la.
+6. O sistema classifica cada paleta como clara ou escura a partir da cor de fundo. Quando o estilo global em vigor é o oposto ao da paleta em uso, as cores são exibidas com a claridade invertida, preservando os tons.
+7. As paletas e a paleta em uso devem ser salvas no perfil e persistidas entre sessões e dispositivos.
+8. Enquanto o usuário edita uma paleta, a interface exibe a própria paleta em edição, para que ele veja o resultado exato antes de confirmar. Nada é gravado até que ele salve, e cancelar ou sair devolve a interface à paleta em uso. A paleta é exibida no estilo em que foi desenhada; a inversão para o estilo oposto acontece apenas quando ela está em uso (regra 6).
+9. O sistema deve alertar o usuário quando uma combinação de cores não atender ao contraste mínimo (RNF-09), sem impedir a escolha.
+10. A biblioteca de paletas pode ser exibida em grade ou em lista e filtrada por paletas claras ou escuras.
 
 ### RF-19 — Gerenciar Tipografia Global
 
@@ -526,15 +538,15 @@ Camila cria a paleta personalizada "Meu Rosa" com cor primária #E91E8C, aplica 
 - **Objeto:** Tipografia e aparência textual global
 - **Prioridade:** Desejável · **Operação:** Entrada · **Ator:** Usuário
 
-**Atributos:** família de fonte (lista predefinida com no mínimo 5 opções), tamanho base em px (mínimo 12 px, máximo 24 px), espaço entre linhas (1.0 a 2.0), espaço entre letras.
+**Atributos:** família de fonte (lista predefinida com no mínimo 5 opções), tamanho base em px (mínimo 12 px, máximo 24 px), tamanho de título em px (mínimo 16 px, máximo 48 px), espaço entre linhas (1.0 a 2.0), espaço entre letras, peso da fonte (300 a 800), itálico.
 
-**Exemplos:** Camila altera a fonte para "Georgia", tamanho base para 16 px e espaço de linha para 1.6; a prévia reflete as mudanças antes da confirmação.
+**Exemplos:** Camila edita a paleta "Meu Rosa" e altera a fonte para "Georgia", o tamanho base para 16 px e o espaço de linha para 1.6; a prévia reflete as mudanças antes da confirmação.
 
 **Regras / Restrições:**
 
 1. As fontes disponíveis devem incluir ao menos cinco opções tipográficas distintas (ex.: serif, sans-serif, monospace).
 2. As alterações devem ser exibidas em área de prévia antes de o usuário confirmar a aplicação.
-3. As configurações de tipografia devem ser aplicadas globalmente e persistidas entre sessões.
+3. A tipografia faz parte de cada paleta (RF-18): é aplicada globalmente junto com a paleta em uso e persistida entre sessões e dispositivos.
 
 ### RF-20 — Gerenciar Amizade
 
@@ -939,21 +951,22 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 6. O usuário insere uma descrição (opcional).
 7. O usuário associa um layout à coleção (opcional) [E01].
 8. O usuário configura a privacidade da coleção (pública, somente amigos ou privada) [E02].
-9. O usuário confirma a criação da coleção.
-10. O sistema valida os dados inseridos.
-11. O sistema cria a coleção vinculada à categoria pai, com a privacidade configurada.
-12. O sistema exibe mensagem de sucesso.
-13. O sistema redireciona para a visualização da coleção, pronta para receber itens.
+9. O usuário escreve as tags da coleção (opcional), recebendo como sugestão o vocabulário já existente no sistema (RF-07).
+10. O usuário confirma a criação da coleção.
+11. O sistema valida os dados inseridos.
+12. O sistema cria a coleção vinculada à categoria pai, com a privacidade configurada, e vincula as tags informadas ao vocabulário, criando as que ainda não existirem.
+13. O sistema exibe mensagem de sucesso.
+14. O sistema redireciona para a visualização da coleção, pronta para receber itens.
 
 **Fluxos alternativos / exceções:**
 
-- No passo 10 do FB01, o sistema identifica que já existe uma coleção com o mesmo nome na categoria pai.
+- No passo 11 do FB01, o sistema identifica que já existe uma coleção com o mesmo nome na categoria pai.
 - O sistema exibe mensagem de erro: "Já existe uma coleção com este nome nesta categoria. Por favor, escolha outro nome."
 - O sistema retorna ao passo 4 do FB01.
-- No passo 10 do FB01, o sistema identifica que o campo nome não foi preenchido.
+- No passo 11 do FB01, o sistema identifica que o campo nome não foi preenchido.
 - O sistema exibe mensagem de erro: "O nome da coleção é obrigatório."
 - O sistema retorna ao passo 4 do FB01.
-- Em qualquer momento entre os passos 4 e 8 do FB01, o usuário pode selecionar "Cancelar".
+- Em qualquer momento entre os passos 4 e 9 do FB01, o usuário pode selecionar "Cancelar".
 - O sistema descarta as informações inseridas.
 - O sistema retorna à categoria pai.
 - O caso de uso é encerrado.
@@ -1134,38 +1147,45 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 
 ### Caso de uso: Personalizar Interface
 
-**Descrição:** Este caso de uso permite que o usuário configure a aparência visual global da plataforma, incluindo cores, subcores, tipografia e tema do sistema (claro, escuro ou automático). As alterações são exibidas em prévia antes de serem confirmadas e persistem entre sessões e dispositivos (RF-18 e RF-19).
+**Descrição:** Este caso de uso permite que o usuário gerencie a aparência visual global da plataforma por meio de paletas: selecionar a paleta em uso e criar, editar, duplicar, renomear e excluir paletas, cada uma com cor primária, subcores e tipografia. O estilo global (claro, escuro ou automático) é escolhido no menu da conta. Enquanto uma paleta é editada, a interface passa a exibi-la, para que o usuário veja o resultado exato antes de confirmar; nada é gravado até salvar, e tudo persiste entre sessões e dispositivos (RF-18 e RF-19).
 
 **Condições prévias:** O usuário deve estar autenticado no sistema.
 
 **Fluxo básico:**
 
-1. O usuário acessa a área de configurações da plataforma.
-2. O usuário seleciona a opção "Personalizar Interface".
-3. O sistema exibe o painel de personalização com as configurações atuais e uma área de prévia.
-4. O usuário seleciona ou modifica as configurações desejadas (cores, tipografia, tema) [E01][E02][E03].
-5. O sistema atualiza a área de prévia em tempo real conforme as alterações.
-6. O usuário confirma as alterações clicando em "Aplicar".
-7. O sistema salva as configurações no perfil do usuário.
-8. O sistema aplica as alterações globalmente a todas as telas do sistema de forma imediata.
-9. O sistema exibe mensagem de sucesso: "Configurações visuais aplicadas com sucesso."
+1. O usuário seleciona a opção "Aparência" no menu da conta.
+2. O sistema exibe a biblioteca de paletas do usuário, com a paleta em uso destacada.
+3. O usuário seleciona uma paleta da biblioteca.
+4. O sistema define a paleta selecionada como paleta em uso, adotando o estilo global associado a ela.
+5. O sistema aplica a paleta globalmente a todas as telas do sistema de forma imediata.
 
 **Fluxos alternativos / exceções:**
 
-- No passo 4 do FB01, o usuário seleciona uma paleta predefinida disponível no sistema (ex.: "Outono", "Oceano").
-- O sistema preenche automaticamente os campos de cor primária e subcores com os valores da paleta selecionada.
-- O sistema atualiza a prévia em tempo real.
-- O fluxo continua no passo 6 do FB01.
-- Em qualquer momento entre os passos 4 e 6 do FB01, o usuário seleciona "Cancelar".
-- O sistema descarta as alterações não salvas.
-- O sistema mantém as configurações visuais anteriores.
-- O sistema retorna ao painel de configurações.
-- No passo 4 do FB01, o usuário seleciona "Restaurar Configuração Padrão".
-- O sistema exibe mensagem de confirmação: "Deseja restaurar todas as configurações visuais para o padrão?"
-- Se o usuário confirmar, o sistema restaura os valores padrão e atualiza a prévia.
-- O fluxo continua no passo 6 do FB01.
+- No passo 3 do FB01, o usuário seleciona "Nova paleta".
+- O sistema exibe o editor de paleta com as cores e a tipografia da paleta em uso, e passa a exibir a interface com a paleta em edição.
+- O usuário informa o nome e modifica cores e tipografia; a cada alteração o sistema atualiza a interface exibida, sem gravar [E03].
+- O usuário clica em "Salvar" [E02].
+- O sistema classifica a paleta como clara ou escura pela cor de fundo, salva-a na biblioteca e retorna ao passo 2 do FB01.
+- No passo 3 do FB01, o usuário seleciona "Editar" no menu de uma paleta.
+- O sistema exibe o editor de paleta com os valores atuais da paleta, e passa a exibir a interface com a paleta em edição.
+- O usuário modifica nome, cores e tipografia e clica em "Salvar" [E02][E03].
+- O sistema salva a paleta; se ela for a paleta em uso, as alterações são aplicadas globalmente de forma imediata. O fluxo retorna ao passo 2 do FB01.
+- Em qualquer momento no editor de paleta, antes de salvar, o usuário seleciona "Cancelar".
+- Havendo alterações não salvas, o sistema exibe mensagem de confirmação: "Sair sem salvar?"
+- Se o usuário confirmar, o sistema descarta as alterações, devolve a interface à paleta em uso e retorna ao passo 2 do FB01; caso contrário, permanece no editor.
+- No passo 3 do FB01, o usuário seleciona "Duplicar" no menu de uma paleta.
+- O sistema cria uma cópia da paleta, com "(cópia)" no nome, e a exibe na biblioteca.
+- No passo 3 do FB01, o usuário seleciona "Renomear" no menu de uma paleta, informa o novo nome e confirma [E02].
+- O sistema salva o novo nome e atualiza a biblioteca.
+- No passo 3 do FB01, o usuário seleciona "Excluir" no menu de uma paleta [E01].
+- O sistema exibe mensagem de confirmação; se o usuário confirmar, o sistema remove a paleta da biblioteca.
+- Em qualquer momento, o usuário altera o estilo global (claro, escuro ou automático) no menu da conta.
+- O sistema aplica o estilo e o salva na paleta em uso; se o estilo em vigor for o oposto ao da paleta, as cores são exibidas com a claridade invertida, preservando os tons.
+- E01 — A paleta selecionada para exclusão é a paleta em uso: o sistema recusa a exclusão e informa que outra paleta deve ser selecionada antes.
+- E02 — Já existe uma paleta com o nome informado: o sistema informa o conflito e mantém o editor aberto para correção.
+- E03 — Uma combinação de cores não atende ao contraste mínimo (RNF-09): o sistema exibe um alerta junto à cor, sem impedir o salvamento.
 
-**Pós-condições:** As configurações visuais são salvas no perfil do usuário. As alterações são aplicadas globalmente e imediatamente a todas as telas. As configurações persistem em futuras sessões e em outros dispositivos.
+**Pós-condições:** As paletas e a paleta em uso são salvas no perfil do usuário. A paleta em uso é aplicada globalmente e imediatamente a todas as telas, e persiste em futuras sessões e em outros dispositivos.
 
 **Requisitos especiais:** RNF01 - O painel de personalização deve ser intuitivo e acessível. RNF07 - As alterações devem ser refletidas na prévia em tempo real, sem recarregar a página. RNF04 - As configurações devem ser persistidas entre sessões e dispositivos.
 
