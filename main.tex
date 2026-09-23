@@ -282,6 +282,11 @@
 % Configuração de posicionamento padrão:
 \setfloatlocations{quadro}{hbtp}
 
+% Páginas exclusivas de flutuantes começam no topo, em vez de centralizadas
+\makeatletter
+\setlength{\@fptop}{0pt}
+\makeatother
+
 
 
 % --- 
@@ -433,8 +438,8 @@
 \input{capitulos/capitulo04DescricaoGeraldoProduto}
 \input{capitulos/capitulo05ElicitacaodeRequisitosEAnalise}
 \input{capitulos/capitulo06ProjetodeSoftware}
-%\input{capitulos/capitulo07Implementacao}
-%\input{capitulos/capitulo08Teste}
+\input{capitulos/capitulo07Implementacao}
+\input{capitulos/capitulo08Teste}
 %\input{capitulos/capitulo09Implantacao}
 %\input{capitulos/capitulo10ResultadosDiscussao}
 %\input{capitulos/capitulo11TrabalhosRelacionados}
