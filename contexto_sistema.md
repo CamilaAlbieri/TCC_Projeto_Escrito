@@ -292,7 +292,7 @@ Camila define "Favoritos" como "somente amigos"; apenas amigos confirmados passa
 - **Objeto:** Item dentro de uma coleção
 - **Prioridade:** Essencial · **Operação:** Entrada · **Ator:** Usuário
 
-**Atributos:** nome (200 caracteres), coleção pai (referência obrigatória), cor de fundo do cartão (hexadecimal, opcional), layout visual efetivo do item, elementos visuais herdados ou personalizados (Texto, Imagem, Forma, Ícone, Classificação e Data), conteúdo e estilo armazenados nos próprios elementos, data de criação (gerada automaticamente).
+**Atributos:** nome (200 caracteres), subtítulo (150 caracteres, opcional), coleção pai (referência obrigatória), capa (imagem JPEG/PNG opcional, enviada com até 10 MB e enquadrada pelo usuário, e o recorte gravado tem até 5 MB), imagem original da capa (guardada apenas para permitir o reenquadramento, nunca exibida), área do recorte (posição e tamanho em pixels do original), cor de fundo do cartão (hexadecimal, opcional), layout visual efetivo do item, elementos visuais herdados ou personalizados (Texto, Imagem, Forma, Ícone, Classificação e Data), conteúdo e estilo armazenados nos próprios elementos, data de criação (gerada automaticamente).
 
 **Exemplos:** Camila cria o item "Duna" na coleção "Lidos" (dentro da categoria "Livros"); o item abre com o layout aplicável e Camila edita visualmente os textos, imagens, datas e classificações que aparecem na ficha, como faria em um canvas.
 Camila adiciona individualmente um elemento de Imagem e um texto extra "Personagem Favorito: Paul Atreides", sem afetar os demais itens nem o layout da coleção.
@@ -308,6 +308,9 @@ Posteriormente edita a classificação de 5 para 4 estrelas e, por fim, exclui o
 6. Imagens enviadas devem estar em formato JPEG ou PNG com tamanho máximo de 5 MB por arquivo.
 7. A exclusão deve exibir diálogo de confirmação informando que a ação é irreversível.
 8. A data de criação é gerada automaticamente e não pode ser editada pelo usuário.
+9. O item pode ter um subtítulo de até 150 caracteres, opcional, exibido sob o nome na listagem da coleção (RF-12). É campo do item, e não elemento da ficha: na ficha há textos demais para que algum deles seja "o subtítulo" sem ambiguidade.
+10. A capa é enquadrada pelo usuário em proporção retrato (2:3) antes de ser gravada, como o ícone da coleção (RF-07 §17) e a capa da categoria (RF-06). O sistema guarda o arquivo original junto com a área recortada, de modo que o enquadramento possa ser refeito depois sem novo envio; remover a capa apaga as duas imagens. O limite de 5 MB do §6 vale para o recorte; o original aceita até 10 MB, já que não é ele que o sistema exibe.
+11. O item não tem emoji: onde a categoria e a coleção oferecem emoji ou imagem, o item oferece apenas a capa. O cartão do item é a própria capa, e um emoji ampliado a esse tamanho não a substituiria.
 
 ### RF-10 — Mover Item entre Coleções
 
@@ -374,6 +377,10 @@ Camila visualiza a coleção "Favoritos" usando o mesmo filtro; o sistema manté
 4. A ordenação aplicada deve ser persistida por usuário e válida para todas as coleções até ser alterada.
 5. Os filtros aplicados são mantidos durante a navegação dentro da mesma coleção e reiniciados ao sair dela.
 6. **A tag não é critério de filtro nesta tela.** A especificação original listava tags entre os filtros de itens; elas passaram a pertencer à coleção (RF-07), e não ao item. Como todos os itens de uma mesma coleção compartilhariam as mesmas tags, o filtro não separaria nada — a busca por tag reúne coleções, e está descrita no RF-07.
+7. O cartão do item exibe a capa ocupando o cartão inteiro, com a avaliação, o nome e o subtítulo sobre ela.
+8. A avaliação exibida no cartão é **a média normalizada dos elementos de Classificação da ficha do item**: cada um é convertido para a escala de 0 a 5 na proporção do seu próprio máximo, e a média é arredondada para meia estrela. O sistema não guarda nota própria do item — se a ficha não tem elemento de Classificação, o cartão não exibe estrelas, porque uma fileira apagada se leria como "avaliei com zero". Não há média entre itens: a nota é de cada item.
+9. A busca da tela alcança o nome e o subtítulo do item.
+10. O usuário pode esconder os títulos sobre as capas, escolha válida para todas as coleções e persistida entre sessões. Esconder alcança o nome e o subtítulo; a avaliação permanece, já que nenhuma capa a repete. O controle existe porque a capa costuma trazer o título impresso, e vale apenas para o modo grade — no modo lista não há capa, e o nome é o único texto da linha. Escondido, o nome continua sendo anunciado ao leitor de tela.
 
 ### RF-13 — Exibir Tela Principal de Categorias
 
