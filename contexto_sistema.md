@@ -89,7 +89,7 @@ Os requisitos seguem esta ordem (do mais básico ao mais avançado):
 - **Objeto:** Usuário
 - **Prioridade:** Essencial · **Operação:** Entrada · **Ator:** Usuário
 
-**Atributos:** nome (100 caracteres), email (150 caracteres), senha (mínimo 8 caracteres), foto de perfil (JPEG/PNG, máx. 5 MB), descrição (500 caracteres), código de usuário (gerado automaticamente pelo sistema, único e imutável).
+**Atributos:** nome (100 caracteres), email (150 caracteres), senha (mínimo 8 caracteres), foto de perfil (JPEG/PNG, máx. 5 MB, enquadrada pelo usuário em círculo, com o original guardado para reenquadramento), cor da foto (hexadecimal, opcional; fundo do círculo quando não há foto), descrição (500 caracteres), código de usuário (gerado automaticamente pelo sistema, único e imutável).
 
 **Exemplos:** Usuário preenche nome "Camila Albieri Mattos", email "camilamattos.mila@gmail.com", senha "Camila@2024" e conclui o cadastro com sucesso; o sistema gera automaticamente o código de usuário "camila#4827".
 Usuário tenta cadastrar com o email "camilamattos.mila@gmail.com", que já existe, e recebe mensagem de erro informando que o email já está em uso.
@@ -189,7 +189,7 @@ Usuário altera o e-mail para "cami.mattos@gmail.com"; o sistema envia um link d
 **Regras / Restrições:**
 
 1. O nome de exibição deve ter entre 3 e 100 caracteres e é obrigatório.
-2. A foto de perfil deve estar em formato JPEG ou PNG com tamanho máximo de 5 MB.
+2. A foto de perfil deve estar em formato JPEG ou PNG com tamanho máximo de 5 MB. Antes de ser gravada, ela é enquadrada pelo usuário numa moldura circular — a forma em que a foto é exibida —, como as demais imagens do sistema; o sistema guarda o original junto com a área recortada, de modo que o enquadramento possa ser refeito sem novo envio, e remover a foto apaga as duas imagens. O usuário pode também escolher uma cor para a foto, exibida como fundo do círculo com a inicial do nome quando não há imagem, em todos os lugares em que o usuário aparece.
 3. A descrição/bio é opcional e pode ser deixada em branco.
 4. Alterações só têm efeito após o usuário salvar explicitamente.
 5. Ao alterar o e-mail, o sistema deve enviar um link de verificação para o novo endereço antes de efetivar a mudança.
