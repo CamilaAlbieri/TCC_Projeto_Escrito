@@ -181,7 +181,7 @@ Camila tenta usar um link de redefinição expirado e recebe a mensagem de que o
 - **Objeto:** Usuário
 - **Prioridade:** Importante · **Operação:** Entrada · **Ator:** Usuário
 
-**Atributos:** nome de exibição (100 caracteres), email (150 caracteres), foto de perfil (JPEG/PNG, máx. 5 MB), descrição/bio (500 caracteres), token de verificação de e-mail (gerado automaticamente pelo sistema quando há alteração de e-mail).
+**Atributos:** nome de exibição (100 caracteres), email (150 caracteres), foto de perfil (JPEG/PNG, máx. 5 MB), descrição/bio (500 caracteres), capa do perfil (imagem JPEG/PNG enquadrada pelo usuário, com o original guardado para reenquadramento, ou cor em hexadecimal; opcional), token de verificação de e-mail (gerado automaticamente pelo sistema quando há alteração de e-mail).
 
 **Exemplos:** Usuário acessa "Editar Perfil", altera o nome de exibição para "Cami Mattos", adiciona bio "Leitora e colecionadora de histórias" e salva as alterações.
 Usuário altera o e-mail para "cami.mattos@gmail.com"; o sistema envia um link de verificação ao novo endereço e mantém o e-mail antigo ativo até a confirmação.
@@ -198,6 +198,8 @@ Usuário altera o e-mail para "cami.mattos@gmail.com"; o sistema envia um link d
 8. Não é permitido alterar o e-mail para um endereço já cadastrado por outro usuário.
 9. A alteração de senha não é feita por este requisito, e sim pelo RF-03 (área restrita).
 10. O código de usuário (RF-01) não pode ser alterado por este caso de uso.
+11. O usuário pode definir uma capa para o perfil — a faixa exibida no alto do perfil visitado (RF-23) —, escolhendo uma imagem ou uma cor. A imagem é enquadrada pelo usuário na proporção da faixa antes de ser gravada, e o sistema guarda o original junto com a área recortada, de modo que o enquadramento possa ser refeito sem novo envio. Remover a imagem mantém a cor escolhida; sem imagem e sem cor, a faixa usa a cor primária da aparência. A capa é alterada na mesma janela de edição do perfil (§12).
+12. A edição do perfil acontece numa janela sobreposta ao próprio perfil do usuário, com os campos em duas colunas: nome, descrição e foto de um lado, e a capa do outro. Tudo o que foi alterado — nome, descrição, foto e capa — é gravado junto, ao confirmar a janela; fechá-la sem confirmar descarta as alterações. O próprio perfil do usuário exibe apenas o cartão do perfil (capa, foto, nome, código e descrição), sem as coleções; as coleções visíveis aparecem no perfil visitado por outros usuários (RF-23).
 
 ### RF-06 — Gerenciar Categoria
 
@@ -257,7 +259,7 @@ Camila exclui a coleção "Rascunhos" e confirma no diálogo a remoção de todo
 11. O usuário deve poder filtrar as coleções por nível de privacidade (RF-08); a ordenação e o filtro aplicados devem ser persistidos entre sessões.
 12. A coleção pode receber até dez tags, opcionais, de texto livre com até 30 caracteres cada. As tags são gravadas em forma canônica — sem espaços nas pontas, em minúsculas e sem acentuação —, de modo que grafias diferentes da mesma palavra correspondam sempre à mesma tag; tags repetidas na mesma coleção são descartadas.
 13. O vocabulário de tags é compartilhado por todos os usuários: cada palavra existe uma única vez no sistema, e o formulário sugere as tags já utilizadas por qualquer conta. O compartilhamento alcança apenas o rótulo — as coleções que o utilizam continuam sujeitas às regras de privacidade do RF-08, e uma tag pode existir no vocabulário sem que o usuário possua qualquer coleção que a use.
-14. Cada tag exibida é um vínculo que leva à tela de descoberta, também alcançável por um campo de busca de tags presente no cabeçalho de todas as telas. A descoberta lista as coleções de **outros usuários** que possuam **todas** as tags escolhidas — cada tag acrescentada restringe o resultado — e as sugestões de tags vêm do vocabulário compartilhado. A visibilidade segue o RF-08 e o RF-23: coleções públicas de qualquer usuário, coleções "somente amigos" apenas de amigos confirmados, e nunca coleções privadas; as coleções do próprio usuário não aparecem. O resultado apresenta as pessoas encontradas, das que têm mais coleções em comum para as que têm menos, e cada coleção leva ao perfil de quem a criou (RF-23).
+14. Cada tag exibida é um vínculo que leva à tela de descoberta, também alcançável por um campo de busca de tags presente no cabeçalho de todas as telas. A descoberta lista as coleções de **outros usuários** que possuam **todas** as tags escolhidas — cada tag acrescentada restringe o resultado — e as sugestões de tags vêm do vocabulário compartilhado. A visibilidade segue o RF-08 e o RF-23: coleções públicas de qualquer usuário, coleções "somente amigos" apenas de amigos confirmados, e nunca coleções privadas; as coleções do próprio usuário e as coleções sem nenhum item não aparecem. O resultado apresenta as pessoas encontradas, das que têm mais coleções em comum para as que têm menos, e cada coleção leva ao perfil de quem a criou (RF-23).
 15. A tag sobrevive à exclusão das coleções que a utilizavam: o vínculo é desfeito, e a palavra permanece disponível no vocabulário.
 16. O ícone aceita uma única forma por vez: escolher uma imagem substitui o emoji, e escolher um emoji descarta a imagem. Difere da categoria (RF-06), onde o emoji e a capa coexistem.
 17. A imagem do ícone é enquadrada pelo usuário em proporção quadrada antes de ser gravada. O sistema guarda o arquivo original junto com a área recortada, de modo que o enquadramento possa ser refeito depois sem novo envio; remover o ícone apaga as duas imagens.
@@ -609,6 +611,7 @@ Camila tenta acessar uma coleção privada de João e não encontra a opção de
 7. Se a coleção seguida for alterada para "privada", todos os acompanhamentos devem ser encerrados automaticamente (RF-08).
 8. Se uma coleção "pública" for alterada para "somente amigos", acompanhamentos de usuários sem amizade confirmada devem ser encerrados; os de amigos permanecem ativos.
 9. Ao desfazer uma amizade, acompanhamentos de coleções "públicas" permanecem ativos e acompanhamentos de coleções "somente amigos" entre os dois usuários são encerrados.
+10. O usuário dispõe de uma tela com todas as coleções que acompanha, acessível pela navegação lateral, das mais recentes para as mais antigas. Cada coleção mostra o dono, a categoria e a quantidade de itens, abre a página da coleção com todos os itens (RF-23 §9) e permite deixar de segui-la. Coleções que deixaram de ser visíveis ao usuário (§7 a §9) não aparecem na tela.
 
 ### RF-22 — Exibir Feed de Atualizações
 
@@ -655,6 +658,9 @@ A categoria "Jogos" de João aparece para Camila apenas com as coleções não-p
 4. Categorias que, para o visitante, não tenham nenhuma coleção visível devem ser ocultadas integralmente do perfil, de modo que o visitante não tenha conhecimento de sua existência.
 5. Todos os itens dentro de uma coleção visível são acessíveis ao visitante; não há privacidade individual por item.
 6. A navegação nas categorias, coleções e itens de outros usuários é somente leitura; não é possível editar ou excluir dados.
+7. Coleções sem nenhum item não são exibidas a quem visita o perfil, e a categoria que, para o visitante, só tenha coleções vazias é ocultada como a do §4. O próprio dono continua vendo suas coleções vazias.
+8. No perfil visitado, cada categoria é apresentada apenas pelo nome. Selecionar um item de uma coleção visível exibe a ficha do item (RF-11) em uma janela sobreposta, somente leitura, que permite avançar e voltar entre os itens daquela coleção.
+9. Cada coleção visível de outro usuário tem uma página própria, somente leitura, com todos os seus itens em grade, o dono, a categoria, a privacidade, a descrição e a ação de seguir ou deixar de seguir (RF-21). A página é aberta pelo nome da coleção no perfil visitado, pela tela de coleções seguidas e pelas notificações de atualização em coleção seguida (RF-24); selecionar um item exibe a sua ficha (RF-11) em janela sobreposta, com navegação entre os itens da coleção. Uma coleção que o usuário não pode ver não é exibida (§1 e §2).
 
 ### RF-24 — Gerenciar Notificações do Sistema
 
@@ -679,6 +685,7 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 6. Notificações referentes a coleções cuja privacidade tenha sido alterada para "privada" devem ser ocultadas automaticamente do destinatário (RF-08).
 7. As notificações in-app serão persistidas para consulta pela API; atualização em tempo real por SSE permanece fora desta etapa.
 8. Notificações lidas devem ser mantidas por no mínimo 30 dias antes de qualquer limpeza automática.
+9. A área de notificações é um ícone de sino no cabeçalho, presente em todas as telas da área logada, com a quantidade de não lidas; como não há atualização em tempo real (§7), a quantidade é consultada periodicamente e ao retornar à janela. Cada notificação exibe o autor, o texto e há quanto tempo foi gerada, e leva ao que a originou: a de atualização em coleção seguida, à página da coleção (RF-23 §9), com o texto montado a partir do evento (autor, ação, nome do item e coleção); a de amizade, ao perfil de quem a provocou, onde está a ação cabível. Abrir uma notificação a marca como lida.
 
 ## Requisitos Não-Funcionais
 
