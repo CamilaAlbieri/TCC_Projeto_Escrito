@@ -22,7 +22,7 @@ a aparência das fichas de cada item por meio de um editor visual, no estilo de 
 O editor funciona como o Canva: o usuário arrasta elementos para uma tela, redimensiona e posiciona.
 A diferença é que a tela montada é um **modelo reutilizável** por vários itens.
 
-- **Element** — Componente visual reutilizável utilizado para compor layouts, como textos, imagens, classificações, datas e ícones. Cada elemento possui tipo, posição, tamanho, camada de sobreposição, conteúdo opcional e um conjunto extensível de propriedades visuais próprias (fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento horizontal e vertical, nível de título, cor, cor de fundo, arredondamento, opacidade, rotação, borda (cor, espessura e traço), forma do elemento, curva e ponta da linha, ajuste de imagem, apresentação em lista, nota máxima, ícone da nota, formato da data e estética da data).
+- **Element** — Componente visual reutilizável utilizado para compor layouts, como textos, imagens, classificações, datas e ícones. Cada elemento possui tipo, posição, tamanho, camada de sobreposição, conteúdo opcional e um conjunto extensível de propriedades visuais próprias (fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento horizontal e vertical, nível de título, cor, cor de fundo, arredondamento, opacidade, rotação, borda (cor, espessura e traço), forma do elemento, curva e ponta da linha, ajuste de imagem, recorte da imagem (o arquivo original e a área recortada), apresentação em lista, nota máxima, ícone da nota, formato da data e estética da data).
 - **ElementType** — Conjunto fixo e predefinido de categorias de elemento que o usuário pode arrastar para o editor, à semelhança dos elementos básicos de ferramentas como o Canva. Compreende: texto, imagem, forma, ícone, classificação e data. É representado por uma enumeração, pois constitui um conjunto estável que faz parte das capacidades do próprio editor.
 - **Layout** — Estrutura personalizada que define quais elementos compõem a ficha de um item e como eles se organizam visualmente. Funciona como um _template_ reutilizável, associado a uma coleção; um mesmo layout pode ser reutilizado por diferentes coleções. Todos os itens de uma coleção compartilham o layout dela.
 - **Item** — Unidade individual de conteúdo cadastrada pelo usuário (por exemplo, um livro, filme ou jogo específico). Todo item pertence a uma coleção e adota, por padrão, o layout associado a essa coleção, podendo receber uma versão visual própria conforme RF-17.
@@ -238,7 +238,7 @@ Camila exclui a categoria "Jogos Antigos" e confirma a exclusão permanente no d
 
 **Exemplos:** Usuário cria a coleção "Lidos" dentro da categoria "Livros", definindo a privacidade como "pública"; a coleção passa a aceitar itens.
 Camila edita a coleção "Lidos" para associar o layout "Card de Mangá", que passa a valer para os itens dessa coleção.
-Camila marca as coleções "Lidos" e "Relidos" com a tag "fantasia" e, clicando nela, vê as duas reunidas, ainda que pertençam a categorias diferentes.
+Camila marca as coleções "Lidos" e "Relidos" com a tag "fantasia" e, clicando nela, vê as coleções de outras pessoas marcadas com a mesma tag, junto de quem as montou; ao acrescentar a tag "terror" à busca, restam apenas as coleções que têm as duas.
 Ao escrever uma tag no formulário, Camila recebe como sugestão "ficcao cientifica", palavra já utilizada por outro usuário do sistema.
 Camila exclui a coleção "Rascunhos" e confirma no diálogo a remoção de todos os itens vinculados.
 
@@ -257,7 +257,7 @@ Camila exclui a coleção "Rascunhos" e confirma no diálogo a remoção de todo
 11. O usuário deve poder filtrar as coleções por nível de privacidade (RF-08); a ordenação e o filtro aplicados devem ser persistidos entre sessões.
 12. A coleção pode receber até dez tags, opcionais, de texto livre com até 30 caracteres cada. As tags são gravadas em forma canônica — sem espaços nas pontas, em minúsculas e sem acentuação —, de modo que grafias diferentes da mesma palavra correspondam sempre à mesma tag; tags repetidas na mesma coleção são descartadas.
 13. O vocabulário de tags é compartilhado por todos os usuários: cada palavra existe uma única vez no sistema, e o formulário sugere as tags já utilizadas por qualquer conta. O compartilhamento alcança apenas o rótulo — as coleções que o utilizam continuam sujeitas às regras de privacidade do RF-08, e uma tag pode existir no vocabulário sem que o usuário possua qualquer coleção que a use.
-14. Cada tag exibida é um vínculo que leva à relação das coleções do próprio usuário marcadas com ela, independentemente da categoria a que pertençam. O sistema deve oferecer também uma tela de consulta ao vocabulário, com busca por texto.
+14. Cada tag exibida é um vínculo que leva à tela de descoberta, também alcançável por um campo de busca de tags presente no cabeçalho de todas as telas. A descoberta lista as coleções de **outros usuários** que possuam **todas** as tags escolhidas — cada tag acrescentada restringe o resultado — e as sugestões de tags vêm do vocabulário compartilhado. A visibilidade segue o RF-08 e o RF-23: coleções públicas de qualquer usuário, coleções "somente amigos" apenas de amigos confirmados, e nunca coleções privadas; as coleções do próprio usuário não aparecem. O resultado apresenta as pessoas encontradas, das que têm mais coleções em comum para as que têm menos, e cada coleção leva ao perfil de quem a criou (RF-23).
 15. A tag sobrevive à exclusão das coleções que a utilizavam: o vínculo é desfeito, e a palavra permanece disponível no vocabulário.
 16. O ícone aceita uma única forma por vez: escolher uma imagem substitui o emoji, e escolher um emoji descarta a imagem. Difere da categoria (RF-06), onde o emoji e a capa coexistem.
 17. A imagem do ícone é enquadrada pelo usuário em proporção quadrada antes de ser gravada. O sistema guarda o arquivo original junto com a área recortada, de modo que o enquadramento possa ser refeito depois sem novo envio; remover o ícone apaga as duas imagens.
@@ -355,6 +355,7 @@ Elementos não preenchidos continuam visíveis para visitantes com indicação v
 4. Para visitantes, a ficha é estritamente somente leitura, sem nenhuma opção de edição visível.
 5. A ficha deve respeitar a aparência (tema e cores) configurada pelo dono (RF-18).
 6. O sistema deve fornecer ao front-end as informações necessárias para exibir a ficha final do item em modo leitura, diferenciando visualmente o acesso do dono e de visitantes.
+7. Na listagem da coleção, abrir um item exibe a ficha sobreposta à listagem, sem sair dela, com o fundo escurecido. A própria ficha é o elemento principal da janela, acompanhada apenas do nome do item e de controles discretos para editar a ficha e fechar. Setas laterais (e as teclas ← e →) avançam e voltam entre os itens na ordem em que a listagem os mostra, com a busca e a ordenação vigentes, e param no primeiro e no último item. A ficha continua disponível em página própria, pelo endereço do item. Em modo leitura, a ficha ocupa a largura disponível, preservando sempre a proporção da folha; a altura da tela nunca a reduz — quando a ficha é mais alta que a área visível, a área de visualização permite rolagem vertical.
 
 ### RF-12 — Visualizar Itens de uma Coleção
 
@@ -419,7 +420,7 @@ Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão "Criar prim
 - **Objeto:** Layout personalizado (template)
 - **Prioridade:** Importante · **Operação:** Entrada · **Ator:** Usuário
 
-**Atributos:** nome do layout (100 caracteres), fundo da ficha (uma cor hexadecimal, ou um degradê de duas cores com um ângulo e um ponto de início), elementos disponíveis (conforme os tipos fixos definidos pela enumeração ElementType: texto, imagem, forma, ícone, classificação e data), conteúdo textual opcional do elemento, propriedades visuais do elemento (fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento horizontal e vertical, nível de título, cor, cor de fundo, arredondamento, opacidade, rotação, borda (cor, espessura e traço), forma do elemento, curva e ponta da linha, ajuste de imagem, apresentação em lista, nota máxima, ícone da nota, formato da data e estética da data), camada de sobreposição, posição e tamanho de cada elemento na área de edição, layout de origem (referência opcional, preenchida apenas na operação de duplicação).
+**Atributos:** nome do layout (100 caracteres), fundo da ficha (uma cor hexadecimal, ou um degradê de duas cores com um ângulo e um ponto de início), elementos disponíveis (conforme os tipos fixos definidos pela enumeração ElementType: texto, imagem, forma, ícone, classificação e data), conteúdo textual opcional do elemento, propriedades visuais do elemento (fonte, tamanho, peso, itálico, sublinhado, riscado, alinhamento horizontal e vertical, nível de título, cor, cor de fundo, arredondamento, opacidade, rotação, borda (cor, espessura e traço), forma do elemento, curva e ponta da linha, ajuste de imagem, recorte da imagem (o arquivo original e a área recortada), apresentação em lista, nota máxima, ícone da nota, formato da data e estética da data), camada de sobreposição, posição e tamanho de cada elemento na área de edição, layout de origem (referência opcional, preenchida apenas na operação de duplicação).
 
 **Exemplos:** Camila cria o layout "Card de Livro" com elemento de Imagem para capa, textos livres como "Autor: Frank Herbert", Classificação de 1 a 5 estrelas, dois elementos de Data (início e fim de leitura) e área de Texto para notas.
 Camila reposiciona o elemento de Classificação via _drag-and-drop_ e visualiza o resultado em tempo real na prévia.
@@ -434,12 +435,14 @@ Camila exclui o layout "Card Antigo" que não está associado a nenhuma coleçã
 4. Os tipos de elemento disponíveis para inclusão são os definidos pela enumeração ElementType (texto, imagem, forma, ícone, classificação e data), à semelhança dos elementos fixos oferecidos por editores visuais como o Canva.
 5. Elementos podem armazenar conteúdo visual próprio em `content`, como "Autor:" ou "Autor: Frank Herbert", além de propriedades de fonte, cor e alinhamento.
 6. Elementos podem ser reposicionados e redimensionados via arrastar e soltar (_drag-and-drop_).
+6.1. O elemento de imagem é recortado pelo mesmo mecanismo das capas de categoria, coleção e item: ao enviar o arquivo, o usuário enquadra a imagem em uma janela de recorte, e o que o sistema exibe é o recorte resultante. O arquivo original é preservado junto da área recortada, de modo que o enquadramento pode ser reaberto e refeito a qualquer momento sem novo envio.
 7. Alterações devem ser refletidas em tempo real na prévia do editor, sem recarregar a página.
 8. A duplicação deve copiar integralmente a estrutura de elementos (tipo, conteúdo, estilo, posição, tamanho e propriedades) do layout de origem.
 9. Na duplicação, o sistema sugere automaticamente o nome original acrescido de "(cópia)", podendo ser editado antes de salvar.
 10. Alterações no layout duplicado não devem refletir no layout de origem.
 11. O usuário pode excluir um layout somente se ele não estiver associado a nenhuma coleção ativa (RF-15).
 12. A data de criação do layout duplicado é a data da operação, e não a do layout de origem.
+13. O layout possui um tamanho de folha próprio (largura e altura), definido pelo usuário no editor e independente dos elementos: uma folha grande com poucos elementos mantém seu tamanho. Os elementos são posicionados e dimensionados nas unidades da folha, de modo que alterar o tamanho da folha não move nem redimensiona nenhum elemento. A largura é limitada; a altura não tem limite prático. O tamanho da folha é copiado junto em toda duplicação, importação e personalização de ficha de item.
 
 ### RF-15 — Associar Layout a Coleção
 
