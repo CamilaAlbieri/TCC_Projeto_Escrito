@@ -428,6 +428,7 @@ Camila, em seu primeiro acesso, vê mensagem de boas-vindas e botão "Criar prim
 Camila reposiciona o elemento de Classificação via _drag-and-drop_ e visualiza o resultado em tempo real na prévia.
 Camila seleciona o layout "Card de Livro" e clica em "Duplicar"; o sistema cria "Card de Livro (cópia)" com a mesma estrutura, que Camila renomeia para "Card de Livro — Edição Especial" e ajusta sem afetar o original.
 Camila exclui o layout "Card Antigo" que não está associado a nenhuma coleção.
+Camila desvincula o layout "Card de Filme" das coleções que o usam; os itens mantêm a ficha que tinham, e o layout pode então ser excluído.
 
 **Regras / Restrições:**
 
@@ -442,7 +443,7 @@ Camila exclui o layout "Card Antigo" que não está associado a nenhuma coleçã
 8. A duplicação deve copiar integralmente a estrutura de elementos (tipo, conteúdo, estilo, posição, tamanho e propriedades) do layout de origem.
 9. Na duplicação, o sistema sugere automaticamente o nome original acrescido de "(cópia)", podendo ser editado antes de salvar.
 10. Alterações no layout duplicado não devem refletir no layout de origem.
-11. O usuário pode excluir um layout somente se ele não estiver associado a nenhuma coleção ativa (RF-15).
+11. O usuário pode excluir um layout somente se ele não estiver associado a nenhuma coleção ativa (RF-15). Para liberar a exclusão, pode desvinculá-lo de todas as coleções de uma vez — e a própria confirmação da exclusão de um layout em uso avisa o vínculo e oferece desvincular e excluir: os itens que seguiam o layout recebem antes uma cópia própria dele (RF-17 §5), e nenhuma ficha muda de aparência.
 12. A data de criação do layout duplicado é a data da operação, e não a do layout de origem.
 13. O layout possui um tamanho de folha próprio (largura e altura), definido pelo usuário no editor e independente dos elementos: uma folha grande com poucos elementos mantém seu tamanho. Os elementos são posicionados e dimensionados nas unidades da folha, de modo que alterar o tamanho da folha não move nem redimensiona nenhum elemento. A largura é limitada; a altura não tem limite prático. O tamanho da folha é copiado junto em toda duplicação, importação e personalização de ficha de item.
 
@@ -459,6 +460,7 @@ Camila exclui o layout "Card Antigo" que não está associado a nenhuma coleçã
 Camila associa o mesmo layout "Card de Livro" também à coleção "Para Ler"; as duas coleções reutilizam o mesmo template, de forma independente.
 Camila associa à coleção "Mangás" um layout padrão oferecido pelo sistema, por não desejar compor a ficha do zero.
 Camila troca o layout da coleção "Mangás" para "Card de Mangá"; os novos itens passam a usar o novo layout, e os itens já existentes mantêm seus dados (RF-17).
+Ao trocar, o sistema mostra "Card de Livro → Card de Mangá" e cada ficha própria indo para o novo layout; Camila marca três itens e escolhe trocar e mesclar, e a capa quadrada de cada um passa para a moldura redonda do novo layout.
 
 **Regras / Restrições:**
 
@@ -471,6 +473,7 @@ Camila troca o layout da coleção "Mangás" para "Card de Mangá"; os novos ite
 7. A troca ou remoção do layout da coleção não altera os dados nem os elementos individuais (_override_) dos itens já cadastrados (RF-17).
 8. Ao associar um layout, o sistema deve exibir prévia de como os novos itens serão criados.
 9. O usuário pode remover a associação de layout da coleção a qualquer momento.
+10. Trocar ou remover o layout de uma coleção exige confirmação, que informa de qual layout para qual. Havendo itens com ficha própria (RF-17) — também ao vincular um layout a uma coleção que não tinha nenhum —, a confirmação mostra antes a prévia de cada ficha no novo layout, e o usuário decide ali entre só trocar ou trocar e mesclar os itens que marcar. Na mesclagem, cada valor vai para o elemento equivalente do novo layout — o de mesma origem, o de mesmo tipo e nome ou, por fim, o de mesmo tipo na ordem de leitura —, e o que não encontra lugar permanece na ficha onde estava. Os itens não escolhidos ficam como estavam (regra 7). Sem ficha própria a mesclar, o vínculo a uma coleção sem layout é feito sem pergunta.
 
 ### RF-16 — Compartilhar Layout
 
@@ -516,6 +519,7 @@ Depois da personalização, o item mantém seu próprio layout, sem alterar o la
 5. Ao iniciar a edição visual individual, o sistema deve criar uma cópia própria do layout da coleção para aquele item, preservando elementos, conteúdo e estilos como ponto de partida. Não havendo layout na coleção, a cópia é criada vazia: a existência de um layout na coleção não é pré-requisito para personalizar a ficha de um item.
 6. Após a criação da cópia individual, alterações de conteúdo, estilo, posição, tamanho, adição ou remoção de elementos devem afetar apenas aquele item, sem modificar o layout da coleção nem os demais itens.
 7. Depois de personalizado, o item mantém seu layout próprio, mesmo que o layout da coleção seja alterado posteriormente.
+8. A qualquer momento, o usuário pode levar a ficha própria de um item para o layout atual da coleção, pela mesma mesclagem do RF-15 §10, vendo antes o resultado.
 
 ### RF-18 — Gerenciar Aparência (Tema e Cores)
 
@@ -1351,3 +1355,16 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 **Pós-condições:** O usuário visualiza o perfil e as coleções acessíveis do usuário visitado, agrupadas por categoria. Nenhuma alteração é feita nos dados do usuário visitado. O usuário pode iniciar o fluxo de seguir uma coleção a partir desta tela.
 
 **Requisitos especiais:** RNF03 - A privacidade das coleções deve ser respeitada rigorosamente em toda a navegação. RNF02 - O perfil deve ser carregado em até 3 segundos. RNF04 - A visualização deve ser responsiva em dispositivos móveis.
+
+---
+
+## Anexo — Ajustes a fazer no texto
+
+Mudanças feitas no sistema depois de este documento ser escrito. Cada item traz o texto novo pronto para colar.
+
+### [AJUSTAR] RF-06 e RF-07 — descrição de categoria e de coleção com 500 caracteres (01/10/2026)
+
+O limite da descrição passou de 300 para 500 caracteres, nas categorias e nas coleções. Com 300, a frase que a pessoa escreve sobre o próprio acervo ficava cortada; a coluna no banco já era texto sem limite, então só a validação mudou.
+
+- **RF-06, atributos da categoria:** trocar "descrição (300 caracteres)" por **"descrição (500 caracteres)"**.
+- **RF-07, atributos da coleção:** trocar "descrição (300 caracteres)" por **"descrição (500 caracteres)"**.

@@ -139,3 +139,193 @@
   url           = {https://www.prolivro.org.br/2024/11/19/53-dos-brasileiros-nao-leem-livros-aponta-pesquisa-retratos-da-leitura-2024/},
   urlaccessdate = {25 set. 2026}
 }
+
+% ---------------------------------------------------------------
+% VERIFICAR: a especificação do HTTP permite ao servidor responder 404 em vez de 403 para ocultar a existência de um recurso proibido (cap. 10, Subseção Controle de Privacidade).
+% Link: https://www.rfc-editor.org/rfc/rfc9110.txt
+% Localização na fonte: Seção 15.5.4 (403 Forbidden), último parágrafo; Seção 15.5.5 (404 Not Found), primeira frase.
+% Acesso em: 02 out. 2026
+% Observações: li o texto completo das Seções 15.5.4 e 15.5.5 e o cabeçalho do documento (RFC 9110, STD 97, Standards Track, junho de 2022, ISSN 2070-1721). O DOI não aparece no próprio documento e por isso não foi incluído.
+% ---------------------------------------------------------------
+@misc{fielding2022http,
+  author        = {Fielding, Roy T. and Nottingham, Mark and Reschke, Julian},
+  title         = {{HTTP} Semantics},
+  howpublished  = {RFC 9110, STD 97. Internet Engineering Task Force (IETF)},
+  year          = {2022},
+  month         = {jun.},
+  url           = {https://www.rfc-editor.org/rfc/rfc9110.txt},
+  urlaccessdate = {02 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: a unidade cqw corresponde a 1% da largura do contêiner de consulta (cap. 10, Subseção A Folha e sua Unidade de Medida).
+% Link: https://www.w3.org/TR/css-contain-3/
+% Localização na fonte: Seção 6, "Container Relative Lengths: the cqw, cqh, cqi, cqb, cqmin, cqmax units" (tabela "Informative Summary of Container Units").
+% Acesso em: 02 out. 2026
+% Observações: li a Seção 6 e o cabeçalho do documento (W3C Working Draft de 18 de agosto de 2022; editores Tab Atkins, Florian Rivoal e Miriam E. Suzanne). Trata-se de rascunho de trabalho, não de recomendação final do W3C.
+% ---------------------------------------------------------------
+@misc{atkins2022containment,
+  author        = {Atkins, Tab and Rivoal, Florian and Suzanne, Miriam E.},
+  title         = {{CSS} Containment Module Level 3},
+  howpublished  = {W3C Working Draft},
+  year          = {2022},
+  month         = {ago.},
+  url           = {https://www.w3.org/TR/2022/WD-css-contain-3-20220818/},
+  urlaccessdate = {02 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: o critério 1.4.3 (Contraste Mínimo, nível AA) exige razão de contraste de pelo menos 4,5:1 para texto, e a razão é calculada por (L1 + 0,05) / (L2 + 0,05) a partir da luminância relativa (cap. 10, Subseção Paletas Padrão e Contraste; também usada na seção de responsividade para o critério 2.5.8).
+% Link: https://www.w3.org/TR/WCAG22/
+% Localização na fonte: Critério de sucesso 1.4.3 Contrast (Minimum); Glossário, verbetes "contrast ratio" e "relative luminance"; Critério 2.5.8 Target Size (Minimum).
+% Acesso em: 02 out. 2026
+% Observações: li o texto do critério 1.4.3, do 2.5.8 e as definições do glossário. Documento é W3C Recommendation de 12 de dezembro de 2024; editores: Alastair Campbell, Chuck Adams, Rachael Bradley Montgomery, Michael Cooper e Andrew Kirkpatrick.
+% ---------------------------------------------------------------
+@misc{campbell2024wcag,
+  author        = {Campbell, Alastair and Adams, Chuck and Montgomery, Rachael Bradley and Cooper, Michael and Kirkpatrick, Andrew},
+  title         = {Web Content Accessibility Guidelines ({WCAG}) 2.2},
+  howpublished  = {W3C Recommendation},
+  year          = {2024},
+  month         = {dez.},
+  url           = {https://www.w3.org/TR/2024/REC-WCAG22-20241212/},
+  urlaccessdate = {02 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: bcrypt com fator de custo 10 ou mais consta entre as opções aceitas para armazenar senhas (cap. 10, Subseção Contas e Sessões). Também registra que bcrypt é recomendado apenas quando Argon2id e scrypt não estão disponíveis e que a entrada é limitada a 72 bytes (usado na Discussão).
+% Link: https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html (texto lido na fonte do repositório: https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Password_Storage_Cheat_Sheet.md)
+% Localização na fonte: introdução (lista de recomendações, item sobre bcrypt) e seção "bcrypt", subseção "Input Limits of bcrypt".
+% Acesso em: 02 out. 2026
+% Observações: li o texto completo das seções citadas. O documento não informa autor individual nem data de publicação; o ano foi deixado de fora (o abnTeX2 deve exibir s.d.). Conferir se a orientadora aceita esse tipo de fonte.
+% ---------------------------------------------------------------
+@misc{owasp2026password,
+  author        = {{OWASP Foundation}},
+  title         = {Password Storage Cheat Sheet},
+  howpublished  = {OWASP Cheat Sheet Series},
+  url           = {https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html},
+  urlaccessdate = {02 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: a recuperação de senha deve devolver a mesma mensagem para contas existentes e inexistentes, usar token de uso único com expiração e, após a recuperação, invalidar as sessões existentes (cap. 10, Subseção Contas e Sessões).
+% Link: https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html (texto lido na fonte do repositório: https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/Forgot_Password_Cheat_Sheet.md)
+% Localização na fonte: seção introdutória (lista de recomendações), seção "Forgot Password Request" e seção sobre recuperação de conta comprometida ("invalidate existing sessions").
+% Acesso em: 02 out. 2026
+% Observações: li o texto completo. Sem autor individual nem data de publicação; o ano foi deixado de fora.
+% ---------------------------------------------------------------
+@misc{owasp2026forgot,
+  author        = {{OWASP Foundation}},
+  title         = {Forgot Password Cheat Sheet},
+  howpublished  = {OWASP Cheat Sheet Series},
+  url           = {https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html},
+  urlaccessdate = {02 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: o elemento canvas é apenas um mapa de bits, não fornece informação sobre os objetos desenhados e seu conteúdo não é exposto às tecnologias assistivas como o HTML semântico (cap. 10, Subseção Decisões Técnicas e seus Custos).
+% Link: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/canvas (texto lido na fonte do repositório: https://raw.githubusercontent.com/mdn/content/main/files/en-us/web/html/reference/elements/canvas/index.md)
+% Localização na fonte: seção "Accessibility", primeiro parágrafo.
+% Acesso em: 02 out. 2026
+% Observações: li a seção completa. Documentação colaborativa da Mozilla, sem autor individual nem data de publicação; o ano foi deixado de fora.
+% ---------------------------------------------------------------
+@misc{mdn2026canvas,
+  author        = {{MDN Web Docs}},
+  title         = {<canvas>: The Graphics Canvas element},
+  howpublished  = {Mozilla Developer Network},
+  url           = {https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/canvas},
+  urlaccessdate = {02 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: identificadores de sessão não devem ser guardados no localStorage, pois ficam sempre acessíveis ao JavaScript e um único ataque de XSS pode roubá-los; cookies com httpOnly mitigam esse risco (cap. 10, Subseção Decisões Técnicas e seus Custos).
+% Link: https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html (texto lido na fonte do repositório: https://raw.githubusercontent.com/OWASP/CheatSheetSeries/master/cheatsheets/HTML5_Security_Cheat_Sheet.md)
+% Localização na fonte: seção "Local Storage" (itens sobre XSS e sobre não armazenar identificadores de sessão).
+% Acesso em: 02 out. 2026
+% Observações: li a seção completa. Sem autor individual nem data de publicação; o ano foi deixado de fora.
+% ---------------------------------------------------------------
+@misc{owasp2026html5,
+  author        = {{OWASP Foundation}},
+  title         = {{HTML5} Security Cheat Sheet},
+  howpublished  = {OWASP Cheat Sheet Series},
+  url           = {https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html},
+  urlaccessdate = {02 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: um LCP de até 2,5 s é considerado bom, medido no percentil 75 das cargas de página (cap. 10, Seção Validação dos Requisitos Não Funcionais, limiar do RNF-02).
+% Link: https://web.dev/articles/lcp
+% Localização na fonte: seção "What is a good LCP score?".
+% Acesso em: 02 out. 2026
+% Observações: li a seção citada e o cabeçalho (autores Philip Walton e Barry Pollard; publicado em 8 ago. 2019, atualizado em 4 set. 2025). Ano usado: o da publicação.
+% ---------------------------------------------------------------
+@misc{walton2019lcp,
+  author        = {Walton, Philip and Pollard, Barry},
+  title         = {Largest Contentful Paint ({LCP})},
+  howpublished  = {web.dev},
+  year          = {2019},
+  note          = {Atualizado em 4 set. 2025},
+  url           = {https://web.dev/articles/lcp},
+  urlaccessdate = {02 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: um INP de até 200 ms indica boa responsividade, medido no percentil 75; o INP usa dados da Event Timing API e agrupa os eventos de uma mesma interação (cap. 10, Seção Validação dos Requisitos Não Funcionais, limiar do RNF-07).
+% Link: https://web.dev/articles/inp
+% Localização na fonte: nota inicial (Event Timing API) e seção "What is a good INP score?".
+% Acesso em: 02 out. 2026
+% Observações: li as seções citadas e o cabeçalho (autores Jeremy Wagner e Barry Pollard; publicado em 6 maio 2022, atualizado em 2 set. 2025). Ano usado: o da publicação.
+% ---------------------------------------------------------------
+@misc{wagner2022inp,
+  author        = {Wagner, Jeremy and Pollard, Barry},
+  title         = {Interaction to Next Paint ({INP})},
+  howpublished  = {web.dev},
+  year          = {2022},
+  note          = {Atualizado em 2 set. 2025},
+  url           = {https://web.dev/articles/inp},
+  urlaccessdate = {02 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: o Caddy obtém e renova automaticamente certificados TLS de uma autoridade ACME (como a Let's Encrypt) e redireciona HTTP para HTTPS (cap. 10, Subseção Fluxo de Implantação).
+% Link: https://caddyserver.com/docs/automatic-https
+% Localização na fonte: introdução da página e seção sobre nomes de domínio públicos.
+% Acesso em: 02 out. 2026
+% Observações: li as seções citadas. Documentação oficial do projeto, sem autor individual nem data; ano deixado de fora.
+% ---------------------------------------------------------------
+@misc{caddy2026https,
+  author        = {{Caddy Web Server}},
+  title         = {Automatic {HTTPS}},
+  howpublished  = {Documentação do Caddy},
+  url           = {https://caddyserver.com/docs/automatic-https},
+  urlaccessdate = {02 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: ao atuar como proxy reverso, o Caddy define ou acrescenta o cabeçalho X-Forwarded-For com o endereço do cliente (cap. 10, Subseção Fluxo de Implantação).
+% Link: https://caddyserver.com/docs/caddyfile/directives/reverse_proxy
+% Localização na fonte: seção "Headers", parágrafo "Defaults".
+% Acesso em: 02 out. 2026
+% Observações: li a seção citada. Documentação oficial, sem autor individual nem data.
+% ---------------------------------------------------------------
+@misc{caddy2026proxy,
+  author        = {{Caddy Web Server}},
+  title         = {reverse\_proxy (Caddyfile directive)},
+  howpublished  = {Documentação do Caddy},
+  url           = {https://caddyserver.com/docs/caddyfile/directives/reverse_proxy},
+  urlaccessdate = {02 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: em uma aplicação Vite publicada como SPA na Vercel, o acesso direto a endereços internos (deep linking) não funciona sem configuração, e a solução indicada é um vercel.json com rewrite de todas as rotas para /index.html (cap. 10, Subseção Fluxo de Implantação).
+% Link: https://vercel.com/docs/frameworks/frontend/vite
+% Localização na fonte: seção "Using Vite to make SPAs".
+% Acesso em: 02 out. 2026
+% Observações: li a seção completa. Documentação oficial, sem autor individual nem data.
+% ---------------------------------------------------------------
+@misc{vercel2026vite,
+  author        = {{Vercel}},
+  title         = {Vite on Vercel},
+  howpublished  = {Documentação da Vercel},
+  url           = {https://vercel.com/docs/frameworks/frontend/vite},
+  urlaccessdate = {02 out. 2026}
+}

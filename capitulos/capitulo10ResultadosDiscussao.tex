@@ -1,4 +1,823 @@
 \chapter{Resultados e Discussão}
 \label{cap:10}
+Este capítulo apresenta o sistema resultante do trabalho e o examina à luz dos objetivos definidos no Capítulo~\ref{cap:01}. Enquanto o Capítulo~\ref{cap:07} descreveu como a plataforma foi construída e o Capítulo~\ref{cap:08} relatou como seu funcionamento foi verificado, o foco aqui recai sobre o que o sistema entrega ao usuário, sobre as razões das principais decisões que moldaram esse resultado e sobre os limites dessas decisões. Inicialmente, apresenta-se uma visão geral da plataforma em funcionamento; em seguida, os resultados são descritos por área, na ordem dos objetivos específicos: a organização do acervo e o controle de privacidade, o editor visual de \textit{layouts}, a personalização da interface, as funcionalidades sociais e os aspectos de segurança e de responsividade. Em seguida, os requisitos não funcionais são confrontados com as medições realizadas, e a operação da plataforma é descrita, com o fluxo de implantação e a delimitação do que essa operação permite afirmar. Por fim, o atendimento a cada objetivo específico é avaliado, e as decisões técnicas, suas limitações e as implicações dos resultados são discutidas.
 
-Texto dos resultados.
+\section{Visão Geral do Sistema Desenvolvido}
+\label{sec:visao_geral_resultados}
+
+O resultado do trabalho é uma plataforma \textit{web} composta por três partes que se comunicam por interfaces bem definidas: uma aplicação cliente executada no navegador, uma API REST que concentra as regras de negócio e um banco de dados relacional, complementados por um serviço de armazenamento de arquivos para as imagens enviadas pelos usuários. A Figura~\ref{fig:arquiteturaResultado} apresenta essa organização.
+
+% TODO: criar o diagrama de arquitetura (não existe nenhum no trabalho; as figuras de
+% arquitetura do capítulo 6 são do modelo da instituição e estão comentadas).
+% Sugestão de arquivo: imagens/Resultados/arquitetura.png
+% Conteúdo: três blocos da esquerda para a direita.
+%   (1) Navegador: aplicação React (SPA), com Axios e TanStack Query.
+%   (2) API NestJS: guards globais (limitação de requisições -> autenticação JWT com sessão),
+%       validação dos DTOs, controladores e serviços por módulo, Prisma.
+%   (3) PostgreSQL 16.
+% Ao lado da API: "Armazenamento de arquivos (Cloudflare R2 ou disco local)" e
+% "Servidor SMTP (e-mail de redefinição de senha)".
+% Setas: navegador -> API (HTTPS/JSON, cabeçalho Authorization: Bearer);
+%        API -> PostgreSQL (Prisma); API -> armazenamento (gravar/remover);
+%        navegador -> armazenamento (leitura das imagens pelo caminho público).
+% Depois de criar a imagem, trocar o \fbox abaixo por:
+% \includegraphics[width=0.9\textwidth]{imagens/Resultados/arquitetura.png}
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Organização geral da plataforma desenvolvida}
+	\fbox{\parbox[c][4cm][c]{0.85\textwidth}{\centering Diagrama de arquitetura (pendente)}}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:arquiteturaResultado}
+\end{figure}
+\FloatBarrier
+
+A aplicação cliente é uma aplicação de página única escrita com React. Suas telas correspondem a rotas cujos endereços refletem a posição do usuário no acervo: a lista de coleções de uma categoria fica em \texttt{/categorias/:idCategoria}, e a ficha de um item, em \texttt{/categorias/:idCategoria/colecoes/:idColecao/itens/:idItem}. Como o caminho completo está no endereço, qualquer nível do acervo pode ser aberto diretamente, sem passar pelas telas anteriores, e os vínculos da trilha de navegação exibida no topo de cada página são montados a partir do próprio endereço. Além dos três níveis do acervo, a aplicação reúne a biblioteca e o editor de \textit{layouts}, a biblioteca e o editor de paletas, a tela de descoberta de coleções por etiquetas, as telas de amigos e de coleções acompanhadas, e as páginas que exibem o perfil, as categorias e as coleções de outras pessoas. Cada tela é empacotada em um arquivo próprio, carregado apenas quando o usuário a visita, de modo que o primeiro acesso transfere somente a estrutura comum da aplicação.
+
+A API é organizada em módulos do NestJS que acompanham os pacotes do modelo de domínio (Subseção~\ref{subsec:pacotes_dominio}): usuário, autenticação, categorias, coleções, etiquetas, itens, \textit{layouts}, aparência, interação social e notificações, além dos módulos de infraestrutura que dão acesso ao banco e ao armazenamento de arquivos. Os dados são persistidos no PostgreSQL por meio do Prisma, conforme o projeto de dados do Capítulo~\ref{cap:06}. As imagens, por sua vez, não são gravadas no banco: a API as envia ao Cloudflare R2 ou, na ausência das credenciais desse serviço, ao disco do servidor, e o banco guarda apenas o caminho de cada arquivo.
+
+O percurso de uma ação do usuário ilustra como essas partes colaboram. Quando um Elemento é arrastado no editor de \textit{layouts}, a nova posição é aplicada imediatamente ao estado da tela; após uma breve pausa, a aplicação envia à API apenas os campos alterados daquele Elemento, acompanhados do \textit{token} de acesso. Na API, a requisição passa pela limitação de requisições, pela verificação do \textit{token} e da sessão correspondente e pela validação estrita do corpo, e só então alcança o serviço do módulo de \textit{layouts}, que confirma que o \textit{layout} pertence ao usuário autenticado e que o Elemento pertence àquele \textit{layout} antes de gravar a alteração. Essa sequência de verificações, detalhada no Capítulo~\ref{cap:07}, é comum a todas as rotas, exceto às quatro que precisam ser públicas: o cadastro, o \textit{login} e as duas etapas da redefinição de senha.
+
+A separação entre cliente e API tem uma consequência que vale registrar como resultado: toda regra que protege os dados do usuário, como a verificação de propriedade de um registro ou a política de privacidade das coleções, é aplicada no servidor. A interface oculta ações que o usuário não pode executar, mas essa ocultação é apenas uma conveniência; uma requisição montada fora da aplicação encontra as mesmas restrições. As seções seguintes descrevem os resultados obtidos em cada área funcional sobre essa base.
+
+\section{Organização do Acervo e Controle de Privacidade}
+\label{sec:resultado_acervo}
+
+A organização do acervo em Categorias, Coleções e Itens, definida no modelo de domínio do Capítulo~\ref{cap:05}, foi implementada de ponta a ponta: cada nível tem suas tabelas, suas rotas na API e sua tela na aplicação cliente. A Categoria agrupa um tema amplo e reúne nome, tema, descrição, ícone (um \textit{emoji} ou uma imagem), imagem de capa e cor de fundo; a Coleção acrescenta a privacidade, as etiquetas e o \textit{layout} das fichas; e o Item guarda nome, subtítulo, imagem de capa, notas e cor de fundo, além da ficha descrita na Seção~\ref{sec:resultado_editor}. As Figuras~\ref{fig:resultadoCategorias} a~\ref{fig:resultadoItens} mostram as três telas correspondentes.
+
+% TODO: capturar a tela de Categorias (rota /categorias) com uma conta que tenha pelo menos
+% três categorias com capa, para que apareçam as contagens de coleções e itens e o resumo
+% de privacidade de cada cartão. Mostrar também a barra lateral aberta.
+% Sugestão de arquivo: imagens/Resultados/categorias.png
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Tela de Categorias, página inicial da área autenticada}
+	\fbox{\parbox[c][5cm][c]{0.85\textwidth}{\centering Captura da tela de Categorias (pendente)}}
+	% \includegraphics[width=0.9\textwidth]{imagens/Resultados/categorias.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:resultadoCategorias}
+\end{figure}
+\FloatBarrier
+
+% TODO: capturar a tela de Coleções de uma categoria (rota /categorias/:idCategoria) com
+% coleções de privacidades diferentes (pública, só amigos, privada) e com etiquetas visíveis.
+% Sugestão de arquivo: imagens/Resultados/colecoes.png
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Tela de Coleções de uma Categoria}
+	\fbox{\parbox[c][5cm][c]{0.85\textwidth}{\centering Captura da tela de Coleções (pendente)}}
+	% \includegraphics[width=0.9\textwidth]{imagens/Resultados/colecoes.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:resultadoColecoes}
+\end{figure}
+\FloatBarrier
+
+% TODO: capturar a tela de Itens de uma coleção (rota /categorias/:idCategoria/colecoes/:idColecao)
+% com a trilha de navegação "Categorias > Categoria > Coleção" visível no topo e os cartões dos itens.
+% Sugestão de arquivo: imagens/Resultados/itens.png
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Tela de Itens de uma Coleção, com a trilha de navegação}
+	\fbox{\parbox[c][5cm][c]{0.85\textwidth}{\centering Captura da tela de Itens (pendente)}}
+	% \includegraphics[width=0.9\textwidth]{imagens/Resultados/itens.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:resultadoItens}
+\end{figure}
+\FloatBarrier
+
+A tela de Categorias é a página inicial da área autenticada e funciona como um painel do acervo. Para cada Categoria, a API devolve, em uma única consulta, o número de Coleções, o número total de Itens e um resumo de quantas Coleções estão em cada nível de privacidade, o que permite ao usuário enxergar a dimensão e a exposição do próprio acervo sem abrir cada Categoria. As listagens dos três níveis podem ser ordenadas por nome ou por data de criação, nos dois sentidos, e essa ordenação é feita pelo banco de dados, e não no navegador, o que mantém o resultado correto independentemente de quantos registros já foram carregados na tela. Para circular entre os níveis, além da trilha de navegação, a aplicação oferece uma barra lateral que exibe as Categorias e desdobra suas Coleções, e uma paleta de navegação acionada por \texttt{Ctrl+K}, que localiza Categorias, Coleções e telas pelo nome.
+
+As regras de unicidade do domínio também foram atendidas: o nome de uma Categoria é único entre as Categorias do usuário, o de uma Coleção é único dentro de sua Categoria, e o de um Item é único dentro de sua Coleção. A primeira regra é garantida por uma restrição do próprio banco, e as duas últimas, pela camada de serviço, conforme discutido no Capítulo~\ref{cap:06}. Um Item pode ainda ser transferido para outra Coleção do mesmo usuário; nesse caso, a API confirma que a Coleção de destino pertence a quem fez a requisição e que o nome do Item não colide com o de outro Item já existente no destino.
+
+\subsection{Etiquetas e Descoberta de Coleções}
+\label{subsec:resultado_etiquetas}
+
+Cada Coleção pode receber até dez etiquetas, que formam um vocabulário único, compartilhado por todas as contas. Para que a mesma palavra escrita por pessoas diferentes seja reconhecida como igual, toda etiqueta é gravada em uma forma canônica: sem espaços nas extremidades, em letras minúsculas e sem acentos, removidos por meio da decomposição canônica do Unicode. A mesma normalização é aplicada ao tema das Categorias. O custo dessa escolha é visível: a palavra exibida perde a acentuação com que foi digitada, de modo que ``mangás'' é gravada e exibida como ``mangas''. Optou-se por esse custo porque, sem a forma canônica, ``Mangás'', ``mangas'' e ``mangás '' seriam três palavras distintas para o banco, e as pessoas que usassem cada grafia nunca seriam encontradas umas pelas outras, o que anularia a finalidade de um vocabulário compartilhado.
+
+É justamente esse vocabulário que sustenta a tela Explorar, na qual o usuário encontra Coleções de outras pessoas a partir de etiquetas. A busca exige que a Coleção possua todas as etiquetas escolhidas, de modo que cada etiqueta acrescentada estreita o resultado, e considera apenas Coleções de outros usuários que já contenham ao menos um Item, limitadas às 60 mais recentes. A visibilidade dos resultados segue a mesma política de privacidade descrita a seguir: são exibidas as Coleções públicas de qualquer usuário e as Coleções restritas a amigos apenas quando o dono é amigo de quem busca. Além das Coleções, a tela apresenta as pessoas por trás delas, ordenadas pela quantidade de Coleções encontradas de cada uma, o que transforma a coincidência de etiquetas em um meio de encontrar pessoas com interesses semelhantes. As etiquetas escolhidas ficam registradas no endereço da página; por isso, uma busca pode ser compartilhada, e o botão de voltar do navegador desfaz a última etiqueta acrescentada.
+
+\subsection{Controle de Privacidade}
+\label{subsec:resultado_privacidade}
+
+A privacidade é definida no nível da Coleção, em três valores: pública, restrita a amigos e privada. Toda decisão sobre o que uma pessoa pode ver no acervo de outra é tomada por um único serviço da API, o \texttt{SocialAccessPolicyService}, consultado pelas telas de perfil, de Coleção e de Item de terceiros, pela descoberta por etiquetas e pelo acompanhamento de Coleções. O serviço classifica quem consulta em um de três níveis de acesso em relação ao dono do acervo e, a partir desse nível, determina quais valores de privacidade lhe são visíveis, conforme o Quadro~\ref{quad:niveisAcesso}. O trecho que realiza essa classificação é apresentado no Quadro~\ref{quad:codigoPoliticaAcesso}.
+
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Coleções visíveis conforme o nível de acesso de quem consulta}
+\label{quad:niveisAcesso}
+\begin{tabular}{|p{3.5cm}|p{5cm}|p{6.5cm}|}
+\hline
+\textbf{Nível de acesso} & \textbf{Condição} & \textbf{Privacidades visíveis} \\ \hline
+Dono & Quem consulta é o próprio dono & Pública, restrita a amigos e privada \\ \hline
+Amigo & Existe amizade aceita entre os dois & Pública e restrita a amigos \\ \hline
+Autenticado & Qualquer outro usuário com sessão válida & Somente pública \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Classificação do nível de acesso no \texttt{SocialAccessPolicyService}}
+\label{quad:codigoPoliticaAcesso}
+\centering
+\begin{minipage}{0.9\textwidth}
+\begin{lstlisting}
+const friendship = await this.prisma.friendship.findUnique({
+  where: { pairKey: this.createPairKey(viewerId, ownerId) },
+  select: { status: true },
+});
+const isFriend = friendship?.status === FriendshipStatus.ACCEPTED;
+
+return {
+  viewerId,
+  ownerId,
+  level: isFriend
+    ? SocialAccessLevel.FRIEND
+    : SocialAccessLevel.AUTHENTICATED,
+  visiblePrivacies: isFriend ? FRIEND_PRIVACIES : PUBLIC_PRIVACIES,
+};
+\end{lstlisting}
+\end{minipage}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
+Concentrar a regra em um único serviço é o que torna a privacidade confiável: as diferentes telas que exibem conteúdo de terceiros não reimplementam a verificação, apenas a consultam, e uma correção feita no serviço passa a valer em todas elas ao mesmo tempo. A amizade é localizada por uma chave única formada pelos identificadores dos dois usuários em ordem fixa (\texttt{pairKey}), o que reduz a verificação a uma busca por chave, e somente uma amizade com estado aceito eleva o nível de acesso; uma solicitação pendente, recusada ou cancelada não concede nada.
+
+Quando alguém tenta abrir uma Coleção que não pode ver, a API responde que a Coleção não foi encontrada (código HTTP 404), e não que o acesso foi negado (código 403). A especificação do HTTP admite essa conduta para o servidor que deseja ocultar a existência de um recurso proibido \cite{fielding2022http}, e ela foi adotada de propósito: responder com 403 confirmaria a quem consulta que a Coleção existe, o que já é, em si, uma informação sobre o acervo de outra pessoa. Com o 404, uma Coleção privada é indistinguível de uma Coleção inexistente.
+
+A privacidade também foi tratada como um estado que pode mudar ao longo do tempo, e não apenas como um filtro de leitura. Quando o dono restringe uma Coleção, os acompanhamentos que deixariam de ser permitidos são encerrados na mesma transação que grava a nova privacidade: ao tornar a Coleção privada, todos os acompanhamentos ativos são encerrados; ao torná-la restrita a amigos, apenas os de quem não é amigo do dono. Os registros encerrados são marcados com a data de término em vez de apagados, preservando o histórico. Sem esse tratamento, quem acompanhava uma Coleção pública continuaria recebendo notícias dela depois de ela se tornar privada, o que contrariaria a decisão do dono. A mesma lógica se aplica ao término de uma amizade, como se descreve na Seção~\ref{sec:resultado_social}.
+
+\section{Editor Visual de \textit{Layouts}}
+\label{sec:resultado_editor}
+
+O editor visual de \textit{layouts} é o resultado que mais diferencia a plataforma de uma ferramenta de catalogação convencional, pois é ele que permite ao usuário decidir não apenas o que registrar sobre cada Item, mas também como esse registro é apresentado. Um mesmo componente de edição atende a dois propósitos: montar os \textit{layouts} da biblioteca, que funcionam como moldes reutilizáveis entre Coleções, e montar a ficha de um Item específico. Nos dois casos, o usuário trabalha sobre uma folha, na qual posiciona, redimensiona, gira e estiliza Elementos, como mostra a Figura~\ref{fig:resultadoEditor}. A Figura~\ref{fig:resultadoFicha} apresenta uma ficha de Item já montada, na forma como é exibida fora do editor.
+
+% TODO: capturar o editor de layouts em tela cheia (rota /layouts/:idLayout) com uma folha
+% montada que use os seis tipos de Elemento (texto, imagem, forma, ícone, classificação e data),
+% com um Elemento selecionado, de modo que apareçam as alças de redimensionamento, a alça de giro,
+% a barra de propriedades e o painel de posição/camadas.
+% Sugestão de arquivo: imagens/Resultados/editor.png
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Editor de \textit{layouts} com um Elemento selecionado}
+	\fbox{\parbox[c][6cm][c]{0.85\textwidth}{\centering Captura do editor de \textit{layouts} (pendente)}}
+	% \includegraphics[width=0.95\textwidth]{imagens/Resultados/editor.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:resultadoEditor}
+\end{figure}
+\FloatBarrier
+
+% TODO: capturar a ficha de um item (rota /categorias/:idCategoria/colecoes/:idColecao/itens/:idItem)
+% que tenha ficha própria preenchida: capa, título, nota em estrelas, data e descrição.
+% De preferência o mesmo item do exemplo do capítulo 5 (livro "Duna").
+% Sugestão de arquivo: imagens/Resultados/ficha-item.png
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Ficha de um Item exibida fora do editor}
+	\fbox{\parbox[c][6cm][c]{0.6\textwidth}{\centering Captura da ficha do Item (pendente)}}
+	% \includegraphics[width=0.6\textwidth]{imagens/Resultados/ficha-item.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:resultadoFicha}
+\end{figure}
+\FloatBarrier
+
+\subsection{A Folha e sua Unidade de Medida}
+\label{subsec:resultado_folha}
+
+A folha tem largura e altura próprias, expressas em uma unidade da própria folha, e não em \textit{pixels}. O formato padrão mede 1000 por 1400 unidades, e o editor oferece formatos prontos (retrato, quadrado, paisagem e comprido), além da definição livre das dimensões, entre 200 e 4000 unidades de largura e entre 200 e 100000 de altura. Todas as medidas de um Elemento, isto é, posição, largura, altura, espessura de borda e tamanho de fonte, são gravadas nessa mesma unidade. Na largura padrão, cada unidade corresponde à milésima parte da largura da folha, como previsto no projeto de dados do Capítulo~\ref{cap:06}; o resultado final generalizou essa regra para folhas de qualquer largura.
+
+A conversão entre a unidade da folha e o comprimento na tela é feita inteiramente pelo CSS, por meio de uma variável \texttt{-{}-u} calculada a partir da unidade \texttt{cqw}, que corresponde a 1\% da largura do contêiner de consulta \cite{atkins2022containment}. Dividindo-se a largura do contêiner pela largura da folha, obtém-se o comprimento de uma unidade, e cada Elemento é desenhado multiplicando suas medidas por essa variável. O Quadro~\ref{quad:codigoFicha} mostra o trecho do componente \texttt{Ficha} que define essa variável, junto com as cores do papel e da tinta.
+
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Definição da unidade da folha e das cores do papel no componente \texttt{Ficha}}
+\label{quad:codigoFicha}
+\centering
+\begin{minipage}{0.9\textwidth}
+\begin{lstlisting}
+style={{
+  aspectRatio: `${largura} / ${altura}`,
+  ...({ '--u': `calc(100cqw / ${largura})` } as CSSProperties),
+  ...(papel
+    ? ({
+        '--papel': papel.de,
+        '--tinta': tintaParaPapel(papel),
+        ...(imagemDoPapel(papel)
+          ? { '--papel-fundo': imagemDoPapel(papel) }
+          : {}),
+      } as CSSProperties)
+    : {}),
+}}
+\end{lstlisting}
+\end{minipage}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
+Essa escolha tem duas consequências práticas. A primeira é que a mesma ficha é desenhada de forma idêntica em qualquer largura de tela: em um monitor largo ou em um celular, muda apenas a escala, e nenhum Elemento se desloca em relação aos demais. A segunda é que aumentar o tamanho da folha não altera nenhum Elemento já posicionado, pois um Elemento de 300 unidades continua medindo 300 unidades; o que muda é o espaço disponível ao redor dele. Os Elementos são desenhados como elementos HTML posicionados de forma absoluta sobre a folha, e não em uma superfície de desenho do tipo \textit{canvas}, de modo que o mesmo componente \texttt{Ficha} serve ao editor, à página do Item e às miniaturas da biblioteca. As razões e as consequências dessa decisão são discutidas na Seção~\ref{sec:discussao}.
+
+O fundo da folha pode ser uma cor sólida ou um degradê entre duas cores. O degradê não é gravado como uma regra CSS livre, mas em um formato textual restrito, composto pelas duas cores e pelo ângulo, que o servidor valida antes de gravar; com isso, nenhum texto arbitrário enviado pelo cliente chega a ser interpretado como estilo pelo navegador de quem visualiza a ficha. A cor padrão dos textos, por sua vez, é calculada a partir do contraste com a cor do papel, de modo que um fundo escuro recebe automaticamente uma tinta clara.
+
+\subsection{Tipos de Elemento}
+\label{subsec:resultado_tipos_elemento}
+
+O editor oferece os seis tipos de Elemento definidos nos requisitos, resumidos no Quadro~\ref{quad:tiposElemento}. Todos compartilham nome, posição, dimensões, camada, rotação, opacidade e borda, e cada tipo acrescenta as propriedades que lhe são específicas. As propriedades visuais ficam gravadas em um campo JSON do Elemento, enquanto o valor exibido (o texto, o endereço da imagem, a nota ou a data) fica em uma coluna própria, segundo a regra de projeto descrita no Capítulo~\ref{cap:06}.
+
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Tipos de Elemento oferecidos pelo editor}
+\label{quad:tiposElemento}
+\begin{tabular}{|p{2.5cm}|p{12.5cm}|}
+\hline
+\textbf{Tipo} & \textbf{Recursos implementados} \\ \hline
+Texto & Título, subtítulo, parágrafo ou lista com marcadores ou numerada; família tipográfica, tamanho, negrito, itálico, sublinhado, tachado, alinhamento horizontal e vertical, espaçamento entre letras e entre linhas, cor do texto e cor de fundo \\ \hline
+Imagem & Envio de arquivo com recorte feito no navegador; preenchimento ou ajuste à caixa; formato retangular, arredondado ou circular; o arquivo original é preservado, o que permite refazer o recorte \\ \hline
+Forma & Doze silhuetas fechadas e uma linha, desenhadas em SVG, com preenchimento, cor, espessura e estilo de traço (contínuo, tracejado ou pontilhado), cantos arredondados e, na linha, curvatura e pontas ajustáveis \\ \hline
+Ícone & Ícones de um acervo pré-gerado a partir da biblioteca Phosphor, organizado em categorias com nomes e termos de busca em português, desenhados em SVG na cor escolhida \\ \hline
+Classificação & Nota com passo de meio ponto, máximo configurável (cinco por padrão) e dez desenhos (estrela, coração, círculo, chama, lua, marcador, coroa, gema, polegar e pata); para leitores de tela, a nota é anunciada na forma ``X de Y'' \\ \hline
+Data & Data única ou período; sete formatos de exibição (curto, médio, longo, dia da semana, mês e ano, ano e relativo) e cinco apresentações visuais (texto, calendário, mês, etiqueta e carimbo) \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
+O tipo Data merece uma observação sobre um detalhe que costuma provocar erros em aplicações \textit{web}: a data é sempre montada a partir de suas partes (ano, mês e dia), e nunca interpretada pelo navegador a partir de um texto completo, porque essa interpretação pode considerar a data no fuso horário UTC e exibir, para um usuário no Brasil, o dia anterior ao registrado.
+
+\subsection{Interação no Editor}
+\label{subsec:resultado_interacao_editor}
+
+A manipulação direta dos Elementos reproduz os gestos de editores visuais conhecidos pelo público, como o Canva, citado no Capítulo~\ref{cap:01} como referência. Um Elemento pode ser arrastado com o \textit{mouse}, o toque ou a caneta; a nova posição é convertida de \textit{pixels} para unidades da folha e limitada às bordas da folha apenas quando o gesto termina. Oito alças permitem redimensioná-lo, mantendo fixo o canto ou o lado oposto mesmo quando o Elemento está girado, e uma nona alça permite girá-lo, com a tecla \texttt{Shift} restringindo o giro a múltiplos de 15 graus. Vários Elementos podem ser selecionados ao mesmo tempo, por clique com \texttt{Shift} ou \texttt{Ctrl}, por um laço desenhado sobre a folha ou pelo atalho \texttt{Ctrl+A}, e então movidos ou redimensionados em grupo. Os atalhos \texttt{Ctrl+C}, \texttt{Ctrl+V} e \texttt{Ctrl+D} copiam, colam e duplicam a seleção, e as teclas \texttt{Delete} e \texttt{Backspace} a excluem; as mesmas ações aparecem em um menu de contexto, aberto com o botão direito.
+
+A sobreposição entre Elementos é controlada por camadas. Quatro comandos (trazer para a frente, avançar, recuar e enviar para trás) reorganizam a pilha, e um painel lista as camadas com miniaturas de cada Elemento, permitindo reordená-las por arraste. Toda alteração entra no histórico de desfazer e refazer, que guarda os últimos 50 passos. Para que esse histórico seja útil, alterações contínuas, como arrastar o controle deslizante de tamanho de fonte, são fundidas em um único passo por meio de uma chave de fusão: enquanto chegam alterações com a mesma chave, o topo do histórico é reescrito em vez de receber um novo passo. Sem essa fusão, desfazer o ajuste de um tamanho de fonte exigiria dezenas de acionamentos do atalho. A gravação automática, a sincronização por diferença e a separação entre os identificadores da tela e os do banco, que tornam seguro esse modelo de edição sem botão de salvar, foram descritas no Capítulo~\ref{cap:07}.
+
+\subsection{Do \textit{Layout} à Ficha do Item}
+\label{subsec:resultado_ficha_item}
+
+A relação entre o \textit{layout} de uma Coleção e a ficha de cada Item é o ponto em que o editor se conecta à organização do acervo. O \textit{layout} da biblioteca é um molde: define quais Elementos existem, onde ficam e como se parecem, mas não guarda o conteúdo de nenhum Item. Quando um Elemento ainda não tem valor, a ficha o exibe com um contorno tracejado e o seu nome, indicando o que se espera ser preenchido ali. Ao vincular um \textit{layout} a uma Coleção, todos os seus Itens passam a ser exibidos segundo esse molde.
+
+A ficha efetiva de um Item é resolvida em cascata, conforme o trecho do Quadro~\ref{quad:codigoCascata}: se o Item possui ficha própria, é ela que vale; caso contrário, vale o \textit{layout} da Coleção; e, não havendo nenhum dos dois, o Item é exibido sem ficha, apenas com um convite para montá-la e com as notas já cadastradas. Quando existe uma ficha, ela é a apresentação completa do Item: as notas e a data de criação não são acrescentadas abaixo dela, pois não fazem parte do que o usuário desenhou.
+
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Resolução da ficha efetiva de um Item no \texttt{ItemLayoutOverrideService}}
+\label{quad:codigoCascata}
+\centering
+\begin{minipage}{0.9\textwidth}
+\begin{lstlisting}
+const hasOverride = this.hasPrivateOverride(item.layout?.purpose);
+const layout = hasOverride ? item.layout : item.collection.layout;
+
+return {
+  source: hasOverride ? 'ITEM' : layout ? 'COLLECTION' : 'BASIC',
+  layout,
+};
+\end{lstlisting}
+\end{minipage}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
+O preenchimento da ficha acontece no editor da ficha do Item. Na primeira vez em que é aberto para um Item, o sistema cria, em uma única transação, um \textit{layout} de finalidade exclusiva daquele Item, copiando os Elementos do \textit{layout} da Coleção e registrando em cada cópia o Elemento de origem; nas vezes seguintes, devolve a cópia já existente. A partir daí, o usuário preenche os valores e pode também alterar a disposição e o estilo daquela ficha específica, sem que nenhuma dessas mudanças atinja o \textit{layout} da Coleção ou as fichas dos demais Itens. Esse resultado atende diretamente ao objetivo de permitir a personalização da ficha de Itens individualmente.
+
+\subsection{Troca de \textit{Layout} e Mescla de Fichas}
+\label{subsec:resultado_mescla}
+
+A cópia por Item cria uma situação que precisou ser tratada: se o usuário troca o \textit{layout} de uma Coleção, os Itens que já têm ficha própria continuariam presos ao molde antigo, e reconstruí-los à mão seria trabalhoso justamente nas Coleções mais cuidadas. Para resolver esse caso, foi implementada a mescla de fichas, que leva os valores de uma ficha própria para o novo \textit{layout} da Coleção. A troca de \textit{layout} passa por uma confirmação que apresenta, para cada Item com ficha própria derivada de outro molde, a prévia do resultado da mescla, e o usuário escolhe se apenas troca o \textit{layout} ou se troca e mescla os Itens selecionados. O editor da ficha de um Item oferece a mesma operação para um Item isolado.
+
+A mescla associa a cada Elemento do novo \textit{layout} no máximo um Elemento da ficha antiga do mesmo tipo, segundo três critérios aplicados em ordem de preferência, como mostra o Quadro~\ref{quad:codigoMescla}: primeiro, a linhagem, isto é, os dois Elementos descendem do mesmo original; depois, o nome, comparado sem acentos e sem distinção entre maiúsculas e minúsculas; por fim, a ordem de leitura, de cima para baixo e da esquerda para a direita. A posição, o tamanho e o estilo vêm sempre do novo \textit{layout}, e da ficha antiga é transferido apenas o valor. Uma imagem leva consigo o arquivo original e o recorte, e uma nota é convertida para a escala do novo Elemento, de modo que quatro de cinco estrelas se tornam oito de dez. Formas e ícones não são transferidos, por serem parte do desenho do molde e não valores do Item. Os valores que não encontram correspondência não são descartados: permanecem na ficha, sobrepostos aos demais e ajustados aos limites da nova folha, para que o usuário decida o que fazer com eles.
+
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Critérios de correspondência da mescla de fichas, em ordem de preferência}
+\label{quad:codigoMescla}
+\centering
+\begin{minipage}{0.9\textwidth}
+\begin{lstlisting}
+match(
+  (target, old) =>
+    !!old.sourceElementId &&
+    (old.sourceElementId === target.idElement ||
+      old.sourceElementId === target.sourceElementId),
+);
+match((target, old) => normalize(target.name) === normalize(old.name));
+match(() => true);
+\end{lstlisting}
+\end{minipage}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
+A regra de mescla é implementada como uma função pura no \textit{backend} e tem uma função equivalente no \textit{frontend}, usada para desenhar a prévia. Manter as duas em acordo é o que garante que a prévia exibida antes da confirmação corresponda ao que de fato será gravado. A mescla de vários Itens ocorre em uma única transação, limitada a 500 Itens por requisição: ou todas as fichas escolhidas são convertidas, ou nenhuma é.
+
+\subsection{Biblioteca de \textit{Layouts}}
+\label{subsec:resultado_biblioteca}
+
+A biblioteca reúne os \textit{layouts} do usuário em três origens, identificadas por selos: os criados por ele, os \textit{layouts} padrão do sistema e os importados de outros usuários. Toda conta recebe uma cópia do \textit{layout} padrão ``Ficha simples'', composto por uma imagem de capa, um título, uma nota em estrelas e uma descrição; por ser uma cópia, e não uma referência compartilhada, o usuário pode editá-lo ou excluí-lo sem afetar os de outras contas. Qualquer \textit{layout} pode ser duplicado, e o compartilhamento é feito pelo identificador do \textit{layout}: quem o recebe visualiza uma prévia antes de importá-lo, e a importação cria uma cópia independente na biblioteca do destinatário, que registra o código do usuário de origem. A prévia é a única leitura da API que atravessa a fronteira entre contas no módulo de \textit{layouts}, e por isso devolve apenas os campos necessários para desenhá-la.
+
+A exclusão de um \textit{layout} é recusada enquanto ele estiver vinculado a uma Coleção ou servir de origem a fichas próprias de Itens, pois apagá-lo alteraria a apresentação de fichas que o usuário não pretendia modificar. Para que essa proteção não impeça a limpeza da biblioteca, foi implementada a operação de desassociar: em uma única transação, cada Item que ainda exibia o \textit{layout} recebe uma ficha própria copiada dele, as Coleções deixam de apontá-lo e as fichas derivadas deixam de registrá-lo como origem. Após essa operação, nenhuma ficha muda de aparência, e o \textit{layout} pode ser excluído.
+
+\section{Personalização da Interface}
+\label{sec:resultado_aparencia}
+
+Se o editor de \textit{layouts} permite ao usuário definir a aparência de cada ficha, a personalização da interface estende essa liberdade ao ambiente em que o acervo é consultado. O resultado é uma biblioteca de paletas, na qual cada paleta reúne as cores de toda a interface e as configurações tipográficas, e apenas uma está ativa por vez. A Figura~\ref{fig:resultadoAparencia} mostra a biblioteca, e a Figura~\ref{fig:resultadoEditorPaleta}, o editor de uma paleta com sua prévia.
+
+% TODO: capturar a tela Aparência (rota /aparencia) mostrando as seis paletas padrão com o selo
+% de origem do sistema e a indicação da paleta em uso.
+% Sugestão de arquivo: imagens/Resultados/aparencia.png
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Biblioteca de paletas na tela Aparência}
+	\fbox{\parbox[c][5cm][c]{0.85\textwidth}{\centering Captura da tela Aparência (pendente)}}
+	% \includegraphics[width=0.9\textwidth]{imagens/Resultados/aparencia.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:resultadoAparencia}
+\end{figure}
+\FloatBarrier
+
+% TODO: capturar o editor de paleta (rota /aparencia/:idAppearancePreset) com a prévia visível e,
+% se possível, uma cor escolhida de propósito com contraste baixo, para que o aviso de contraste
+% apareça ao lado do campo de cor.
+% Sugestão de arquivo: imagens/Resultados/editor-paleta.png
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Editor de paleta com prévia e aviso de contraste}
+	\fbox{\parbox[c][5cm][c]{0.85\textwidth}{\centering Captura do editor de paleta (pendente)}}
+	% \includegraphics[width=0.9\textwidth]{imagens/Resultados/editor-paleta.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:resultadoEditorPaleta}
+\end{figure}
+\FloatBarrier
+
+\subsection{Paletas de Cores e Tipografia}
+\label{subsec:resultado_paletas}
+
+Uma paleta é composta por uma cor primária, usada nos botões e destaques, e por doze cores com papéis fixos: o fundo da página, os cartões, os títulos, o texto dos cartões, a barra lateral, o cabeçalho, as janelas modais, o texto sobre cada uma dessas superfícies e o texto sobre a cor primária. O papel de cada cor é dado por sua posição na lista gravada no banco, e essa posição é o contrato entre a API e a interface. Cada superfície tem a sua própria cor de texto, em vez de uma cor de texto única calculada pelo sistema, o que permite, por exemplo, uma barra lateral escura em uma paleta de fundo claro. As demais tonalidades de que a interface precisa, como os estados de passagem do \textit{mouse} e de elemento desabilitado, as bordas e as cores de erro e de sucesso, são derivadas dessas cores, e não escolhidas pelo usuário, o que mantém pequeno o número de decisões necessárias para criar uma paleta coerente.
+
+A tipografia faz parte da mesma paleta. O usuário escolhe a família tipográfica entre 19 opções (dez conjuntos de fontes do sistema operacional e nove fontes servidas pelo próprio site), o tamanho dos títulos, entre 16 e 48 \textit{pixels}, o tamanho do texto, entre 12 e 24, a altura da linha, o espaçamento entre letras, o peso e o itálico. Os limites desses valores são validados pela API, e não apenas pelos controles da tela, de modo que nenhuma paleta gravada leva a interface a tamanhos de texto fora dessas faixas.
+
+A paleta é aplicada à interface por meio de variáveis CSS, e a mesma função que calcula essas variáveis pinta a prévia do editor e as miniaturas da biblioteca, como detalhado no Capítulo~\ref{cap:07}. O resultado observável é que a prévia exibida durante a edição corresponde exatamente ao que será aplicado. A biblioteca permite criar, editar, duplicar, excluir e ativar paletas; a única restrição é que a paleta em uso não pode ser excluída, o que garante que a conta nunca fique sem paleta.
+
+\subsection{Paletas Padrão e Contraste}
+\label{subsec:resultado_contraste}
+
+Toda conta é criada com seis paletas padrão: Claro, Outono e Floresta, de fundo claro, e Escuro, Oceano e Lavanda, de fundo escuro. A paleta que nasce ativa acompanha a preferência do sistema operacional de quem se cadastra: a interface informa à API se o dispositivo está no modo escuro, e a conta começa com a paleta Escuro nesse caso e com a paleta Claro nos demais. Como os \textit{layouts} padrão, as paletas são cópias pertencentes à conta, e podem ser editadas ou excluídas livremente.
+
+A legibilidade das paletas padrão foi verificada pelo critério de sucesso 1.4.3 das Diretrizes de Acessibilidade para Conteúdo Web (WCAG) 2.2, que exige razão de contraste de pelo menos 4,5:1 entre texto e fundo, calculada a partir da luminância relativa das duas cores \cite{campbell2024wcag}. Para este trabalho, a razão de contraste foi recalculada, com a fórmula da norma, para os oito pares de cores de texto e superfície de cada paleta, a partir dos valores definidos no arquivo \texttt{paletas-padrao.ts}. O Quadro~\ref{quad:contrastePaletas} apresenta o menor e o maior valor encontrados em cada paleta.
+
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Razão de contraste dos pares de texto e superfície das paletas padrão}
+\label{quad:contrastePaletas}
+\begin{tabular}{|p{2.3cm}|p{2cm}|p{2.8cm}|p{7.9cm}|}
+\hline
+\textbf{Paleta} & \textbf{Fundo} & \textbf{Maior razão} & \textbf{Menor razão e par correspondente} \\ \hline
+Claro & Claro & 14,63:1 & 6,01:1 (texto sobre a cor primária) \\ \hline
+Outono & Claro & 14,53:1 & 4,80:1 (texto sobre a cor primária) \\ \hline
+Floresta & Claro & 12,54:1 & 4,79:1 (texto sobre a cor primária) \\ \hline
+Escuro & Escuro & 15,21:1 & 4,99:1 (texto sobre a cor primária) \\ \hline
+Oceano & Escuro & 15,27:1 & 6,83:1 (texto sobre a cor primária) \\ \hline
+Lavanda & Escuro & 15,28:1 & 5,38:1 (texto sobre a cor primária) \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
+Os pares considerados foram o texto sobre o fundo da página, sobre os cartões, sobre a barra lateral, sobre o cabeçalho e sobre as janelas modais, o título sobre o fundo da página e sobre os cartões, e o texto sobre a cor primária. Nenhum dos 48 pares ficou abaixo do mínimo de 4,5:1, e o menor valor, de 4,79:1, corresponde ao texto dos botões da paleta Floresta. Em todas as paletas, o par de menor contraste é o texto sobre a cor primária, o que é esperado: a cor primária precisa ser saturada o bastante para funcionar como destaque, e por isso fica mais próxima, em luminância, de qualquer cor de texto. Cabe registrar o alcance dessa verificação: ela se refere às cores definidas no código das paletas padrão, e não substitui uma avaliação de acessibilidade da interface como um todo.
+
+Para as paletas criadas ou alteradas pelo usuário, o editor calcula a mesma razão de contraste a cada mudança de cor, comparando a cor editada com a cor que aparece junto dela na interface, e exibe um aviso ao lado do campo quando o resultado fica abaixo de 4,5:1. No caso dos títulos, que aparecem tanto sobre o fundo da página quanto sobre os cartões, o aviso considera o pior dos dois pares. O aviso não impede a gravação: a decisão final cabe ao usuário, que pode desejar, por exemplo, uma combinação de baixo contraste por razões estéticas, mas passa a tomá-la informado.
+
+\subsection{Tema Claro e Escuro}
+\label{subsec:resultado_tema}
+
+Além da paleta, o usuário escolhe, no menu da conta, entre o tema claro, o escuro e o automático, que acompanha a configuração do sistema operacional. Essa escolha é gravada na paleta ativa e espelhada no armazenamento local do navegador, para que seja aplicada antes mesmo do carregamento da página, conforme descrito no Capítulo~\ref{cap:07}. Quando o tema em vigor é o oposto da natureza da paleta, como uma paleta de fundo claro com o tema escuro, a claridade das cores é invertida no espaço de cor OKLCH, de modo que qualquer paleta, inclusive as criadas pelo usuário, pode ser usada nos dois temas sem exigir uma versão separada para cada um.
+
+Uma decisão relevante para o resultado é que a ficha dos Itens não segue o tema. A ficha tem as suas próprias cores de papel e de tinta, definidas no editor de \textit{layouts}, e é exibida da mesma forma no tema claro e no escuro. A ficha é tratada como um documento criado pelo usuário, e não como parte da interface: inverter suas cores alteraria uma obra cuja aparência foi escolhida deliberadamente, assim como um visualizador de imagens não altera as cores de uma fotografia quando o sistema muda de tema. A Figura~\ref{fig:resultadoTemas} ilustra esse comportamento.
+
+% TODO: capturar a mesma tela de ficha de item (rota .../itens/:idItem) duas vezes, uma no tema
+% claro e outra no tema escuro, e montar as duas lado a lado (subfloat ou uma imagem única).
+% A interface ao redor deve mudar de cor e a ficha deve permanecer idêntica.
+% Sugestão de arquivos: imagens/Resultados/tema-claro.png e imagens/Resultados/tema-escuro.png
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{A mesma ficha nos temas claro e escuro: a interface muda, a ficha permanece}
+	\fbox{\parbox[c][5cm][c]{0.85\textwidth}{\centering Capturas lado a lado nos temas claro e escuro (pendente)}}
+	% \subfloat[Tema claro]{\includegraphics[width=0.48\textwidth]{imagens/Resultados/tema-claro.png}}
+	% \hfill
+	% \subfloat[Tema escuro]{\includegraphics[width=0.48\textwidth]{imagens/Resultados/tema-escuro.png}}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:resultadoTemas}
+\end{figure}
+\FloatBarrier
+
+\section{Funcionalidades Sociais}
+\label{sec:resultado_social}
+
+A dimensão social completa a proposta da plataforma ao permitir que as Coleções sejam vistas, acompanhadas e encontradas por outras pessoas. Os resultados nessa área se organizam em quatro frentes: a amizade entre usuários, a visita ao acervo de outras pessoas, o acompanhamento de Coleções e as notificações. Todas elas se apoiam na política de privacidade descrita na Subseção~\ref{subsec:resultado_privacidade}, de modo que nenhuma funcionalidade social expõe conteúdo que o dono não tenha decidido mostrar.
+
+\subsection{Amizade}
+\label{subsec:resultado_amizade}
+
+Cada usuário é identificado publicamente por um código no formato \texttt{nome\#0000}, gerado no cadastro a partir do nome e de quatro dígitos, e é por esse código que se localiza outra pessoa e se envia uma solicitação de amizade. A busca exige o código exato e nunca devolve o próprio usuário, o que evita que a plataforma funcione como um catálogo aberto de contas. A tela de amigos, mostrada na Figura~\ref{fig:resultadoAmigos}, reúne os amigos atuais e as solicitações recebidas e enviadas.
+
+% TODO: capturar a tela de Amigos (rota /amigos) com pelo menos um amigo e uma solicitação
+% recebida pendente, mostrando as abas da tela.
+% Sugestão de arquivo: imagens/Resultados/amigos.png
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Tela de Amigos, com amigos e solicitações}
+	\fbox{\parbox[c][5cm][c]{0.85\textwidth}{\centering Captura da tela de Amigos (pendente)}}
+	% \includegraphics[width=0.9\textwidth]{imagens/Resultados/amigos.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:resultadoAmigos}
+\end{figure}
+\FloatBarrier
+
+A relação entre duas pessoas é representada por um único registro, identificado pela chave de par já mencionada, que percorre os estados pendente, aceita, recusada e cancelada. Uma nova solicitação entre as mesmas pessoas reaproveita esse registro em vez de criar outro, o que impede, pela própria restrição de unicidade do banco, a existência de duas relações paralelas entre o mesmo par. Quando uma pessoa tenta enviar uma solicitação a quem já lhe enviou uma, a API não cria um segundo pedido: responde informando que aquela pessoa já enviou uma solicitação, acompanhada de um código que distingue esse caso e do identificador do pedido existente, que pode então ser aceito. As respostas a uma solicitação são gravadas com uma atualização condicional, que só tem efeito se o pedido ainda estiver pendente; assim, se a mesma solicitação for aceita em duas abas ao mesmo tempo, apenas uma das operações é aplicada, e a outra recebe uma mensagem informando que o pedido já não está pendente.
+
+O envio de uma solicitação, sua aceitação e o desfazimento de uma amizade geram notificações para a outra pessoa. A recusa, deliberadamente, não gera: avisar alguém de que foi recusado não acrescenta informação útil e expõe a decisão de quem recusou. Desfazer uma amizade também tem efeito sobre o acompanhamento de Coleções, pelo mesmo princípio aplicado à mudança de privacidade: as Coleções restritas a amigos deixam de estar visíveis entre as duas pessoas, e os acompanhamentos correspondentes são encerrados, nos dois sentidos, na mesma transação que encerra a amizade. O Quadro~\ref{quad:codigoFimAmizade} apresenta esse trecho, reformatado para caber na página.
+
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Encerramento dos acompanhamentos ao desfazer uma amizade (trecho reformatado do \texttt{FriendshipService})}
+\label{quad:codigoFimAmizade}
+\centering
+\begin{minipage}{0.9\textwidth}
+\begin{lstlisting}
+await transaction.followCollection.updateMany({
+  where: {
+    isActive: true,
+    OR: [
+      { userId, collection: { privacy: Privacy.FRIENDS_ONLY,
+          category: { userId: otherUserId } } },
+      { userId: otherUserId, collection: { privacy: Privacy.FRIENDS_ONLY,
+          category: { userId } } },
+    ],
+  },
+  data: { isActive: false, endedAt: new Date() },
+});
+\end{lstlisting}
+\end{minipage}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
+\subsection{Visita ao Acervo de Outras Pessoas}
+\label{subsec:resultado_perfil}
+
+O perfil de um usuário reúne seu nome, sua biografia, sua foto, sua imagem de capa e suas Categorias, e pode ser visitado por qualquer pessoa autenticada a partir do código do usuário, como mostra a Figura~\ref{fig:resultadoPerfil}. A partir do perfil, o visitante navega pelas Categorias e Coleções do dono e abre as fichas dos Itens, sempre em modo de leitura, nas mesmas telas e com os mesmos cartões que usa para o próprio acervo. O que aparece em cada nível é filtrado pela política de privacidade: um visitante sem amizade vê apenas as Coleções públicas, e um amigo vê também as restritas a amigos.
+
+% TODO: capturar o perfil de outro usuário (rota /perfil/:userCode) visto por uma conta amiga,
+% com foto, capa, biografia e as categorias com coleções públicas e "só amigos".
+% Sugestão de arquivo: imagens/Resultados/perfil-visitado.png
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Perfil de outro usuário visto por um amigo}
+	\fbox{\parbox[c][5cm][c]{0.85\textwidth}{\centering Captura do perfil visitado (pendente)}}
+	% \includegraphics[width=0.9\textwidth]{imagens/Resultados/perfil-visitado.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:resultadoPerfil}
+\end{figure}
+\FloatBarrier
+
+Além da privacidade, o perfil visitado aplica uma regra de apresentação: Coleções sem nenhum Item não são exibidas a visitantes, e uma Categoria cujas Coleções visíveis estejam todas vazias também é omitida. Para o dono, uma Coleção vazia é um trabalho em andamento; para o visitante, seria apenas um cartão sem conteúdo. A foto de perfil é recortada em formato circular no próprio navegador, e o usuário pode escolher uma cor para o círculo que o representa quando não há foto, exibido com a inicial do nome, na tinta de maior contraste, nos pontos da interface em que a pessoa aparece.
+
+\subsection{Acompanhamento de Coleções}
+\label{subsec:resultado_acompanhamento}
+
+Qualquer Coleção que o usuário possa ver, exceto as suas próprias, pode ser acompanhada. As Coleções acompanhadas são reunidas em uma tela própria, acessível pela barra lateral, e o acompanhamento pode ser encerrado a qualquer momento. Encerrar um acompanhamento não apaga o registro: ele é marcado como inativo, com a data de término, e uma nova adesão à mesma Coleção reativa o registro existente. Esse histórico permite distinguir quem acompanha uma Coleção agora de quem já a acompanhou, distinção usada pelos encerramentos automáticos descritos nas seções anteriores.
+
+\subsection{Notificações}
+\label{subsec:resultado_notificacoes}
+
+As notificações são de dois tipos. As de amizade informam solicitações recebidas, solicitações aceitas e amizades desfeitas. As de atualização de Coleção informam a quem acompanha uma Coleção que um Item foi adicionado, alterado ou excluído. Cada uma dessas operações sobre Itens gera, na mesma transação, um registro de evento e uma notificação para cada pessoa que acompanha a Coleção, exceto o próprio autor da alteração. Em Coleções privadas, que por definição não podem ter acompanhantes, nenhum evento é registrado. O registro de evento guarda uma cópia do nome do Item no momento da alteração, de modo que a notificação de uma exclusão continua legível mesmo depois que o Item deixou de existir.
+
+As notificações são exibidas em um painel aberto a partir de um ícone de sino no cabeçalho, mostrado na Figura~\ref{fig:resultadoNotificacoes}, que indica a quantidade de notificações não lidas. O usuário pode marcar uma notificação ou todas como lidas e limpar o painel; a limpeza oculta as notificações sem apagá-las do banco. A contagem é atualizada pela consulta periódica à API, a cada 60 segundos, e também sempre que a janela do navegador volta a ficar em primeiro plano.
+
+% TODO: capturar o painel de notificações aberto a partir do sino, com pelo menos uma notificação
+% de amizade e uma de atualização de coleção, e o contador de não lidas visível.
+% Sugestão de arquivo: imagens/Resultados/notificacoes.png
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{Painel de notificações aberto a partir do sino do cabeçalho}
+	\fbox{\parbox[c][5cm][c]{0.6\textwidth}{\centering Captura do painel de notificações (pendente)}}
+	% \includegraphics[width=0.6\textwidth]{imagens/Resultados/notificacoes.png}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:resultadoNotificacoes}
+\end{figure}
+\FloatBarrier
+
+Um cuidado adicional diz respeito às notificações já entregues. Uma notificação de atualização é gerada quando a Coleção está visível para quem a recebe, mas essa visibilidade pode mudar depois: a Coleção pode se tornar privada, ou a amizade pode ser desfeita. Por isso, a cada consulta, a API filtra as notificações de atualização pela visibilidade atual da Coleção a que se referem, e uma notificação sobre uma Coleção que deixou de ser visível simplesmente deixa de aparecer. A privacidade, assim, não vale apenas no momento em que o conteúdo é produzido, mas também no momento em que é consultado.
+
+\section{Segurança, Integridade dos Dados e Responsividade}
+\label{sec:resultado_seguranca}
+
+Além das funcionalidades visíveis, o sistema entrega um conjunto de garantias que não aparecem como telas, mas que determinam se a plataforma pode ser confiada com o acervo de seus usuários. Os mecanismos que as implementam foram descritos no Capítulo~\ref{cap:07}, e os casos de teste que as verificam, no Capítulo~\ref{cap:08}; esta seção as apresenta como resultados, isto é, pelo comportamento que o usuário e um eventual atacante observam.
+
+\subsection{Contas e Sessões}
+\label{subsec:resultado_sessoes}
+
+As senhas são armazenadas apenas como resumo criptográfico gerado pelo bcrypt, com fator de custo 10, algoritmo e fator que constam entre as opções aceitas pelo guia de armazenamento de senhas da OWASP \cite{owasp2026password}. A tela de \textit{login} responde com a mesma mensagem quando o e-mail não existe e quando a senha está errada, e a solicitação de redefinição de senha responde da mesma forma para endereços cadastrados e não cadastrados, conduta recomendada pelo guia de recuperação de senha da mesma organização para que não se possa descobrir quais e-mails têm conta na plataforma \cite{owasp2026forgot}. O \textit{link} de redefinição é de uso único, expira em uma hora e invalida os \textit{links} emitidos anteriormente, e o banco guarda apenas o resumo do \textit{token}, e não o \textit{token} em si.
+
+Cada \textit{login} cria uma sessão registrada no banco, e a validade do \textit{token} de acesso depende, além da assinatura e do prazo, de essa sessão não ter sido revogada. Esse desenho produz três resultados observáveis: o \textit{logout} invalida o \textit{token} imediatamente, e não apenas no navegador em que foi feito; a troca de senha encerra todas as outras sessões da conta, mantendo apenas a do dispositivo que fez a troca; e a redefinição de senha por e-mail encerra todas as sessões, inclusive as de quem eventualmente tivesse obtido acesso indevido à conta. Esse último comportamento corresponde à recomendação de invalidar as sessões existentes após uma recuperação de conta \cite{owasp2026forgot}.
+
+\subsection{Integridade dos Dados e dos Arquivos}
+\label{subsec:resultado_integridade}
+
+As operações que alteram mais de um registro são atômicas. Entre os exemplos apresentados neste capítulo estão a criação da ficha própria de um Item, a mescla de fichas, a desassociação de um \textit{layout}, a mudança de privacidade com o encerramento de acompanhamentos, o término de uma amizade e o registro de eventos com suas notificações: em todos eles, ou a operação inteira é gravada, ou nada é. As operações sujeitas a concorrência, como responder a uma solicitação de amizade ou entregar os \textit{layouts} padrão a uma conta antiga, usam atualizações condicionais, de modo que duas requisições simultâneas não produzem um estado inconsistente.
+
+O mesmo cuidado se estende aos arquivos, que ficam fora do banco e, por isso, fora de suas transações. Quando uma imagem é substituída, o arquivo antigo só é apagado depois que o banco confirma a gravação do novo caminho; e, se o banco recusar a gravação, os arquivos recém-enviados são removidos, pois nenhum registro passaria a apontar para eles. Com essa ordem, uma falha no meio da operação pode, no pior caso, deixar um arquivo sem uso no armazenamento, mas nunca deixa um registro apontando para um arquivo inexistente, que seria a falha visível ao usuário. O formato de cada imagem é verificado pelos \textit{bytes} iniciais do arquivo, e não pela declaração do cliente, conforme o Capítulo~\ref{cap:07}.
+
+\subsection{Responsividade e Acessibilidade}
+\label{subsec:resultado_responsividade}
+
+A interface foi escrita segundo a abordagem \textit{mobile-first}: as regras de estilo básicas atendem a telas estreitas, e consultas de mídia acrescentam o que muda nas telas maiores. A principal adaptação é a navegação. Em telas a partir de 56\,rem de largura operadas com \textit{mouse}, a barra lateral flutua junto à borda da tela, abre-se ao passar o cursor e pode ser fixada; nas telas mais estreitas e nas telas de toque, mesmo as largas, como um celular na horizontal, ela se transforma em uma gaveta que desliza sobre o conteúdo. A gaveta é aberta como janela modal do elemento \texttt{dialog} nativo do HTML, de modo que o próprio navegador mantém o foco no painel aberto e o fecha pela tecla \texttt{Esc}. A Figura~\ref{fig:resultadoMobile} mostra a aplicação em um celular.
+
+% TODO: capturar a aplicação em largura de celular (por exemplo, 390 px nas ferramentas de
+% desenvolvedor do navegador): (a) a tela de Categorias com a gaveta de navegação fechada e
+% (b) a mesma tela com a gaveta aberta. Se possível, uma terceira captura da ficha de um item
+% na mesma largura, para mostrar que ela só muda de escala.
+% Sugestão de arquivos: imagens/Resultados/mobile-fechado.png e imagens/Resultados/mobile-gaveta.png
+\FloatBarrier
+\begin{figure}[!htbp]
+	\centering
+	\caption{A aplicação em largura de celular, com a gaveta de navegação fechada e aberta}
+	\fbox{\parbox[c][6cm][c]{0.7\textwidth}{\centering Capturas em largura de celular (pendente)}}
+	% \subfloat[Gaveta fechada]{\includegraphics[width=0.3\textwidth]{imagens/Resultados/mobile-fechado.png}}
+	% \hspace{1cm}
+	% \subfloat[Gaveta aberta]{\includegraphics[width=0.3\textwidth]{imagens/Resultados/mobile-gaveta.png}}
+	\\\textbf{Fonte:} Elaborada pelo autor
+	\label{fig:resultadoMobile}
+\end{figure}
+\FloatBarrier
+
+O editor de \textit{layouts} também funciona por toque. O arraste e as alças de redimensionamento e de giro são tratados por eventos de ponteiro, que unificam \textit{mouse}, toque e caneta, e as áreas de manipulação desativam os gestos nativos do navegador, como a rolagem, para que arrastar um Elemento não role a página. As alças são desenhadas pequenas, para não cobrir o Elemento, mas sua área de toque é estendida para além do ponto visível, até cerca de 26 por 26 \textit{pixels} CSS com o tamanho de fonte padrão do navegador, acima do mínimo de 24 por 24 do critério 2.5.8 das WCAG 2.2 \cite{campbell2024wcag}. Em dispositivos sem passagem do \textit{mouse}, os controles que nas telas maiores aparecem apenas ao passar o cursor permanecem visíveis, e, para usuários que configuraram o sistema para reduzir animações, as transições e animações da interface são praticamente anuladas.
+
+Esses resultados devem ser lidos com uma ressalva. Os mecanismos acima foram implementados com base em critérios das WCAG, mas a conformidade da interface como um todo com as diretrizes não foi auditada, nem por ferramenta automatizada nem por avaliação com usuários; por isso, este trabalho não afirma que a plataforma atende a um nível de conformidade das WCAG.
+
+\section{Validação dos Requisitos Não Funcionais}
+\label{sec:validacao_rnf}
+
+Os requisitos não funcionais do Capítulo~\ref{cap:05} não são o eixo deste trabalho, cuja contribuição está nas funcionalidades descritas nas seções anteriores, mas cada um deles merece um juízo explícito sobre o seu atendimento. Esta seção apresenta esse juízo, indicando para cada requisito o instrumento empregado, o resultado obtido e a situação, que assume um de quatro valores: \textbf{atendido}; \textbf{atendido com ressalva}, quando a métrica foi cumprida mas alguma restrição do requisito comprovadamente não foi; \textbf{não verificado}, quando faltou o instrumento ou a medição; e \textbf{não atendido}, quando o resultado contraria a métrica. A situação de cada requisito é determinada pela métrica, e uma restrição não cumprida impede que o requisito seja considerado plenamente atendido, ainda que a métrica o seja.
+
+\subsection{Ambiente e Método das Medições}
+\label{subsec:metodo_medicoes}
+
+As medições foram feitas com \textit{scripts} mantidos no repositório da API, na pasta \texttt{scripts/medicoes}, que gravam cada requisição individualmente (horário, rota, código de resposta, tempo e tamanho), a descrição do ambiente e os resumos estatísticos, de modo que todo número citado nesta seção pode ser conferido e a medição, repetida. Os \textit{scripts} criam, pela própria API, uma conta de teste com um acervo sintético (uma Categoria, duas Coleções, 50 Itens sem imagem, um \textit{layout} com 15 Elementos, que é a quantidade citada no RNF-07, e cinco Itens com ficha própria), medem as rotas e, ao final, excluem a conta e confirmam a exclusão.
+
+São previstos dois ambientes. O ambiente \textbf{local}, medido em 2 de outubro de 2026, executou a API compilada para produção em um computador com processador Intel Core i5-13420H, 16 GB de memória e Windows 11, ligada ao banco PostgreSQL do Supabase, na região de São Paulo, acessado pela internet. Cada tempo medido inclui, portanto, as idas e voltas entre esse computador e o banco remoto. O ambiente de \textbf{produção} corresponde à implantação descrita na Seção~\ref{sec:operacao_uso} e será medido com os mesmos \textit{scripts} após a publicação.
+
+O tempo de cada requisição foi medido do instante anterior ao envio até a leitura completa do corpo da resposta, uma requisição de cada vez, com 700 milissegundos entre elas. O intervalo mantém o ritmo abaixo do limite de 100 requisições por minuto que a API impõe a cada endereço de origem; pela mesma razão, não foi feito ensaio de carga, que, a partir de uma única máquina, mediria o limitador, e não a API. Para cada rota foram descartadas cinco requisições de aquecimento e medidas 50. Os percentis foram calculados pelo método do posto mais próximo, sem interpolação, de modo que todo valor relatado é um tempo que de fato ocorreu; com 50 amostras, o percentil 99 coincide com o máximo. O Quadro~\ref{quad:latenciaLocal} apresenta os resultados. Todas as 441 requisições da medição, incluídas as de aquecimento, foram respondidas com sucesso.
+
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Tempo de resposta da API no ambiente local, em milissegundos (n = 50 por rota)}
+\label{quad:latenciaLocal}
+\footnotesize
+\begin{tabular}{|p{6.4cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.6cm}|}
+\hline
+\textbf{Rota} & \textbf{RNF} & \textbf{Mínimo} & \textbf{p50} & \textbf{p95} & \textbf{Máximo} \\ \hline
+Painel de Categorias (\texttt{GET /category}) & RNF-02 & 87,6 & 93,3 & 107,6 & 119,8 \\ \hline
+Coleções da Categoria (\texttt{GET /collection}) & RNF-02 & 102,6 & 111,1 & 141,1 & 349,5 \\ \hline
+Lista de 50 Itens (\texttt{GET /item}) & RNF-02 & 148,3 & 161,4 & 195,6 & 207,5 \\ \hline
+Ficha própria com 15 Elementos (\texttt{GET /item/:id/layout}) & RNF-02 & 122,8 & 135,3 & 156,4 & 160,1 \\ \hline
+Cadastro de Item (\texttt{POST /item}) & RNF-02 & 345,7 & 367,2 & 397,1 & 510,0 \\ \hline
+Exclusão de Item (\texttt{DELETE /item/:id}) & RNF-02 & 230,5 & 243,8 & 268,1 & 328,1 \\ \hline
+Mover Item entre Coleções (\texttt{PATCH /item/:id}) & RNF-06 & 420,0 & 445,2 & 468,2 & 475,9 \\ \hline
+Gravação de Elemento no editor (\texttt{PATCH /layout/:id/elements/:id}) & RNF-07 & 128,9 & 135,2 & 174,9 & 261,7 \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
+% [APÓS DEPLOY] confirmar tempo verbal e dados
+No ambiente de produção, os mesmos cenários resultaram em [PREENCHER APÓS DEPLOY: tabela equivalente ao Quadro de latência local, gerada pelo latencia-api.mjs com AMBIENTE=producao, com data, região da máquina virtual e região do Supabase].
+
+\subsection{Requisitos Mensuráveis}
+\label{subsec:rnf_mensuraveis}
+
+\textbf{RNF-02 (desempenho de carregamento).} O requisito fixa três limites: três segundos para o carregamento de uma tela principal, dois segundos para as respostas de leitura da API e três segundos para as operações de escrita. Para a tela, adota-se como medida o maior elemento de conteúdo pintado (LCP), no percentil 75 de dez carregamentos, convenção que acompanha a recomendação do web.dev, para o qual um LCP de até 2,5 segundos, no percentil 75, caracteriza um bom carregamento \cite{walton2019lcp}; o limite de três segundos do requisito é, assim, um pouco mais tolerante que essa referência. Para a API, adota-se o percentil 95, que afirma o limite para a quase totalidade das requisições, e não apenas para a típica. No ambiente local, o maior percentil 95 entre as rotas de leitura foi de 195,6 milissegundos (lista de 50 Itens), e o maior entre as de escrita, de 397,1 milissegundos (cadastro de Item), valores cerca de dez e de sete vezes menores que os respectivos limites. O carregamento das telas, que depende do navegador, ainda não foi medido: [PREENCHER: LCP no percentil 75 de dez carregamentos da tela de Itens (50 Itens) e da ficha de um Item, medido com o scripts/medicoes/tela.js, com navegador, tamanho da janela e se havia limitação de rede]. Independentemente dessa medição, duas restrições do requisito não são atendidas: as imagens não são otimizadas pelo servidor, e as listagens de Categorias, Coleções e Itens não são paginadas, sendo devolvidas por inteiro em uma única resposta. O requisito permanece não verificado; mesmo que o carregamento das telas cumpra o limite, a situação máxima será a de atendido com ressalva.
+
+\textbf{RNF-06 (movimentação de Itens).} O requisito exige que a mudança de Coleção se reflita na interface em até 500 milissegundos e que a interface a aplique de forma otimista, antes da confirmação do servidor. A implementação não é otimista: a interface aguarda a resposta da API e, em seguida, recarrega as listagens afetadas, e só então o Item deixa de aparecer na Coleção de origem. O tempo percebido é, portanto, no mínimo a soma da gravação com a nova leitura da lista. No ambiente local, a gravação mais rápida levou 420,0 milissegundos e a leitura mais rápida da lista, 148,3, o que soma 568,3 milissegundos mesmo no melhor caso observado, acima do limite. O requisito é considerado \textbf{não atendido} no ambiente local, por um motivo de projeto, e não de desempenho bruto: com atualização otimista, a gravação ocorreria depois da atualização visual, e o tempo do servidor deixaria de compor o tempo percebido. Registra-se ainda que a gravação de uma movimentação é a mais lenta das rotas medidas, o que se explica pelo número de operações que ela executa em sequência, cada uma atravessando a internet até o banco: a verificação da sessão, a confirmação de que o Item e a Coleção de destino pertencem ao usuário e a verificação de unicidade do nome, seguidas de uma transação que atualiza o Item, registra o evento e consulta quem acompanha a Coleção. Conjectura-se que, com a API e o banco próximos um do outro, esse tempo diminua, mas a medição em produção é que dirá se o melhor caso cabe nos 500 milissegundos: [PREENCHER APÓS DEPLOY: mínimo, p50 e p95 de PATCH /item/:id e de GET /item em produção, e a soma dos mínimos]. A restrição de desfazer foi atendida de outra forma que a especificada: a interface oferece, por 30 segundos, um botão ``Desfazer'' que devolve o Item à Coleção de origem, e não o atalho \texttt{Ctrl+Z}.
+
+\textbf{RNF-07 (desempenho do editor).} O requisito limita a 200 milissegundos o tempo entre uma operação no editor e sua exibição. Esse valor coincide com o limite que o web.dev adota para uma boa responsividade na métrica INP, medida a partir da API de temporização de eventos do navegador e avaliada no percentil 75 das interações \cite{wagner2022inp}; adota-se, por isso, a mesma medida e o mesmo percentil. A gravação no servidor não compõe esse tempo, pois ocorre de forma assíncrona, depois de uma pausa de 400 milissegundos, sem bloquear a edição; ainda assim, registra-se que ela levou 174,9 milissegundos no percentil 95, de modo que uma alteração feita no editor chega ao banco em menos de um segundo depois da pausa. A responsividade do editor em si não foi medida: [PREENCHER: percentil 75, percentil 98 e máximo da duração das interações no editor, com pelo menos 20 interações sobre o layout de 15 Elementos, medidos com o scripts/medicoes/editor.js, e navegador e máquina usados]. Até essa medição, o requisito permanece não verificado.
+
+\textbf{RNF-08 (disponibilidade).} A disponibilidade de 99\% só pode ser aferida com a plataforma publicada, por um serviço externo que consulte periodicamente a API e a aplicação cliente. Como a API não tem rota de verificação de saúde, a consulta pode usar a resposta 401 de uma rota protegida, como descrito na Subseção~\ref{subsec:fluxo_implantacao}. [PREENCHER APÓS DEPLOY: serviço de monitoramento usado, rota consultada, intervalo, período observado e disponibilidade medida]. Duas restrições não são atendidas independentemente da medição: não há cache para uso sem conexão, e a interface não reenvia automaticamente operações feitas enquanto a conexão estava interrompida, com exceção das alterações do editor, cuja sincronização reenvia o que ficou pendente na tentativa seguinte.
+
+\subsection{Síntese da Validação}
+\label{subsec:sintese_rnf}
+
+O Quadro~\ref{quad:validacaoRnf} reúne a situação de todos os requisitos não funcionais.
+
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Síntese da validação dos requisitos não funcionais}
+\label{quad:validacaoRnf}
+\footnotesize
+\begin{tabular}{|p{2.3cm}|p{3.6cm}|p{6.4cm}|p{2.4cm}|}
+\hline
+\textbf{Requisito} & \textbf{Instrumento} & \textbf{Resultado} & \textbf{Situação} \\ \hline
+RNF-01 Usabilidade & Teste com usuários iniciantes (não realizado) & Nenhuma medição do tempo para criar uma Coleção e um Item & Não verificado \\ \hline
+RNF-02 Carregamento & \textit{Script} de latência; medição no navegador & Leitura: p95 máximo de 195,6\,ms; escrita: p95 máximo de 397,1\,ms (local). Telas não medidas. Sem paginação e sem otimização de imagens & Não verificado \\ \hline
+RNF-03 Segurança de senhas e dados & Inspeção do código; testes automatizados (Capítulo~\ref{cap:08}) & bcrypt, mensagem genérica no \textit{login}, sessões revogáveis e limite de cinco \textit{logins} por minuto. HTTPS depende da publicação; limite por IP depende do ajuste de proxy & Atendido com ressalva \\ \hline
+RNF-04 Compatibilidade & Teste em navegadores e larguras de tela (não realizado) & Interface escrita para telas a partir de 320\,px; matriz de navegadores não testada & Não verificado \\ \hline
+RNF-05 Personalização & Inspeção do código e da interface & Variáveis CSS, alerta de contraste, aplicação imediata e persistência no perfil; combinações não testadas sistematicamente & Atendido com ressalva \\ \hline
+RNF-06 Movimentação de Itens & \textit{Script} de latência; análise do fluxo da interface & Melhor caso de 568,3\,ms (gravação mais leitura); atualização não otimista; desfazer por 30\,s via botão & Não atendido \\ \hline
+RNF-07 Editor & Medição no navegador (pendente); \textit{script} de latência & Gravação assíncrona com p95 de 174,9\,ms; responsividade das interações não medida & Não verificado \\ \hline
+RNF-08 Disponibilidade & Monitoramento externo após a publicação & Sem medição; sem cache para uso sem conexão & Não verificado \\ \hline
+RNF-09 Acessibilidade & Inspeção do código e registros do projeto & Contraste das paletas padrão verificado e alerta de contraste; navegação do editor por teclado não implementada & Não atendido \\ \hline
+RNF-10 Integridade & Inspeção do código; configuração do banco & Transações atômicas e confirmação antes de excluir; sem registro de auditoria das exclusões; \textit{backup} depende do plano do Supabase & Não verificado \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
+Três situações merecem comentário. O RNF-03 é considerado atendido com ressalva porque os mecanismos que ele exige existem e estão verificados, mas dois deles dependem da publicação: o tráfego cifrado, fornecido pelo Caddy, e o limite de tentativas de \textit{login} por endereço, que, atrás do proxy, só funcionará como especificado com o ajuste descrito na Subseção~\ref{subsec:fluxo_implantacao}. O RNF-09 é considerado não atendido porque o requisito exige conformidade com o nível AA das WCAG e que todos os elementos interativos sejam acessíveis por teclado, enquanto o próprio projeto registra que a navegação do editor por teclado ficou fora do escopo, de modo que posicionar um Elemento depende de um dispositivo apontador ou dos campos numéricos de posição; o critério 2.1.1 das diretrizes, de operação por teclado, é de nível A, abaixo do AA exigido \cite{campbell2024wcag}. As demais partes da interface não foram auditadas. Por fim, o RNF-10 permanece não verificado porque a sua métrica principal, a de \textit{backups} diários com retenção de 30 dias, depende de [PREENCHER APÓS DEPLOY: plano contratado no Supabase e política de backup efetivamente configurada, ou o procedimento de backup próprio adotado], e uma de suas restrições, o registro em log de auditoria de toda exclusão, não é atendida: apenas as alterações de Itens em Coleções não privadas geram registro de evento.
+
+O resultado de conjunto é coerente com a posição secundária desses requisitos no trabalho: os que dependem do servidor e foram medidos ficaram com folga dentro dos limites, à exceção da movimentação de Itens, cujo descumprimento decorre de uma escolha de implementação na interface; os que exigem avaliação com pessoas, como usabilidade e acessibilidade, ou a plataforma publicada, como disponibilidade e \textit{backup}, permanecem em aberto, e são essas as lacunas que a avaliação deixa.
+
+\section{Operação e Validação em Uso}
+\label{sec:operacao_uso}
+
+Esta seção descreve como a plataforma é colocada em operação e delimita o que essa operação permite afirmar. No momento da redação, a publicação ainda não foi realizada; por isso, o que já é verdade, como a arquitetura de implantação e os passos que o repositório define, é escrito como fato, e o que depende da publicação aparece como marcador a ser preenchido.
+
+\subsection{Arquitetura de Implantação}
+\label{subsec:arquitetura_implantacao}
+
+A implantação separa as três partes do sistema em ambientes distintos. A aplicação cliente, que após a construção se reduz a arquivos estáticos (HTML, JavaScript, CSS e fontes), é publicada na Vercel. A API é executada em uma máquina virtual, atrás do servidor \textit{web} Caddy, que atua como proxy reverso e é o único ponto exposto à internet. O banco de dados é o PostgreSQL gerenciado do Supabase, ao qual a API se conecta pela cadeia de conexão do \textit{pooler} de sessão, e as imagens enviadas pelos usuários são gravadas no Cloudflare R2. O envio de e-mails de redefinição de senha depende de um servidor SMTP configurado por variáveis de ambiente.
+
+Essa divisão decorre de decisões já presentes no código. Como a aplicação cliente não tem servidor próprio, ela pode ser servida por qualquer hospedagem de arquivos estáticos; e como o banco é acessado apenas por uma cadeia de conexão e o armazenamento de arquivos é escolhido pelas credenciais presentes na configuração, conforme o Capítulo~\ref{cap:07}, a API não depende da máquina em que roda para guardar dados. A consequência prática é que, com as credenciais do R2 configuradas, a máquina virtual não guarda estado: perdê-la exige apenas reinstalar a API, sem perda de Coleções, Itens ou imagens. Sem essas credenciais, as imagens passariam a ser gravadas no disco da máquina virtual, e essa propriedade deixaria de valer.
+
+\subsection{Fluxo de Implantação}
+\label{subsec:fluxo_implantacao}
+
+O fluxo descrito a seguir corresponde ao que os repositórios definem; os pontos que só serão conhecidos na publicação estão marcados.
+
+\begin{enumerate}
+    \item \textbf{Banco de dados:} o esquema é criado no Supabase pelo comando \texttt{prisma migrate deploy}, que aplica, em ordem, as migrações versionadas no repositório da API, sem gerar novas. A mesma cadeia de conexão do \textit{pooler} de sessão atende às migrações e à API.
+    \item \textbf{API:} na máquina virtual, a instalação das dependências gera automaticamente o cliente do Prisma (\textit{script} \texttt{postinstall}), e a compilação (\texttt{pnpm build}) produz o código JavaScript em \texttt{dist}. A configuração é feita pelas variáveis de ambiente descritas no Capítulo~\ref{cap:07}: \texttt{DATABASE\_URL}, \texttt{JWT\_SECRET}, \texttt{FRONTEND\_URL}, que define a única origem autorizada pelo CORS e deve receber o endereço publicado da aplicação cliente, \texttt{PORT}, os parâmetros \texttt{SMTP\_*} e as cinco credenciais \texttt{R2\_*}. O processo da API é mantido em execução por [PREENCHER APÓS DEPLOY: gerenciador de processo usado na VM, por exemplo systemd ou pm2, e a política de reinício automático].
+    \item \textbf{Proxy reverso e HTTPS:} o Caddy recebe as requisições do domínio da API e as repassa à porta local da API. Para nomes de domínio públicos, o Caddy obtém e renova automaticamente certificados TLS de uma autoridade certificadora e redireciona o tráfego HTTP para HTTPS \cite{caddy2026https}. Ao repassar uma requisição, ele acrescenta o cabeçalho \texttt{X-Forwarded-For} com o endereço do cliente \cite{caddy2026proxy}. O domínio da API e a configuração do Caddy são [PREENCHER APÓS DEPLOY: domínio da API e trecho do Caddyfile usado].
+    \item \textbf{Aplicação cliente:} a Vercel executa o \textit{script} de construção do repositório (\texttt{tsc -b} seguido de \texttt{vite build}), que verifica os tipos e gera os arquivos estáticos. O endereço da API é embutido nesse momento, pela variável \texttt{VITE\_API\_URL}, sem a qual a aplicação se recusa a iniciar. Como a navegação é feita no navegador, um endereço interno aberto diretamente, como o de uma Coleção, precisa ser respondido com o \texttt{index.html}; a documentação da Vercel indica que, em aplicações Vite publicadas desse modo, isso exige uma regra de reescrita em um arquivo \texttt{vercel.json} \cite{vercel2026vite}. O endereço publicado é [PREENCHER APÓS DEPLOY: URL da aplicação cliente na Vercel].
+\end{enumerate}
+
+A preparação deste fluxo, confrontada com o código, revelou quatro ajustes que precisam estar feitos antes da publicação, registrados aqui como resultado da análise, e não como funcionalidades:
+
+\begin{itemize}
+    \item \textbf{Comando de inicialização:} o \textit{script} \texttt{start:prod} executa \texttt{node dist/main}, mas a compilação gera o ponto de entrada em \texttt{dist/src/main.js}, porque os arquivos da pasta \texttt{prisma} também são compilados e deslocam a raiz da saída. Na forma atual, o comando falha ao iniciar, o que foi constatado ao preparar as medições da Seção~\ref{sec:validacao_rnf}.
+    \item \textbf{Endereço do cliente atrás do proxy:} a limitação de requisições identifica o cliente pelo endereço IP. Atrás do Caddy, todas as requisições chegam à API vindas do próprio proxy, e, sem que a aplicação seja configurada para confiar no cabeçalho \texttt{X-Forwarded-For}, todos os usuários passariam a compartilhar um único contador, de modo que cinco tentativas de \textit{login} por minuto valeriam para a plataforma inteira.
+    \item \textbf{Reescrita de rotas na Vercel:} o repositório da aplicação cliente não contém o \texttt{vercel.json} com a regra de reescrita citada acima.
+    \item \textbf{Origens do CORS:} além de \texttt{FRONTEND\_URL}, a API ainda autoriza uma origem local remanescente do início do desenvolvimento (\texttt{http://127.0.0.1:5500}), que não deve permanecer em produção.
+\end{itemize}
+
+% [APÓS DEPLOY] confirmar tempo verbal e dados
+A situação desses ajustes no momento da publicação é [PREENCHER APÓS DEPLOY: para cada um dos quatro ajustes, se foi corrigido, como e em qual commit].
+
+A API não possui uma rota dedicada à verificação de saúde. Para o monitoramento de disponibilidade, pode-se usar uma rota protegida, como \texttt{GET /me}, cuja resposta 401 a uma requisição sem \textit{token} indica que o processo, o roteamento e a verificação de autenticação estão operando, embora não comprove o acesso ao banco.
+
+\subsection{Operação da Plataforma}
+\label{subsec:operacao_plataforma}
+
+% [APÓS DEPLOY] confirmar tempo verbal e dados
+A plataforma encontra-se publicada desde [PREENCHER APÓS DEPLOY: data de publicação], no endereço [PREENCHER APÓS DEPLOY: URL pública da aplicação], com a API em [PREENCHER APÓS DEPLOY: domínio da API e descrição da máquina virtual: provedor, região, vCPU e memória] e o banco no Supabase, na região [PREENCHER APÓS DEPLOY: região do projeto Supabase e plano contratado].
+
+Convém delimitar desde já o que essa operação sustenta. Trata-se de uma operação para validação do trabalho, e não de exploração comercial, e nenhum número relativo a contas, Coleções ou acessos deve ser lido como indicador de adoção. Os dados existentes na base foram criados, em sua maior parte, pelo próprio autor, durante o desenvolvimento e os testes, e por isso caracterizam o funcionamento do sistema, e não o interesse de usuários por ele.
+
+% [APÓS DEPLOY] confirmar tempo verbal e dados
+Quanto ao uso por terceiros, [PREENCHER APÓS DEPLOY: escolher uma das duas redações e apagar a outra. (a) Se houve: ``a plataforma foi utilizada por N pessoas além do autor, entre DATA e DATA; essas pessoas são (vínculo: colegas, amigos, orientadora etc.), foram convidadas pelo autor e realizaram (o que fizeram: criar contas, Coleções, Itens, fichas, amizades)''. Registrar números exatos, sem arredondar para cima e sem chamar convidados de usuários espontâneos. (b) Se não houve: ``não houve uso por terceiros até a data de redação; toda a operação descrita foi realizada pelo autor''.]
+
+% [APÓS DEPLOY] confirmar tempo verbal e dados
+Durante a operação, observou-se [PREENCHER APÓS DEPLOY: o que foi observado em produção: falhas, erros registrados nos logs da API, comportamento do limite de requisições, tempo de resposta percebido, problemas de implantação encontrados e como foram resolvidos. Se nada digno de nota ocorreu, dizer isso explicitamente, com o período observado].
+
+Mesmo depois de preenchidos esses pontos, o alcance da validação em uso permanece restrito: a operação demonstra que a plataforma pode ser implantada e funciona em um ambiente público, mas não substitui uma avaliação de usabilidade com usuários, que não foi conduzida, nem permite conclusões sobre preferência ou adoção, retomadas na Subseção~\ref{subsec:discussao_implicacoes}.
+
+\section{Atendimento aos Objetivos Específicos}
+\label{sec:atendimento_objetivos}
+
+Apresentados os resultados por área, cabe confrontá-los com os objetivos específicos definidos no Capítulo~\ref{cap:01}. O Quadro~\ref{quad:objetivosResultados} relaciona cada objetivo ao resultado que o atende e ao ponto do trabalho em que esse resultado é apresentado; em seguida, cada objetivo é comentado individualmente.
+
+% TODO: o 6º objetivo específico (capítulo 1) menciona o "feed de atualizações". Este quadro e o
+% comentário do objetivo 6 tratam apenas de amizade, acompanhamento e notificações, que são o que
+% existe na interface hoje. Antes da entrega: implementar a tela do feed (a API já tem a rota) ou
+% ajustar a redação do objetivo no capítulo 1. Ver pendencias_cap10.md.
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Objetivos específicos e resultados correspondentes}
+\label{quad:objetivosResultados}
+\footnotesize
+\begin{tabular}{|p{4.6cm}|p{7.6cm}|p{2.4cm}|}
+\hline
+\textbf{Objetivo específico} & \textbf{Resultado obtido} & \textbf{Onde} \\ \hline
+Levantar e especificar os requisitos funcionais e não funcionais e os casos de uso & 24 requisitos funcionais, 10 requisitos não funcionais, 7 diagramas de casos de uso e 19 especificações de casos de uso & Capítulo~\ref{cap:05} \\ \hline
+Elaborar o modelo de domínio e, a partir dele, o projeto de interface e o projeto de dados & Modelo de domínio em sete pacotes; esquemas das telas; mapeamento objeto-relacional e estrutura detalhada das tabelas & Capítulos~\ref{cap:05} e~\ref{cap:06} \\ \hline
+Implementar a organização do acervo em Categorias, Coleções e Itens, com privacidade no nível da Coleção & Três níveis com telas, rotas e regras de unicidade; três níveis de privacidade aplicados por um serviço único de política de acesso & Seção~\ref{sec:resultado_acervo} \\ \hline
+Construir o editor visual de \textit{layouts} com seis tipos de Elemento, associar \textit{layouts} a Coleções e personalizar a ficha de Itens individualmente & Editor com os seis tipos; \textit{layout} vinculado à Coleção; ficha própria por Item; mescla de fichas; biblioteca com \textit{layout} padrão, duplicação e importação & Seção~\ref{sec:resultado_editor} \\ \hline
+Oferecer a personalização global da interface por paletas de cores e tipografia & Biblioteca de paletas com doze cores por papel e tipografia; seis paletas padrão; aviso de contraste; temas claro, escuro e automático & Seção~\ref{sec:resultado_aparencia} \\ \hline
+Implementar as funcionalidades sociais & Amizade por código de usuário; visita a perfis, Categorias e Coleções de terceiros; acompanhamento de Coleções; notificações de amizade e de atualização; descoberta por etiquetas & Seção~\ref{sec:resultado_social} e Subseção~\ref{subsec:resultado_etiquetas} \\ \hline
+Verificar o funcionamento por testes automatizados e manuais & Testes unitários automatizados no \textit{backend}, todos aprovados; verificação de tipos na construção do \textit{frontend}; verificação manual durante o desenvolvimento & Capítulos~\ref{cap:07} e~\ref{cap:08} \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
+O primeiro e o segundo objetivos, de natureza analítica, foram atendidos pelos artefatos dos Capítulos~\ref{cap:05} e~\ref{cap:06}. Mais do que documentos produzidos antes da implementação, esses artefatos orientaram diretamente a construção do sistema: cada pacote do modelo de domínio tem módulos correspondentes na API, e as tabelas do projeto de dados são as definidas no esquema do Prisma a partir do qual o banco é criado. Cabe observar que os esquemas de tela do Capítulo~\ref{cap:06} registram a intenção de projeto, e que a interface final, apresentada neste capítulo, evoluiu em relação a eles, como aquele capítulo já antecipava.
+
+O terceiro objetivo foi atendido integralmente. Os três níveis do acervo estão disponíveis em telas próprias, com navegação pelo endereço, pela trilha, pela barra lateral e pela paleta de navegação, e a privacidade da Coleção é respeitada em todas as funcionalidades que exibem conteúdo de terceiros, inclusive quando muda depois que o conteúdo já foi visto ou acompanhado.
+
+O quarto objetivo, que concentra a proposta central do trabalho, também foi atendido integralmente, e os resultados foram além do que o objetivo exigia. Além dos seis tipos de Elemento, da associação de \textit{layouts} a Coleções e da ficha individual por Item, o editor reúne recursos que não constavam do objetivo, como a mescla de fichas ao trocar o \textit{layout} de uma Coleção, a desassociação que permite excluir um \textit{layout} sem alterar nenhuma ficha e o compartilhamento de \textit{layouts} entre usuários. Esses recursos respondem a situações criadas pela própria cópia do \textit{layout} por Item, como a de uma Coleção cujo molde muda depois que várias fichas já foram preenchidas.
+
+O quinto objetivo foi atendido integralmente, com a biblioteca de paletas que reúne cores e tipografia. O resultado acrescenta ao objetivo uma preocupação com a legibilidade: as paletas padrão foram verificadas pelo critério de contraste das WCAG, e o editor alerta o usuário quando uma combinação escolhida fica abaixo do mínimo.
+
+No sexto objetivo, as funcionalidades de amizade, de acompanhamento de Coleções e de notificações estão disponíveis na interface, apoiadas pela visita a perfis de outros usuários e pela descoberta de Coleções por etiquetas. O conjunto permite que um usuário encontre pessoas, veja o que elas guardam conforme o que cada uma decidiu mostrar e seja avisado quando as Coleções que acompanha mudam.
+
+O sétimo objetivo foi atendido no que se refere aos testes automatizados do \textit{backend}. Na execução mais recente, realizada em 2 de outubro de 2026, os testes unitários somavam 51 conjuntos e 359 casos, todos aprovados, que verificam serviços, controladores e DTOs, com ênfase nas regras de privacidade, amizade, acompanhamento e cópia de fichas.
+O \textit{frontend} não possui testes automatizados; sua verificação automática se limita à checagem de tipos do TypeScript, executada a cada construção, que impede divergências entre os tipos da interface e os formatos da API. As verificações manuais descritas no Capítulo~\ref{cap:07} acompanharam o desenvolvimento de cada funcionalidade, mas não foram documentadas neste trabalho na forma de roteiros com resultados registrados. Esse é o objetivo com menor cobertura entre os sete, e suas consequências são discutidas na Seção~\ref{sec:discussao}.
+
+\section{Discussão}
+\label{sec:discussao}
+
+Os resultados apresentados neste capítulo decorrem de um conjunto de decisões técnicas, cada uma tomada diante de alternativas viáveis e com custos próprios. Esta seção discute as decisões que mais influenciaram o resultado, examina as limitações das soluções adotadas e situa o capítulo em relação aos que o seguem.
+
+\subsection{Decisões Técnicas e seus Custos}
+\label{subsec:decisoes_tecnicas}
+
+O Quadro~\ref{quad:decisoesTecnicas} resume as principais decisões, a alternativa que cada uma preteriu e o custo assumido. As decisões mais relevantes para a proposta do trabalho são discutidas em seguida.
+
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Principais decisões técnicas, alternativas preteridas e custos assumidos}
+\label{quad:decisoesTecnicas}
+\footnotesize
+\begin{tabular}{|p{4.2cm}|p{4.8cm}|p{5.6cm}|}
+\hline
+\textbf{Decisão} & \textbf{Alternativa preterida} & \textbf{Custo assumido} \\ \hline
+Ficha desenhada com elementos HTML & Superfície de desenho \textit{canvas} & Efeitos de desenho livre e exportação direta da ficha como imagem ficam mais difíceis \\ \hline
+Medidas em unidades da folha & Medidas em \textit{pixels} & Em telas estreitas, o texto encolhe com a folha; abaixo de uma largura mínima, a ficha passa a rolar na horizontal \\ \hline
+Geometria em colunas e estilo em JSON & Uma coluna por propriedade visual & O banco não consulta propriedades de estilo; a validação do JSON passa a depender dos DTOs \\ \hline
+Cópia do \textit{layout} por Item & Referência ao \textit{layout} da Coleção & Mudanças no molde não chegam às fichas próprias, o que exigiu a mescla de fichas \\ \hline
+Gravação automática com desfazer & Botão de salvar & Uma requisição por alteração concluída e a necessidade de sincronização por diferença \\ \hline
+Sessão verificada no banco & \textit{Token} JWT validado apenas pela assinatura & Uma consulta ao banco por requisição autenticada \\ \hline
+\textit{Token} no armazenamento local & \textit{Cookie} inacessível ao JavaScript & Exposição do \textit{token} em caso de execução de \textit{script} malicioso na página \\ \hline
+Recorte de imagens no navegador & Processamento de imagens no servidor & Sem miniaturas geradas pelo servidor: as listagens carregam a imagem completa \\ \hline
+Notificações por consulta periódica & Envio pelo servidor em tempo real & Atraso de até um minuto e requisições mesmo sem novidades \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
+A decisão de desenhar a ficha com elementos HTML, e não em uma superfície \textit{canvas}, foi a que mais condicionou o editor. Um \textit{canvas} é, por si só, uma imagem de mapa de \textit{bits}, que não fornece informação sobre os objetos desenhados nem os expõe às tecnologias assistivas da forma como o HTML semântico os expõe \cite{mdn2026canvas}. Com elementos HTML, cada texto da ficha continua sendo texto, que pode ser selecionado, lido por um leitor de tela e renderizado com as fontes do navegador, e uma nota em estrelas pode ser anunciada como ``4 de 5''. A mesma escolha permitiu que um único componente desenhasse a ficha no editor, na página do Item e nas miniaturas, sem uma etapa de conversão entre o modelo de edição e o de exibição. O custo é que operações próprias de ferramentas de desenho, como pincéis, filtros sobre \textit{pixels} ou a exportação da ficha como imagem, não vêm de graça: dependeriam de rasterizar a ficha a partir do HTML.
+
+A unidade de medida da folha passou por uma evolução que vale registrar. A primeira versão media tudo em milésimos de uma largura fixa e deixava a altura crescer com o conteúdo, como em um documento de texto; a versão final, apresentada na Subseção~\ref{subsec:resultado_folha}, deu à folha largura e altura próprias e escolhidas pelo usuário, aproximando-a da página de um editor gráfico, mas manteve a unidade relativa, e não o \textit{pixel}. Essa combinação preserva o que motivou a unidade relativa, isto é, a garantia de que a ficha é idêntica em qualquer tela, e acrescenta o controle sobre o formato da ficha que os usuários de editores visuais esperam. O custo é inerente à escala uniforme: em uma tela muito estreita, todo o conteúdo encolhe junto, inclusive o texto, e por isso a ficha deixa de encolher a partir de uma largura mínima e passa a rolar na horizontal, solução pior do que caber na tela, mas melhor do que se tornar ilegível.
+
+O armazenamento dos Elementos segue uma regra explícita: é coluna o que o banco precisa ler para filtrar, ordenar ou relacionar, e é JSON o que apenas o navegador interpreta. Assim, o valor do Elemento é coluna, por ser um dado do Item que se previu consultar, como na ordenação de Itens pela nota prevista no RF-12, enquanto a cor de fundo é parte do JSON de estilo, porque nenhuma consulta pergunta quais Elementos são azuis. A alternativa, uma coluna por propriedade visual, faria cada novo recurso do editor exigir uma migração do banco. A flexibilidade do JSON não significou abrir mão da validação: o objeto de estilo é validado campo a campo pelos DTOs, e uma propriedade desconhecida faz a requisição ser recusada, como qualquer outro campo não previsto.
+
+A cópia do \textit{layout} por Item é o fundamento da personalização individual, e seu custo foi tratado como parte do resultado, e não como efeito colateral. Uma referência ao \textit{layout} da Coleção seria mais econômica e faria qualquer alteração no molde valer imediatamente para todos os Itens, mas tornaria impossível alterar a ficha de um único Item sem alterar todas as outras. Com a cópia, cada ficha é independente, e o preço é que um molde atualizado não alcança as fichas já personalizadas. A mescla de fichas e a desassociação de \textit{layouts}, descritas na Seção~\ref{sec:resultado_editor}, existem justamente para pagar esse preço, e a linhagem registrada em cada Elemento copiado é o que permite à mescla reconhecer, em um \textit{layout} novo, o que corresponde a cada valor antigo. O mesmo princípio de cópia, aplicado aos \textit{layouts} e às paletas padrão entregues a cada conta, é o que permite ao usuário editá-los como seus sem afetar outras pessoas.
+
+As decisões de segurança envolveram contrapartidas assumidas de forma consciente. A verificação da sessão no banco a cada requisição custa uma consulta, mas é o que dá ao \textit{logout} e à troca de senha efeito imediato; sem ela, um \textit{token} copiado continuaria válido até expirar, o que, com a validade de dez dias adotada, seria uma janela longa. Já o armazenamento do \textit{token} no \texttt{localStorage} contraria a orientação da OWASP, segundo a qual identificadores de sessão não devem ser guardados no armazenamento local, por estarem sempre acessíveis ao JavaScript e, portanto, a um eventual ataque de \textit{cross-site scripting} \cite{owasp2026html5}. A alternativa, um \textit{cookie} com o atributo \texttt{httpOnly}, exigiria reestruturar a autenticação da API e acrescentar proteção contra falsificação de requisições entre sites, trocando um risco por outro. O risco residual foi mitigado por duas características do sistema: a interface, escrita em React, insere o conteúdo vindo do usuário como texto, e não como HTML, e a sessão pode ser revogada no servidor a qualquer momento. Ainda assim, trata-se de um ponto em que a solução adotada fica aquém da recomendação de referência.
+
+\subsection{Limitações}
+\label{subsec:limitacoes_resultados}
+
+Além das limitações de infraestrutura já registradas no Capítulo~\ref{cap:07}, como a limitação de requisições mantida em memória e a ausência de documentação automática da API, a análise dos resultados permitiu identificar as seguintes limitações das soluções adotadas:
+
+\begin{itemize}
+    \item \textbf{Imagens acessíveis pelo endereço:} os arquivos de imagem são servidos em endereços públicos, tanto no disco do servidor quanto no Cloudflare R2, sem passar pela verificação de privacidade. Os nomes dos arquivos são identificadores aleatórios gerados pelo servidor, o que torna impraticável descobri-los, mas uma imagem de uma Coleção privada permanece acessível a quem obtiver seu endereço, por exemplo, por ter visualizado a Coleção antes de ela se tornar privada.
+    \item \textbf{Comprimento máximo da senha:} a API exige no mínimo oito caracteres, mas não impõe um máximo. O bcrypt considera apenas os primeiros 72 \textit{bytes} da senha, e a OWASP recomenda limitar a senha a esse comprimento quando esse algoritmo é usado, além de indicar o Argon2id como primeira opção para sistemas novos \cite{owasp2026password}. Na prática, uma senha mais longa do que 72 \textit{bytes} tem os caracteres excedentes ignorados.
+    \item \textbf{Vocabulário de etiquetas sem filtro de privacidade:} as sugestões de etiquetas exibidas ao preencher uma Coleção e na tela Explorar vêm do vocabulário de todas as contas, inclusive de etiquetas usadas apenas em Coleções privadas. O conteúdo das Coleções não é exposto, mas a existência de uma palavra usada somente em Coleções privadas pode ser percebida por outras pessoas.
+    \item \textbf{Ausência de processamento de imagens no servidor:} como o recorte é feito no navegador e o servidor não gera versões reduzidas, as listagens de Itens carregam as imagens de capa em seu tamanho completo, o que pesa em Coleções grandes e em conexões lentas.
+    \item \textbf{Cobertura dos testes:} os testes automatizados são unitários, com o acesso ao banco substituído por objetos simulados, e concentram-se no \textit{backend}. Não há testes de integração com um banco real, nem testes automatizados da interface ou do editor, que é a parte mais extensa e mais interativa do sistema. Comportamentos como o arraste no editor, a sincronização por diferença e a aplicação das paletas foram verificados apenas manualmente.
+    \item \textbf{Área de transferência restrita à ficha aberta:} os Elementos copiados no editor só podem ser colados na mesma ficha, pois a área de transferência é mantida pelo próprio editor, e não pelo sistema operacional.
+    \item \textbf{Perda de acentuação nas etiquetas e nos temas:} a forma canônica que permite comparar palavras entre contas remove os acentos também da palavra exibida, como discutido na Subseção~\ref{subsec:resultado_etiquetas}.
+\end{itemize}
+
+Às limitações acima somam-se as que a validação dos requisitos não funcionais revelou na Seção~\ref{sec:validacao_rnf}, como a ausência de paginação, a movimentação de Itens sem atualização otimista e a navegação do editor sem teclado. Nenhuma dessas limitações compromete as funcionalidades descritas neste capítulo, mas elas indicam onde a plataforma precisaria de reforço antes de ser oferecida a um público amplo. As de segurança, em particular as imagens acessíveis pelo endereço e o comprimento máximo da senha, são as de correção mais simples e de maior impacto relativo.
+
+\subsection{Discussão e Implicações}
+\label{subsec:discussao_implicacoes}
+
+O Capítulo~\ref{cap:01} identificou o problema que motivou este trabalho: as ferramentas usualmente empregadas para registrar coleções pessoais tratam cada registro como um conjunto de campos fixos, com aparência padronizada, e não existe uma plataforma que reúna a organização de coleções de qualquer natureza, a liberdade de definir a estrutura e a aparência de cada registro e o compartilhamento dessas coleções com outras pessoas. Esta subseção retoma esse problema à luz do que as seções anteriores apuraram.
+
+A resposta é afirmativa quanto ao que foi construído e restrita quanto ao que se pode concluir a partir disso. O sistema implementa os três elementos que o problema reúne: o acervo organizado em Categorias, Coleções e Itens, sem campos fixos por tipo de coleção; o editor de \textit{layouts}, com a ficha própria por Item, que permite decidir a estrutura e a aparência de cada registro; e o compartilhamento controlado pela privacidade de cada Coleção. Os três funcionam em conjunto, sobre a mesma base de dados e sob as mesmas regras de acesso, e foram verificados pelos testes do Capítulo~\ref{cap:08} e pelas medições da Seção~\ref{sec:validacao_rnf}.
+% [APÓS DEPLOY] confirmar tempo verbal e dados
+Em produção, [PREENCHER APÓS DEPLOY: uma frase dizendo se a plataforma foi publicada e opera no ambiente descrito na Seção de Operação, desde quando, e se houve uso por terceiros, com os números exatos ou a declaração de que não houve].
+
+Convém separar com clareza o que esses resultados demonstram do que não demonstram. Eles demonstram \textbf{viabilidade}: a combinação proposta é construível com tecnologias de uso corrente e funciona de ponta a ponta, da edição de uma ficha à sua exibição para um amigo, respeitando a privacidade definida pelo dono. Eles \textbf{não} demonstram que a plataforma seja preferível às ferramentas existentes, pois nenhuma comparação de uso com essas ferramentas foi conduzida. Tampouco demonstram usabilidade, pois não houve avaliação com usuários e o requisito de usabilidade permaneceu não verificado, nem adoção, pois a operação descrita na Seção~\ref{sec:operacao_uso} tem caráter de validação, e os dados existentes foram, em sua maior parte, criados pelo próprio autor. A contribuição do trabalho situa-se, por isso, no plano da demonstração de viabilidade, e não no da evidência de superioridade ou de aceitação.
+
+A implementação permite, contudo, duas observações que vão além desta plataforma. A primeira diz respeito ao custo de oferecer personalização individual sobre modelos reutilizáveis. Para que a ficha de um Item pudesse ser alterada sem afetar as demais, cada personalização passou a ser uma cópia do \textit{layout} da Coleção, e a evidência da implementação é que essa escolha não encerra o problema, apenas o desloca: a partir do momento em que existe uma cópia, toda mudança no modelo cria a pergunta sobre o que fazer com as cópias já personalizadas. Responder a essa pergunta exigiu um mecanismo próprio, a mescla de fichas, e um dado que a cópia simples não teria guardado, a linhagem de cada Elemento, sem a qual não seria possível reconhecer, em um \textit{layout} novo, o que corresponde a cada valor antigo. A implicação, no limite do que esta implementação sustenta, é que, em um sistema que combina modelos reutilizáveis com personalização por instância, a sincronização entre modelo e instâncias deve ser tratada como parte do projeto desde o início, e não como uma funcionalidade a ser acrescentada depois. Conjectura-se que o mesmo valha para outras ferramentas que oferecem modelos e personalização individual, mas a experiência de uma única implementação não permite verificá-lo.
+
+A segunda observação diz respeito à aplicação da privacidade. A decisão de concentrar as regras de acesso em um único serviço, descrita na Subseção~\ref{subsec:resultado_privacidade}, mostrou-se correta para as rotas que o consultam, mas a análise dos resultados encontrou dois pontos em que a centralização, sozinha, não bastou. As notificações, geradas quando a Coleção era visível, precisaram ser filtradas novamente no momento da leitura, porque a visibilidade pode mudar depois; e as imagens, servidas diretamente pelo armazenamento de arquivos, não passam pelo serviço, de modo que uma imagem de Coleção privada permanece acessível pelo endereço. A lição que esses dois casos sustentam é que uma política de acesso centralizada protege apenas o que passa por ela, e que a garantia de privacidade depende de identificar todos os caminhos pelos quais um dado chega ao usuário, inclusive os que não são rotas da API, como arquivos estáticos e dados derivados gerados em outro momento. Garantir isso é uma disciplina que precisa ser mantida a cada funcionalidade nova, e não uma propriedade que o projeto assegure de uma vez.
+
+Por fim, as medições qualificam uma decisão de interface. A movimentação de Itens foi o único requisito mensurável não atendido, e o motivo não foi a lentidão do servidor em si, mas a escolha de aguardar a confirmação da API antes de atualizar a tela: com a atualização otimista prevista no requisito, o tempo do servidor deixaria de compor o tempo percebido. No caso medido, o tempo percebido foi determinado menos pela velocidade de cada operação do que pelo número de idas ao servidor que a interface aguarda antes de responder; trata-se de uma única operação, em um único ambiente, e a observação não é aqui generalizada.
+
+A comparação da plataforma com ferramentas e trabalhos que tratam de problemas semelhantes é apresentada no Capítulo~\ref{cap:11}, e as conclusões do trabalho, com as possibilidades de continuidade que decorrem das limitações aqui discutidas, no Capítulo~\ref{cap:12}.
