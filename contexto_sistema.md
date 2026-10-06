@@ -1384,3 +1384,20 @@ O layout deixa de exigir ao menos um elemento. O molde novo nascia com um texto 
 
 - **RF-14, regra 3 — trocar por:** "3. O layout pode ser criado sem elementos; as peças são adicionadas no editor, a qualquer momento."
 - **Caso de uso Gerenciar Layouts, fluxo de exceção — remover:** o trecho "No passo 11 do FB01, o sistema identifica que nenhum elemento foi adicionado ao layout. / O sistema exibe mensagem de erro: 'O layout deve conter pelo menos um elemento.' / O sistema retorna ao passo 6 do FB01."
+
+### [AJUSTAR] Onboarding — o checklist "Primeiros passos" com dez passos (06/10/2026)
+
+O checklist do primeiro acesso passou de seis para dez passos. Os quatro novos cobrem o que o guia não mostrava: tags, importação de layout, amizade e aparência. O progresso continua **lido do que existe na conta**, e não gravado passo a passo (`GET /user/me/onboarding`).
+
+- **Os dez passos e o que marca cada um:**
+  1. criar uma categoria — existe categoria;
+  2. criar uma coleção — existe coleção;
+  3. escolher o layout da coleção — existe coleção com layout;
+  4. criar o seu layout — existe layout reutilizável criado pelo usuário, com ao menos um elemento;
+  5. adicionar o primeiro item — existe item;
+  6. personalizar o layout de um item — existe item com layout próprio;
+  7. usar tags — existe coleção com ao menos uma tag;
+  8. importar um layout — existe layout importado, **ou** o usuário passou por esse passo no guia;
+  9. adicionar um amigo — existe pedido de amizade enviado ou amizade aceita, **ou** o usuário passou por esse passo no guia;
+  10. criar sua paleta — existe paleta criada pelo usuário (as seis padrão do cadastro não contam).
+- **Por que 8 e 9 também marcam ao passar:** importar e adicionar amigo dependem do código de outra pessoa, que uma conta nova não tem. O guia mostra onde fica e o que colar, e a passagem fica registrada nas dicas vistas (`import-layout` e `add-friend`, aceitas pelo `PATCH /user/me/onboarding`).
