@@ -1368,3 +1368,19 @@ O limite da descrição passou de 300 para 500 caracteres, nas categorias e nas 
 
 - **RF-06, atributos da categoria:** trocar "descrição (300 caracteres)" por **"descrição (500 caracteres)"**.
 - **RF-07, atributos da coleção:** trocar "descrição (300 caracteres)" por **"descrição (500 caracteres)"**.
+
+### [AJUSTAR] RF-01, RF-02 e RF-24 — confirmação do e-mail por código de 6 dígitos (05/10/2026)
+
+A conta nova só entra depois de confirmar o e-mail com um código de 6 dígitos, enviado no cadastro. Antes, qualquer e-mail digitado virava conta ativa na hora, inclusive com erro de digitação ou e-mail de outra pessoa. O código vale 15 minutos e aceita 5 tentativas; o banco guarda só o hash do código. As contas que já existiam ficaram confirmadas, com a data do próprio cadastro.
+
+- **RF-01, regras — acrescentar:** "10. Ao concluir o cadastro, o sistema envia ao e-mail informado um código de verificação de 6 dígitos, válido por 15 minutos e limitado a 5 tentativas. A conta só pode ser acessada depois que o código for confirmado; o usuário pode solicitar um novo código, respeitando o intervalo de um minuto entre envios e o máximo de cinco por hora."
+- **RF-02, regras — acrescentar:** "O login de uma conta cujo e-mail ainda não foi confirmado é recusado, depois de verificada a senha, e o sistema encaminha o usuário à confirmação do código, enviando um novo se não houver um válido. O código correto já autentica o usuário."
+- **RF-24, regra 5 — trocar por:** "5. A verificação de e-mail (RF-01) e a recuperação de senha (RF-04) são enviadas pelo canal de e-mail: a verificação, com um código de 6 dígitos; a recuperação, com um link único. Ambos têm prazo de expiração."
+- **Modelo de dados (se o texto descrever as tabelas):** o usuário ganha a data de confirmação do e-mail (`email_verified_at`), e os códigos ficam na tabela `email_verification_codes` (hash do código, tentativas, criação, expiração e uso).
+
+### [AJUSTAR] RF-14 — o layout pode nascer sem elementos (06/10/2026)
+
+O layout deixa de exigir ao menos um elemento. O molde novo nascia com um texto que ninguém tinha pedido, só para cumprir a regra; agora nasce em branco, e a pessoa escolhe as peças no editor. Pelo mesmo motivo, a última peça de um layout pode ser removida.
+
+- **RF-14, regra 3 — trocar por:** "3. O layout pode ser criado sem elementos; as peças são adicionadas no editor, a qualquer momento."
+- **Caso de uso Gerenciar Layouts, fluxo de exceção — remover:** o trecho "No passo 11 do FB01, o sistema identifica que nenhum elemento foi adicionado ao layout. / O sistema exibe mensagem de erro: 'O layout deve conter pelo menos um elemento.' / O sistema retorna ao passo 6 do FB01."

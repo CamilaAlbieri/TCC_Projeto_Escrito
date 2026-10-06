@@ -1,2 +1,124 @@
 \chapter{Resultados e Discussão}
 \label{cap:10}
+
+Este capítulo apresenta os resultados obtidos com base nos requisitos funcionais e não funcionais definidos no Capítulo~\ref{cap:05} e discute, a partir do que foi verificado, em que medida a plataforma atende ao problema enunciado no Capítulo~\ref{cap:01}. A Seção~\ref{sec:plataformaOperacao} descreve a plataforma em operação e delimita o que esse fato sustenta; a Seção~\ref{sec:validacaoRF} apresenta a validação dos requisitos funcionais; a Seção~\ref{sec:validacaoRNF} trata da validação dos requisitos não funcionais, com os limiares e o alcance de cada verificação; a Seção~\ref{sec:validacaoUso} relata o que se observou no uso da plataforma publicada; e a Seção~\ref{sec:discussao} retoma o problema do Capítulo~\ref{cap:01} à luz desses resultados.
+
+\section{A Plataforma em Operação}
+\label{sec:plataformaOperacao}
+
+A plataforma encontra-se em operação pública desde 3 de outubro de 2026, data em que a aplicação cliente e a API foram publicadas no ambiente descrito no Capítulo~\ref{cap:09}, com a aplicação cliente na Vercel, a API em uma máquina virtual da Oracle Cloud, atrás do Caddy, o banco de dados no Supabase e as imagens no Cloudflare R2. O envio de e-mail pelo servidor SMTP do Gmail está ativo em produção, e as mensagens enviadas pela plataforma chegam ao destinatário, o que completa os fluxos de acesso que dependem de um canal externo à própria aplicação.
+
+Convém delimitar desde já o que esse fato sustenta e o que não sustenta. Trata-se de operação em caráter de validação acadêmica, e não de exploração do produto, de modo que os registros apresentados adiante caracterizam o funcionamento da plataforma e não constituem indicador de adoção. A distinção é necessária porque a existência de um endereço público poderia sugerir uma base de usuários que o trabalho não possui e não afirma possuir. As Categorias, Coleções, Itens e \textit{layouts} existentes na base foram criados, em sua maior parte, pela própria autora, no curso do desenvolvimento. O uso por outras pessoas restringe-se a duas pessoas do convívio da autora, sem vínculo com o desenvolvimento, cujas observações são relatadas na Seção~\ref{sec:validacaoUso} e cujo alcance é ali delimitado.
+
+Dois conjuntos de registros sustentam a validação que se segue. O primeiro é a execução dos testes automatizados descrita no Capítulo~\ref{cap:08}, na qual, em 2 de outubro de 2026, os 51 conjuntos de testes de unidade do \textit{backend}, com 359 testes no total, foram aprovados. O segundo é uma medição do tempo de resposta da API, realizada no mesmo dia sobre um acervo sintético criado para esse fim, com uma Categoria, duas Coleções, cinquenta Itens e um \textit{layout} de quinze Elementos. Cada uma das oito rotas medidas recebeu cinquenta requisições, precedidas de cinco de aquecimento e espaçadas de 700~ms, e nenhuma das 441 requisições terminou em erro. % [ATUALIZAR APÓS MEDIÇÃO NO RYZEN: data, máquina (quad:equipamento) e números; os atuais são do notebook i5-13420H, 02/10/2026]
+A API foi executada em modo de produção em um computador portátil com processador Intel Core i5-13420H e 16~GB de memória, conectada ao banco de dados do Supabase pela internet; cada tempo medido inclui, portanto, a ida e a volta até o banco. Concluída a medição, a conta de teste e todo o acervo sintético foram excluídos, de modo que nenhum dado da medição permanece na base.
+
+O que esses registros estabelecem, em conjunto, é modesto e preciso. Eles mostram que a plataforma está publicada e acessível, os fluxos que dependem de e-mail funcionam em produção, as regras de negócio do \textit{backend} passaram pelo conjunto de testes de unidade e a API responde, sobre um acervo de tamanho conhecido, em tempos que podem ser confrontados com as métricas do Capítulo~\ref{cap:05}. A verificação de cada requisito funcional é objeto da Seção~\ref{sec:validacaoRF}.
+
+\section{Validação dos Requisitos Funcionais}
+\label{sec:validacaoRF}
+
+Os requisitos funcionais foram verificados por três instrumentos complementares. O primeiro são os testes de unidade descritos no Capítulo~\ref{cap:08}, cuja distribuição por requisito consta do Quadro~\ref{quad:resumoTestes} e cujos casos principais, CT01 a CT08, especificam as regras de maior risco. O segundo é a conferência da implementação no código da aplicação cliente e da API, que estabelece por qual tela e por qual rota cada requisito se realiza. O terceiro é o uso da plataforma publicada, que exercita em conjunto a interface, a API e os serviços externos. A divisão de trabalho entre eles decorre do alcance de cada um, já que os testes de unidade verificam as regras de negócio do \textit{backend} com o banco de dados simulado, e o que depende da interface ou de um serviço externo, como o envio de e-mail, só se demonstra pela inspeção e pelo uso. As subseções seguem os grupos de requisitos definidos no Capítulo~\ref{cap:05}.
+
+\subsection{Acesso ao Sistema}
+
+O cadastro (RF-01) gera o código de usuário único e entrega à conta nova as seis paletas predefinidas e os \textit{layouts} padrão; o CT06 verifica que a paleta em uso nasce clara ou escura conforme o tema do sistema operacional informado no cadastro. A conta só é acessada depois da confirmação do e-mail por um código de seis dígitos, válido por quinze minutos e limitado a cinco tentativas, do qual o banco guarda apenas o \textit{hash}. A autenticação (RF-02) registra uma sessão no banco a cada \textit{login} e a confere a cada requisição, e o CT01 verifica que o \textit{logout} revoga apenas a sessão em uso e que um \textit{token} de sessão revogada recebe a resposta 401. A recuperação de senha (RF-04) é coberta pelo CT02, que verifica a mensagem idêntica para e-mails cadastrados ou não, o \textit{token} aleatório guardado como \textit{hash}, com prazo de validade e uso único, e a revogação de todas as sessões ao fim da redefinição; o envio de e-mail, do qual o \textit{link} depende, funciona em produção, conforme a Seção~\ref{sec:plataformaOperacao}. A alteração de senha (RF-03) é realizada pela API, que exige a senha atual, recusa uma nova senha igual à anterior e revoga as demais sessões na mesma transação, comportamento coberto pelos testes do módulo \texttt{user}. A edição do perfil (RF-05) ocorre em uma janela sobreposta ao próprio perfil, com a foto enquadrada em círculo e a capa enquadrada na proporção da faixa, ambas com o original guardado para reenquadramento.
+
+\subsection{Coleção}
+
+A organização em Categorias, Coleções e Itens (RF-06, RF-07, RF-09 e RF-13) foi verificada pelos testes dos módulos \texttt{category}, \texttt{collection} e \texttt{item} e pelo uso. O painel de Categorias exibe as contagens de Coleções e de Itens, alterna entre grade e lista e oferece as quatro ordenações previstas, e cada nível impede nomes repetidos no seu escopo. O CT08 verifica que a imagem enviada é reconhecida pela assinatura do arquivo, e não pela extensão declarada, de modo que um arquivo de texto renomeado é recusado. As \textit{tags} são gravadas em forma canônica e formam um vocabulário único, e a tela de descoberta reúne as Coleções de outros usuários que tenham todas as \textit{tags} escolhidas, respeitando a privacidade de cada uma. O controle de privacidade (RF-08) é o requisito com verificação mais extensa, pois o CT04 verifica o nível de acesso do dono, do amigo e de terceiros a cada privacidade, com a resposta 404 para a Coleção que o visitante não pode ver, e o CT03 verifica que restringir a privacidade encerra, na mesma transação, o acompanhamento de quem perdeu o acesso.
+
+A movimentação de Itens (RF-10) é concluída em três comandos pelo menu de ações do Item, em que o usuário escolhe a ação, escolhe o destino e confirma. Durante trinta segundos, um botão permite desfazê-la, e os testes do módulo \texttt{item} verificam que o Item com ficha própria a conserva ao mudar de Coleção. A ficha em modo leitura (RF-11) é aberta sobre a listagem, com setas que percorrem os Itens na ordem exibida, indicação visual dos Elementos vazios e nenhuma opção de edição para o visitante. Por ser um requisito de apresentação, sem regra de negócio própria no \textit{backend}, o RF-11 não tem teste de unidade associado no Quadro~\ref{quad:resumoTestes} e foi verificado pela inspeção e pelo uso. A listagem de Itens (RF-12) oferece busca pelo nome e pelo subtítulo, as quatro ordenações por nome e por data e a opção de esconder o texto sobre as capas, e o cartão exibe a média normalizada dos Elementos de Classificação da ficha.
+
+\subsection{Editor de \textit{Layout}}
+
+O editor (RF-14) oferece os seis tipos de Elemento previstos e posiciona cada um em unidades da folha, cujo tamanho é independente dos Elementos. O editor e a ficha em modo leitura desenham o \textit{layout} com o mesmo componente, de modo que a prévia é, por construção, a própria ficha final, e não uma aproximação dela. A duplicação cria uma cópia independente, com o sufixo ``(cópia)'', e a exclusão de um \textit{layout} em uso é precedida da desvinculação, que entrega antes a cada Item uma cópia própria do \textit{layout}, sem alterar nenhuma ficha. A associação a Coleções (RF-15) admite a troca com confirmação e a mescla das fichas próprias no novo \textit{layout}, cuja regra de correspondência (mesma origem, mesmo tipo e nome e, por fim, mesmo tipo na ordem de leitura) é verificada pelos testes da mescla no módulo \texttt{common}. O compartilhamento (RF-16) importa um \textit{layout} a partir do seu identificador e cria uma cópia independente marcada como importada, e os testes do módulo \texttt{layout} verificam a recusa de importar um \textit{layout} da própria biblioteca. A personalização de um Item (RF-17) é verificada pelo CT05, segundo o qual a primeira edição cria a cópia própria da ficha, com ou sem \textit{layout} na Coleção, e uma edição sobre a ficha ainda não copiada é recusada com a resposta 409.
+
+\subsection{Aparência}
+
+As paletas (RF-18) são aplicadas a toda a interface no momento da escolha e gravadas no servidor, o que as mantém entre sessões e dispositivos. O CT06 verifica a troca da paleta em uso como operação atômica e a recusa de excluir a paleta em uso, e os testes do módulo \texttt{appearance-preset} verificam que cada paleta tem a cor primária e as doze subcores preenchidas. O editor de paletas calcula a razão de contraste de cada par de cor de texto e de superfície e avisa quando ela fica abaixo de 4,5:1, sem impedir a escolha. A tipografia (RF-19) integra a paleta e oferece dezenove famílias de fonte, com os tamanhos, o espaçamento entre linhas e o peso validados nas faixas do requisito pelos testes do DTO correspondente.
+
+\subsection{Interação Social}
+
+A amizade (RF-20) é solicitada a partir do código de usuário, e o CT07 verifica que só uma solicitação pendente pode ser aceita, que a notificação ao solicitante é criada na mesma transação do aceite e que dois aceites simultâneos resultam em um único vínculo, com a resposta 409 para o segundo; a recusa, por sua vez, não gera notificação. O acompanhamento de Coleções (RF-21) obedece às mesmas regras de visibilidade da privacidade, verificadas pelo CT03 e pelos testes do módulo \texttt{social}, e a tela de Coleções seguidas reúne, para cada uma, o dono, a Categoria e a quantidade de Itens. A visita a outros usuários (RF-23) percorre o perfil, a Categoria e a página da Coleção em modo somente leitura; o CT04 verifica a resposta 404 para o que o visitante não pode ver, e o perfil visitado omite as Categorias sem nenhuma Coleção visível. O \textit{feed} de atualizações (RF-22) é fornecido pela API, que devolve os eventos das Coleções acompanhadas, do mais recente ao mais antigo, com paginação por cursor, excluindo as Coleções privadas e preservando o nome do Item já removido, comportamento coberto pelos testes do serviço de \textit{feed}.
+
+\subsection{Notificação}
+
+As notificações (RF-24) ficam no sino do cabeçalho, presente em todas as telas da área logada, com a quantidade de não lidas, consultada a cada sessenta segundos e sempre que o usuário retorna à janela. Abrir uma notificação a marca como lida e leva ao que a originou, seja a Coleção atualizada, seja o perfil de quem pediu ou aceitou a amizade. Os testes do módulo \texttt{notification} verificam a marcação individual e coletiva, a limpeza da área sem exclusão dos registros e a ocultação das notificações de Coleções que passaram a ser privadas. O canal de e-mail, usado pela confirmação de cadastro e pela recuperação de senha, funciona em produção, conforme a Seção~\ref{sec:plataformaOperacao}.
+
+O Quadro~\ref{quad:sinteseRF} reúne o instrumento, o resultado e a situação de cada requisito funcional.
+
+\begin{quadro}[h!]
+\caption{Síntese da validação dos requisitos funcionais}
+\label{quad:sinteseRF}
+\footnotesize
+\begin{tabular}{|p{1.3cm}|p{4.6cm}|p{5.6cm}|p{2.2cm}|}
+\hline
+\textbf{Req.} & \textbf{Instrumento/Evidência} & \textbf{Resultado} & \textbf{Situação} \\ \hline
+RF-01 & CT06; módulo \texttt{user}; inspeção & Código de usuário, paletas e \textit{layouts} iniciais; confirmação do e-mail por código & Atendido \\ \hline
+RF-02 & CT01; módulo \texttt{auth} & Sessão revogada recebe 401 & Atendido \\ \hline
+RF-03 & Módulo \texttt{user} & Senha atual exigida; demais sessões revogadas & Implementado na API \\ \hline
+RF-04 & CT02; uso em produção & \textit{Token} de uso único; \textit{link} entregue por e-mail & Atendido \\ \hline
+RF-05 & Módulo \texttt{user}; inspeção & Foto e capa enquadradas, com original guardado & Atendido \\ \hline
+RF-06 & Módulo \texttt{category}; uso & Categoria com capa, ícone e tema & Atendido \\ \hline
+RF-07 & Módulo \texttt{collection}; uso & Coleções com \textit{tags} e descoberta por \textit{tags} & Atendido \\ \hline
+RF-08 & CT03; CT04 & Acesso por privacidade; acompanhamentos encerrados & Atendido \\ \hline
+RF-09 & CT08; módulo \texttt{item} & Imagem reconhecida pela assinatura & Atendido \\ \hline
+RF-10 & Módulo \texttt{item}; uso & Três comandos; desfazer por 30~s; ficha própria mantida & Atendido \\ \hline
+RF-11 & Inspeção; uso & Ficha sobreposta, somente leitura ao visitante & Atendido \\ \hline
+RF-12 & Módulo \texttt{item}; uso & Busca, ordenação e média das Classificações & Atendido \\ \hline
+RF-13 & Módulo \texttt{category}; uso & Contagens, grade e lista, ordenações & Atendido \\ \hline
+RF-14 & Módulo \texttt{layout}; inspeção & Seis tipos de Elemento; prévia igual à ficha & Atendido \\ \hline
+RF-15 & Testes da mescla; uso & Troca com confirmação e mescla das fichas & Atendido \\ \hline
+RF-16 & Módulo \texttt{layout} & Cópia independente importada pelo identificador & Atendido \\ \hline
+RF-17 & CT05 & Cópia própria na primeira edição & Atendido \\ \hline
+RF-18 & CT06; módulo \texttt{appearance-preset} & Troca atômica; aviso de contraste & Atendido \\ \hline
+RF-19 & Testes do DTO de paleta & Faixas tipográficas validadas & Atendido \\ \hline
+RF-20 & CT07 & Aceite com notificação na mesma transação & Atendido \\ \hline
+RF-21 & CT03; módulo \texttt{social} & Acompanhamento conforme a visibilidade & Atendido \\ \hline
+RF-22 & Testes do serviço de \textit{feed} & Eventos paginados, sem Coleções privadas & Implementado na API \\ \hline
+RF-23 & CT04; uso & Visita somente leitura; 404 ao que não é visível & Atendido \\ \hline
+RF-24 & Módulo \texttt{notification}; uso & Sino com contador; ocultação por privacidade & Atendido \\ \hline
+\end{tabular}
+\fonte{Elaborado pelo autor}
+\end{quadro}
+
+Os vinte e quatro requisitos funcionais têm, portanto, implementação verificada, sendo vinte e dois de ponta a ponta, da interface ao banco, e dois, o RF-03 e o RF-22, por rotas da API cobertas por testes de unidade. A seção seguinte examina se a plataforma apresenta as propriedades de desempenho, segurança e acessibilidade que os requisitos não funcionais enunciam.
+
+\section{Validação dos Requisitos Não Funcionais}
+\label{sec:validacaoRNF}
+
+% [A ESCREVER APÓS A MEDIÇÃO NO RYZEN: limiares do Capítulo 5, quadro quad:latenciaApi e juízo de cada RNF]
+
+\section{Validação em Uso}
+\label{sec:validacaoUso}
+
+A validação em uso foi conduzida por observação, sem entrevista nem questionário, e registra o que ocorreu quando a plataforma publicada foi usada pela autora e por duas pessoas do seu convívio que não participaram do desenvolvimento e que, por isso, não conheciam a plataforma de antemão.
+
+Desse uso resultou uma observação contrária ao previsto. Uma das usuárias, diante da versão publicada, pediu um guia de primeiros passos, e o pedido revelou que ela esperava uma ferramenta de listas, próxima de uma planilha. O modelo da plataforma, em que um \textit{layout} reutilizável é associado a uma Coleção e dá forma às fichas dos seus Itens, não se mostrou evidente sem orientação. A observação tem peso particular porque a planilha é justamente uma das ferramentas que o Capítulo~\ref{cap:01} caracteriza como rígidas, por reduzirem cada registro a campos fixos. O primeiro contato com a plataforma reproduziu, portanto, a expectativa formada por essas ferramentas, e não a proposta que pretende substituí-las.
+
+Convém registrar a ordem dos fatos. A decisão de oferecer um guia de primeiros passos antecede esse pedido, de modo que a observação converge com ela sem tê-la motivado. O guia compreende uma apresentação no primeiro acesso, com um diagrama que relaciona o \textit{layout}, a Coleção e as fichas, uma lista de primeiros passos acompanhada de dicas em cada tela e uma página que explica o funcionamento da plataforma. Sobre a eficácia desse guia nada se afirma, pois ele não foi observado em uso por quem fez o pedido nem por outra pessoa.
+
+O alcance destas observações é restrito, já que envolvem três pessoas, nenhuma independente do trabalho, e um único relato que vai além do próprio uso. Nada se afirma quanto à facilidade de uso em geral, à preferência pela plataforma ou à sua adoção, e a Seção~\ref{sec:discussao} retoma esses limites.
+
+\section{Discussão e Implicações}
+\label{sec:discussao}
+
+O Capítulo~\ref{cap:01} enunciou o problema que motivou este trabalho. As ferramentas usualmente empregadas para registrar coleções pessoais tratam cada registro como um conjunto de campos fixos com aparência padronizada, e falta uma plataforma que reúna a organização de coleções de qualquer tipo, a liberdade de definir a estrutura e a aparência de cada registro e a possibilidade de compartilhar essas coleções com outras pessoas. Esta seção retoma esse problema à luz do que as seções anteriores apuraram.
+
+A resposta é afirmativa quanto ao que foi verificado e restrita quanto ao que se pode generalizar. Cada uma das três partes do problema tem correspondência na plataforma em operação.
+
+\begin{itemize}
+    \item \textbf{Organização de coleções de qualquer tipo:} realiza-se na hierarquia de Categorias, Coleções e Itens, cujo tema é texto livre definido pelo usuário.
+    \item \textbf{Liberdade de estrutura e de aparência:} realiza-se no editor, em que o próprio usuário define quais Elementos compõem a ficha e como eles se dispõem, e na personalização global por paletas e tipografia.
+    \item \textbf{Compartilhamento:} realiza-se pela visita a perfis, pelo acompanhamento de Coleções e pelas notificações, sob uma privacidade definida em cada Coleção e verificada pelos testes de maior extensão do conjunto, conforme a Seção~\ref{sec:validacaoRF}.
+\end{itemize}
+
+Convém, contudo, separar o que esses resultados demonstram do que não demonstram. Eles demonstram que a proposta é construível e operável, porque os requisitos funcionais têm implementação verificada e a plataforma funciona publicada, com os serviços externos de que depende. Não demonstram que a plataforma seja preferível às planilhas, aos aplicativos de listas ou aos cadernos mencionados no Capítulo~\ref{cap:01}, porque nenhuma comparação de uso foi conduzida, nem que seja de uso fácil para o público em geral, porque as observações da Seção~\ref{sec:validacaoUso} envolvem três pessoas próximas do trabalho. A contribuição situa-se, por isso, no plano da demonstração de viabilidade, e não no da evidência de superioridade.
+
+A observação de uso permite, ainda assim, uma implicação que extrapola esta plataforma. A flexibilidade que responde ao problema do Capítulo~\ref{cap:01} tem um custo de entendimento, pois um registro cuja estrutura é definida pelo próprio usuário exige que ele compreenda antes a relação entre o molde e as fichas, ao passo que a planilha, por ter estrutura fixa, dispensa essa compreensão. Para uma ferramenta desse tipo, a apresentação do modelo deixa de ser material acessório e passa a integrar o produto, o que corresponde à decisão de oferecer um guia de primeiros passos. Cabe registrar, como conjectura, que a expectativa de encontrar uma planilha seja comum entre usuários novos, por ser essa a referência mais difundida para registrar listas. A conjectura não pode ser verificada a partir de um único relato, e sua verificação exigiria observar usuários independentes, com e sem o guia.
+
+As decisões de projeto que sustentam o editor também merecem ser qualificadas pelo que custam. O editor e a ficha em modo leitura desenham o \textit{layout} com o mesmo componente, o que torna a prévia fiel por construção, e não por verificação. Em contrapartida, toda a ficha precisa ser expressa em uma unidade relativa à largura da folha, resolvida no navegador por consultas de contêiner, recurso recente das folhas de estilo, e a fidelidade da prévia passa a depender desse suporte. A ficha própria de um Item, por sua vez, é uma cópia do \textit{layout} da Coleção, o que garante que personalizar um Item nunca altere os demais. O custo dessa escolha é que a cópia deixa de acompanhar as alterações do \textit{layout} de origem, e reaproximá-las exige a mescla descrita na Seção~\ref{sec:validacaoRF}, cuja correspondência entre Elementos é heurística e mantém na ficha o que não encontra lugar no novo \textit{layout}.
+
+Observação análoga cabe à privacidade. A regra de visibilidade não reside em um ponto único do sistema, porque é imposta em cada rota que recebe o identificador de uma Coleção, de um Item ou de um perfil, e responde com 404 ao que o visitante não pode ver, de modo a não revelar sequer a existência do recurso. Na prática, a privacidade custa mais para manter do que para projetar, já que toda rota nova precisa aplicá-la, e esse custo cresce com a quantidade de rotas, e não com a quantidade de níveis de privacidade. Por fim, a publicação em serviços gratuitos, descrita no Capítulo~\ref{cap:09}, viabilizou a operação sem custo financeiro em troca de limites de recurso, uma vez que a API dispõe de 1~GB de memória e a recuperação dos dados depende de uma exportação feita pelo responsável pela plataforma. Para uma operação de validação, a troca é favorável, mas é uma troca, e não um ganho sem contrapartida.
+% [REVISAR APÓS A 10.3: acrescentar, se couber, a qualificação das decisões pelos tempos medidos no Ryzen]
