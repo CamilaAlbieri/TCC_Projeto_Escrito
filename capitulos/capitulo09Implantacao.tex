@@ -1,6 +1,332 @@
 \chapter{Implantação}
 \label{cap:09}
 
-Em qual servidor o sistema está implantado, em qual servidor está a aplicação e em qual servidor está o banco de dados, se foi feito registro de domínio, como deve ser feita a implantação e configuração do sistema, etc etc etc.
+% Fatos de produção conferidos em 05/10/2026 com a autora, nos repositórios (backend-colecoes
+% e TCC-frontend) e por teste externo (porta 3000 inacessível de fora; porta 80 redireciona
+% para HTTPS). Marcadores [PREENCHER] e comentários [DEPENDE DE CORREÇÃO] precisam ser
+% resolvidos antes da entrega. Não colocar no texto o IP da VM, o OCID nem valores de segredos.
 
-Caso o sistema esteja em execução em um ou mais clientes, apresentar nesse capítulo como foi a implantação. Sendo necessário, podem ser usados diagramas UML, como o diagrama de atividades, para apresentar as tarefas de implantação.
+Os Capítulos~\ref{cap:06} e~\ref{cap:07} trataram o sistema como artefato lógico: a divisão em camadas, a aplicação cliente em React, a API em NestJS e a persistência em PostgreSQL por meio do Prisma. Este capítulo trata de onde cada uma dessas partes é executada. A distinção é necessária porque o desenho em camadas não determina, por si só, a distribuição física: a mesma arquitetura poderia ser publicada em uma única máquina ou repartida entre vários provedores, e a escolha entre essas alternativas responde a critérios de custo, de carga esperada e de esforço de operação, e não a critérios de projeto.
+
+O ambiente aqui descrito é o de produção, acessível pela internet, e foi montado exclusivamente com planos gratuitos dos provedores envolvidos. Essa restrição de custo é o fio que explica a maior parte das decisões registradas a seguir. A Seção~\ref{sec:infraestrutura} apresenta os ambientes de execução e a distribuição dos componentes entre eles. A Seção~\ref{sec:configuracao_servicos} descreve como cada componente é configurado e qual superfície da máquina permanece exposta. A Seção~\ref{sec:procedimento_implantacao} percorre o caminho que uma nova versão do sistema atravessa até entrar em operação.
+
+\section{Infraestrutura}
+\label{sec:infraestrutura}
+
+A alocação dos componentes segue um critério simples: cada parte do sistema é publicada no tipo de ambiente que corresponde à sua natureza de execução. A aplicação cliente, que se reduz a arquivos estáticos, vai para uma plataforma de hospedagem de arquivos estáticos; a API, que é um processo de longa duração, vai para uma máquina virtual; e os dados, que precisam sobreviver à máquina, ficam em serviços gerenciados. Desse critério decorre a distribuição apresentada na Figura~\ref{fig:diagramaImplantacao}.
+
+\begin{figure}[!htbp]
+	\centering
+	\caption{Diagrama de implantação do sistema}
+	\label{fig:diagramaImplantacao}
+	\noindent\resizebox{\textwidth}{!}{%
+	\begin{tikzpicture}[
+		y=1.4cm,
+		font=\footnotesize,
+		>={Stealth[length=2.2mm]},
+		no/.style={draw, thick, align=center, inner sep=4pt, fill=white},
+		artefato/.style={draw, align=center, inner sep=3pt, fill=gray!8},
+		rotulo/.style={font=\scriptsize, align=center, fill=white, inner sep=1pt},
+		ligacao/.style={->, thick}
+	]
+		% Coluna da esquerda: navegador, Vercel e Duck DNS
+		\node[no, text width=3.4cm] (nav) at (0,5.0) {\guillemotleft device\guillemotright\\\textbf{Navegador do usuário}\\[2pt]aplicação React\\em execução};
+		\node[artefato, text width=3.0cm] (dist) at (0,1.3) {\guillemotleft artifact\guillemotright\\\texttt{dist/} (HTML, JS, CSS)};
+		\node[font=\footnotesize\bfseries, above=2pt of dist] (vtit) {Vercel (plano Hobby)};
+		\node[font=\scriptsize, above=-1pt of vtit] (vest) {\guillemotleft execution environment\guillemotright};
+		\begin{scope}[on background layer]
+			\node[draw, thick, fit=(dist)(vtit)(vest), inner sep=5pt, fill=white] (vercel) {};
+		\end{scope}
+		\node[no, text width=3.4cm] (dns) at (0,-1.9) {\guillemotleft service\guillemotright\\\textbf{Duck DNS}\\[2pt]nome público da API};
+
+		% Centro: máquina virtual com Caddy e Docker
+		\node[no, text width=4.0cm] (caddy) at (6.5,5.0) {\guillemotleft execution environment\guillemotright\\\textbf{Caddy} (systemd)\\[2pt]proxy reverso e TLS};
+		\node[artefato, text width=3.0cm] (api) at (6.5,0.9) {\guillemotleft container\guillemotright\\\texttt{colecoes-api}\\[2pt]Node.js 22 e NestJS};
+		\node[font=\footnotesize\bfseries, above=2pt of api] (dtit) {Docker Engine};
+		\node[font=\scriptsize, above=-1pt of dtit] (dest) {\guillemotleft execution environment\guillemotright};
+		\begin{scope}[on background layer]
+			\node[draw, thick, fit=(api)(dtit)(dest), inner sep=5pt, fill=white] (docker) {};
+		\end{scope}
+		\node[font=\footnotesize, align=center, anchor=south] (vmtit) at (6.5,6.15) {\guillemotleft device\guillemotright\ \textbf{Máquina virtual}\\\textbf{Oracle Cloud} (São Paulo)\\VM.Standard.E2.1.Micro, Ubuntu 22.04};
+		\begin{scope}[on background layer]
+			\node[draw, very thick, fit=(caddy)(docker)(vmtit), inner sep=6pt, fill=gray!5] (vm) {};
+		\end{scope}
+
+		% Coluna da direita: serviços gerenciados
+		\node[no, text width=3.6cm] (supa) at (13.0,4.4) {\guillemotleft cloud service\guillemotright\\\textbf{Supabase}\\[2pt]PostgreSQL gerenciado\\(gratuito, São Paulo)};
+		\node[no, text width=3.6cm] (r2) at (13.0,1.2) {\guillemotleft cloud service\guillemotright\\\textbf{Cloudflare R2}\\[2pt]imagens enviadas};
+		\node[no, text width=3.6cm] (smtp) at (13.0,-1.9) {\guillemotleft cloud service\guillemotright\\\textbf{SMTP do Gmail}\\[2pt]e-mails de recuperação};
+
+		% Ligações
+		\draw[ligacao] (nav.south) -- node[rotulo, right] {HTTPS\\arquivos estáticos} (vercel.north);
+		\draw[ligacao] (nav.west) -- ++(-0.6,0) |- node[rotulo, pos=0.25, left] {DNS} (dns.west);
+		\draw[ligacao] (nav.east) -- node[rotulo, above] {HTTPS (443)\\API REST} (caddy.west);
+		\draw[ligacao] (caddy.south) -- node[rotulo, right] {HTTP\\127.0.0.1:3000} (docker.north);
+		\draw[ligacao] (docker.east |- 0,2.0) -- (9.9,2.0) |- (supa.west);
+		\node[rotulo, anchor=west] at (10.0,3.0) {PostgreSQL (5432)\\\textit{pooler} de sessão};
+		\draw[ligacao] (docker.east |- r2.west) -- node[rotulo, above, pos=0.62] {API S3 (HTTPS)} (r2.west);
+		\draw[ligacao] (docker.east |- 0,0.3) -- (9.9,0.3) |- (smtp.west);
+		\node[rotulo, anchor=west] at (10.0,-0.45) {SMTP com TLS (465)};
+		\draw[ligacao, dashed] (nav.north) -- (0,7.9) -- node[rotulo, pos=0.5, above] {HTTPS: exibição das imagens pelo endereço público do balde} (15.6,7.9) |- (r2.east);
+	\end{tikzpicture}%
+	}
+	\\\textbf{Fonte:} Elaborada pelo autor
+\end{figure}
+
+\textbf{Aplicação cliente.} A aplicação cliente é publicada na Vercel, no plano gratuito (Hobby), sob o endereço \url{https://tcc-frontend-git-main-camilaalbierimattos.vercel.app}.
+% [VERIFICAR: em 05/10/2026 este endereço redirecionava visitantes sem login para a autenticação
+% da Vercel (Deployment Protection). Desativar a proteção ou usar o domínio de produção do projeto.] A separação já era imposta pela arquitetura: a aplicação executa no navegador do usuário, e o resultado da sua construção (\texttt{tsc -b} seguido de \texttt{vite build}) é um conjunto de arquivos estáticos, sem estado de servidor. Qualquer hospedagem de arquivos estáticos poderia servi-los; a Vercel foi escolhida porque constrói e publica o projeto diretamente a partir do repositório no GitHub, a cada alteração no ramo principal \cite{vercel2026git}, o que dispensa qualquer etapa manual para essa parte do sistema. Servir esses arquivos a partir da mesma máquina que executa a API foi descartado, por consumir a memória escassa dessa máquina em uma função que não exige nenhuma de suas características. Como a navegação entre telas é feita no próprio navegador, um endereço interno aberto diretamente, como o de uma Coleção, precisa ser respondido com o arquivo \texttt{index.html}; em aplicações Vite publicadas na Vercel, isso é feito por uma regra de reescrita declarada no arquivo \texttt{vercel.json} do repositório \cite{vercel2026vite}.
+% [DEPENDE DE CORREÇÃO: criar o vercel.json no TCC-frontend; ver correcoes_sistema.md, item 3]
+
+\textbf{API.} A API é executada em uma máquina virtual da Oracle Cloud Infrastructure, criada na região de São Paulo com a forma \texttt{VM.Standard.E2.1.Micro}, que integra o nível gratuito permanente (\textit{Always Free}) do provedor. A documentação da Oracle descreve essa forma com um oitavo de OCPU, com possibilidade de usar recursos adicionais de processamento, e 1~GB de memória \cite{oracle2026alwaysfree}; o sistema operacional é o Ubuntu 22.04. Diferentemente de arquiteturas baseadas em serviços, em que a decisão de implantação envolve distribuir vários processos entre máquinas, a API deste trabalho é um monólito: um único processo, empacotado em um único contêiner. A questão de distribuição, portanto, não se coloca, e o dimensionamento reduz-se a saber se a máquina comporta esse processo. Com 1~GB, a memória é o recurso que se esgota primeiro, antes do processamento e do disco. O efeito foi observado já na primeira publicação: como a imagem do contêiner é construída na própria máquina, a instalação das dependências e a compilação só foram concluídas depois da criação de uma área de troca (\textit{swap}) em disco.
+
+\textbf{Banco de dados.} O PostgreSQL de produção é fornecido em regime gerenciado pelo Supabase, no plano gratuito, em projeto criado na região de São Paulo, a mesma da máquina virtual, o que mantém curto o percurso de ida e volta entre a API e o banco. Durante o desenvolvimento, o banco local em contêiner Docker, descrito nos Capítulos~\ref{cap:03} e~\ref{cap:07}, continua disponível como alternativa. A escolha de um serviço gerenciado separa duas responsabilidades: manter o processo do banco em execução e atualizado, que passa a ser do provedor, e guardar a única cópia dos dados fora da máquina virtual, que de outro modo dividiria com a API o mesmo gigabyte de memória. A API conecta-se pelo \textit{pooler} de sessão do Supabase, na porta 5432. A escolha não é de desempenho, mas de rede: no plano gratuito, a conexão direta ao banco é feita apenas por IPv6, e o próprio provedor indica o modo sessão do \textit{pooler} como alternativa para clientes em redes apenas IPv4 \cite{supabase2026connect}, situação da máquina virtual, que dispõe de um endereço público IPv4. A mesma cadeia de conexão atende às migrações e à API.
+% [VERIFICAR: confirmar que a VCN da Oracle não tem IPv6 habilitado; se tiver, a justificativa do pooler precisa ser revista]
+
+O plano gratuito impõe três limites que convém registrar. O banco é limitado a 500~MB por projeto \cite{supabase2026billing}. O provedor não faz cópia de segurança automática de projetos gratuitos e recomenda que eles exportem os dados regularmente com o comando \texttt{db dump} da sua ferramenta de linha de comando, mantendo as cópias fora da plataforma \cite{supabase2026backups}. E projetos gratuitos com pouca atividade ao longo de sete dias são pausados, podendo ser restaurados pelo painel \cite{supabase2026pausing}. O primeiro limite está longe de ser atingido por uma operação de validação; os dois últimos, ao contrário, afetam diretamente a confiabilidade do ambiente: o que a delegação ao serviço gerenciado removeu foi a operação do banco, e não a garantia de recuperação dos dados, que depende de uma exportação feita pelo próprio responsável pela plataforma.
+% [VERIFICAR com a autora: existe rotina de pg_dump/db dump? Se existir, descrever aqui e no RNF-10 (cap. 10)]
+
+\textbf{Arquivos enviados.} As imagens enviadas pelos usuários (capas, ícones, fotos de perfil e imagens dos Elementos) são gravadas no Cloudflare R2, acessado pela API S3 por meio do SDK da AWS, conforme o Capítulo~\ref{cap:07}. A consequência prática é que a máquina virtual não guarda estado: o banco está no Supabase e os arquivos estão no R2, de modo que perder a máquina exige apenas reinstalar a API, sem perda de Coleções, Itens ou imagens. Essa propriedade depende das credenciais do R2 estarem configuradas; sem elas, a API gravaria os arquivos no disco do contêiner, limitação já registrada no Capítulo~\ref{cap:07}, e eles se perderiam a cada nova construção da imagem.
+
+\textbf{Envio de e-mail.} Os e-mails de recuperação de senha são enviados pelo servidor SMTP do Gmail, com conexão cifrada na porta 465 e autenticação por senha de aplicativo da conta Google. Não há serviço de e-mail próprio: o envio depende apenas das variáveis de configuração descritas na Seção~\ref{sec:configuracao_servicos}.
+
+\textbf{Nome de domínio.} Não houve registro de domínio próprio. A aplicação cliente usa o subdomínio fornecido pela Vercel, e a API usa um subdomínio gratuito do Duck DNS, serviço que aponta subdomínios de \texttt{duckdns.org} para um endereço IP escolhido pelo usuário \cite{duckdns2026about}, no caso, o endereço público da máquina virtual. A necessidade de um nome para a API decorre de uma cadeia de exigências. A aplicação cliente é servida pela Vercel em HTTPS, e requisições \texttt{fetch()} ou \texttt{XMLHttpRequest} feitas por uma página segura a um endereço HTTP são conteúdo misto bloqueável, recusado pelo navegador \cite{mdn2026mixed}; a API precisa, portanto, responder em HTTPS. Para isso, o Caddy obtém e renova automaticamente certificados TLS para nomes de domínio públicos \cite{caddy2026https}, o que pressupõe um nome que resolva para a máquina. O subdomínio gratuito atende a essa exigência sem custo. A contrapartida é a dependência de um serviço mantido por terceiros, sem compromisso de disponibilidade: uma falha na resolução do nome tornaria a API inacessível, ainda que a máquina estivesse em funcionamento.
+
+O Quadro~\ref{quad:alvosImplantacao} sintetiza os alvos de implantação e o motivo da alocação de cada um.
+
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Alvos de implantação do sistema}
+\label{quad:alvosImplantacao}
+\footnotesize
+\begin{tabular}{|p{2.4cm}|p{3.2cm}|p{2.0cm}|p{5.9cm}|}
+\hline
+\textbf{Componente} & \textbf{Onde executa} & \textbf{Plano} & \textbf{Motivo da alocação} \\ \hline
+Aplicação cliente (React) & Vercel & Hobby (gratuito) & Arquivos estáticos sem estado de servidor; construção e publicação automáticas a partir do repositório \\ \hline
+API (NestJS) & Máquina virtual Oracle Cloud, em contêiner Docker, atrás do Caddy & \textit{Always Free} & Processo de longa duração; um único contêiner, por ser um monólito \\ \hline
+Banco de dados (PostgreSQL) & Supabase, região de São Paulo & Gratuito & Operação do banco delegada ao provedor; dados fora da máquina virtual \\ \hline
+Arquivos enviados & Cloudflare R2 & Gratuito & Mantém a máquina virtual sem estado \\ \hline
+E-mail & SMTP do Gmail & Conta Google & Envio dos e-mails de recuperação de senha sem servidor próprio \\ \hline
+Nome da API & Duck DNS & Gratuito & Nome público necessário para o certificado TLS emitido pelo Caddy \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
+\section{Configuração dos Serviços}
+\label{sec:configuracao_servicos}
+
+A configuração segue um princípio único: o código é o mesmo em todos os ambientes, e tudo o que varia entre eles é fornecido de fora, no momento da execução ou da construção. Na máquina virtual, os valores ficam em um arquivo \texttt{.env} ao lado do repositório; na Vercel, nas variáveis de ambiente do projeto. O Quadro~\ref{quad:variaveisAmbiente} relaciona essas variáveis, sem seus valores.
+
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Variáveis de ambiente de produção}
+\label{quad:variaveisAmbiente}
+\footnotesize
+\begin{tabular}{|p{3.0cm}|p{2.2cm}|p{8.3cm}|}
+\hline
+\textbf{Variável} & \textbf{Onde} & \textbf{Função} \\ \hline
+\texttt{DATABASE\_URL} & Máquina virtual & Cadeia de conexão do \textit{pooler} de sessão do Supabase, usada pela API e pelas migrações \\ \hline
+\texttt{JWT\_SECRET} & Máquina virtual & Segredo de assinatura dos \textit{tokens} de sessão \\ \hline
+\texttt{FRONTEND\_URL} & Máquina virtual & Endereço publicado da aplicação cliente; única origem autorizada pelo CORS \\ \hline
+\texttt{PORT} & Máquina virtual & Porta em que a API escuta dentro do contêiner \\ \hline
+\texttt{SMTP\_*} & Máquina virtual & Servidor, porta, cifra, usuário, senha de aplicativo e remetente do Gmail \\ \hline
+\texttt{R2\_*} & Máquina virtual & Conta, chaves de acesso, balde e endereço público do Cloudflare R2 \\ \hline
+\texttt{API\_URL} & Vercel & Endereço HTTPS da API, embutido nos arquivos estáticos durante a construção \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
+A variável \texttt{API\_URL} tem natureza diferente das demais. Como a aplicação cliente não tem servidor próprio, não há momento de execução em que ela pudesse ler a configuração: o endereço da API é embutido nos arquivos durante a construção, e alterá-lo exige uma nova publicação. O nome sem o prefixo \texttt{VITE\_}, que o Vite exige por padrão, é aceito por uma configuração explícita do prefixo no \texttt{vite.config.ts}, restrita a esse nome exato para que nenhuma outra variável do ambiente seja exposta nos arquivos públicos por acidente.
+
+\subsection{Contêiner da API}
+
+A API é construída e executada pelo Docker, a partir de um \texttt{Dockerfile} e de um \texttt{docker-compose.yml} versionados no repositório do \textit{backend}. O \texttt{Dockerfile}, reproduzido no Quadro~\ref{quad:dockerfile}, é dividido em três estágios. O estágio \texttt{base} parte da imagem \texttt{node:22-slim} e acrescenta o OpenSSL, exigido pelo motor do Prisma e ausente da imagem reduzida. O estágio \texttt{build} instala as dependências, o que gera o cliente do Prisma, compila o código e aplica as migrações pendentes ao banco. O estágio \texttt{runtime}, que é o único que compõe a imagem final, copia apenas o \texttt{package.json}, as dependências e o código compilado, sem o código-fonte.
+
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{\texttt{Dockerfile} da API}
+\label{quad:dockerfile}
+\centering
+\begin{lstlisting}
+FROM node:22-slim AS base
+RUN apt-get update && apt-get install -y --no-install-recommends openssl \
+    && rm -rf /var/lib/apt/lists/*
+RUN corepack enable
+WORKDIR /app
+
+FROM base AS build
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml prisma.config.ts ./
+COPY prisma ./prisma
+RUN pnpm install --frozen-lockfile
+COPY . .
+RUN pnpm build
+RUN --mount=type=secret,id=backend_env,target=/app/.env \
+    pnpm exec prisma migrate deploy
+
+FROM base AS runtime
+ENV NODE_ENV=production
+COPY --from=build /app/package.json ./
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
+EXPOSE 3000
+CMD ["node", "dist/src/main.js"]
+\end{lstlisting}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
+Dois pontos desse arquivo merecem comentário. O primeiro é a forma como a migração recebe a cadeia de conexão. Argumentos de construção e variáveis de ambiente são inadequados para passar segredos ao processo de construção, porque persistem na imagem final; a montagem de segredo (\texttt{RUN -{}-mount=type=secret}) torna o arquivo disponível apenas durante a instrução que o utiliza \cite{docker2026secrets}. O \texttt{.env} é declarado no \texttt{docker-compose.yml} como segredo de construção e montado somente no passo da migração, de modo que nenhuma camada da imagem contém as credenciais. Em execução, o mesmo arquivo é entregue ao contêiner como conjunto de variáveis de ambiente (\texttt{env\_file}).
+
+O segundo é o momento da migração. Executada durante a construção, ela altera o esquema do banco antes que o contêiner novo substitua o antigo, e o contêiner antigo continua atendendo requisições sobre o esquema já alterado até ser substituído. A vinculação tem uma consequência desejável e uma que precisa ser observada. A desejável é que uma versão cujo esquema não pôde ser aplicado não chega a entrar em execução, porque a falha da migração interrompe a construção. A que precisa ser observada é que, durante a janela de construção, o código antigo opera sobre o esquema novo: em migrações que apenas acrescentam tabelas ou colunas, o efeito é nulo; em migrações que removem ou renomeiam estruturas, abre-se uma janela de erro. Manter cada migração compatível com a versão anterior do código passa, assim, a ser condição do procedimento tal como ele está construído.
+
+\subsection{Superfície Exposta}
+
+O Quadro~\ref{quad:composeCaddy} reproduz a declaração do contêiner e a configuração do Caddy. A porta da API é publicada apenas na interface de retorno da máquina (\texttt{127.0.0.1}), o que a torna inalcançável de fora; o único caminho até ela passa pelo Caddy, instalado diretamente no sistema operacional e executado como serviço do \texttt{systemd}. A restrição no próprio mapeamento de portas não é redundante em relação ao \textit{firewall}: quando o Docker publica a porta de um contêiner, o tráfego é desviado antes de passar pelas regras do UFW, que ficam, na prática, sem efeito para essa porta \cite{docker2026firewall}. Publicada em todas as interfaces, a API ficaria acessível sem cifra, contornando o Caddy, ainda que o UFW não a liberasse.
+% [DEPENDE DE CORREÇÃO: trocar "3000:3000" por "127.0.0.1:3000:3000" no docker-compose.yml.
+% Em 05/10/2026 a porta 3000 já não respondia de fora (teste externo), provavelmente pelas
+% regras de entrada da VCN; a correção torna a proteção independente dessas regras.]
+
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Declaração do contêiner da API e configuração do Caddy}
+\label{quad:composeCaddy}
+\centering
+\begin{lstlisting}[numbers=none]
+# docker-compose.yml (trecho)
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      secrets:
+        - backend_env
+    container_name: colecoes-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:3000:3000"
+
+# /etc/caddy/Caddyfile
+[PREENCHER].duckdns.org {
+    reverse_proxy localhost:3000
+}
+\end{lstlisting}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
+O bloco do Caddyfile é suficiente para o arranjo inteiro: por se tratar de um nome de domínio público, o Caddy obtém e renova o certificado TLS e redireciona o tráfego HTTP para HTTPS sem configuração adicional \cite{caddy2026https}. A superfície de rede da máquina reduz-se, assim, a três portas, liberadas tanto nas regras de entrada da rede virtual da Oracle quanto no UFW: a 22, para administração por SSH com autenticação por chave; a 443, atendida pelo Caddy; e a 80, que não serve conteúdo algum e responde apenas pelo redirecionamento para HTTPS e pela validação dos certificados.
+
+Ao repassar uma requisição, o Caddy acrescenta o cabeçalho \texttt{X-Forwarded-For} com o endereço do cliente \cite{caddy2026proxy}. A informação é necessária para a limitação de requisições descrita no Capítulo~\ref{cap:07}, que identifica o cliente pelo endereço IP: sem ela, todas as requisições chegariam à API vindas do próprio Caddy, e o limite de cinco tentativas de \textit{login} por minuto passaria a valer para a plataforma inteira, e não para cada cliente. A API é, por isso, configurada para confiar em exatamente um intermediário, o Caddy. Confiar em qualquer valor do cabeçalho, em vez de em um único salto, permitiria a um cliente forjar o próprio endereço e escapar do limite. Pela mesma razão de restringir o que é aceito, o CORS da API autoriza uma única origem, a da aplicação cliente publicada, lida da variável \texttt{FRONTEND\_URL}.
+% [DEPENDE DE CORREÇÃO: app.set('trust proxy', 1) e enableCors({ origin: FRONTEND_URL }) no
+% src/main.ts do backend; ver correcoes_sistema.md, itens 2 e 4. Hoje o main.ts tem
+% app.enableCors() sem restrição de origem e não tem trust proxy.]
+
+\subsection{Continuidade de Execução}
+
+A recuperação após falhas é delegada a dois supervisores já presentes na máquina. O contêiner é declarado com a política \texttt{restart: unless-stopped}, de modo que o Docker o reinicia se o processo terminar inesperadamente, e o Docker e o Caddy são serviços do \texttt{systemd} habilitados na inicialização, o que faz a plataforma voltar sozinha depois de uma reinicialização da máquina virtual. Não há, contudo, rota dedicada à verificação de saúde: a forma mais simples de saber se a API está operando é uma requisição sem \textit{token} a uma rota protegida, como \texttt{GET /me}, cuja resposta 401 indica que o processo, o roteamento e a verificação de autenticação estão funcionando, embora não comprove o acesso ao banco.
+% [VERIFICAR na VM: systemctl is-enabled docker caddy deve responder "enabled" para os dois]
+
+Os segredos e parâmetros da API são mantidos no arquivo \texttt{.env}, fora do controle de versão e redigido diretamente na máquina virtual, por acesso remoto. Não há cofre de segredos nem cópia desse arquivo em outro lugar. A consequência é que a máquina guarda a única cópia existente da configuração de produção: perdê-la não implicaria perda de dados, que estão no Supabase e no R2, mas exigiria reconstituir as credenciais de cada serviço. É uma limitação registrada, de correção simples, e não uma decisão de projeto.
+
+\section{Procedimento de Implantação}
+\label{sec:procedimento_implantacao}
+
+A implantação envolve duas atividades distintas: o provisionamento inicial do ambiente, feito uma única vez, e a publicação de novas versões, repetida a cada alteração do sistema.
+
+\subsection{Provisionamento Inicial}
+
+O ambiente foi preparado na seguinte ordem:
+
+\begin{enumerate}
+	\item \textbf{Serviços de dados:} criação do projeto no Supabase, na região de São Paulo, e do balde no Cloudflare R2, com acesso público de leitura para a exibição das imagens; geração da senha de aplicativo da conta Google usada no envio de e-mails.
+	\item \textbf{Máquina virtual:} criação da instância na Oracle Cloud, com acesso por SSH autenticado por chave; liberação das portas 80 e 443 nas regras de entrada da rede virtual; atualização dos pacotes do sistema e ativação do UFW, permitindo apenas as portas 22, 80 e 443.
+	\item \textbf{Área de troca:} criação de um arquivo de \textit{swap}, necessário para que a construção da imagem caiba na memória da máquina.
+	\item \textbf{Docker e Caddy:} instalação do Docker pelo \textit{script} oficial do projeto e do Caddy pelo seu repositório de pacotes, habilitado como serviço do \texttt{systemd}.
+	\item \textbf{Nome da API:} cadastro do subdomínio no Duck DNS, apontando para o endereço público da máquina.
+	\item \textbf{Código:} geração de uma chave SSH na máquina, cadastrada como chave de implantação (\textit{deploy key}) no repositório do \textit{backend} no GitHub, e clonagem do repositório no diretório \texttt{/opt/apps}.
+	\item \textbf{Configuração:} redação do \texttt{.env} a partir do modelo \texttt{.env.example} e do \texttt{Caddyfile} com o nome da API.
+	\item \textbf{Primeira execução:} construção e início do contêiner com \texttt{docker compose up -d -{}-build}, que aplica todas as migrações ao banco vazio, e recarga do Caddy, que obtém o certificado.
+	\item \textbf{Aplicação cliente:} importação do repositório do \textit{frontend} na Vercel e definição da variável \texttt{API\_URL} com o endereço HTTPS da API, antes da primeira construção.
+\end{enumerate}
+
+\subsection{Publicação de Novas Versões}
+
+A publicação de uma nova versão segue caminhos diferentes para as duas partes do sistema, como mostra o diagrama de atividades da Figura~\ref{fig:atividadesImplantacao}. A aplicação cliente é publicada automaticamente: a cada alteração no ramo principal do repositório, a Vercel constrói o projeto e cria uma nova publicação de produção \cite{vercel2026git}. A API é publicada manualmente: o responsável acessa a máquina por SSH e executa um \textit{script} de implantação, que obtém a versão mais recente do repositório (\texttt{git pull}), reconstrói a imagem e substitui o contêiner (\texttt{docker compose up -d -{}-build}) e, por fim, remove as imagens que deixaram de ser usadas (\texttt{docker image prune -f}).
+% [VERIFICAR com a autora: o deploy.sh existe na VM com esses três comandos? Ele não está
+% versionado no repositório. Não há GitHub Actions configurado (não há .github/workflows).]
+
+\begin{figure}[!htbp]
+	\centering
+	\caption{Diagrama de atividades da publicação de uma nova versão}
+	\label{fig:atividadesImplantacao}
+	\noindent\resizebox{0.92\textwidth}{!}{%
+	\begin{tikzpicture}[
+		font=\footnotesize,
+		>={Stealth[length=2.2mm]},
+		acao/.style={draw, thick, rounded corners=6pt, align=center, text width=5.2cm, minimum height=0.9cm, fill=white},
+		barra/.style={fill=black, minimum width=13.0cm, minimum height=0.12cm, inner sep=0pt},
+		seta/.style={->, thick},
+		raia/.style={font=\footnotesize\bfseries, align=center}
+	]
+		\node[circle, fill=black, minimum size=0.45cm, inner sep=0pt] (inicio) at (0,0) {};
+		\node[acao, below=0.6cm of inicio] (push) {Alteração enviada ao ramo \texttt{main}\\do repositório no GitHub};
+		\node[barra, below=0.6cm of push] (fork) {};
+
+		\node[acao] (v1) at (-3.6,-4.6) {A Vercel detecta a alteração\\no ramo de produção};
+		\node[acao, below=0.5cm of v1] (v2) {Construção: \texttt{tsc -b} e \texttt{vite build},\\com \texttt{API\_URL} embutida};
+		\node[acao, below=0.5cm of v2] (v3) {Publicação da nova versão\\no endereço de produção};
+
+		\node[acao] (a1) at (3.6,-4.6) {Acesso à máquina virtual por SSH};
+		\node[acao, below=0.5cm of a1] (a2) {\texttt{git pull} no repositório\\em \texttt{/opt/apps}};
+		\node[acao, below=0.5cm of a2] (a3) {Construção da imagem: instalação,\\compilação e \texttt{prisma migrate deploy}};
+		\node[diamond, draw, thick, aspect=2, minimum width=0.6cm, minimum height=0.4cm, inner sep=0pt, below=0.5cm of a3] (dec) {};
+		\node[acao, below=0.9cm of dec] (a4) {Substituição do contêiner\\\texttt{colecoes-api}};
+		\node[acao, below=0.5cm of a4] (a5) {\texttt{docker image prune -f}};
+		\node[acao, below=0.5cm of a5] (a6) {Verificação: \texttt{GET /me} responde 401};
+		\node[acao, text width=3.0cm, anchor=west] (falha) at ($(dec.east)+(3.3,0)$) {Falha relatada;\\contêiner anterior\\segue no ar};
+
+		\node[raia, anchor=east] at ($(fork.south -| v1.north)+(-0.15,-0.55)$) {Aplicação cliente\\(automática)};
+		\node[raia, anchor=west] at ($(fork.south -| a1.north)+(0.15,-0.55)$) {API\\(manual)};
+
+		\path (a6.south) ++(0,-0.7) coordinate (j);
+		\node[barra] (join) at (j -| inicio) {};
+		\node[circle, draw, thick, minimum size=0.5cm, inner sep=0pt, below=0.6cm of join] (fim) {};
+		\node[circle, fill=black, minimum size=0.3cm, inner sep=0pt] at (fim) {};
+		\node[circle, draw, thick, minimum size=0.5cm, inner sep=0pt, below=0.6cm of falha] (fimfalha) {};
+		\node[circle, fill=black, minimum size=0.3cm, inner sep=0pt] at (fimfalha) {};
+
+		\draw[seta] (inicio) -- (push);
+		\draw[seta] (push) -- (fork);
+		\draw[seta] (fork.south -| v1.north) -- (v1);
+		\draw[seta] (fork.south -| a1.north) -- (a1);
+		\draw[seta] (v1) -- (v2);
+		\draw[seta] (v2) -- (v3);
+		\draw[seta] (a1) -- (a2);
+		\draw[seta] (a2) -- (a3);
+		\draw[seta] (a3) -- (dec);
+		\draw[seta] (dec) -- node[right, font=\scriptsize] {[migração aplicada]} (a4);
+		\draw[seta] (dec) -- node[above, font=\scriptsize] {[falha na construção]} (falha);
+		\draw[seta] (falha) -- (fimfalha);
+		\draw[seta] (a4) -- (a5);
+		\draw[seta] (a5) -- (a6);
+		\draw[seta] (v3) -- (v3 |- join.north);
+		\draw[seta] (a6) -- (a6 |- join.north);
+		\draw[seta] (join) -- (fim);
+	\end{tikzpicture}%
+	}
+	\\\textbf{Fonte:} Elaborada pelo autor
+\end{figure}
+
+A diferença de tratamento entre as duas partes decorre do que cada uma exige. A publicação da aplicação cliente não toca em nenhum recurso da máquina virtual nem em dados, e a plataforma que a recebe já oferece a construção automática; automatizá-la não teve custo. A publicação da API, ao contrário, reconstrói a imagem na mesma máquina que atende à produção e aplica migrações ao banco, e foi mantida manual para que cada publicação seja acompanhada por quem a disparou. A automação por uma esteira de integração contínua, que se conectaria à máquina e executaria o mesmo \textit{script}, é um acréscimo possível que não altera nenhum dos passos descritos.
+
+Duas consequências da publicação da API precisam ser registradas. A primeira é a degradação durante a construção: instalar dependências e compilar o código em uma máquina de 1~GB, com parte da memória em disco, disputa recursos com o contêiner em execução, e as respostas da API tornam-se mais lentas enquanto a construção ocorre. A segunda é a indisponibilidade breve no momento da substituição do contêiner, durante a qual o Caddy não encontra o processo na porta local e a aplicação cliente recebe erro nas requisições. Para a escala de uso do trabalho, ambas são aceitáveis; deixariam de ser em uma operação com compromisso formal de disponibilidade.
+
+\subsection{Reversão}
+
+A reversão também segue caminhos distintos. Na aplicação cliente, a Vercel permite devolver a produção a uma publicação anterior sem nova construção, recurso que, no plano Hobby, alcança a publicação imediatamente anterior \cite{vercel2026rollback}. Na API, a reversão percorre o mesmo caminho da publicação: o código é revertido no repositório e o \textit{script} de implantação é executado novamente. Como o último passo da publicação remove as imagens que deixaram de ser usadas, não há artefato preservado da versão substituída, e o tempo de reversão é igual ao de uma publicação completa, e não menor. Uma migração já aplicada, por sua vez, não é desfeita pela reversão do código; por isso, a compatibilidade entre cada migração e a versão anterior do código, discutida na Seção~\ref{sec:configuracao_servicos}, é também o que torna a reversão segura.
+
+As decisões descritas neste capítulo (a máquina gratuita de 1~GB, a construção da imagem no próprio ambiente de produção, a publicação manual da API, o banco sem cópia de segurança automática e a configuração mantida apenas na máquina) têm a mesma natureza: trocam garantias operacionais por custo zero, em um contexto em que o objetivo da operação é validar o sistema, e não sustentar uma exploração comercial. Nenhuma delas decorre da arquitetura descrita nos Capítulos~\ref{cap:06} e~\ref{cap:07}, e todas podem ser revistas por acréscimo, sem alteração do código da aplicação.

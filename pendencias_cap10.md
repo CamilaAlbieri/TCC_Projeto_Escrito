@@ -47,9 +47,15 @@ Total: 17 marcadores `[PREENCHER...]` (2 sem deploy, 15 após o deploy) e 6 come
 - **A máquina das medições não é a do cap. 3:** foi o notebook (i5-13420H, 16 GB), não o desktop
   Ryzen 5 do `quad:equipamento`. O cap. 10 descreve a máquina real. Se o notebook também foi usado no
   desenvolvimento, vale acrescentá-lo ao quadro do cap. 3.
-- **O cap. 9 (Implantação) ainda é texto do modelo da instituição.** O "Fluxo de Implantação" foi
-  escrito no cap. 10 como pedido; depois do deploy, considere movê-lo (ou resumi-lo) para o cap. 9 e
-  deixar no cap. 10 só a remissão.
+- **O cap. 9 (Implantação) foi escrito em 05/10/2026**, com o conteúdo de implantação que estava
+  no cap. 10 (Arquitetura e Fluxo de Implantação). Ele descreve a produção real (Vercel, VM Oracle
+  E2.1.Micro com Docker e Caddy, Supabase gratuito, R2, SMTP do Gmail, Duck DNS). Pendências do cap. 9:
+  - `[PREENCHER]` do subdomínio Duck DNS (no `/etc/caddy/Caddyfile` da VM) e do endereço público
+    `.vercel.app` (painel da Vercel > Domains; o endereço `...-git-main-...` exige login da Vercel);
+  - comentários `% [DEPENDE DE CORREÇÃO]`: CORS só com `FRONTEND_URL`, `trust proxy` 1, `vercel.json`
+    e porta `127.0.0.1:3000:3000` no `docker-compose.yml` (itens 2, 3 e 4 do `correcoes_sistema.md`);
+  - comentários `% [VERIFICAR]`: IPv6 na VCN, rotina de `db dump`, `systemctl is-enabled docker caddy`
+    e o `deploy.sh` (existe só na VM; não há GitHub Actions).
 - **RNF-09 classificado como "Não atendido"**, com base no corte registrado da navegação do editor
   por teclado (WCAG 2.1.1, nível A).
 - **Os itens 1 a 6 do `correcoes_sistema.md` bloqueiam ou prejudicam o deploy.**

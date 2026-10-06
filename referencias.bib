@@ -329,3 +329,168 @@
   url           = {https://vercel.com/docs/frameworks/frontend/vite},
   urlaccessdate = {02 out. 2026}
 }
+
+% ---------------------------------------------------------------
+% VERIFICAR: a forma VM.Standard.E2.1.Micro do nível Always Free tem 1/8 de OCPU, com possibilidade de usar recursos adicionais de CPU, e 1 GB de memória; cada conta tem até duas instâncias dessa forma (cap. 9, Seção Infraestrutura).
+% Link: https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm
+% Localização na fonte: seção "Compute", especificação da forma VM.Standard.E2.1.Micro.
+% Acesso em: 05 out. 2026
+% Observações: li a seção citada. Documentação oficial, sem autor individual nem data. O console da instância mostra "OCPU count 1"; o texto usa a descrição da documentação.
+% ---------------------------------------------------------------
+@misc{oracle2026alwaysfree,
+  author        = {{Oracle}},
+  title         = {Always Free Resources},
+  howpublished  = {Documentação da Oracle Cloud Infrastructure},
+  url           = {https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm},
+  urlaccessdate = {05 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: no plano gratuito, a conexão direta ao banco é apenas por IPv6; o modo sessão do pooler compartilhado (porta 5432) é indicado como alternativa à conexão direta quando se conecta a partir de uma rede apenas IPv4 (cap. 9, Seção Infraestrutura).
+% Link: https://supabase.com/docs/guides/database/connecting-to-postgres
+% Localização na fonte: seções sobre conexão direta e "Session mode".
+% Acesso em: 05 out. 2026
+% Observações: li as seções citadas. Documentação oficial, sem autor individual nem data.
+% ---------------------------------------------------------------
+@misc{supabase2026connect,
+  author        = {{Supabase}},
+  title         = {Connect to your database},
+  howpublished  = {Documentação do Supabase},
+  url           = {https://supabase.com/docs/guides/database/connecting-to-postgres},
+  urlaccessdate = {05 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: o Supabase faz cópia de segurança diária automática apenas dos projetos nos planos Pro, Team e Enterprise; para projetos do plano gratuito, recomenda exportar os dados regularmente com o comando db dump da CLI e manter cópias fora da plataforma (cap. 9, Seção Infraestrutura).
+% Link: https://supabase.com/docs/guides/platform/backups
+% Localização na fonte: início da página.
+% Acesso em: 05 out. 2026
+% Observações: li a seção citada. Documentação oficial, sem autor individual nem data.
+% ---------------------------------------------------------------
+@misc{supabase2026backups,
+  author        = {{Supabase}},
+  title         = {Database Backups},
+  howpublished  = {Documentação do Supabase},
+  url           = {https://supabase.com/docs/guides/platform/backups},
+  urlaccessdate = {05 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: o plano gratuito do Supabase limita o banco a 500 MB por projeto e concede dois projetos gratuitos (cap. 9, Seção Infraestrutura).
+% Link: https://supabase.com/docs/guides/platform/billing-on-supabase
+% Localização na fonte: seção sobre o plano gratuito.
+% Acesso em: 05 out. 2026
+% Observações: li a seção citada. Documentação oficial, sem autor individual nem data.
+% ---------------------------------------------------------------
+@misc{supabase2026billing,
+  author        = {{Supabase}},
+  title         = {About billing on {Supabase}},
+  howpublished  = {Documentação do Supabase},
+  url           = {https://supabase.com/docs/guides/platform/billing-on-supabase},
+  urlaccessdate = {05 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: o Supabase pausa projetos do plano gratuito que apresentam pouca atividade ao longo de sete dias, e o projeto pausado pode ser restaurado pelo painel em até um ano (cap. 9, Seção Infraestrutura).
+% Link: https://supabase.com/docs/guides/platform/free-project-pausing
+% Localização na fonte: início da página e seção sobre restauração.
+% Acesso em: 05 out. 2026
+% Observações: li a página. Documentação oficial, sem autor individual nem data.
+% ---------------------------------------------------------------
+@misc{supabase2026pausing,
+  author        = {{Supabase}},
+  title         = {Project Pausing},
+  howpublished  = {Documentação do Supabase},
+  url           = {https://supabase.com/docs/guides/platform/free-project-pausing},
+  urlaccessdate = {05 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: ao publicar portas de um contêiner, o Docker desvia o tráfego antes que ele passe pelas regras do ufw, de modo que a configuração do firewall é, na prática, ignorada para essas portas (cap. 9, Seção Configuração dos Serviços).
+% Link: https://docs.docker.com/engine/network/packet-filtering-firewalls/
+% Localização na fonte: seção "Docker and ufw".
+% Acesso em: 05 out. 2026
+% Observações: li a seção citada. Documentação oficial, sem autor individual nem data.
+% ---------------------------------------------------------------
+@misc{docker2026firewall,
+  author        = {{Docker}},
+  title         = {Packet filtering and firewalls},
+  howpublished  = {Documentação do Docker},
+  url           = {https://docs.docker.com/engine/network/packet-filtering-firewalls/},
+  urlaccessdate = {05 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: argumentos de construção e variáveis de ambiente não são adequados para passar segredos ao build, porque persistem na imagem final; a montagem de segredo (RUN --mount=type=secret) torna o segredo disponível apenas durante a instrução de construção (cap. 9, Seção Configuração dos Serviços).
+% Link: https://docs.docker.com/build/building/secrets/
+% Localização na fonte: introdução da página e seção sobre o uso de segredos no Dockerfile.
+% Acesso em: 05 out. 2026
+% Observações: li as seções citadas. Documentação oficial, sem autor individual nem data.
+% ---------------------------------------------------------------
+@misc{docker2026secrets,
+  author        = {{Docker}},
+  title         = {Build secrets},
+  howpublished  = {Documentação do Docker},
+  url           = {https://docs.docker.com/build/building/secrets/},
+  urlaccessdate = {05 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: conteúdo misto é o recurso buscado por HTTP a partir de uma página carregada com segurança; requisições fetch() e XMLHttpRequest são conteúdo bloqueável (cap. 9, Seção Infraestrutura).
+% Link: https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content
+% Localização na fonte: definição no início da página e lista de conteúdo bloqueável.
+% Acesso em: 05 out. 2026
+% Observações: li as seções citadas. Documentação colaborativa da Mozilla, sem autor individual nem data.
+% ---------------------------------------------------------------
+@misc{mdn2026mixed,
+  author        = {{MDN Web Docs}},
+  title         = {Mixed content},
+  howpublished  = {Mozilla Developer Network},
+  url           = {https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content},
+  urlaccessdate = {05 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: a Vercel cria uma publicação de produção a cada alteração no ramo de produção (por padrão, main) e publicações de pré-visualização para os demais ramos (cap. 9, Seção Procedimento de Implantação).
+% Link: https://vercel.com/docs/git
+% Localização na fonte: introdução e seções "Production branch" e "Preview branches".
+% Acesso em: 05 out. 2026
+% Observações: li as seções citadas. Documentação oficial, sem autor individual; a página indica atualização em 18 set. 2026.
+% ---------------------------------------------------------------
+@misc{vercel2026git,
+  author        = {{Vercel}},
+  title         = {Deploying Git Repositories with {Vercel}},
+  howpublished  = {Documentação da Vercel},
+  url           = {https://vercel.com/docs/git},
+  urlaccessdate = {05 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: o Instant Rollback devolve a produção a uma publicação anterior; no plano Hobby, é possível voltar apenas à publicação imediatamente anterior (cap. 9, Seção Procedimento de Implantação).
+% Link: https://vercel.com/docs/instant-rollback
+% Localização na fonte: introdução e seção "Who can roll back deployments?".
+% Acesso em: 05 out. 2026
+% Observações: li a página. Documentação oficial, sem autor individual; a página indica atualização em 07 jul. 2026.
+% ---------------------------------------------------------------
+@misc{vercel2026rollback,
+  author        = {{Vercel}},
+  title         = {Performing an Instant Rollback on a Deployment},
+  howpublished  = {Documentação da Vercel},
+  url           = {https://vercel.com/docs/instant-rollback},
+  urlaccessdate = {05 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% VERIFICAR: o Duck DNS é um serviço gratuito que aponta subdomínios de duckdns.org para um endereço IP escolhido pelo usuário (cap. 9, Seção Infraestrutura).
+% Link: https://www.duckdns.org/about.jsp
+% Localização na fonte: primeiro parágrafo da página "about".
+% Acesso em: 05 out. 2026
+% Observações: li a página. Sem autor individual nem data.
+% ---------------------------------------------------------------
+@misc{duckdns2026about,
+  author        = {{Duck DNS}},
+  title         = {Duck {DNS}: about},
+  howpublished  = {Duck DNS},
+  url           = {https://www.duckdns.org/about.jsp},
+  urlaccessdate = {05 out. 2026}
+}
