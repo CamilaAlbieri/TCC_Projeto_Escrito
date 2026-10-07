@@ -357,7 +357,8 @@ Elementos não preenchidos continuam visíveis para visitantes com indicação v
 4. Para visitantes, a ficha é estritamente somente leitura, sem nenhuma opção de edição visível.
 5. A ficha deve respeitar a aparência (tema e cores) configurada pelo dono (RF-18).
 6. O sistema deve fornecer ao front-end as informações necessárias para exibir a ficha final do item em modo leitura, diferenciando visualmente o acesso do dono e de visitantes.
-7. Na listagem da coleção, abrir um item exibe a ficha sobreposta à listagem, sem sair dela, com o fundo escurecido. A própria ficha é o elemento principal da janela, acompanhada apenas do nome do item e de controles discretos para editar a ficha e fechar. Setas laterais (e as teclas ← e →) avançam e voltam entre os itens na ordem em que a listagem os mostra, com a busca e a ordenação vigentes, e param no primeiro e no último item. A ficha continua disponível em página própria, pelo endereço do item. Em modo leitura, a ficha ocupa a largura disponível, preservando sempre a proporção da folha; a altura da tela nunca a reduz — quando a ficha é mais alta que a área visível, a área de visualização permite rolagem vertical.
+7. Na listagem da coleção, abrir um item exibe a ficha sobreposta à listagem, sem sair dela, com o fundo escurecido. A própria ficha é o elemento principal da janela, acompanhada apenas do nome do item e de controles discretos para editar a ficha e fechar. Setas laterais (e as teclas ← e →) avançam e voltam entre os itens na ordem em que a listagem os mostra, com a busca e a ordenação vigentes, e param no primeiro e no último item. A ficha continua disponível em página própria, pelo endereço do item. Em modo leitura, a ficha aparece inteira na área visível e o maior possível, preservando sempre a proporção da folha: uma folha mais alta que a tela é reduzida até caber, para que o usuário veja tudo o que colocou nela. Na visualização sobreposta, um controle de zoom (botões, teclas + e − ou um clique na própria folha) amplia ou reduz a ficha em passos de 10%, a partir do centro do que está à vista; ampliada além da tela, a área de visualização permite rolagem.
+8. O dono pode baixar a ficha exibida, com o nome do item como nome do arquivo, em dois formatos: imagem PNG, gerada no navegador em largura fixa, e PDF, gerado pela impressão do navegador numa página do tamanho da folha. Para a imagem, os arquivos das peças de imagem são obtidos pela API (`GET /storage/file`), que devolve somente arquivos do próprio armazenamento do sistema — o armazenamento em nuvem não libera a leitura direta por outra origem, que o navegador exige para compor a imagem.
 
 ### RF-12 — Visualizar Itens de uma Coleção
 
@@ -1396,8 +1397,8 @@ O checklist do primeiro acesso passou de seis para dez passos. Os quatro novos c
   4. criar o seu layout — existe layout reutilizável criado pelo usuário, com ao menos um elemento;
   5. adicionar o primeiro item — existe item;
   6. personalizar o layout de um item — existe item com layout próprio;
-  7. usar tags — existe coleção com ao menos uma tag;
+  7. explorar pelas tags — existe coleção com ao menos uma tag, **ou** o usuário passou por esse passo no guia;
   8. importar um layout — existe layout importado, **ou** o usuário passou por esse passo no guia;
   9. adicionar um amigo — existe pedido de amizade enviado ou amizade aceita, **ou** o usuário passou por esse passo no guia;
   10. criar sua paleta — existe paleta criada pelo usuário (as seis padrão do cadastro não contam).
-- **Por que 8 e 9 também marcam ao passar:** importar e adicionar amigo dependem do código de outra pessoa, que uma conta nova não tem. O guia mostra onde fica e o que colar, e a passagem fica registrada nas dicas vistas (`import-layout` e `add-friend`, aceitas pelo `PATCH /user/me/onboarding`).
+- **Por que 7, 8 e 9 também marcam ao passar:** o Explorar se conhece olhando; importar e adicionar amigo dependem do código de outra pessoa, que uma conta nova não tem. O guia mostra onde fica e o que fazer, e a passagem fica registrada nas dicas vistas (`explore-tags`, `import-layout` e `add-friend`, aceitas pelo `PATCH /user/me/onboarding`).
