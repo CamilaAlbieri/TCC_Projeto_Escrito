@@ -1402,3 +1402,98 @@ O checklist do primeiro acesso passou de seis para dez passos. Os quatro novos c
   9. adicionar um amigo — existe pedido de amizade enviado ou amizade aceita, **ou** o usuário passou por esse passo no guia;
   10. criar sua paleta — existe paleta criada pelo usuário (as seis padrão do cadastro não contam).
 - **Por que 7, 8 e 9 também marcam ao passar:** o Explorar se conhece olhando; importar e adicionar amigo dependem do código de outra pessoa, que uma conta nova não tem. O guia mostra onde fica e o que fazer, e a passagem fica registrada nas dicas vistas (`explore-tags`, `import-layout` e `add-friend`, aceitas pelo `PATCH /user/me/onboarding`).
+
+### [AJUSTAR] RF-01 e RF-14 — layouts padrão ilustrados, entregues por versão (07/10/2026)
+
+A "Ficha simples" deixou de ser o layout padrão. Toda conta nova recebe três layouts ilustrados — Diário de leitura, Sessão de cinema e Lado A —, desenhados só com as peças do editor e já na folha de criação (1070 de largura). Quem já tinha a "Ficha simples" continua com ela. A entrega passou a ser **por versão**: um layout padrão acrescentado depois chega também às contas que já existem, e um padrão apagado de propósito não volta. Um nome que a pessoa já usa na biblioteca fica de fora da entrega.
+
+- **RF-01, regra 9 — trocar por:** "9. Ao concluir o cadastro, o sistema disponibiliza na biblioteca de layouts do usuário os layouts padrão que oferece, prontos para serem associados a coleções, editados ou duplicados (RF-14 e RF-15). Quando o sistema passa a oferecer um layout padrão novo, ele é acrescentado também à biblioteca das contas existentes, uma única vez; um layout padrão excluído pelo usuário não é entregue de novo."
+- **Modelo de dados (se o texto descrever as tabelas):** o usuário guarda a versão dos layouts padrão que já recebeu (`default_layouts_version`), no lugar da data da entrega (`default_layouts_at`). A folha de uma ficha criada sem tamanho nasce com 1070 × 600.
+- **Element, propriedades visuais — acrescentar:** "desfoque" e "grupo" à lista. O desfoque borra a peça (uma forma desfocada vira sombra ou brilho solto, como no Canva); o grupo faz peças se moverem juntas no editor.
+- **Forma do elemento:** a peça Forma ganhou seis silhuetas — quarto de círculo, meio círculo, arco, onda, mancha e gota —, além das treze que já tinha.
+
+### [AJUSTAR] RF-25 (novo) — Inserir Ilustração do Acervo (08/10/2026)
+
+**Funcionalidade nova, e por isso um requisito próprio.** O editor ganhou um acervo de ilustrações: desenhos prontos (objetos, bichos, natureza, enfeites, cantos de moldura, sombras e brilhos) que o usuário insere na ficha e personaliza. Nenhum requisito existente cobre isso: o RF-14 trata das peças avulsas, e uma ilustração é um conjunto delas com comportamento próprio (seleção em grupo, troca de cores do conjunto). A numeração segue a sequência (RF-25), sem renumerar os demais; no índice, ele entra no grupo **Editor de Layout**.
+
+Com ele vêm duas capacidades do editor que valem para qualquer peça e por isso vão para o RF-14: **agrupar** elementos e o **desfoque**.
+
+**1. Índice dos requisitos funcionais — acrescentar a linha:**
+
+| RF-25 | Inserir Ilustração do Acervo | Editor de Layout | Desejável | Usuário |
+
+**2. Requisito novo — colar depois do RF-17 (ou ao fim da lista, mantendo o número):**
+
+> ### RF-25 — Inserir Ilustração do Acervo
+>
+> - **Grupo:** Editor de Layout
+> - **Ação:** Inserir e personalizar
+> - **Objeto:** Ilustração do acervo do sistema
+> - **Prioridade:** Desejável · **Operação:** Entrada · **Ator:** Usuário
+>
+> **Atributos:** acervo de ilustrações oferecido pelo sistema (para cada ilustração: nome, categoria, termos de busca, tamanho do quadro e o conjunto de formas que a compõem, com posição, tamanho e estilo de cada uma), categoria escolhida ou termo de busca, ilustração escolhida, layout em edição (do usuário ou ficha própria de um item), grupo gerado na inserção (identificador comum às formas inseridas), cores do grupo.
+>
+> **Exemplos:** Camila abre "Ilustrações" no editor do layout "Diário de leitura", escolhe a categoria "Objetos" e insere a "Pilha de livros"; o desenho aparece centralizado na folha, já selecionado inteiro.
+> Camila troca uma das cores do grupo de vinho para azul, e todas as peças que usavam aquela cor mudam juntas.
+> Camila dá um duplo clique na maçã da pilha de livros, entra no grupo e aumenta só a maçã.
+> Camila busca "sombra", insere uma "Sombra de chão" e a leva para baixo de uma foto, como no Canva.
+> Camila seleciona três formas que desenhou e as agrupa; a partir daí elas se movem juntas.
+>
+> **Regras / Restrições:**
+>
+> 1. O acervo de ilustrações é mantido pelo sistema e é o mesmo para todos os usuários; o usuário não cria nem altera ilustrações do acervo, apenas as insere e personaliza as cópias.
+> 2. As ilustrações são organizadas em categorias (Objetos; Cinema, música e jogos; Natureza; Bichos; Enfeites; Cantos e molduras; Sombras e brilhos) e podem ser encontradas por busca, que ignora acentos e maiúsculas.
+> 3. Inserir uma ilustração cria, no layout em edição, um conjunto de elementos do tipo forma ligados por um grupo comum. Não há tipo de elemento novo: cada peça da ilustração é uma forma comum, com cor, borda, opacidade, desfoque, posição e tamanho próprios.
+> 4. A ilustração entra centralizada na folha, com no máximo 40% da largura dela, por cima dos demais elementos e já selecionada por inteiro. O painel continua aberto para inserir outras.
+> 5. Um clique numa peça agrupada seleciona o grupo inteiro, que se move e se redimensiona como um bloco. O duplo clique entra no grupo e seleciona somente aquela peça; clicar fora do grupo sai dele.
+> 6. Com o grupo selecionado, o sistema exibe uma amostra para cada cor usada pelas peças. Trocar a cor de uma amostra troca essa cor em todas as peças do grupo que a usam.
+> 7. O layout guarda uma cópia das formas inseridas. Alterações posteriores no acervo não modificam layouts nem fichas que já usam a ilustração, e duplicar (RF-14), importar (RF-16) ou personalizar (RF-17) o layout leva junto as formas e o grupo.
+> 8. As ilustrações do acervo podem ser desenhadas com as próprias formas do editor ou importadas de arquivos SVG feitos em programas de desenho vetorial. Na importação, cada caminho do arquivo vira uma forma de silhueta livre ("caminho"), com sua cor, e as quatro cores mais usadas tornam-se as cores trocáveis do grupo. Degradês, máscaras, textos e imagens embutidas não são importados.
+
+**3. Caso de uso novo — colar depois de "Criar Layout":**
+
+> ### Caso de uso: Inserir Ilustração do Acervo
+>
+> **Descrição:** Este caso de uso permite que o usuário insira, num layout em edição, uma ilustração pronta do acervo do sistema e a personalize, conforme RF-25.
+>
+> **Condições prévias:** O usuário deve estar autenticado e com um layout aberto no editor (um layout da biblioteca ou a ficha própria de um item).
+>
+> **Fluxo básico:**
+>
+> 1. O usuário seleciona "Ilustrações" no painel de elementos do editor.
+> 2. O sistema exibe o painel de ilustrações, com as categorias e a primeira delas aberta.
+> 3. O usuário escolhe uma categoria ou digita um termo de busca [E01].
+> 4. O sistema exibe as ilustrações correspondentes, cada uma com sua miniatura e nome.
+> 5. O usuário seleciona uma ilustração.
+> 6. O sistema insere as formas da ilustração na folha, centralizadas e agrupadas, por cima dos demais elementos, e as seleciona por inteiro.
+> 7. O usuário move ou redimensiona o grupo, e troca as cores do grupo pela barra de seleção.
+> 8. O sistema grava as alterações automaticamente, como em toda edição do layout (RF-14).
+>
+> **Fluxos alternativos / exceções:**
+>
+> - No passo 3 do FB01, nenhuma ilustração corresponde à busca [E01].
+> - O sistema exibe a mensagem "Nenhuma ilustração com esse nome."
+> - O sistema retorna ao passo 3 do FB01.
+> - No passo 7 do FB01, o usuário dá um duplo clique numa peça do grupo [E02].
+> - O sistema seleciona apenas aquela peça, e o usuário a edita como qualquer forma.
+> - Clicando fora do grupo, o sistema volta a selecionar o grupo inteiro a cada clique.
+> - No passo 7 do FB01, o usuário escolhe "Desagrupar" [E03].
+> - O sistema desfaz o grupo, e cada peça passa a ser selecionada sozinha.
+> - Em qualquer passo, o usuário pode desfazer a inserção (Ctrl+Z ou o botão de desfazer).
+>
+> **Pós-condições:** As formas da ilustração passam a fazer parte do layout em edição, agrupadas, e são gravadas como os demais elementos. O acervo não é alterado.
+>
+> **Requisitos especiais:** RNF01 - O editor deve ser intuitivo e facilitar a personalização. RNF07 - A inserção e a troca de cores devem refletir em tempo real, sem travamentos.
+
+**4. RF-14 — ajustes que acompanham:**
+
+- **Regras — acrescentar:** "14. Elementos selecionados juntos podem ser agrupados e desagrupados. Um grupo se seleciona, move e redimensiona como um bloco, e o duplo clique numa peça entra no grupo para editá-la sozinha. Com vários elementos selecionados, o sistema exibe as cores usadas por eles, e trocar uma troca em todos."
+- **Regras — acrescentar:** "15. Todo elemento pode receber desfoque, medido nas unidades da folha. Uma forma desfocada serve de sombra ou de brilho solto sob outros elementos."
+- **Atributos — acrescentar** à lista de propriedades visuais do elemento: "desfoque, grupo e desenho do caminho (para a forma importada de SVG)".
+- **Glossário, Element:** a mesma lista de propriedades recebe "desfoque, grupo e desenho do caminho".
+
+**5. Caso de uso "Criar Layout", passo 6 — trocar por:** "6. O usuário acrescenta elementos à área de edição pelo painel, escolhendo entre os seis tipos disponíveis (texto, imagem, forma, ícone, classificação e data) ou inserindo uma ilustração pronta do acervo (RF-25) [E01]."
+
+**6. RF-11, regra 2 — complemento opcional:** "A indicação de vazio usa o estilo do próprio elemento, esmaecido — o nome do elemento na fonte, no tamanho e na cor dele; a imagem como uma área tingida com o desenho de foto; a classificação com os símbolos vazios —, de modo que o layout mantenha a aparência pensada pelo autor mesmo antes de preenchido."
+
+**7. Para o capítulo de implementação (se o texto descrever a arquitetura):** as ilustrações são escritas no back-end, junto dos layouts de exemplo, e o front-end recebe uma cópia gerada delas, carregada somente quando o painel é aberto. A importação de SVG é uma ferramenta de manutenção do acervo (`pnpm importar-svg`), e não uma tela do sistema: uma conta administrativa com envio de ilustrações pelo próprio site fica como trabalho futuro, junto dos planos de assinatura.
