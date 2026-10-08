@@ -13,7 +13,7 @@ Os testes se dividem em três alvos. Os testes de serviços verificam as regras 
 
 \section{Visão Geral dos Testes}
 
-O Quadro~\ref{quad:resumoTestes} apresenta a distribuição dos testes pelos módulos do \textit{backend}, com os requisitos funcionais a que cada módulo se relaciona. Os módulos \texttt{storage} e \texttt{common} não correspondem a um requisito específico, pois reúnem funcionalidades transversais: o armazenamento de arquivos, a validação dos Elementos e das imagens enviadas e a regra de mescla de fichas.
+O Quadro~\ref{quad:resumoTestes} apresenta a distribuição dos testes pelos módulos do \textit{backend}, com os requisitos funcionais a que cada módulo se relaciona. Os módulos \texttt{storage}, \texttt{mail} e \texttt{common} não correspondem a um requisito específico, pois reúnem funcionalidades transversais: o armazenamento de arquivos, o envio de e-mail, a validação dos Elementos e das imagens enviadas, a regra de mescla de fichas e o tratamento global de erros.
 
 \begin{quadro}[h!]
 \caption{Distribuição dos testes automatizados por módulo}
@@ -22,17 +22,18 @@ O Quadro~\ref{quad:resumoTestes} apresenta a distribuição dos testes pelos mó
 \hline
 \textbf{Módulo} & \textbf{Requisitos relacionados} & \textbf{Arquivos} & \textbf{Testes} \\ \hline
 \texttt{social} & RF-20 a RF-23 & 20 & 103 \\ \hline
-\texttt{user} & RF-01, RF-03 e RF-05 & 3 & 41 \\ \hline
-\texttt{common} & Transversal (validação de Elementos e de imagens e mescla de fichas) & 4 & 41 \\ \hline
+\texttt{user} & RF-01, RF-03 e RF-05 & 5 & 70 \\ \hline
+\texttt{common} & Transversal (validação de Elementos e de imagens, mescla de fichas e tratamento de erros) & 5 & 44 \\ \hline
 \texttt{item} & RF-09, RF-10, RF-12, RF-17 e RF-22 & 4 & 38 \\ \hline
 \texttt{layout} & RF-14 e RF-16 & 3 & 27 \\ \hline
 \texttt{category} & RF-06 e RF-13 & 4 & 24 \\ \hline
 \texttt{appearance-preset} & RF-18 e RF-19 & 3 & 23 \\ \hline
 \texttt{notification} & RF-24 & 3 & 23 \\ \hline
+\texttt{auth} & RF-01, RF-02 e RF-04 & 5 & 22 \\ \hline
 \texttt{storage} & Transversal (armazenamento de arquivos) & 2 & 16 \\ \hline
-\texttt{auth} & RF-02 e RF-04 & 4 & 12 \\ \hline
 \texttt{collection} & RF-07, RF-08 e RF-15 & 1 & 11 \\ \hline
-\textbf{Total} &  & \textbf{51} & \textbf{359} \\ \hline
+\texttt{mail} & Transversal (envio de e-mail) & 1 & 6 \\ \hline
+\textbf{Total} &  & \textbf{56} & \textbf{407} \\ \hline
 \end{tabular}
 \fonte{Elaborada pelo autor}
 \end{quadro}
@@ -267,7 +268,7 @@ Os casos de teste a seguir foram especificados segundo a estrutura proposta por 
 
 \section{Resultados e Limitações}
 
-Na execução realizada em 2 de outubro de 2026, os 51 conjuntos de testes, com 359 testes no total, foram aprovados, em aproximadamente 8 segundos. Todos os casos de teste especificados na seção anterior obtiveram, portanto, os resultados esperados.
+Na execução realizada em 7 de outubro de 2026, os 56 conjuntos de testes, com 407 testes no total, foram aprovados, em aproximadamente 7 segundos. Todos os casos de teste especificados na seção anterior obtiveram, portanto, os resultados esperados.
 
 A estratégia adotada possui limitações que devem ser consideradas na interpretação desses resultados:
 

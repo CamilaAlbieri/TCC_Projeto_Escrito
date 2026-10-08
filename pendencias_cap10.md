@@ -33,7 +33,17 @@ Linhas conferidas em 02/10/2026 (mudam se o texto for editado; busque por `PREEN
 Total: 17 marcadores `[PREENCHER...]` (2 sem deploy, 15 após o deploy) e 6 comentários `% [APÓS DEPLOY]`.
 
 ### Medições
-- **Feitas (local, 02/10/2026):** latência de 8 rotas, n = 50 cada, todas as 441 requisições com
+- **Refeitas no desktop Ryzen 5 5500 (07/10/2026), backend `b3aaa96`:** Jest com 56 conjuntos e
+  407 testes, todos aprovados (≈ 7 s); latência das 8 rotas, n = 50, 441 requisições 2xx, nenhum 429.
+  Arquivos em `backend-colecoes/scripts/medicoes/resultados/local-20261007T235528/`. Caps. 7, 8 e 10
+  atualizados com esses números; a Seção 10.3 (Validação dos RNF) foi escrita com eles.
+  O `preparar-dados.mjs` agora confirma o e-mail da conta de teste lendo o código do log da API
+  (`MAIL_TRANSPORT=console` + `LOG_DA_API`), porque o login passou a exigir a confirmação.
+- **Resultado novo do RNF-06:** no desktop, gravação + leitura da lista = 388,9 ms (mínimos) e
+  461,7 ms (p95), abaixo dos 500 ms; no notebook tinha dado 568,3 ms. O texto classifica como
+  "não verificado" (a soma é só um limite inferior; o desenho da tela não foi medido) e mantém a
+  falta de atualização otimista.
+- **Feitas antes (local, 02/10/2026, notebook, substituídas pela de 07/10):** latência de 8 rotas, n = 50 cada, todas as 441 requisições com
   sucesso. Arquivos brutos em `TCC-backend/scripts/medicoes/resultados/local-20261002T200334/`
   (`ambiente.json`, `preparo.jsonl`, `amostras.jsonl`, `resumo.json`, `resumo.md`, `limpeza.json`,
   `api.log`, `notas.md`). A conta de teste foi excluída e conferida (login → 401).
@@ -44,9 +54,8 @@ Total: 17 marcadores `[PREENCHER...]` (2 sem deploy, 15 após o deploy) e 6 come
   disponibilidade; a confirmação do backup do Supabase.
 
 ### Achados desta revisão
-- **A máquina das medições não é a do cap. 3:** foi o notebook (i5-13420H, 16 GB), não o desktop
-  Ryzen 5 do `quad:equipamento`. O cap. 10 descreve a máquina real. Se o notebook também foi usado no
-  desenvolvimento, vale acrescentá-lo ao quadro do cap. 3.
+- ~~**A máquina das medições não é a do cap. 3.**~~ **Resolvido em 07/10/2026:** medições refeitas
+  no desktop Ryzen 5 5500 do `quad:equipamento`.
 - **O cap. 9 (Implantação) foi escrito em 05/10/2026**, com o conteúdo de implantação que estava
   no cap. 10 (Arquitetura e Fluxo de Implantação). Ele descreve a produção real (Vercel, VM Oracle
   E2.1.Micro com Docker e Caddy, Supabase gratuito, R2, SMTP do Gmail, Duck DNS). Pendências do cap. 9:
@@ -89,7 +98,7 @@ Há um `% TODO` no início da Seção 10.7 lembrando disso.
 
 | Capítulo | O que diz | O que o código mostra hoje |
 |---|---|---|
-| ~~Cap. 7 (Verificação) e cap. 8 (Resultados)~~ | ~~45 conjuntos, 277 testes~~ | **Resolvido em 02/10/2026:** caps. 7, 8 e 10 citam a mesma execução (51 conjuntos, 359 testes, todos aprovados, ≈ 8 s); o `quad:resumoTestes` foi refeito por módulo. |
+| ~~Cap. 7 (Verificação) e cap. 8 (Resultados)~~ | ~~45 conjuntos, 277 testes~~ | **Atualizado em 07/10/2026:** caps. 7, 8 e 10 citam a execução de 07/10 (56 conjuntos, 407 testes, todos aprovados, ≈ 7 s); o `quad:resumoTestes` ganhou o módulo `mail` e os novos totais de `user`, `auth` e `common`. |
 | Cap. 7 (Servidor de Dados) | 36 migrações | 50 pastas de migração |
 | Cap. 7 (Servidor de Aplicação) | 16 controladores, 81 rotas | Não reconferido; houve rotas novas depois (mescla, desassociação, foto com recorte etc.). Recontar. |
 | Cap. 7 (Aplicação Cliente) | 13 telas | 19 telas em produção (mais `/movimento`, só em desenvolvimento): inclui Explorar, Amigos, Seguindo, perfil, categoria e coleção visitados |
@@ -100,8 +109,8 @@ Há um `% TODO` no início da Seção 10.7 lembrando disso.
 | Cap. 5, linha 192 | Ator Sistema faz "atualização do feed em tempo real" | Não há tempo real nem tela de feed |
 | Cap. 5, RF-06/RF-07 | Descrição até 300 caracteres | Agora 500 (anexo do `contexto_sistema.md`, 01/10/2026) |
 | Item: nome | Banco `VarChar(255)` | DTO aceita no máximo 200. Não citado no texto; escolher um valor se algum capítulo mencionar. |
-| README do back-end, linha 470 | "39 suítes" | 51 |
-| Cap. 7, linha 159 | Os testes verificam "serviços, controladores e DTOs de todos os módulos" | O módulo `tag` não tem testes, e alguns controladores também não (`collection`, `tag`, `social-collection`, `social-item`, `item-layout-override`). Trocar "de todos os módulos" por "dos módulos". |
+| README do back-end, linha 470 | "39 suítes" | 56 (em 07/10/2026) |
+| ~~Cap. 7, linha 159~~ | ~~"de todos os módulos"~~ | **Resolvido em 07/10/2026:** trocado por "dos módulos" (o `tag` não tem testes). |
 
 ---
 
