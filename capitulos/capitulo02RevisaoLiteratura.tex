@@ -26,14 +26,12 @@
 % domínio; aqui ficam o conceito geral e o porquê.
 % =====================================================================
 
-% ABERTURA DO CAPÍTULO (1 parágrafo curto)
-% COMO ABORDAR: apresentar o caminho como um funil, da prática humana
-%   (colecionar) às áreas técnicas usadas para construir a plataforma.
-% FRASE SUGERIDA: "Este capítulo reúne os fundamentos que sustentam a
-%   plataforma, partindo da prática de colecionar e de sua passagem para
-%   o meio digital e chegando às áreas da engenharia de software e da
-%   interação humano-computador envolvidas na sua construção."
-% Fechar com uma frase que liste as sete seções na ordem.
+Este capítulo reúne os fundamentos que sustentam a plataforma, partindo da prática de colecionar e de sua passagem para o meio digital e chegando às áreas da
+engenharia de software e da interação humano-computador envolvidas na sua construção. A Seção~\ref{sec:colecionismo} trata das coleções e do colecionismo
+digital, e as Seções~\ref{sec:engenharia-requisitos}, \ref{sec:modelagem-conceitual} e~\ref{sec:arquitetura-web} abordam a engenharia de requisitos, a modelagem
+conceitual com UML e a arquitetura de aplicações \textit{web}. Em seguida, as Seções~\ref{sec:personalizacao} e~\ref{sec:manipulacao-direta} discutem a
+personalização de interfaces e a manipulação direta em editores visuais, e a Seção~\ref{sec:redes-sociais} encerra o capítulo com as redes sociais e o
+compartilhamento de coleções.
 
 
 \section{Coleções e Colecionismo Digital}
@@ -41,40 +39,43 @@
 
 % PAPEL DA SEÇÃO: mostrar que colecionar é um fenômeno estudado e que, no
 %   digital, as necessidades de organizar e exibir continuam.
-% ABERTURA: "Colecionar vai além de acumular objetos, pois envolve escolher
-%   o que entra no conjunto, organizá-lo e atribuir a ele um significado
-%   pessoal."
-%
-% PASSO 1. O que é colecionar
-% IDEIA: Belk e colegas separam o colecionador do acumulador pela
-%   seletividade e mostram que uma coleção pode reunir objetos, ideias ou
-%   experiências. Estudos recentes mantêm essa base. Silva, Nunes e
-%   Strehlau retomam a definição de Belk de colecionar como um processo
-%   ativo, seletivo e apaixonado, sem função utilitária, e destacam que
-%   manipular, catalogar e expor os itens sustentam o sentimento de posse e
-%   a expressão de si. Correia e colegas, ouvindo 29 colecionadores
-%   brasileiros, descrevem o colecionismo como aquisição, classificação,
-%   exibição e cuidado, e como construção de identidade e de memória.
-%   Sundström e Albuquerque opõem o acúmulo, sem ordem, ao colecionar, que
-%   busca representar quem coleciona. Rava mostra que o princípio de
-%   seleção continua sendo o que separa coleção de acúmulo.
-% COMO ABORDAR: abrir pela definição e destacar dois termos. "Seletiva"
-%   separa coleção de acúmulo. "Experiências" mostra que a coleção não
-%   precisa ser física, então filmes vistos e livros lidos contam. Fechar
-%   com catalogar e exibir, que reaparecem em todo o capítulo.
-% FONTES:
-%   \cite{Belk1988}, p. 548 (seletividade; objetos, ideias ou experiências).
-%   \cite{Silva2020}, p. 96 e 104 (definição de Belk; objetos ou
-%     experiências), p. 105 (coleção como extensão do eu) e p. 106
-%     (manipular, catalogar e expor).
-%   \cite{Correia2026}, p. 2 (aquisição, classificação, exibição, cuidado),
-%     p. 3 (identidade e memória) e p. 5 (seleção, não acúmulo).
-%   \cite{Sundstrom2020}, p. 252 (acumular e colecionar) e p. 253 (a coleção
-%     reflete quem a formou).
-%   \cite{Rava2023}, p. 173-174 (seleção separa coleção de acúmulo).
-% PONTE: "Se a coleção pode ser feita de experiências, ela também pode
-%   existir em meio digital."
-%
+
+Colecionar é uma prática antiga, com indícios que remontam à Pré-História \cite{CasadoRigalt2020,Sundstrom2020}. \citeonline[p.~254]{Sundstrom2020} associam
+esses primeiros indícios à sobrevivência, pois identificar e guardar um novo instrumento era essencial para o desenvolvimento humano, e
+\citeonline[p.~13]{CasadoRigalt2020} trata o instinto de posse como inerente à condição humana. Já nesse período, porém, objetos com características especiais
+eram guardados e recebiam valor simbólico mesmo quando não estavam ligados à sobrevivência \cite[p.~170]{Oliveira2017}. Na Antiguidade, o rei assírio
+Assurbanipal reuniu mais de 20 mil tabuletas de argila em sua biblioteca em Nínive, e gregos e romanos colecionavam como forma de prestígio e de poder
+\cite{CasadoRigalt2020,Oliveira2017,Finardi2020}.
+
+A prática se transformou ao longo dos séculos. Na Idade Média, as coleções tinham viés religioso e exibiam as riquezas de reis e governantes
+\cite[p.~254]{Sundstrom2020}. A partir do Renascimento, nobres europeus passaram a guardar peças raras e exóticas em gabinetes de curiosidades, e muitas dessas
+coleções formaram o núcleo dos primeiros museus públicos \cite{Finardi2020,Oliveira2017,CasadoRigalt2020}. No século XX, a produção em massa tornou o
+colecionismo um fenômeno de massas, e muitos objetos passaram a ser fabricados já para serem colecionados \cite{Oliveira2017,Sundstrom2020,Finardi2020}.
+
+As motivações para colecionar também são variadas. A coleção expressa quem coleciona, pois reflete a personalidade do colecionador e funciona como uma extensão
+do seu eu \cite{Silva2020,Oliveira2017,Correia2026}. Ela responde ainda ao desejo de controle, e \citeonline{Cao2025} mostram, em estudos de laboratório e de
+campo, que esse desejo leva as pessoas a se engajar no colecionismo porque a coleção oferece estrutura e ordem. Catalogar os itens, por sua vez, dá ao
+colecionador um meio concreto de acompanhar seus objetivos \cite[p.~106]{Silva2020}.
+
+Muitas vezes, colecionar é alimentado pela nostalgia e pelo desejo de resgatar memórias da infância, motivação relatada por colecionadores brasileiros e por
+consumidores norte-americanos \cite{Correia2024,Correia2026,JohnsonJorgensen2023,Silva2020}. A coleção também preserva a história pessoal e coletiva, já que
+reúne registros de acontecimentos passados cujo valor pode ser pessoal ou ligado à história de famílias, comunidades e nações \cite[p.~88]{Finardi2020}, e
+funciona como um arquivo pessoal que reflete a trajetória do colecionador \cite[p.~106]{Silva2020}. Para muitos objetos, reuni-los numa coleção é a única forma
+de salvaguardá-los para as gerações futuras \cite[p.~176]{Oliveira2017}.
+
+Cuidar da coleção traz ainda bem-estar e satisfação. Colecionadores descrevem a atividade como um lazer agradável, que proporciona contentamento e no qual
+manusear, organizar e inventariar os itens é fonte de satisfação \cite[p.~176]{Oliveira2017}. Alcançar um objetivo da coleção gera um sentimento de autoeficácia
+e eleva a autoestima \cite[p.~105]{Silva2020}, e completar um conjunto é descrito pelos próprios colecionadores como uma sensação muito boa
+\cite[p.~9]{Correia2026}. \citeonline{Cao2025} acrescentam que a coleção pode servir como forma de enfrentamento em tempos de incerteza e mudança rápida, nos
+quais traz conforto e sentido.
+
+\citeonline[p.~548]{Belk1988} separam o colecionador do acumulador pela seletividade e mostram que uma coleção pode reunir objetos, ideias ou experiências.
+Estudos recentes mantêm essa base. \citeonline{Silva2020} retomam a definição de Belk de colecionar como um processo ativo, seletivo e apaixonado, sem função
+utilitária, e destacam que manipular, catalogar e expor os itens sustentam o sentimento de posse e a expressão de si. \citeonline{Correia2026}, ouvindo 29
+colecionadores brasileiros, descrevem o colecionismo como aquisição, classificação, exibição e cuidado, e como construção de identidade e de memória.
+\citeonline{Sundstrom2020} opõem o acúmulo, sem ordem, ao colecionar, que busca representar quem coleciona, e \citeonline{Rava2023} mostra que o princípio de
+seleção continua sendo o que separa coleção de acúmulo.
+
 % PASSO 2. A coleção no meio digital
 % IDEIA: Watkins, Sellen e Lindley identificaram três práticas centrais
 %   dos colecionadores, a aquisição, a curadoria e a exibição, que o
