@@ -1,46 +1,36 @@
 \chapter{Conclusões}
 \label{cap:12}
 
-Este trabalho partiu da ausência de uma plataforma que reunisse, em um só lugar, a organização de coleções de qualquer tipo, a liberdade de definir a estrutura e a aparência de cada registro e o compartilhamento dessas coleções com outras pessoas. Para enfrentá-la, foi desenvolvida uma plataforma \textit{web} em que o acervo se organiza em Categorias, Coleções e Itens, a ficha de cada Item é desenhada em um editor de \textit{layouts}, a interface pode ser personalizada por paletas e tipografia, e as coleções podem ser compartilhadas com amigos e acompanhadas por outros usuários. A plataforma está em operação pública desde 3 de outubro de 2026, e o objetivo geral, apresentado no Capítulo~\ref{cap:01}, foi alcançado.
+Este trabalho propôs-se a desenvolver uma plataforma \textit{web} para coleções digitais de qualquer natureza, organizadas em Categorias, Coleções e Itens, com a apresentação de cada Item definida pelo próprio usuário em um editor de \textit{layouts}, a aparência da interface personalizável por paletas e tipografia e o compartilhamento das coleções com outras pessoas. A plataforma está em operação pública desde 3 de outubro de 2026. Este capítulo avalia o alcance desse propósito, registra as limitações do que foi afirmado, discute as ameaças à validade dos resultados e indica os desdobramentos possíveis.
 
-\section{Atendimento dos Objetivos}
+\section{Objetivos Alcançados}
 
-Os objetivos específicos foram cumpridos da seguinte forma.
+Os sete objetivos específicos enunciados na Seção~\ref{subsec:objetivosEspecificos} foram alcançados. Os requisitos funcionais e não funcionais, os casos de uso e o modelo de domínio foram especificados no Capítulo~\ref{cap:05}. O modelo de domínio, organizado em sete pacotes conceituais, deu origem ao projeto de interface e ao projeto de dados do Capítulo~\ref{cap:06}, e a mesma divisão se manteve nos módulos da API. A organização do acervo em Categorias, Coleções e Itens, com a privacidade definida no nível da Coleção, foi implementada e atende aos requisitos do RF-06 ao RF-13. O editor de \textit{layouts} oferece Elementos de seis tipos, associa um \textit{layout} a Coleções e permite personalizar a ficha de um Item sem alterar os demais, atendendo aos requisitos do RF-14 ao RF-17, e responde às interações em no máximo 48 milissegundos, frente ao limite de 200 milissegundos do RNF-07. As paletas de cores e a tipografia são aplicadas a toda a interface e guardadas no perfil do usuário (RF-18 e RF-19). A amizade, o acompanhamento de Coleções, o \textit{feed} de atualizações e as notificações operam sob a privacidade de cada Coleção (RF-20 a RF-24).
 
-\begin{itemize}
-    \item \textbf{Requisitos e casos de uso.} Os requisitos funcionais e não funcionais, os casos de uso e o modelo de domínio foram especificados no Capítulo~\ref{cap:05}, e serviram de referência para a validação apresentada no Capítulo~\ref{cap:10}.
-    \item \textbf{Modelo de domínio, projeto de interface e projeto de dados.} O modelo de domínio, organizado em sete pacotes conceituais, deu origem ao projeto de interface e ao projeto de dados descritos no Capítulo~\ref{cap:06}, e a mesma divisão se manteve nos módulos da API.
-    \item \textbf{Organização do acervo com privacidade por Coleção.} A hierarquia de Categorias, Coleções e Itens e o controle de privacidade no nível da Coleção foram implementados, e os requisitos correspondentes, do RF-06 ao RF-13, foram considerados atendidos.
-    \item \textbf{Editor de \textit{layouts}.} O editor oferece Elementos de seis tipos, permite associar um \textit{layout} a Coleções e personalizar a ficha de um Item sem alterar os demais, o que atende aos requisitos do RF-14 ao RF-17. A resposta do editor foi medida no navegador, e o maior tempo entre uma interação e a sua exibição foi de 48 milissegundos, abaixo do limite de 200 milissegundos do RNF-07.
-    \item \textbf{Personalização global da interface.} As paletas de cores e a tipografia são aplicadas a toda a interface e guardadas no perfil do usuário, atendendo ao RF-18 e ao RF-19.
-    \item \textbf{Funcionalidades sociais.} A amizade, o acompanhamento de Coleções, o \textit{feed} de atualizações e as notificações foram implementados sob as regras de privacidade de cada Coleção, e os requisitos do RF-20 ao RF-24 foram considerados atendidos.
-    \item \textbf{Verificação do sistema.} O \textit{backend} conta com 58 conjuntos de testes automatizados, com 520 testes, todos aprovados; a interface foi verificada manualmente durante o desenvolvimento e pelo uso da plataforma publicada; e os limites de tempo dos requisitos não funcionais foram medidos com \textit{scripts} que gravam cada amostra, de modo que os resultados podem ser conferidos e repetidos.
-\end{itemize}
+O sétimo objetivo, verificar o funcionamento do sistema, foi cumprido nos termos delimitados pelo Capítulo~\ref{cap:08} e pela Seção~\ref{sec:validacaoRNF}. Os 520 testes automatizados do \textit{backend} foram aprovados, os vinte e quatro requisitos funcionais foram considerados atendidos, e as métricas de desempenho foram cumpridas com folga: a 10 Mbps e sem cache, as telas medidas atingiram o maior elemento pintado em menos de meio segundo no percentil 75; a movimentação de um Item se reflete na tela em menos de 60 milissegundos; e o editor responde às interações em até 48 milissegundos. A situação de cada requisito não funcional está reunida no Quadro~\ref{quad:sinteseRNF}. A ressalva é de alcance: a verificação cobre as regras e as telas exercitadas, e não toda combinação de uso possível.
 
-Os vinte e quatro requisitos funcionais foram, portanto, considerados atendidos. Entre os dez requisitos não funcionais, o RNF-07 foi atendido; o RNF-02, o RNF-03, o RNF-05 e o RNF-06 foram atendidos com ressalva, isto é, cumpriram suas métricas, mas não todas as suas restrições; o RNF-01, o RNF-04 e o RNF-08 não foram verificados, por dependerem de avaliação com usuários, de testes em vários navegadores ou do acompanhamento contínuo da plataforma publicada; e o RNF-09 e o RNF-10 não foram atendidos.
-
-\section{Considerações sobre o Desenvolvimento}
-
-Algumas decisões tomadas ao longo do trabalho se mostraram centrais para o resultado. A área de edição do editor desenha a ficha exatamente como ela aparecerá em modo leitura, o que dispensa uma prévia separada, mas exige medir toda a ficha em relação à largura da folha. A cópia própria do \textit{layout}, criada quando um Item é personalizado, garante que a personalização de um Item nunca altere os demais, ao custo de essa cópia deixar de acompanhar as mudanças posteriores no \textit{layout} da Coleção, o que levou à mescla entre a ficha e o \textit{layout} novo. A privacidade aplicada em cada rota da API, com respostas que escondem até a existência de um recurso restrito, protege as coleções privadas, mas precisa ser repetida em toda rota nova.
-
-As medições também orientaram o desenvolvimento. A primeira medição da movimentação de Itens mostrou que esperar a confirmação do servidor e reler a lista antes de atualizar a tela ultrapassava o limite de 500 milissegundos do RNF-06. A interface passou então a aplicar a movimentação de forma otimista, e o tempo percebido caiu para menos de 60 milissegundos. O caso ilustra o valor de medir, e não apenas estimar, o desempenho percebido pelo usuário.
-
-O uso da plataforma por pessoas que não participaram do desenvolvimento mostrou, por fim, uma característica própria desse tipo de ferramenta: como o usuário define a estrutura de cada registro, ele precisa compreender a relação entre o \textit{layout}, a Coleção e as fichas antes de aproveitar a liberdade que ela oferece, algo que uma planilha, de estrutura fixa, dispensa.
+Algumas decisões de projeto sustentam esse resultado. A área de edição desenha a ficha exatamente como ela aparecerá em modo leitura, de modo que o usuário vê o resultado final enquanto edita. A cópia própria do \textit{layout}, criada quando um Item é personalizado, isola a personalização de cada Item, e a mescla com o \textit{layout} da Coleção preserva os Elementos de quem personalizou. A regra de privacidade, aplicada em cada rota da API, responde a um recurso restrito como se ele não existisse. E a movimentação de Itens, aplicada de forma otimista, deixa de esperar a gravação no banco para atualizar a tela, decisão orientada pela própria medição, que mostrou que a espera somada à releitura da lista ultrapassaria o limite do RNF-06.
 
 \section{Limitações}
 
-Os resultados devem ser lidos à luz de algumas limitações. Os testes automatizados são de unidade, com o banco de dados simulado, e não há testes de integração com um banco real nem testes de ponta a ponta que percorram a API e a interface. As medições de desempenho foram feitas em um único computador, com a API conectada ao banco de dados do Supabase pela internet, e não foram repetidas no ambiente de produção nem em aparelhos de menor desempenho. A avaliação com usuários limitou-se ao uso da plataforma por duas pessoas, acompanhado por observação, sem as medições previstas para a usabilidade no RNF-01.
+As limitações a seguir incidem sobre o que o trabalho afirma.
+
+Os testes automatizados são de unidade, com o acesso ao banco de dados simulado. Eles verificam as operações que cada regra de negócio solicita ao banco, e não o resultado dessas operações em um banco PostgreSQL real, como a aplicação das restrições de unicidade.
+
+As medições de desempenho foram feitas em um único computador, com a API conectada ao banco de dados do Supabase pela internet e sem limitação do processador. Elas caracterizam a API, o banco de dados e a interface, e não a rede de quem usa a plataforma publicada nem aparelhos de menor desempenho.
+
+A reversão da movimentação de um Item, quando o servidor recusa a operação, foi implementada e conferida no código, mas não foi exercitada nas medições, pois nenhuma das movimentações medidas falhou.
+
+\section{Ameaças à Validade}
+
+Os resultados do Capítulo~\ref{cap:10} apoiam-se em condições que convém explicitar. As medições de desempenho provêm de um único dia e de uma única máquina, com dez a cinquenta amostras por cenário, e não constituem série estatística. O uso da plataforma por pessoas que não participaram do desenvolvimento limitou-se a duas pessoas, acompanhadas por observação, o que não permite generalizar a percepção de uso para outros perfis de colecionador. Por fim, a verificação foi conduzida pela própria autora da implementação, sobre os aspectos que ela identificou como relevantes; uma verificação conduzida por terceiros poderia alcançar caminhos que este trabalho não considerou.
 
 \section{Trabalhos Futuros}
 
-As ressalvas e lacunas da validação indicam os próximos passos do trabalho:
+Os desdobramentos identificados dividem-se em três grupos. O primeiro corresponde à evolução da plataforma para acervos maiores e para mais formas de interação: o carregamento progressivo das listagens de Categorias, Coleções e Itens, a otimização das imagens enviadas, a navegação do editor de \textit{layouts} por teclado e um atalho de teclado para desfazer a movimentação de Itens.
 
-\begin{itemize}
-    \item paginar as listagens de Categorias, Coleções e Itens e otimizar no servidor as imagens enviadas, completando as restrições do RNF-02;
-    \item implementar a navegação do editor por teclado e auditar a interface quanto ao nível AA das WCAG, condição do RNF-09;
-    \item adotar cópias de segurança diárias do banco de dados e o registro em auditoria das exclusões, exigidos pelo RNF-10;
-    \item acompanhar a disponibilidade da plataforma publicada com um serviço de monitoramento externo e repetir as medições de desempenho no ambiente de produção;
-    \item conduzir uma avaliação de usabilidade com usuários iniciantes e testar a interface em diferentes navegadores e larguras de tela, verificando o RNF-01 e o RNF-04;
-    \item complementar os testes de unidade com testes de integração, sobre um banco de dados real, e com testes de ponta a ponta;
-    \item oferecer o atalho \texttt{Ctrl+Z} para desfazer a movimentação de Itens, como especificado no RNF-06, e deixar de registrar dados sensíveis nos registros de erro, ressalva do RNF-03.
-\end{itemize}
+O segundo grupo amplia a verificação: testes de integração sobre um banco de dados real e testes de ponta a ponta que percorram a API e a interface, uma avaliação de usabilidade com usuários iniciantes, testes em diferentes navegadores e larguras de tela e a repetição das medições de desempenho no ambiente de produção.
+
+O terceiro diz respeito à operação da plataforma publicada: o acompanhamento contínuo de sua disponibilidade por um serviço de monitoramento externo e a adoção de cópias de segurança automáticas do banco de dados.
+
+A verificação por terceiros, mencionada entre as ameaças à validade, é um desdobramento de natureza distinta dos anteriores, e seria o próximo passo natural para sustentar os resultados deste trabalho com independência maior do que a que ele próprio pôde oferecer.
