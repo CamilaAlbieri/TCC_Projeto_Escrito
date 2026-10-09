@@ -1,7 +1,7 @@
 \chapter{Teste}
 \label{cap:08}
 
-Este capítulo apresenta os testes realizados para verificar as regras de negócio do sistema, conforme a estratégia descrita no Capítulo~\ref{cap:03}. A verificação automatizada concentra-se no \textit{backend}, onde residem as regras de acesso, privacidade, sessão e consistência dos dados, e foi conduzida por meio de testes de unidade. São descritos o ambiente em que os testes são executados, uma visão geral do conjunto de testes por módulo, a especificação dos principais casos de teste e os resultados obtidos.
+Este capítulo apresenta a verificação do sistema, nas três frentes da estratégia descrita no Capítulo~\ref{cap:03}. A verificação automatizada concentra-se no \textit{backend}, onde residem as regras de acesso, privacidade, sessão e consistência dos dados, e foi conduzida por meio de testes de unidade. A verificação manual cobre a interface, que os testes de unidade não alcançam. As medições de desempenho verificam os limites de tempo fixados pelos requisitos não funcionais. São descritos o ambiente em que os testes automatizados são executados, uma visão geral do conjunto de testes por módulo, a especificação dos principais casos de teste e seus resultados, a verificação manual e o método das medições, cujos resultados, por dependerem do juízo sobre cada requisito, são apresentados no Capítulo~\ref{cap:10}.
 
 \section{Ambiente e Execução dos Testes}
 
@@ -21,11 +21,11 @@ O Quadro~\ref{quad:resumoTestes} apresenta a distribuição dos testes pelos mó
 \begin{tabular}{|p{3.9cm}|p{5.6cm}|p{1.9cm}|p{1.6cm}|}
 \hline
 \textbf{Módulo} & \textbf{Requisitos relacionados} & \textbf{Arquivos} & \textbf{Testes} \\ \hline
+\texttt{layout} & RF-01 (\textit{layouts} padrão), RF-14 e RF-16 & 5 & 140 \\ \hline
 \texttt{social} & RF-20 a RF-23 & 20 & 103 \\ \hline
 \texttt{user} & RF-01, RF-03 e RF-05 & 5 & 70 \\ \hline
 \texttt{common} & Transversal (validação de Elementos e de imagens, mescla de fichas e tratamento de erros) & 5 & 44 \\ \hline
 \texttt{item} & RF-09, RF-10, RF-12, RF-17 e RF-22 & 4 & 38 \\ \hline
-\texttt{layout} & RF-14 e RF-16 & 3 & 27 \\ \hline
 \texttt{category} & RF-06 e RF-13 & 4 & 24 \\ \hline
 \texttt{appearance-preset} & RF-18 e RF-19 & 3 & 23 \\ \hline
 \texttt{notification} & RF-24 & 3 & 23 \\ \hline
@@ -33,14 +33,16 @@ O Quadro~\ref{quad:resumoTestes} apresenta a distribuição dos testes pelos mó
 \texttt{storage} & Transversal (armazenamento de arquivos) & 2 & 16 \\ \hline
 \texttt{collection} & RF-07, RF-08 e RF-15 & 1 & 11 \\ \hline
 \texttt{mail} & Transversal (envio de e-mail) & 1 & 6 \\ \hline
-\textbf{Total} &  & \textbf{56} & \textbf{407} \\ \hline
+\textbf{Total} &  & \textbf{58} & \textbf{520} \\ \hline
 \end{tabular}
 \fonte{Elaborada pelo autor}
 \end{quadro}
 
-O módulo social concentra o maior número de testes porque reúne as regras com mais combinações possíveis: o que cada usuário pode ver e acompanhar depende, ao mesmo tempo, do nível de privacidade da coleção e da existência de uma amizade aceita com o dono. Parte desses testes é parametrizada, isto é, um mesmo teste é executado para cada combinação de nível de acesso e privacidade, o que garante que nenhuma delas fique sem verificação.
+O módulo \texttt{layout} concentra o maior número de testes porque a maior parte deles é parametrizada: o mesmo teste é repetido para cada \textit{layout} padrão e para cada forma desenhada que o sistema fornece, submetendo-os às mesmas regras de validação que a API aplica aos Elementos recebidos, de modo que um conteúdo padrão inválido seja detectado no teste, e não na biblioteca do usuário.
+% layout: exemplos.spec.ts tem 30 testes sobre os layouts de exemplo e 76 sobre os desenhos de formas; converter.spec.ts, 5. Em seguida vem o módulo social, que reúne as regras com mais combinações possíveis: o que cada usuário pode ver e acompanhar depende, ao mesmo tempo, do nível de privacidade da coleção e da existência de uma amizade aceita com o dono. Parte desses testes é parametrizada, isto é, um mesmo teste é executado para cada combinação de nível de acesso e privacidade, o que garante que nenhuma delas fique sem verificação.
 
 \section{Casos de Teste}
+\label{sec:casosDeTeste}
 
 Os casos de teste a seguir foram especificados segundo a estrutura proposta por \citeonline{marques2018}, composta por título, objetivo, pré-condição, passos e resultados esperados. Como os casos são executados automaticamente pelo Jest, os passos descrevem as ações realizadas pelo teste automatizado: preparar o estado simulado, acionar a operação e verificar o retorno. Os resultados esperados descrevem o comportamento do sistema com verbos no presente, conforme recomenda o autor. Ao final de cada caso, são indicados os testes automatizados que o implementam, identificados pelo nome registrado no código. Foram selecionadas as regras de maior impacto sobre a segurança e a consistência dos dados, apresentadas nos Quadros~\ref{quad:ct01} a~\ref{quad:ct08}.
 
@@ -266,14 +268,56 @@ Os casos de teste a seguir foram especificados segundo a estrutura proposta por 
 \end{quadro}
 \FloatBarrier
 
-\section{Resultados e Limitações}
+\section{Resultados e Limitações dos Testes Automatizados}
 
-Na execução realizada em 7 de outubro de 2026, os 56 conjuntos de testes, com 407 testes no total, foram aprovados, em aproximadamente 7 segundos. Todos os casos de teste especificados na seção anterior obtiveram, portanto, os resultados esperados.
+Na execução realizada em 8 de outubro de 2026, os 58 conjuntos de testes, com 520 testes no total, foram aprovados, em aproximadamente 7 segundos. Todos os casos de teste especificados na seção anterior obtiveram, portanto, os resultados esperados.
+% Commit bc0b2e7 do backend, o mesmo das medições do Capítulo 10 (scripts/medicoes/resultados/local-20261008T224944/notas.md, item 3).
 
 A estratégia adotada possui limitações que devem ser consideradas na interpretação desses resultados:
 
 \begin{itemize}
     \item \textbf{Ausência de testes de integração:} como o acesso ao banco é simulado, os testes verificam as operações que a regra de negócio solicita ao banco, mas não o comportamento dessas operações em um banco PostgreSQL real, como a aplicação das restrições de unicidade.
     \item \textbf{Ausência de testes de ponta a ponta:} não há testes que percorram a API a partir de requisições HTTP, verificando em conjunto a autenticação, a validação e as respostas de cada rota.
-    \item \textbf{Escopo da verificação automatizada:} os testes automatizados concentram-se nas regras de negócio do \textit{backend} e não abrangem os aspectos visuais e de interação da aplicação cliente.
+    \item \textbf{Escopo da verificação automatizada:} os testes automatizados concentram-se nas regras de negócio do \textit{backend} e não abrangem os aspectos visuais e de interação da aplicação cliente, que ficam a cargo da verificação manual e das medições no navegador, descritas nas seções seguintes.
 \end{itemize}
+
+\section{Verificação Manual}
+\label{sec:verificacaoManual}
+
+Os aspectos que os testes de unidade não alcançam, como a aparência das telas e a interação com o editor de \textit{layouts}, foram verificados manualmente, na segunda frente da estratégia descrita no Capítulo~\ref{cap:03}. A cada funcionalidade concluída, ela foi exercitada pela interface, e o estado do banco de dados após cada operação foi conferido com o DBeaver, o que permitiu confirmar, por exemplo, que um Item ficava vinculado à Coleção correta e usava os Elementos do \textit{layout} aplicável. Depois da publicação descrita no Capítulo~\ref{cap:09}, a plataforma passou a ser usada pela autora e por duas pessoas que não participaram do desenvolvimento, uso relatado na Seção~\ref{sec:validacaoUso}. Somou-se a isso a inspeção do código da aplicação cliente e da API, para confirmar como cada regra foi implementada quando o comportamento observado na tela não bastava para isso.
+
+Por ser exploratória, essa verificação não tem casos especificados como os da Seção~\ref{sec:casosDeTeste}. No Capítulo~\ref{cap:10}, ela aparece como \textit{uso} e \textit{inspeção} entre os instrumentos de validação dos requisitos funcionais, ao lado dos testes automatizados.
+
+\section{Medições de Desempenho}
+\label{sec:medicoes}
+
+Três requisitos não funcionais fixam limites de tempo: o RNF-02, para o carregamento das telas e as respostas da API; o RNF-06, para a movimentação de Itens entre Coleções; e o RNF-07, para a resposta do editor de \textit{layouts}. Esses limites não se verificam por testes de unidade, e foram medidos com \textit{scripts} mantidos no repositório da API, na pasta \texttt{scripts/medicoes}. Os \textit{scripts} gravam cada amostra individualmente, além da descrição do ambiente e dos resumos estatísticos, de modo que todo número citado pode ser conferido e a medição, repetida. Esta seção descreve como as medições foram feitas; os resultados e o juízo sobre cada requisito estão na Seção~\ref{sec:validacaoRNF}.
+% Dados brutos: scripts/medicoes/resultados/local-20261008T224944 (API e editor) e local-20261009T000939 (telas e movimentação a 10 Mbps). Backend bc0b2e7; front 0fc8072 com a movimentação otimista.
+
+\subsection{Ambiente e Acervo}
+
+As medições foram feitas em 8 de outubro de 2026, no computador descrito no Quadro~\ref{quad:equipamento}. A API foi executada em modo de produção, conectada ao banco de dados do Supabase pela internet, de modo que cada tempo medido inclui a ida e a volta até o banco. A interface foi compilada para produção e servida pela mesma máquina que a API. Os \textit{scripts} criam, pela própria API, uma conta de teste e um acervo sintético com uma Categoria, duas Coleções, cinquenta Itens, cinco deles com ficha própria, e um \textit{layout} de quinze Elementos, quantidade citada no RNF-07. A confirmação do e-mail da conta de teste passa pela mesma rota usada pela interface, com o código lido do registro da API, executada em um modo que não envia e-mail. Ao final, os \textit{scripts} excluem a conta e confirmam a exclusão.
+
+As medições não foram repetidas no ambiente de produção descrito no Capítulo~\ref{cap:09}, de modo que os tempos caracterizam a API, o banco de dados e a interface, mas não a distância entre a máquina virtual e o Supabase nem a rede de quem usa a plataforma publicada.
+% [SE MEDIR EM PRODUÇÃO: latencia-api.mjs com AMBIENTE=producao; acrescentar o quadro equivalente no Capítulo 10]
+
+\subsection{Tempo de Resposta da API}
+
+O tempo de resposta foi medido em oito rotas: as leituras do painel de Categorias, das Coleções de uma Categoria, da lista de cinquenta Itens e da ficha própria de quinze Elementos; o cadastro e a exclusão de um Item; a movimentação de um Item entre Coleções; e a gravação de um Elemento no editor. Cada rota recebeu cinco requisições de aquecimento, descartadas, e cinquenta medidas. O tempo de cada requisição foi medido do instante anterior ao envio até a leitura completa do corpo da resposta, uma requisição de cada vez, com 700 milissegundos entre elas. O intervalo mantém o ritmo abaixo do limite de 100 requisições por minuto que a API impõe a cada endereço de origem; pela mesma razão, não foi feito ensaio de carga, que, a partir de uma única máquina, mediria o limitador, e não a API.
+
+\subsection{Medições no Navegador}
+
+As telas, a movimentação de Itens e o editor foram medidos no Google Chrome 154. Três \textit{scripts} da mesma pasta foram executados na própria página, sem alteração, como se colados no console do navegador.
+
+O primeiro registra, a cada carregamento de uma tela, o instante da primeira pintura de conteúdo (FCP), o do maior elemento de conteúdo pintado (LCP) e o início e a duração de cada chamada à API, todos contados a partir do início da navegação. Foram feitos dez recarregamentos da lista de cinquenta Itens e dez da ficha de um Item com ficha própria, com a rede limitada a 10 Mbps pelas ferramentas de desenvolvimento do navegador, como prevê o RNF-02, em duas condições: com o cache do navegador desligado, que equivale à primeira visita, em que toda a interface é baixada, e com o cache ligado, que equivale ao retorno de quem já visitou a plataforma.
+
+O segundo mede, para cada movimentação de Item feita pela tela, o tempo entre o clique no botão que confirma a movimentação e o primeiro quadro pintado sem o cartão do Item, e registra quando chegou a resposta do servidor. Foram feitas dez movimentações, também a 10 Mbps.
+
+O terceiro usa a interface de temporização de eventos do navegador (\textit{Event Timing API}), base da métrica INP, que informa, para cada interação, o tempo entre o gesto e a pintura do quadro seguinte. Os eventos de um mesmo gesto, como os de um arraste, são agrupados, e cada gesto conta pela sua maior duração. No editor do \textit{layout} de quinze Elementos foram feitos 31 gestos com o \textit{mouse}: nove seleções, seis mudanças de propriedade de texto, seis arrastes, quatro redimensionamentos pelas alças, quatro inclusões de Elementos pelo painel, uma operação de desfazer e outra de refazer. A interface só informa interações que duram ao menos 16 milissegundos.
+
+As telas e a movimentação foram medidas com uma janela de 1584 por 805 pixels de área útil; o editor, cuja resposta não depende da rede, foi medido em outra sessão, sem limitação de rede e com uma janela de 1024 por 577 pixels. Em nenhuma das medições houve limitação do processador.
+% Telas e movimentação: Chrome conduzido pelo DevTools Protocol (local-20261009T000939/navegador/roteiros). Editor: Chrome com a extensão Claude in Chrome (local-20261008T224944/navegador).
+
+\subsection{Cálculo dos Percentis}
+
+Os percentis foram calculados pelo método do posto mais próximo, sem interpolação, de modo que todo valor relatado é um tempo que de fato ocorreu; com cinquenta amostras, o percentil 99 coincide com o máximo. O juízo sobre a API usa o percentil 95, e o juízo sobre as telas e o editor, o percentil 75, convenção das métricas LCP e INP; a escolha é justificada com cada requisito na Seção~\ref{sec:validacaoRNF}.

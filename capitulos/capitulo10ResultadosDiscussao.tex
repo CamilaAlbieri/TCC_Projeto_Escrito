@@ -14,7 +14,6 @@ e as mensagens de confirmação de cadastro e de recuperação de senha chegam a
 
 A operação tem caráter de validação acadêmica. As Categorias, Coleções, Itens e \textit{layouts} da base foram criados, em sua maior parte, pela autora
 durante o desenvolvimento. A plataforma também foi usada por duas pessoas que não participaram do desenvolvimento, conforme a Seção~\ref{sec:validacaoUso}.
-% [MEDIÇÃO NO RYZEN: o método (máquina do quad:equipamento, acervo, requisições) vai para o Capítulo 8; aqui entram só os resultados, na Seção 10.3]
 
 \section{Validação dos Requisitos Funcionais}
 \label{sec:validacaoRF}
@@ -160,6 +159,7 @@ RF-24 & Módulo \texttt{notification}; uso & Notificações restritas ao usuári
 \fonte{Elaborado pelo autor}
 \end{quadro}
 
+
 Os vinte e quatro requisitos funcionais são, portanto, considerados atendidos.
 
 \section{Validação dos Requisitos Não Funcionais}
@@ -167,13 +167,11 @@ Os vinte e quatro requisitos funcionais são, portanto, considerados atendidos.
 
 Os requisitos não funcionais do Capítulo~\ref{cap:05} não são o eixo deste trabalho, cuja contribuição está nas funcionalidades verificadas na seção anterior, mas cada um deles merece um juízo explícito sobre o seu atendimento. A situação de cada requisito assume um de quatro valores: \textbf{atendido}; \textbf{atendido com ressalva}, quando a métrica foi cumprida, mas alguma restrição do requisito comprovadamente não foi; \textbf{não verificado}, quando faltou o instrumento ou a medição; e \textbf{não atendido}, quando o resultado contraria a métrica. A situação é determinada pela métrica, e uma restrição não cumprida impede que o requisito seja considerado plenamente atendido, ainda que a métrica o seja.
 
-\subsection{Método das Medições}
+\subsection{Resultados das Medições}
 
-As medições foram feitas com \textit{scripts} mantidos no repositório da API, na pasta \texttt{scripts/medicoes}, que gravam cada requisição individualmente (horário, rota, código de resposta, tempo e tamanho), a descrição do ambiente e os resumos estatísticos, de modo que todo número citado nesta seção pode ser conferido e a medição, repetida. Os \textit{scripts} criam, pela própria API, uma conta de teste e um acervo sintético com uma Categoria, duas Coleções, cinquenta Itens, cinco deles com ficha própria, e um \textit{layout} de quinze Elementos, quantidade citada no RNF-07. A API foi executada em modo de produção, em 7 de outubro de 2026, no computador descrito no Quadro~\ref{quad:equipamento}, conectada ao banco de dados do Supabase pela internet, de modo que cada tempo medido inclui a ida e a volta até o banco.
-% Dados brutos em scripts/medicoes/resultados/local-20261007T235528 (backend b3aaa96).
-A confirmação do e-mail da conta de teste passou pela mesma rota usada pela interface, com o código lido do registro da API, executada em um modo que não envia e-mail. Ao final, os \textit{scripts} excluem a conta e confirmam a exclusão.
-
-O tempo de cada requisição foi medido do instante anterior ao envio até a leitura completa do corpo da resposta, uma requisição de cada vez, com 700 milissegundos entre elas. O intervalo mantém o ritmo abaixo do limite de 100 requisições por minuto que a API impõe a cada endereço de origem; pela mesma razão, não foi feito ensaio de carga, que, a partir de uma única máquina, mediria o limitador, e não a API. Os percentis foram calculados pelo método do posto mais próximo, sem interpolação, de modo que todo valor relatado é um tempo que de fato ocorreu; com 50 amostras, o percentil 99 coincide com o máximo. Nenhuma das 441 requisições terminou em erro. O Quadro~\ref{quad:latenciaApi} apresenta os resultados.
+As medições de desempenho seguiram o método descrito na Seção~\ref{sec:medicoes}, em 8 de outubro de 2026. Nenhuma das 441 requisições da medição da API terminou em erro. O Quadro~\ref{quad:latenciaApi} apresenta os tempos de resposta da API.
+% Dados brutos em scripts/medicoes/resultados/local-20261008T224944 (API e editor) e local-20261009T000939 (telas e movimentação a 10 Mbps); backend bc0b2e7.
+% A execução de 07/10 (local-20261007T235528, backend b3aaa96) foi substituída pela de 08/10, para que API e navegador sejam da mesma versão.
 
 \FloatBarrier
 \begin{quadro}[h!]
@@ -183,31 +181,48 @@ O tempo de cada requisição foi medido do instante anterior ao envio até a lei
 \begin{tabular}{|p{6.0cm}|p{1.3cm}|p{1.4cm}|p{1.3cm}|p{1.3cm}|p{1.4cm}|}
 \hline
 \textbf{Rota} & \textbf{RNF} & \textbf{Mínimo} & \textbf{p50} & \textbf{p95} & \textbf{Máximo} \\ \hline
-Painel de Categorias (\texttt{GET /category}) & RNF-02 & 58,3 & 62,8 & 72,3 & 77,8 \\ \hline
-Coleções da Categoria (\texttt{GET /collection}) & RNF-02 & 77,1 & 83,2 & 103,5 & 128,0 \\ \hline
-Lista de 50 Itens (\texttt{GET /item}) & RNF-02 & 110,8 & 118,1 & 135,3 & 150,9 \\ \hline
-Ficha própria com 15 Elementos (\texttt{GET /item/:id/layout}) & RNF-02 & 87,3 & 95,3 & 109,6 & 117,4 \\ \hline
-Cadastro de Item (\texttt{POST /item}) & RNF-02 & 251,2 & 268,9 & 305,7 & 317,9 \\ \hline
-Exclusão de Item (\texttt{DELETE /item/:id}) & RNF-02 & 143,4 & 155,8 & 169,7 & 194,7 \\ \hline
-Mover Item entre Coleções (\texttt{PATCH /item/:id}) & RNF-06 & 278,1 & 296,1 & 326,4 & 337,6 \\ \hline
-Gravação de Elemento no editor (\texttt{PATCH /layout/:id/elements/:id}) & RNF-07 & 90,6 & 99,4 & 107,6 & 118,7 \\ \hline
+Painel de Categorias (\texttt{GET /category}) & RNF-02 & 83,6 & 89,4 & 95,1 & 99,1 \\ \hline
+Coleções da Categoria (\texttt{GET /collection}) & RNF-02 & 103,3 & 110,7 & 115,1 & 118,7 \\ \hline
+Lista de 50 Itens (\texttt{GET /item}) & RNF-02 & 146,0 & 153,1 & 160,2 & 177,1 \\ \hline
+Ficha própria com 15 Elementos (\texttt{GET /item/:id/layout}) & RNF-02 & 109,1 & 117,1 & 122,4 & 123,5 \\ \hline
+Cadastro de Item (\texttt{POST /item}) & RNF-02 & 338,0 & 356,2 & 371,9 & 373,4 \\ \hline
+Exclusão de Item (\texttt{DELETE /item/:id}) & RNF-02 & 163,0 & 172,8 & 183,0 & 189,2 \\ \hline
+Mover Item entre Coleções (\texttt{PATCH /item/:id}) & RNF-06 & 341,7 & 359,9 & 382,2 & 384,1 \\ \hline
+Gravação de Elemento no editor (\texttt{PATCH /layout/:id/elements/:id}) & RNF-07 & 121,8 & 132,1 & 139,2 & 201,9 \\ \hline
 \end{tabular}
 \fonte{Elaborada pelo autor}
 \end{quadro}
 \FloatBarrier
 
-A medição não foi repetida no ambiente de produção descrito no Capítulo~\ref{cap:09}, de modo que os tempos acima caracterizam a API e o banco de dados, mas não a distância entre a máquina virtual e o Supabase nem a rede de quem usa a plataforma publicada.
-% [SE MEDIR EM PRODUÇÃO: latencia-api.mjs com AMBIENTE=producao; acrescentar o quadro equivalente aqui]
+Como a medição não foi repetida no ambiente de produção, esses tempos caracterizam a API e o banco de dados, e não a rede de quem usa a plataforma publicada. O Quadro~\ref{quad:telasNavegador} apresenta o carregamento das telas no navegador, a 10 Mbps.
+
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Carregamento das telas no navegador a 10 Mbps, em milissegundos desde o início da navegação (n = 10 por linha)}
+\label{quad:telasNavegador}
+\footnotesize
+\begin{tabular}{|p{4.6cm}|p{1.4cm}|p{1.4cm}|p{1.4cm}|p{2.6cm}|p{1.4cm}|}
+\hline
+\textbf{Tela e cache} & \textbf{FCP p75} & \textbf{LCP p75} & \textbf{LCP máximo} & \textbf{Última resposta da API p75} & \textbf{Máximo} \\ \hline
+Lista de 50 Itens, sem cache & 364 & 364 & 364 & 743 & 752 \\ \hline
+Lista de 50 Itens, com cache & 188 & 188 & 192 & 301 & 321 \\ \hline
+Ficha própria com 15 Elementos, sem cache & 300 & 476 & 1108 & 427 & 1070 \\ \hline
+Ficha própria com 15 Elementos, com cache & 128 & 256 & 296 & 226 & 275 \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
 
 \subsection{Requisitos Mensuráveis}
 
-\textbf{RNF-02 (desempenho de carregamento).} O requisito fixa três limites: três segundos para o carregamento de uma tela principal, dois segundos para as respostas de leitura da API e três segundos para as operações de escrita. Para a tela, a medida adequada seria o maior elemento de conteúdo pintado (LCP), no percentil 75 dos carregamentos, convenção que acompanha a recomendação do web.dev, para o qual um LCP de até 2,5 segundos caracteriza um bom carregamento \cite{walton2019lcp}. Para a API, adota-se o percentil 95, que afirma o limite para a quase totalidade das requisições, e não apenas para a típica. O maior percentil 95 entre as rotas de leitura foi de 135,3 milissegundos (lista de 50 Itens), e o maior entre as de escrita, de 305,7 milissegundos (cadastro de Item), valores cerca de quinze e de dez vezes menores que os respectivos limites. O carregamento das telas, que depende do navegador, não foi medido. Independentemente dessa medição, duas restrições do requisito não são atendidas: as imagens não são otimizadas pelo servidor, e as listagens de Categorias, Coleções e Itens não são paginadas, sendo devolvidas por inteiro em uma única resposta. O requisito permanece \textbf{não verificado}, e, ainda que o carregamento das telas cumpra o limite, a situação máxima será a de atendido com ressalva.
-% [SE MEDIR AS TELAS: LCP p75 de dez carregamentos da tela de Itens e da ficha, com scripts/medicoes/tela.js]
+\textbf{RNF-02 (desempenho de carregamento).} O requisito fixa três limites: três segundos para o carregamento de uma tela principal, dois segundos para as respostas de leitura da API e três segundos para as operações de escrita. Para a tela, adota-se o maior elemento de conteúdo pintado (LCP), no percentil 75 dos carregamentos, convenção que acompanha a recomendação do web.dev, para o qual um LCP de até 2,5 segundos caracteriza um bom carregamento \cite{walton2019lcp}. Para a API, adota-se o percentil 95, que afirma o limite para a quase totalidade das requisições, e não apenas para a típica. O maior percentil 95 entre as rotas de leitura foi de 160,2 milissegundos (lista de 50 Itens), e o maior entre as de escrita, de 371,9 milissegundos (cadastro de Item), valores cerca de doze e de oito vezes menores que os respectivos limites. No navegador, a 10 Mbps e sem cache, o caso mais desfavorável, o LCP no percentil 75 foi de 364 milissegundos na lista de Itens e de 476 milissegundos na ficha; com cache, caiu para 188 e 256 milissegundos. Na ficha, o maior elemento pintado é o texto de um Elemento, desenhado depois da chegada dos dados. Na lista, o LCP coincidiu com a primeira pintura em todos os carregamentos e ocorreu antes da chegada dos dados, porque o maior elemento pintado é a estrutura da tela, desenhada enquanto as respostas da API são aguardadas. Por isso, registra-se também o instante em que chegou a última resposta da API, a partir do qual os dados podem ser exibidos: na lista sem cache, 743 milissegundos no percentil 75, com máximo de 752. O maior valor observado em todas as medições foi o LCP de 1,1 segundo em um carregamento da ficha sem cache, quase três vezes abaixo do limite de três segundos. A métrica é, portanto, cumprida. Duas restrições do requisito, no entanto, não são atendidas: as imagens não são otimizadas pelo servidor, e as listagens de Categorias, Coleções e Itens não são paginadas, sendo devolvidas por inteiro em uma única resposta. O requisito é considerado \textbf{atendido com ressalva}.
+% Telas: local-20261009T000939/navegador/medicoes-tela-*-10mbps-*.json. A 1ª rodada, sem limitação de rede (local-20261008T224944/navegador), deu LCP p75 de 320 ms (lista) e 204 ms (ficha).
 
-\textbf{RNF-06 (movimentação de Itens).} O requisito exige que a mudança de Coleção se reflita na interface em até 500 milissegundos e que a interface a aplique de forma otimista, antes da confirmação do servidor. A implementação não é otimista: a interface aguarda a resposta da API e, em seguida, recarrega a listagem, e só então o Item deixa de aparecer na Coleção de origem. O tempo percebido é, portanto, no mínimo a soma da gravação com a nova leitura da lista, à qual se acrescenta o desenho da tela, que não foi medido. Na medição, essa soma foi de 388,9 milissegundos com os mínimos e de 461,7 com os percentis 95, abaixo do limite, mas com folga de apenas 38,3 milissegundos no segundo caso. A margem é estreita o bastante para depender do ambiente: em uma medição preliminar, feita em 2 de outubro de 2026 em outro computador e com o mesmo banco, a soma dos mínimos foi de 568,3 milissegundos, acima do limite. A gravação de uma movimentação é a mais lenta das rotas medidas, o que se explica pelo número de operações executadas em sequência, cada uma atravessando a internet até o banco: a verificação da sessão, a confirmação de que o Item e a Coleção de destino pertencem ao usuário e a verificação de unicidade do nome, seguidas de uma transação que atualiza o Item, registra o evento e consulta quem acompanha a Coleção. Como a soma medida é apenas um limite inferior do tempo percebido, o requisito é considerado \textbf{não verificado}, e a restrição de aplicação otimista não é atendida, o que limita a situação máxima à de atendido com ressalva. A restrição de desfazer foi atendida de forma diferente da especificada: a interface oferece, por 30 segundos, um botão que devolve o Item à Coleção de origem, e não o atalho \texttt{Ctrl+Z}.
+\textbf{RNF-06 (movimentação de Itens).} O requisito exige que a mudança de Coleção se reflita na interface em até 500 milissegundos, que a interface a aplique de forma otimista, antes da confirmação do servidor, e que, em caso de falha, a reverta e informe o usuário. A interface aplica a movimentação de forma otimista: ao confirmar, o Item sai da lista da Coleção de origem e a janela de escolha do destino se fecha antes da resposta da API; se o servidor recusar a movimentação, a lista volta ao estado anterior e a falha é informada na própria tela. Nas dez movimentações medidas a 10 Mbps, o quadro sem o Item foi pintado entre 41 e 57 milissegundos depois do clique, enquanto a resposta do servidor chegou entre 355 e 477 milissegundos; em todas, a tela mudou antes da resposta. O tempo percebido fica, assim, quase nove vezes abaixo do limite e deixa de depender da gravação, que é a mais lenta das rotas medidas. Essa lentidão se explica pelo número de operações executadas em sequência, cada uma atravessando a internet até o banco: a verificação da sessão, a confirmação de que o Item e a Coleção de destino pertencem ao usuário e a verificação de unicidade do nome, seguidas de uma transação que atualiza o Item, registra o evento e consulta quem acompanha a Coleção. Sem a atualização otimista, a interface teria de aguardar a gravação e reler a lista, e a soma das duas rotas, medida no mesmo dia, foi de 513,1 milissegundos na mediana e de 542,3 no percentil 95, acima do limite. A reversão em caso de falha não foi exercitada na medição, pois nenhuma movimentação falhou. A restrição de desfazer foi atendida de forma diferente da especificada: a interface oferece, por 30 segundos, um botão que devolve o Item à Coleção de origem, e não o atalho \texttt{Ctrl+Z}. O requisito é considerado \textbf{atendido com ressalva}.
+% Movimentação: local-20261009T000939/navegador/medicoes-movimentacao-10mbps.json (scripts/medicoes/movimentacao.js). Front 0fc8072 + diff em navegador/front-itens-otimista.diff.
 
-\textbf{RNF-07 (desempenho do editor).} O requisito limita a 200 milissegundos o tempo entre uma operação no editor e sua exibição. Esse valor coincide com o limite que o web.dev adota para uma boa responsividade na métrica INP, avaliada no percentil 75 das interações \cite{wagner2022inp}, que seria, por isso, a medida adequada. A gravação no servidor não compõe esse tempo, pois ocorre de forma assíncrona, depois de uma pausa de 400 milissegundos, sem bloquear a edição, o que atende à restrição de salvamento assíncrono; ainda assim, registra-se que ela levou 107,6 milissegundos no percentil 95. A responsividade das interações no editor não foi medida, e o requisito permanece \textbf{não verificado}.
-% [SE MEDIR O EDITOR: p75, p98 e máximo de pelo menos 20 interações, com scripts/medicoes/editor.js]
+\textbf{RNF-07 (desempenho do editor).} O requisito limita a 200 milissegundos o tempo entre uma operação no editor e sua exibição. Esse valor coincide com o limite que o web.dev adota para uma boa responsividade na métrica INP, avaliada no percentil 75 das interações \cite{wagner2022inp}, que é, por isso, a medida adotada. Nas 30 interações registradas no editor, o tempo até a pintura do quadro seguinte foi de 32 milissegundos no percentil 75 e de 48 milissegundos no percentil 98, que, com essa quantidade de interações, coincide com o máximo; o gesto que não foi registrado ficou abaixo do piso de 16 milissegundos. O maior tempo medido ficou, portanto, cerca de quatro vezes abaixo do limite, com o editor exibindo entre 15 e 19 Elementos, o que atende também à restrição de suportar quinze Elementos sem degradação perceptível. A gravação no servidor não compõe esse tempo, pois ocorre de forma assíncrona, depois de uma pausa de 400 milissegundos, sem bloquear a edição, o que atende à restrição de salvamento assíncrono; ainda assim, registra-se que ela levou 139,2 milissegundos no percentil 95. A medição foi feita em um único computador de mesa, sem limitação do processador, e não representa aparelhos de menor desempenho. Como a métrica foi cumprida e nenhuma restrição foi comprovadamente descumprida, o requisito é considerado \textbf{atendido}.
+% Editor: navegador/medicoes-editor.json (30 interações, p75 32, p98 = máx 48; durações em múltiplos de 8 ms, arredondamento da Event Timing API).
 
 \textbf{RNF-08 (disponibilidade).} A disponibilidade de 99\% só pode ser aferida por um serviço externo que consulte periodicamente a plataforma publicada, e esse acompanhamento não foi feito; o requisito permanece \textbf{não verificado}. A restrição de recuperação automática é atendida pela política de reinício do contêiner e pelos serviços habilitados na inicialização da máquina virtual, descritos no Capítulo~\ref{cap:09}. Duas restrições não são atendidas independentemente da medição: não há cópia local para uso sem conexão, e a interface não reenvia automaticamente operações feitas enquanto a conexão estava interrompida, com exceção das alterações do editor, cuja sincronização reenvia o que ficou pendente na tentativa seguinte.
 
@@ -224,12 +239,12 @@ O Quadro~\ref{quad:sinteseRNF} reúne a situação de todos os requisitos não f
 \hline
 \textbf{Requisito} & \textbf{Instrumento} & \textbf{Resultado} & \textbf{Situação} \\ \hline
 RNF-01 Usabilidade & Teste com usuários iniciantes (não realizado) & Nenhuma medição do tempo para criar uma Coleção e um Item & Não verificado \\ \hline
-RNF-02 Carregamento & \textit{Script} de latência & Leitura: p95 máximo de 135,3\,ms; escrita: p95 máximo de 305,7\,ms. Telas não medidas. Sem paginação e sem otimização de imagens & Não verificado \\ \hline
+RNF-02 Carregamento & \textit{Script} de latência; carregamento das telas no navegador a 10 Mbps & API: p95 máximo de 160,2\,ms na leitura e de 371,9\,ms na escrita. Telas sem cache: LCP p75 de até 476\,ms e máximo de 1,1\,s. Sem paginação e sem otimização de imagens & Atendido com ressalva \\ \hline
 RNF-03 Segurança de senhas e dados & Inspeção do código; testes automatizados (Capítulo~\ref{cap:08}) & bcrypt, mensagem genérica no \textit{login}, sessões revogáveis, HTTPS em produção e limite de cinco \textit{logins} por minuto. Registro de erros inesperados com o objeto completo da exceção & Atendido com ressalva \\ \hline
 RNF-04 Compatibilidade & Teste em navegadores e larguras de tela (não realizado) & Interface escrita para telas a partir de 320\,px; matriz de navegadores não testada & Não verificado \\ \hline
 RNF-05 Personalização & Inspeção do código e da interface & Variáveis CSS, alerta de contraste, aplicação imediata e persistência no perfil; combinações não testadas sistematicamente & Atendido com ressalva \\ \hline
-RNF-06 Movimentação de Itens & \textit{Script} de latência; análise do fluxo da interface & Gravação mais leitura: 461,7\,ms no p95; desenho não medido; atualização não otimista; desfazer por 30\,s via botão & Não verificado \\ \hline
-RNF-07 Editor & \textit{Script} de latência & Gravação assíncrona com p95 de 107,6\,ms; responsividade das interações não medida & Não verificado \\ \hline
+RNF-06 Movimentação de Itens & Movimentação pela tela no navegador a 10 Mbps; \textit{script} de latência & Atualização otimista: tela muda em até 57\,ms, antes da resposta do servidor (até 477\,ms); desfazer por 30\,s via botão, e não por \texttt{Ctrl+Z} & Atendido com ressalva \\ \hline
+RNF-07 Editor & \textit{Script} de latência; temporização de eventos no navegador & 30 interações: p75 de 32\,ms e máximo de 48\,ms, com 15 a 19 Elementos; gravação assíncrona com p95 de 139,2\,ms & Atendido \\ \hline
 RNF-08 Disponibilidade & Monitoramento externo (não realizado) & Reinício automático configurado; sem medição; sem cópia local para uso sem conexão & Não verificado \\ \hline
 RNF-09 Acessibilidade & Inspeção do código e registros do projeto & Contraste das paletas padrão verificado e alerta de contraste; navegação do editor por teclado não implementada & Não atendido \\ \hline
 RNF-10 Integridade & Inspeção do código; configuração do banco & Transações atômicas e confirmação antes de excluir; sem cópia de segurança automática no plano gratuito; sem registro de auditoria das exclusões & Não atendido \\ \hline
@@ -243,7 +258,7 @@ Três situações merecem comentário. O RNF-03 é considerado atendido com ress
 O RNF-09 é considerado não atendido porque o requisito exige conformidade com o nível AA das WCAG e que todos os elementos interativos sejam acessíveis por teclado, enquanto a navegação do editor por teclado não foi implementada, de modo que posicionar um Elemento depende de um dispositivo apontador ou dos campos numéricos de posição; o critério de operação por teclado é de nível A, abaixo do AA exigido \cite{campbell2024wcag}. As demais partes da interface não foram auditadas. Por fim, o RNF-10 é considerado não atendido porque a sua métrica principal, a de cópias de segurança diárias com retenção de 30 dias, não é cumprida no plano gratuito do Supabase, que não faz cópia automática e deixa a exportação dos dados a cargo do responsável pelo projeto \cite{supabase2026backups}, e porque o registro em auditoria de toda exclusão também não é atendido: apenas as alterações de Itens em Coleções não privadas geram registro de evento.
 % [VERIFICAR com a autora: se houver rotina de db dump na VM (cap. 9), rever o RNF-10]
 
-O resultado de conjunto é coerente com a posição secundária desses requisitos no trabalho. Os tempos de resposta da API, que dependem apenas do servidor, ficaram com folga dentro dos limites; a movimentação de Itens, que depende também da interface, ficou dentro do limite por margem estreita e sem a atualização otimista exigida. Os requisitos que exigem avaliação com pessoas, como usabilidade e acessibilidade, ou acompanhamento da plataforma publicada, como a disponibilidade, permanecem em aberto, e são essas as lacunas que a avaliação deixa.
+O resultado de conjunto é coerente com a posição secundária desses requisitos no trabalho. Os tempos de resposta da API e os medidos no navegador, no carregamento das telas, na movimentação de Itens e nas interações do editor, ficaram com folga dentro dos limites; as ressalvas vêm de restrições, como a paginação das listagens e o atalho de desfazer, e não das métricas. Os requisitos que exigem avaliação com pessoas, como usabilidade e acessibilidade, ou acompanhamento da plataforma publicada, como a disponibilidade, permanecem em aberto, e são essas as lacunas que a avaliação deixa.
 
 \section{Validação em Uso}
 \label{sec:validacaoUso}
@@ -286,6 +301,6 @@ A privacidade também tem um custo de manutenção. A regra de visibilidade é a
 ou de um perfil, e a resposta 404 esconde até a existência do recurso. Toda rota nova precisa aplicar a mesma regra, de modo que o esforço de manutenção
 cresce com o número de rotas.
 
-A movimentação de Itens também combina uma vantagem e um custo. A interface espera a confirmação do servidor antes de retirar o Item movido da Coleção
-de origem, e por isso nunca mostra um estado que o banco não confirmou nem precisa reverter a tela quando a gravação falha. Em troca, o tempo percebido
-soma as idas e voltas até o banco, e a Seção~\ref{sec:validacaoRNF} mostrou que essa soma cabe no limite do RNF-06 por margem estreita.
+A movimentação de Itens também combina uma vantagem e um custo. A interface retira o Item movido da Coleção de origem antes da confirmação do servidor,
+e por isso o tempo percebido deixa de somar as idas e voltas até o banco, que, como mostrou a Seção~\ref{sec:validacaoRNF}, ultrapassariam o limite do
+RNF-06. Em troca, a tela mostra por alguns instantes um estado que o banco ainda não confirmou, e precisa ser revertida quando a gravação falha.
