@@ -1,22 +1,22 @@
 \chapter{Teste}
 \label{cap:08}
 
-Este capítulo apresenta a verificação do sistema, nas três frentes da estratégia descrita no Capítulo~\ref{cap:03}. A verificação automatizada concentra-se no \textit{backend}, onde residem as regras de acesso, privacidade, sessão e consistência dos dados, e foi conduzida por meio de testes de unidade. A verificação manual cobre a interface, que os testes de unidade não alcançam. As medições de desempenho verificam os limites de tempo fixados pelos requisitos não funcionais. São descritos o ambiente em que os testes automatizados são executados, uma visão geral do conjunto de testes por módulo, a especificação dos principais casos de teste e seus resultados, a verificação manual e o método das medições, cujos resultados, por dependerem do juízo sobre cada requisito, são apresentados no Capítulo~\ref{cap:10}.
+Este capítulo apresenta a verificação do sistema, nas três frentes da estratégia descrita no Capítulo~\ref{cap:03}. A verificação automatizada concentra-se no \textit{backend}, onde residem as regras de acesso, privacidade, sessão e consistência dos dados, e foi conduzida por meio de testes de unidade e de testes de ponta a ponta da API, estes executados sobre um banco de dados real. A verificação manual cobre a interface, que os testes automatizados não alcançam. As medições de desempenho verificam os limites de tempo fixados pelos requisitos não funcionais. São descritos o ambiente em que os testes automatizados são executados, uma visão geral do conjunto de testes por módulo, a especificação dos principais casos de teste, os testes de ponta a ponta, os resultados dos testes automatizados, a verificação manual e o método das medições, cujos resultados, por dependerem do juízo sobre cada requisito, são apresentados no Capítulo~\ref{cap:10}.
 
 \section{Ambiente e Execução dos Testes}
 
 Os testes foram escritos com o \textit{framework} Jest, na versão 30, com o \textit{ts-jest} responsável por interpretar o código TypeScript. Cada arquivo de teste fica ao lado do código que verifica e é identificado pelo sufixo \texttt{.spec.ts}, e o conjunto completo é executado pelo comando \texttt{pnpm test}, na raiz do projeto do \textit{backend}.
 
-Os testes são de unidade: cada um exercita uma parte do sistema de forma isolada. Para isso, as dependências externas, como o serviço de acesso ao banco de dados e o serviço de armazenamento de arquivos, são substituídas por objetos simulados, cujas respostas são definidas pelo próprio teste. Essa abordagem permite reproduzir situações difíceis de obter manualmente, como duas requisições concorrentes sobre o mesmo registro, e dispensa um banco de dados em execução. Em contrapartida, o teste verifica as chamadas que a regra de negócio faz ao banco, e não o resultado dessas chamadas em um banco real.
+Os testes são de unidade: cada um exercita uma parte do sistema de forma isolada. Para isso, as dependências externas, como o serviço de acesso ao banco de dados e o serviço de armazenamento de arquivos, são substituídas por objetos simulados, cujas respostas são definidas pelo próprio teste. Essa abordagem permite reproduzir situações difíceis de obter manualmente, como duas requisições concorrentes sobre o mesmo registro, e dispensa um banco de dados em execução. Em contrapartida, o teste verifica as chamadas que a regra de negócio faz ao banco, e não o resultado dessas chamadas em um banco real. Esse resultado é verificado pelos testes de ponta a ponta, descritos na Seção~\ref{sec:testesPontaAPonta}.
 
 Os testes se dividem em três alvos. Os testes de serviços verificam as regras de negócio propriamente ditas. Os testes de controladores verificam que cada operação é executada em nome do usuário da sessão autenticada, e não de um identificador enviado na requisição. Os testes de DTOs verificam a validação dos dados de entrada, como formatos, limites e campos obrigatórios.
 
 \section{Visão Geral dos Testes}
 
-O Quadro~\ref{quad:resumoTestes} apresenta a distribuição dos testes pelos módulos do \textit{backend}, com os requisitos funcionais a que cada módulo se relaciona. Os módulos \texttt{storage}, \texttt{mail} e \texttt{common} não correspondem a um requisito específico, pois reúnem funcionalidades transversais: o armazenamento de arquivos, o envio de e-mail, a validação dos Elementos e das imagens enviadas, a regra de mescla de fichas e o tratamento global de erros.
+O Quadro~\ref{quad:resumoTestes} apresenta a distribuição dos testes de unidade pelos módulos do \textit{backend}, com os requisitos funcionais a que cada módulo se relaciona. Os módulos \texttt{storage}, \texttt{mail} e \texttt{common} não correspondem a um requisito específico, pois reúnem funcionalidades transversais: o armazenamento de arquivos, o envio de e-mail, a validação dos Elementos e das imagens enviadas, a regra de mescla de fichas e o tratamento global de erros.
 
 \begin{quadro}[h!]
-\caption{Distribuição dos testes automatizados por módulo}
+\caption{Distribuição dos testes de unidade por módulo}
 \label{quad:resumoTestes}
 \begin{tabular}{|p{3.9cm}|p{5.6cm}|p{1.9cm}|p{1.6cm}|}
 \hline
@@ -268,16 +268,43 @@ Os casos de teste a seguir foram especificados segundo a estrutura proposta por 
 \end{quadro}
 \FloatBarrier
 
+\section{Testes de Ponta a Ponta da API}
+\label{sec:testesPontaAPonta}
+
+Os testes de ponta a ponta exercitam a API como um cliente a usa: cada teste envia requisições HTTP à aplicação completa, com os mesmos módulos, a mesma validação dos dados de entrada e o mesmo tratamento de erros da versão publicada, e confere a resposta e, quando necessário, o que ficou gravado no banco. Assim, um mesmo teste verifica em conjunto a autenticação, a validação, a regra de negócio e o comportamento do banco de dados, inclusive as restrições de unicidade, que os testes de unidade não alcançam.
+
+Os testes são executados pelo Jest, com a biblioteca \textit{supertest} enviando as requisições, sobre um PostgreSQL 16 em um contêiner Docker criado apenas para eles, separado do banco de desenvolvimento e do banco da plataforma publicada. Antes da execução, as migrações do projeto são aplicadas a esse banco, de modo que as tabelas, os índices e as restrições são os mesmos da produção, e cada arquivo de teste começa com as tabelas vazias. A única peça substituída é o envio de e-mail: a mensagem com o código de confirmação do cadastro é capturada pelo teste, em vez de enviada. Uma verificação interrompe a execução se o endereço do banco não for o da própria máquina, o que impede que os testes, que esvaziam as tabelas, sejam executados por engano contra dados reais. O conjunto é executado pelo comando \texttt{pnpm test:e2e}, na raiz do projeto do \textit{backend}.
+
+Os fluxos verificados estão distribuídos em quatro arquivos, apresentados no Quadro~\ref{quad:testesPontaAPonta}. O limite de tentativas de \textit{login} tem arquivo próprio porque a API conta as tentativas por aplicação em execução, e as tentativas dos demais testes interfeririam na contagem.
+% Repositório da API: test/*.e2e-spec.ts, test/e2e/ (ambiente e banco), test/docker-compose.e2e.yml.
+
+\FloatBarrier
+\begin{quadro}[h!]
+\caption{Testes de ponta a ponta da API}
+\label{quad:testesPontaAPonta}
+\footnotesize
+\begin{tabular}{|p{4.1cm}|p{2.4cm}|p{1.2cm}|p{6.1cm}|}
+\hline
+\textbf{Arquivo} & \textbf{Requisitos} & \textbf{Testes} & \textbf{O que verifica} \\ \hline
+\texttt{autenticacao} & RF-01, RF-02 e RNF-03 & 9 & Cadastro com dados inválidos recusado; senha gravada apenas como \textit{hash}; acesso negado antes da confirmação do e-mail; código de confirmação errado recusado; mesma mensagem para senha errada e e-mail inexistente; rota protegida recusada sem sessão; sessão encerrada no \textit{logout} \\ \hline
+\texttt{limite-de-login} & RNF-03 & 1 & Sexta tentativa de \textit{login} no mesmo minuto recusada, mesmo com a senha correta \\ \hline
+\texttt{acervo} & RF-06, RF-07, RF-09, RF-10 e RF-17 & 9 & Categoria com nome repetido recusada pela restrição de unicidade do banco; Item com nome repetido na Coleção recusado; movimentação de Item com registro do evento e recusa quando o destino já tem Item de mesmo nome; Item invisível e inalterável para outro usuário; exclusão do Item com a sua ficha própria; exclusão da Categoria com as suas Coleções e Itens \\ \hline
+\texttt{privacidade-e-social} & RF-08 e RF-20 a RF-24 & 7 & Coleção visível conforme a privacidade e a amizade, com 404 para a invisível; acompanhamento negado a Coleção invisível; notificação do aceite da amizade; Item novo no \textit{feed} de quem acompanha; acompanhamento encerrado quando a Coleção se torna privada; uma única amizade para dois pedidos enviados ao mesmo tempo \\ \hline
+\textbf{Total} &  & \textbf{26} &  \\ \hline
+\end{tabular}
+\fonte{Elaborada pelo autor}
+\end{quadro}
+\FloatBarrier
+
 \section{Resultados e Limitações dos Testes Automatizados}
 
-Na execução realizada em 8 de outubro de 2026, os 58 conjuntos de testes, com 520 testes no total, foram aprovados, em aproximadamente 7 segundos. Todos os casos de teste especificados na seção anterior obtiveram, portanto, os resultados esperados.
+Na execução realizada em 8 de outubro de 2026, os 58 conjuntos de testes de unidade, com 520 testes no total, foram aprovados, em aproximadamente 7 segundos. Todos os casos de teste especificados na Seção~\ref{sec:casosDeTeste} obtiveram, portanto, os resultados esperados. Na mesma data, os quatro arquivos de testes de ponta a ponta, com 26 testes, foram aprovados em aproximadamente 9 segundos, em três execuções consecutivas.
 % Commit bc0b2e7 do backend, o mesmo das medições do Capítulo 10 (scripts/medicoes/resultados/local-20261008T224944/notas.md, item 3).
 
 A estratégia adotada possui limitações que devem ser consideradas na interpretação desses resultados:
 
 \begin{itemize}
-    \item \textbf{Ausência de testes de integração:} como o acesso ao banco é simulado, os testes verificam as operações que a regra de negócio solicita ao banco, mas não o comportamento dessas operações em um banco PostgreSQL real, como a aplicação das restrições de unicidade.
-    \item \textbf{Ausência de testes de ponta a ponta:} não há testes que percorram a API a partir de requisições HTTP, verificando em conjunto a autenticação, a validação e as respostas de cada rota.
+    \item \textbf{Alcance dos testes de ponta a ponta:} eles cobrem os fluxos de autenticação, de organização do acervo e de privacidade e interação social, mas não todas as rotas da API; as rotas do editor de \textit{layouts}, das paletas e do envio de imagens são verificadas apenas pelos testes de unidade.
     \item \textbf{Escopo da verificação automatizada:} os testes automatizados concentram-se nas regras de negócio do \textit{backend} e não abrangem os aspectos visuais e de interação da aplicação cliente, que ficam a cargo da verificação manual e das medições no navegador, descritas nas seções seguintes.
 \end{itemize}
 
