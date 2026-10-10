@@ -1,745 +1,465 @@
 \chapter{Revisão da Literatura}
 \label{cap:02}
 
-% =====================================================================
-% ROTEIRO DO CAPÍTULO 2
-% Cada seção traz, em comentários, o que escrever:
-%   ABERTURA      frase sugerida para começar a seção
-%   IDEIA         o que os autores afirmam e o que usar deles
-%   COMO ABORDAR  o ângulo do parágrafo
-%   FONTES        \cite{chave} e a página ou seção onde a ideia está
-%   PONTE         ideia ou frase que leva ao passo seguinte
-% Critério das fontes: a maioria de 2020 em diante. Antes de 2000 só
-%   entram as seis obras de origem (Belk1988, Codd1970, Shneiderman1983,
-%   Hutchins1985, Granovetter1973, Nielsen1994). Cada parágrafo cita pelo
-%   menos duas fontes, e a clássica vem sempre ao lado de uma recente.
-% Marcas nas fontes:
-%   [CONFERIR]  não foi lida; abrir no Portal de Periódicos da CAPES e
-%               conferir a ideia e a página antes de citar.
-%   [APOIO]     fonte aberta, mas de veículo modesto; usar só junto de
-%               outra fonte, nunca sozinha.
-%   (preprint)  a página indicada é a do arXiv ou da versão do autor;
-%               conferir a numeração na versão publicada.
-% Os links de cada fonte estão em fontes_cap02_proposta.bib, e a tabela
-% com o que cada uma sustenta está em fontes_cap02.md.
-% Não repetir o Cap. 5, que aplica requisitos, casos de uso e modelo de
-% domínio; aqui ficam o conceito geral e o porquê.
-% =====================================================================
-
-Este capítulo reúne os fundamentos que sustentam a plataforma, partindo da prática de colecionar e de sua passagem para o meio digital e chegando às áreas da
-engenharia de software e da interação humano-computador envolvidas na sua construção. A Seção~\ref{sec:colecionismo} trata das coleções e do colecionismo
-digital, e as Seções~\ref{sec:engenharia-requisitos}, \ref{sec:modelagem-conceitual} e~\ref{sec:arquitetura-web} abordam a engenharia de requisitos, a modelagem
-conceitual com UML e a arquitetura de aplicações \textit{web}. Em seguida, as Seções~\ref{sec:personalizacao} e~\ref{sec:manipulacao-direta} discutem a
-personalização de interfaces e a manipulação direta em editores visuais, e a Seção~\ref{sec:redes-sociais} encerra o capítulo com as redes sociais e o
-compartilhamento de coleções.
+Este capítulo reúne os fundamentos que sustentam a plataforma em duas partes. A primeira trata do que o colecionador precisa, e a segunda, de como isso se
+constrói. A Seção~\ref{sec:colecionismo} apresenta as coleções e o colecionismo digital, e as Seções~\ref{sec:personalizacao}, \ref{sec:manipulacao-direta}
+e~\ref{sec:redes-sociais} discutem a personalização de interfaces, a manipulação direta em editores visuais e as redes sociais e o compartilhamento de coleções.
+Em seguida, as Seções~\ref{sec:engenharia-requisitos}, \ref{sec:modelagem-conceitual} e~\ref{sec:arquitetura-web} abordam a engenharia de requisitos, a
+modelagem conceitual com UML e a arquitetura de aplicações \textit{web}. Por fim, a Seção~\ref{sec:consideracoes-cap02} retoma as três práticas do
+colecionador e aponta a lacuna que a plataforma proposta ocupa.
 
 
 \section{Coleções e Colecionismo Digital}
 \label{sec:colecionismo}
 
-% PAPEL DA SEÇÃO: mostrar que colecionar é um fenômeno estudado e que, no
-%   digital, as necessidades de organizar e exibir continuam.
+Esta seção trata da prática de colecionar e de suas motivações, de sua passagem para o meio digital, do sentimento de posse sobre bens digitais e do registro
+como forma de memória.
 
-Colecionar é uma prática antiga, com indícios que remontam à Pré-História \cite{CasadoRigalt2020,Sundstrom2020}. \citeonline[p.~254]{Sundstrom2020} associam
+\subsection{Colecionismo e suas Motivações}
+\label{subsec:colecionismo-motivacoes}
+
+Colecionar é uma prática antiga, com indícios que remontam à Pré-História \cite{CasadoRigalt2020,Sundstrom2020}. \citeonline{Sundstrom2020} associam
 esses primeiros indícios à sobrevivência, pois identificar e guardar um novo instrumento era essencial para o desenvolvimento humano, e
-\citeonline[p.~13]{CasadoRigalt2020} trata o instinto de posse como inerente à condição humana. Já nesse período, porém, objetos com características especiais
-eram guardados e recebiam valor simbólico mesmo quando não estavam ligados à sobrevivência \cite[p.~170]{Oliveira2017}. Na Antiguidade, o rei assírio
+\citeonline{CasadoRigalt2020} trata o instinto de posse como inerente à condição humana. Já nesse período, porém, objetos com características especiais
+eram guardados e recebiam valor simbólico mesmo quando não estavam ligados à sobrevivência \cite{Oliveira2017}. Na Antiguidade, o rei assírio
 Assurbanipal reuniu mais de 20 mil tabuletas de argila em sua biblioteca em Nínive, e gregos e romanos colecionavam como forma de prestígio e de poder
 \cite{CasadoRigalt2020,Oliveira2017,Finardi2020}.
 
 A prática se transformou ao longo dos séculos. Na Idade Média, as coleções tinham viés religioso e exibiam as riquezas de reis e governantes
-\cite[p.~254]{Sundstrom2020}. A partir do Renascimento, nobres europeus passaram a guardar peças raras e exóticas em gabinetes de curiosidades, e muitas dessas
+\cite{Sundstrom2020}. A partir do Renascimento, nobres europeus passaram a guardar peças raras e exóticas em gabinetes de curiosidades, e muitas dessas
 coleções formaram o núcleo dos primeiros museus públicos \cite{Finardi2020,Oliveira2017,CasadoRigalt2020}. No século XX, a produção em massa tornou o
 colecionismo um fenômeno de massas, e muitos objetos passaram a ser fabricados já para serem colecionados \cite{Oliveira2017,Sundstrom2020,Finardi2020}.
+
+Ao longo dessa história, a literatura procurou delimitar o que distingue colecionar de simplesmente acumular. \citeonline{Belk1988} separam o
+colecionador do acumulador pela seletividade e mostram que uma coleção pode reunir objetos, ideias ou experiências. Estudos recentes mantêm essa base.
+\citeonline{Silva2020} retomam a definição de Belk de colecionar como um processo ativo, seletivo e apaixonado, sem função utilitária, e destacam que manipular,
+catalogar e expor os itens sustentam o sentimento de posse e a expressão de si. \citeonline{Correia2026}, ouvindo 29 colecionadores brasileiros, descrevem o
+colecionismo como aquisição, classificação, exibição e cuidado, e como construção de identidade e de memória. \citeonline{Sundstrom2020} opõem o acúmulo, sem
+ordem, ao colecionar, que busca representar quem coleciona, e \citeonline{Rava2023} mostra que o princípio de seleção continua sendo o que separa coleção de
+acúmulo.
 
 As motivações para colecionar também são variadas. A coleção expressa quem coleciona, pois reflete a personalidade do colecionador e funciona como uma extensão
 do seu eu \cite{Silva2020,Oliveira2017,Correia2026}. Ela responde ainda ao desejo de controle, e \citeonline{Cao2025} mostram, em estudos de laboratório e de
 campo, que esse desejo leva as pessoas a se engajar no colecionismo porque a coleção oferece estrutura e ordem. Catalogar os itens, por sua vez, dá ao
-colecionador um meio concreto de acompanhar seus objetivos \cite[p.~106]{Silva2020}.
+colecionador um meio concreto de acompanhar seus objetivos \cite{Silva2020}.
 
 Muitas vezes, colecionar é alimentado pela nostalgia e pelo desejo de resgatar memórias da infância, motivação relatada por colecionadores brasileiros e por
 consumidores norte-americanos \cite{Correia2024,Correia2026,JohnsonJorgensen2023,Silva2020}. A coleção também preserva a história pessoal e coletiva, já que
-reúne registros de acontecimentos passados cujo valor pode ser pessoal ou ligado à história de famílias, comunidades e nações \cite[p.~88]{Finardi2020}, e
-funciona como um arquivo pessoal que reflete a trajetória do colecionador \cite[p.~106]{Silva2020}. Para muitos objetos, reuni-los numa coleção é a única forma
-de salvaguardá-los para as gerações futuras \cite[p.~176]{Oliveira2017}.
+reúne registros de acontecimentos passados cujo valor pode ser pessoal ou ligado à história de famílias, comunidades e nações \cite{Finardi2020}, e
+funciona como um arquivo pessoal que reflete a trajetória do colecionador \cite{Silva2020}. Para muitos objetos, reuni-los numa coleção é a única forma
+de salvaguardá-los para as gerações futuras \cite{Oliveira2017}.
 
 Cuidar da coleção traz ainda bem-estar e satisfação. Colecionadores descrevem a atividade como um lazer agradável, que proporciona contentamento e no qual
-manusear, organizar e inventariar os itens é fonte de satisfação \cite[p.~176]{Oliveira2017}. Alcançar um objetivo da coleção gera um sentimento de autoeficácia
-e eleva a autoestima \cite[p.~105]{Silva2020}, e completar um conjunto é descrito pelos próprios colecionadores como uma sensação muito boa
-\cite[p.~9]{Correia2026}. \citeonline{Cao2025} acrescentam que a coleção pode servir como forma de enfrentamento em tempos de incerteza e mudança rápida, nos
+manusear, organizar e inventariar os itens é fonte de satisfação \cite{Oliveira2017}. Alcançar um objetivo da coleção gera um sentimento de autoeficácia
+e eleva a autoestima \cite{Silva2020}, e completar um conjunto é descrito pelos próprios colecionadores como uma sensação muito boa
+\cite{Correia2026}. \citeonline{Cao2025} acrescentam que a coleção pode servir como forma de enfrentamento em tempos de incerteza e mudança rápida, nos
 quais traz conforto e sentido.
 
-\citeonline[p.~548]{Belk1988} separam o colecionador do acumulador pela seletividade e mostram que uma coleção pode reunir objetos, ideias ou experiências.
-Estudos recentes mantêm essa base. \citeonline{Silva2020} retomam a definição de Belk de colecionar como um processo ativo, seletivo e apaixonado, sem função
-utilitária, e destacam que manipular, catalogar e expor os itens sustentam o sentimento de posse e a expressão de si. \citeonline{Correia2026}, ouvindo 29
-colecionadores brasileiros, descrevem o colecionismo como aquisição, classificação, exibição e cuidado, e como construção de identidade e de memória.
-\citeonline{Sundstrom2020} opõem o acúmulo, sem ordem, ao colecionar, que busca representar quem coleciona, e \citeonline{Rava2023} mostra que o princípio de
-seleção continua sendo o que separa coleção de acúmulo.
+\subsection{Colecionismo Digital}
+\label{subsec:colecionismo-digital}
 
-% PASSO 2. A coleção no meio digital
-% IDEIA: Watkins, Sellen e Lindley identificaram três práticas centrais
-%   dos colecionadores, a aquisição, a curadoria e a exibição, que o
-%   ambiente digital pode favorecer ou atrapalhar. Rava mostra que no
-%   digital o foco passa da aquisição para a organização e o
-%   compartilhamento, e que a curadoria e a visibilidade social dão sentido
-%   a coleções de itens que a pessoa nem possui, como playlists. Mardon e
-%   colegas relatam uma colecionadora que organiza seus discos de vinil por
-%   categorias próprias, mas não consegue organizar nem exibir sua coleção
-%   digital como quer, e por isso a sente só em parte como sua. Ribeiro e
-%   Salcedo mostram colecionadores brasileiros classificando, expondo e
-%   trocando itens em meio digital, e Silva e colegas descrevem a estante
-%   virtual do Goodreads, análoga à estante física.
-% COMO ABORDAR: apresentar as três práticas uma a uma, com um exemplo de
-%   cada (adicionar um item, organizar e anotar, mostrar a alguém). Elas
-%   viram o fio condutor do capítulo, pois a curadoria aparece na
-%   personalização e a exibição nas redes sociais. O caso relatado por
-%   Mardon mostra o que falta nas ferramentas e abre espaço para a
-%   plataforma.
-% FONTES:
-%   \cite{Watkins2015}, p. 3423 (as três práticas) e p. 3431 (ferramentas
-%     em que o usuário impõe a própria estrutura).
-%   \cite{Rava2023}, p. 174, 176 e 181-183.
-%   \cite{Mardon2023}, p. 24-26 do manuscrito (organizar e exibir a
-%     coleção digital) (preprint).
-%   \cite{Ribeiro2022}, p. 13 e 17 (em português).
-%   \cite{Silva2022}, p. 25:5 (estante virtual do Goodreads; SBC).
-%   [APOIO] \cite{Razali2025}, p. 68-70 (plataformas para colecionadores
-%     são pouco flexíveis e ignoram o lado social).
-% PONTE: "Manter uma coleção digital, porém, não produz automaticamente o
-%   mesmo vínculo que a coleção física."
-%
-% PASSO 3. Posse de coisas digitais
-% IDEIA: Odom e colegas observaram que o senso de posse sobre o que fica
-%   online enfraquece, porque a pessoa perde o controle e a noção do que
-%   tem. Morewedge e colegas definem a propriedade psicológica como o
-%   sentimento de que algo é "meu", que nasce do controle, do investimento
-%   de si e do conhecimento íntimo do objeto. Bens digitais acessados por
-%   plataforma ameaçam esse sentimento, mas a personalização e o controle
-%   sobre a experiência podem restaurá-lo. Mardon e colegas mostram que os
-%   obstáculos à posse digital estão nos recursos que o sistema oferece, e
-%   não na natureza digital do objeto. Denegri-Knott e colegas descrevem o
-%   trabalho de posse como selecionar, personalizar, exibir e manter, e
-%   mostram que em plataformas ele inclui compartilhar e seguir.
-% COMO ABORDAR: problema e resposta. O problema é a posse fraca do que está
-%   online. A resposta é dar ao usuário controle, organização própria e
-%   personalização, o que antecipa as Seções 2.5 e 2.7.
-% FONTES:
-%   \cite{Odom2012}, p. 785 (perda de controle e da noção do que se tem) e
-%     p. 788 (inventário visual).
-%   \cite{Morewedge2021}, p. 197 (propriedade psicológica), p. 205 (bens
-%     digitais a ameaçam) e p. 206 (personalização e controle a geram).
-%   \cite{Mardon2023}, p. 5-6, 8 e 42-43 do manuscrito (preprint).
-%   \cite{DenegriKnott2022}, p. 1 e 6.
-%   \cite{DenegriKnott2024}, p. 24, 26 e 31.
-% PONTE: "Além do vínculo, o registro tem outra função, que é permitir
-%   revisitar a própria trajetória."
-%
-% PASSO 4. O registro como memória e reflexão
-% IDEIA: Li, Dey e Forlizzi definem sistemas de informática pessoal como os
-%   que ajudam a pessoa a coletar informações sobre si para refletir, em
-%   cinco estágios (preparação, coleta, integração, reflexão e ação).
-%   Epstein e colegas, ao mapear a área, retomam esse modelo e mostram que
-%   ela se concentra em saúde, com poucos estudos em outros domínios, como
-%   leitura. Lyall mostra que os registros pessoais funcionam como um
-%   diário e servem para contar a própria história. Valiati e colegas,
-%   estudando o resumo anual do Spotify, mostram que rever o histórico de
-%   consumo cultural leva à autorreflexão e que as pessoas comparam como o
-%   gosto mudou ao longo dos anos. Van den Hoven e colegas mostram que
-%   posses, inclusive digitais, funcionam como gatilhos de memória.
-% COMO ABORDAR: analogia. Registrar a data em que viu um filme e a nota
-%   dada é a coleta, e voltar a esses registros anos depois é a reflexão.
-%   O caso do Spotify é o paralelo mais próximo de rever um histórico de
-%   leituras ou de filmes. Isso dá base teórica ao que a Justificativa
-%   conta.
-% FONTES:
-%   \cite{Li2010}, p. 558 (definição) e p. 560 (cinco estágios).
-%   \cite{Epstein2020}, p. 126:2-126:3 (modelo de Li) e p. 126:10 (pouca
-%     pesquisa fora da saúde).
-%   \cite{Lyall2024}, p. 1, 4 e 16.
-%   \cite{Valiati2026}, p. 5-6 e 9-10.
-%   \cite{vandenHoven2021}, p. 3-4 do manuscrito (preprint).
-% PONTE / FECHAMENTO: "Construir um sistema que apoie essas práticas
-%   exige, antes de tudo, definir com precisão o que ele deve fazer."
+No meio digital, essas práticas ganham novas formas. \citeonline{Watkins2015}, a partir de entrevistas com 20 pessoas no Reino Unido, identificam três
+práticas que dão sentido a uma coleção, a aquisição, a curadoria e a exibição, e mostram que os recursos do ambiente digital podem tanto favorecer quanto
+dificultar cada uma delas. A aquisição corresponde a incorporar um novo item ao conjunto, como registrar um livro recém-lido. A curadoria envolve organizar,
+classificar e anotar o que já foi reunido, e a exibição consiste em mostrar a coleção a si mesmo e aos outros, o que comunica quem é o colecionador e reafirma
+sua identidade \cite{Watkins2015}. \citeonline{Rava2023}, retomando Winget, observa que, como os itens digitais são fáceis de obter, o esforço
+do colecionador se desloca da aquisição para a organização e o compartilhamento, a ponto de ser possível colecionar o que não se possui, como as músicas reunidas
+em listas de reprodução nos serviços de \textit{streaming} \cite{Rava2023}. Para a autora, organizar e exibir a coleção no espaço digital é o que lhe
+confere significado \cite{Rava2023}.
 
+Essas práticas aparecem também entre colecionadores brasileiros. \citeonline{Ribeiro2022} mostram que, no colecionismo filatélico, as mídias digitais
+trouxeram outros modos de classificar, expor, leiloar, negociar e trocar selos, e que os colecionadores passaram a participar de exposições filatélicas pela
+internet \cite{Ribeiro2022}. Entre leitores, o Goodreads oferece uma estante virtual, uma lista à qual se adicionam e da qual se retiram livros,
+semelhante à estante em que se guardam os livros em casa \cite{Silva2022}.
 
-\section{Engenharia de Requisitos}
-\label{sec:engenharia-requisitos}
+As ferramentas digitais, porém, nem sempre acompanham essas práticas. No estudo de \citeonline{Watkins2015}, uma participante lamentava que o programa
+em que guardava suas músicas as listasse em ordem alfabética, sem permitir destacar os álbuns favoritos, o que tornava a exibição pouco representativa de seu
+gosto. \citeonline{Mardon2023} relatam um caso semelhante, o de uma colecionadora que organizava seus discos de vinil em categorias próprias, como músicas para
+jantares, mas não conseguia organizar nem exibir a coleção digital do mesmo modo, e por isso a sentia apenas em parte como sua. \citeonline{Watkins2015}
+observam que muitas aplicações impõem esquemas de organização que enfraquecem o senso de controle sobre a coleção e defendem ferramentas mais flexíveis, nas quais
+o usuário imponha suas próprias estruturas, e \citeonline{Razali2025} acrescentam que as plataformas para colecionadores costumam ser voltadas a domínios
+específicos, oferecem pouca personalização e deixam de lado o compartilhamento e o contato entre colecionadores.
 
-% PAPEL DA SEÇÃO: base conceitual curta; o detalhamento fica no Cap. 5.
-% ABERTURA: "Todo sistema de software parte de uma definição do que ele
-%   deve fazer e das restrições sob as quais deve operar, e essa definição
-%   é objeto da engenharia de requisitos."
-%
-% PASSO 1. Conceito e atividades
-% IDEIA: a engenharia de requisitos é a fase em que as necessidades e as
-%   restrições do sistema são identificadas, analisadas e documentadas.
-%   Zhao e colegas organizam suas atividades em elicitação, análise,
-%   modelagem, validação e gerência. Epifânio e colegas, em estudo com
-%   profissionais brasileiros, resumem seu objetivo em especificar,
-%   documentar, validar, negociar e gerenciar requisitos. Franch e colegas
-%   mostram que a especificação, que registra o que foi levantado e
-%   negociado, é a atividade central da fase. Valente resume as atividades
-%   em descoberta, análise, especificação e manutenção.
-% COMO ABORDAR: mostrar a convergência. Os autores descrevem o mesmo
-%   processo com mais ou menos etapas. Não listar tudo em detalhe.
-% FONTES:
-%   \cite{Arora2024}, resumo e seção 1 (preprint).
-%   \cite{Zhao2021}, seção 4.3.1, Tabela 5 (preprint).
-%   \cite{Epifanio2023}, p. 230 (WER, profissionais brasileiros).
-%   \cite{Franch2023}, p. 377-378.
-%   \cite{Valente2020}, cap. 3, seções 3.1 e 3.2.
-% PONTE: "Entre os requisitos levantados, distinguem-se dois tipos."
-%
-% PASSO 2. Requisitos funcionais e não funcionais
-% IDEIA: o requisito funcional diz o que o sistema faz. O não funcional,
-%   também chamado requisito de qualidade, descreve atributos ou restrições
-%   do sistema, como desempenho, disponibilidade, segurança e usabilidade,
-%   e diz respeito a quão bem o sistema realiza suas funções. Ele pode
-%   valer para o sistema inteiro, influencia a arquitetura e é mais difícil
-%   de expressar e verificar. Barbosa e colegas, em português, descrevem os
-%   não funcionais como de efeito global, afetando vários componentes.
-% COMO ABORDAR: definir os dois com um exemplo genérico de cada (cadastrar
-%   um item; responder em poucos segundos). Encerrar dizendo que a
-%   classificação é aplicada no Cap. 5, sem repetir aquele texto.
-% FONTES:
-%   \cite{Werner2022}, seção 1 (atributos e restrições; influência na
-%     arquitetura) (preprint).
-%   \cite{Habibullah2023}, p. 283-285 (definição; sistema inteiro,
-%     componente ou função).
-%   \cite{Olsson2022}, p. 249-250 (requisito de qualidade como sinônimo).
-%   \cite{Barbosa2023}, p. 123-124 (em português, WER).
-%   \cite{Valente2020}, seção 3.1.
-% PONTE: "Para descrever como o usuário interage com essas funções,
-%   usam-se casos de uso."
-%
-% PASSO 3. Casos de uso
-% IDEIA: o caso de uso é uma sequência de passos que define as interações
-%   entre um ator, papel de uma entidade externa, e o sistema para atingir
-%   um objetivo, e documenta requisitos funcionais. Ele descreve o que o
-%   sistema oferece do ponto de vista de quem usa e produz um resultado de
-%   valor para o ator. Franch e colegas mostram que, na indústria, os casos
-%   de uso são o artefato textual mais usado depois das frases em linguagem
-%   natural.
-% COMO ABORDAR: explicar por que a técnica é útil, já que descreve o
-%   sistema do ponto de vista de quem usa e de seu objetivo.
-% FONTES:
-%   \cite{Wang2022}, seção 2.3 (preprint).
-%   \cite{Gupta2025}, seções I e III.A (preprint; aplicação web).
-%   \cite{Santander2022}, seção 2 (em português, WER).
-%   \cite{Franch2023}, p. 382 e 384.
-%   \cite{OMG2017uml}, subcláusulas 18.1.1 e 18.1.3.1, p. 639-640.
-%   \cite{Valente2020}, seção 3.4.
-% PONTE / FECHAMENTO: "Definido o que o sistema faz, é preciso
-%   representar os conceitos sobre os quais ele opera."
+É nesse espaço que se situa a plataforma proposta neste trabalho, que reúne as três práticas em um mesmo ambiente. O usuário cadastra os itens de coleções de
+qualquer natureza, organiza-os em categorias e coleções definidas por ele e escolhe, por meio de layouts, como cada item é apresentado, além de compartilhar
+suas coleções com outras pessoas. A curadoria e a exibição são retomadas nas Seções~\ref{sec:personalizacao} a~\ref{sec:redes-sociais}, dedicadas à
+personalização de interfaces, à manipulação direta e às redes sociais.
 
+\subsection{Propriedade Psicológica}
+\label{subsec:propriedade-psicologica}
 
-\section{Modelagem Conceitual com UML}
-\label{sec:modelagem-conceitual}
+Manter uma coleção digital, porém, não produz automaticamente o mesmo vínculo que a coleção física. \citeonline{Odom2012}, ao entrevistar pessoas sobre o
+que guardavam em serviços \textit{on-line}, observaram que colocar algo na internet pode significar abrir mão do controle sobre aquilo que se valoriza e perder a
+noção do que se tem, de onde está e de quem tem acesso, a ponto de ficar difícil fazer um inventário do que se possui. Esse vínculo é o que
+\citeonline{Morewedge2021} chamam de propriedade psicológica, o sentimento de que algo é ``meu'', que não depende da propriedade legal e que atende tanto
+ao desejo de controle quanto ao de expressar a própria identidade. \citeonline{Mardon2023} explicam que esse sentimento se forma por meio de práticas como
+guardar, organizar, exibir e cuidar dos objetos, pelas quais a pessoa exerce controle sobre eles, passa a conhecê-los intimamente e investe neles parte de si.
 
-% ABERTURA: "Depois de definidos os requisitos, é preciso identificar os
-%   conceitos do domínio e as relações entre eles, e a UML oferece uma
-%   notação padronizada para isso."
-%
-% PASSO 1. O que é a UML
-% IDEIA: a OMG mantém a UML como linguagem para analisar, projetar e
-%   documentar sistemas. Jolak e colegas a descrevem como linguagem de
-%   propósito geral, com vários diagramas para olhar o sistema por
-%   perspectivas diferentes, e mostram que o diagrama de classes é o mais
-%   usado. Na indústria brasileira, Wilson Júnior e colegas registram que a
-%   UML é ensinada como linguagem padrão e serve para documentar decisões e
-%   comunicar equipes. Franch e colegas a apontam como linguagem dominante
-%   entre quem usa modelos.
-% COMO ABORDAR: apresentar a UML brevemente e deixar claro que o trabalho
-%   usa o diagrama de classes para representar o domínio.
-% FONTES:
-%   \cite{OMG2017uml}, cláusula 1, p. 1.
-%   \cite{Jolak2020}, p. 4434.
-%   \cite{WilsonJunior2022}, p. 1 e 13 (SBC, indústria brasileira).
-%   \cite{Franch2023}, p. 382.
-%   \cite{Camara2023}, p. 782.
-%   \cite{Valente2020}, seção 4.2.
-% PONTE: "No uso conceitual, o artefato central é o modelo de domínio."
-%
-% PASSO 2. Modelo de domínio
-% IDEIA: a modelagem conceitual extrai conceitos do mundo real e os
-%   representa por entidades, atributos e relacionamentos, muitas vezes em
-%   diagrama de classes da UML. O que importa é capturar fatos e regras do
-%   domínio independentemente das soluções tecnológicas. Ben Chaaben e
-%   colegas definem o modelo de domínio como uma representação visual dos
-%   objetos do mundo real de um domínio e de suas ligações. Antonelli e
-%   colegas mostram que o modelo conceitual faz a ponte entre a linguagem
-%   dos especialistas e a da equipe de desenvolvimento.
-% COMO ABORDAR: definir e reforçar o "não é software". Isso justifica por
-%   que o modelo vem antes das decisões de banco e de código.
-% FONTES:
-%   \cite{Storey2023}, seções 1 e 2.1 (preprint).
-%   \cite{BenChaaben2026}, seções 1 e 4.2 (preprint).
-%   \cite{Chou2026}, seção 2 (preprint).
-%   \cite{Antonelli2023}, p. 163 e 166 (WER).
-%   \cite{Wang2022}, seção 1 (modelo de domínio como diagrama de classes).
-% PONTE: "Quando o domínio é extenso, o diagrama precisa ser organizado."
-%
-% PASSO 3. Pacotes
-% IDEIA: a especificação da UML trata o pacote como o principal mecanismo
-%   de organização, que agrupa elementos e lhes dá um espaço de nomes.
-%   Gray e Rumpe defendem que as linguagens de modelagem incentivem a
-%   modularidade, porque módulos e pacotes com fronteiras claras contêm a
-%   complexidade de sistemas grandes. Sarhan e colegas mostram que dividir
-%   em partes coesas e pouco acopladas agrupa classes semelhantes.
-% COMO ABORDAR: recurso de organização, em duas ou três frases.
-% FONTES:
-%   \cite{OMG2017uml}, subcláusula 12.1, p. 241, e 12.4.5.1, p. 276.
-%   \cite{Gray2021}, p. 591-592.
-%   \cite{Sarhan2022}, seção 1 (preprint; trata de código).
-%   \cite{Valente2020}, seção 4.4.
-% PONTE / FECHAMENTO: "O modelo conceitual orienta as decisões de
-%   arquitetura e de persistência discutidas a seguir."
+No meio digital, esse sentimento fica ameaçado. Bens digitais acessados por meio de plataformas costumam ser apenas um direito de uso, e as pessoas sentem menos
+propriedade psicológica por livros, filmes e fotografias digitais do que por seus equivalentes físicos \cite{Morewedge2021}. \citeonline{Mardon2023}
+mostram, porém, que o obstáculo não está apenas na natureza digital do objeto, e sim no desencontro entre o que a pessoa espera fazer com ele e o que o sistema
+permite, de modo que o mesmo objeto pode ser um obstáculo para uma pessoa e não para outra. \citeonline{DenegriKnott2024} descrevem o trabalho de posse
+como selecionar, customizar, exibir e manter um objeto significativo, e relatam que uma atualização do Spotify limitou a capacidade dos usuários de criar,
+organizar e manter suas próprias bibliotecas de música \cite{DenegriKnott2024}.
 
+O próprio meio digital oferece, por outro lado, caminhos para restaurar esse vínculo. \citeonline{Morewedge2021} apontam que os bens digitais podem ampliar
+o controle ao facilitar a personalização da experiência, o que pode gerar mais propriedade psicológica do que a sentida por bens físicos semelhantes, e
+recomendam oferecer meios de customizar a experiência e evitar organizar o conteúdo do usuário sem o seu consentimento. \citeonline{DenegriKnott2022} mostram que
+o valor das posses digitais está no que elas permitem fazer, como compartilhar, editar e organizar em conjunto, e \citeonline{DenegriKnott2024} observam
+que, nas plataformas, o trabalho de posse passa a incluir ações como compartilhar, curtir e seguir. \citeonline{Odom2012} sugerem ainda reunir em
+um lugar delimitado tudo aquilo que a pessoa valoriza, como um inventário visual que possa ser percorrido e lhe devolva a noção do que tem. A plataforma
+proposta segue esse caminho, pois reúne a coleção em um único lugar, no qual o próprio usuário define a organização do acervo e a aparência de cada item.
 
-\section{Arquitetura de Aplicações \textit{Web}}
-\label{sec:arquitetura-web}
+\subsection{Registro e Memória}
+\label{subsec:registro-memoria}
 
-% ABERTURA: "Aplicações web costumam ser organizadas em partes com
-%   responsabilidades distintas, o que facilita compreender, testar e
-%   evoluir cada uma delas."
-%
-% PASSO 1. Camadas
-% IDEIA: aplicações web seguem com frequência o modelo de três camadas,
-%   com a interface no navegador, a lógica de negócio no servidor e o banco
-%   de dados. Quando o servidor é um único processo, a comunicação interna
-%   é rápida e a aplicação é mais simples de testar, implantar e depurar.
-%   Hoppe e Souza descrevem a separação em entidades, persistência,
-%   aplicação e navegação. Yang e colegas mostram que as regras de dados
-%   aparecem em mais de uma camada, na interface, na aplicação e no banco.
-% COMO ABORDAR: apresentar a divisão e a vantagem de isolar
-%   responsabilidades.
-% FONTES:
-%   \cite{Blinowski2022}, seção II.A, p. 20358.
-%   \cite{Hoppe2023}, seção 2.2, p. 261 (WebMedia, autores brasileiros).
-%   \cite{Yang2020}, seções 2.1 e 2.2, p. 3.
-%   [CONFERIR] \cite{Thakare2022}, camadas e acesso só à camada de baixo.
-% PONTE: "A comunicação entre a camada de apresentação e as demais segue,
-%   em muitas aplicações, o estilo REST."
-%
-% PASSO 2. REST
-% IDEIA: Fielding define REST como um conjunto de restrições
-%   (cliente-servidor, ausência de estado, cache, interface uniforme e
-%   sistema em camadas). Sem estado, o servidor não guarda contexto do
-%   cliente entre requisições, e na interface uniforme cada recurso tem uma
-%   URI. REST não é um protocolo, e sim um conjunto de diretrizes para
-%   acessar recursos por HTTP, em que cada operação usa um método HTTP
-%   diferente. Neumann e colegas mostram que só 0,8\% de 500 APIs públicas
-%   seguem todos os princípios.
-% COMO ABORDAR: explicar duas restrições com calma, a ausência de estado e
-%   a interface uniforme, que se traduz nos métodos e códigos do HTTP.
-% FONTES:
-%   \cite{Fielding2000}, cap. 5.
-%   \cite{Neumann2021}, seção 3 e resumo (preprint).
-%   \cite{Kotstein2021}, seções 2.1 e 2.2 (preprint).
-%   \cite{Golmohammadi2023}, seção 2.1 (preprint).
-%   \cite{fielding2022http} (métodos e códigos de status).
-% PONTE: "Como cada requisição precisa identificar quem a faz, é comum
-%   usar tokens."
-%
-% PASSO 3. Token de autenticação
-% IDEIA: o JWT é um formato compacto, com cabeçalho, conteúdo e
-%   assinatura. Como é assinado digitalmente, quem o recebe confere a
-%   assinatura sem consultar o servidor que o emitiu, o que permite
-%   autenticação sem estado, adequada a aplicações que não guardam sessão
-%   e enviam o token a cada requisição. Yang e colegas observam que as SPAs
-%   expuseram o limite da sessão guardada no servidor.
-% COMO ABORDAR: apresentar como consequência natural da ausência de
-%   estado do REST.
-% FONTES:
-%   \cite{Jones2015jwt}, resumo e seção 1.
-%   \cite{Yang2026}, seções I e II.A, p. 1-2.
-%   \cite{Almeida2022}, seção 3.4, p. 13 (autores da UnB).
-%   [APOIO] \cite{Laurindo2024}, p. 457 (em português).
-% PONTE: "Do lado do cliente, a interface também pode evitar recarregar a
-%   página a cada ação."
-%
-% PASSO 4. Single-Page Application
-% IDEIA: na aplicação de várias páginas, cada requisição recarrega a
-%   página. A SPA não recarrega, mantém o estado no navegador e atualiza a
-%   interface de forma dinâmica, o que economiza banda ao custo de um
-%   carregamento inicial maior. Em frameworks como o React, a aplicação é
-%   uma árvore de componentes e o framework atualiza a tela conforme o
-%   estado. A SPA chama o servidor por HTTP, em geral no estilo REST.
-% COMO ABORDAR: contrastar com o site tradicional e mostrar que isso
-%   importa para telas muito interativas, como um editor.
-% FONTES:
-%   \cite{Vepsalainen2024}, seções II.B e II.C, p. 9039.
-%   \cite{Ollila2022}, p. 791, 794 e 795.
-%   \cite{Hoppe2023}, p. 260 e 262.
-%   \cite{Komperla2022}, p. 1711.
-%   \cite{Comin2026}, p. 231 (em português).
-% PONTE: "Do outro lado, os dados precisam ser guardados de forma
-%   consistente."
-%
-% PASSO 5. Modelo relacional
-% IDEIA: Codd propõe representar os dados como relações (tabelas), de modo
-%   que quem usa não precise saber como eles estão guardados, e define
-%   chave primária e chave estrangeira. A chave primária garante a
-%   integridade de entidade e a estrangeira, a integridade referencial.
-%   Döhmen e colegas, analisando mais de 221 mil esquemas reais, mostram
-%   que tabelas, chaves e restrições de integridade continuam sendo a base
-%   dos bancos relacionais.
-% COMO ABORDAR: partir do artigo de 1970 como marco e usar as fontes
-%   recentes para chaves e integridade.
-% FONTES:
-%   \cite{Codd1970}, p. 377 e 380.
-%   \cite{Jiang2020}, seções 1 e 3 (preprint).
-%   \cite{Dohmen2024}, p. 172:1-172:3.
-%   \cite{ZhadkoBazilevych2025}, p. 426.
-%   \cite{PostgreSQL2025}, seções 5.5.4 e 5.5.5.
-% PONTE: "Programas orientados a objetos, no entanto, não pensam em
-%   tabelas."
-%
-% PASSO 6. Descompasso objeto-relacional e ORM
-% IDEIA: o modelo relacional e a orientação a objetos não combinam
-%   diretamente, e o ORM automatiza a conversão, traduzindo chamadas do
-%   programa em SQL e mapeando cada modelo para uma tabela. O custo
-%   aparece no desempenho. Shao e colegas mostram que o ORM pode montar
-%   consultas desnecessárias, e Zhadko-Bazilevych, comparando ORMs em
-%   aplicações NestJS com PostgreSQL, encontra diferenças de desempenho
-%   entre eles.
-% COMO ABORDAR: problema primeiro, solução depois, e o custo no fim.
-%   Não citar a ferramenta usada (ela está no Cap. 3).
-% FONTES:
-%   \cite{ZhadkoBazilevych2025}, p. 426-427 e 430.
-%   \cite{Yang2020}, seção 2.1, p. 3.
-%   \cite{Shao2020}, seções III.B e V.B, p. 5 e 9.
-%   \cite{Hoppe2023}, seção 2.2 (mapeamento objeto-relacional).
-%   [CONFERIR] \cite{Loli2020}, problemas de código ligados ao ORM.
-% PONTE / FECHAMENTO: "Sobre essa base técnica, a parte visível do
-%   sistema é a interface, tema das próximas seções."
+Além do vínculo, o registro tem outra função, que é permitir revisitar a própria trajetória. \citeonline{Li2010} definem os sistemas de informática
+pessoal como aqueles que ajudam as pessoas a coletar informações relevantes sobre si mesmas para refletir e ganhar autoconhecimento, com a vantagem de não
+depender apenas da memória, que é limitada, e organizam o uso desses sistemas em cinco estágios, a preparação, a coleta, a integração, a reflexão e a ação
+\cite{Li2010}. Ao mapear uma década de pesquisas na área, \citeonline{Epstein2020} retomam esse modelo como referência e mostram que os
+estudos se concentraram em saúde e bem-estar, enquanto outros domínios, como produtividade, finanças e aprendizagem, aparecem em número bem menor
+\cite{Epstein2020}.
+
+Registrar uma coleção pessoal segue a mesma lógica. Anotar a data em que um filme foi assistido e a nota dada a ele corresponde à coleta, e voltar a esses
+registros anos depois, comparando a opinião de antes com a de agora, corresponde à reflexão. \citeonline{Lyall2024} aproxima o automonitoramento digital
+dos diários pessoais e mostra que as pessoas usam os próprios dados como apoio para construir histórias e afirmar sua identidade \cite{Lyall2024}, de modo
+que os momentos registrados se tornam lembranças \cite{Lyall2024}. O paralelo mais próximo de rever um histórico de leituras ou de filmes é o resumo
+anual do Spotify, estudado por \citeonline{Valiati2026}, cujos participantes relatam perceber hábitos de escuta que passariam despercebidos e guardar os
+resumos anteriores para comparar o que mudou de um ano para outro. \citeonline{vandenHoven2021} mostram ainda que posses, inclusive digitais, funcionam como
+gatilhos de memórias pessoais e que associar um objeto a lembranças é um dos principais motivos do apego a ele.
+
+Esse uso do registro como memória está na origem deste trabalho, como relatado na Justificativa, e por isso a plataforma permite guardar em cada item
+informações como datas e classificações, que o colecionador pode consultar depois. Para que esse registro reflita quem o mantém, importa também a forma como
+ele é apresentado, e é dessa forma que tratam as próximas seções.
 
 
 \section{Personalização de Interfaces}
 \label{sec:personalizacao}
 
-% PAPEL DA SEÇÃO: coração teórico do trabalho; pode ser a seção mais
-%   longa do capítulo.
-% ABERTURA: "Personalizar uma interface é adaptá-la a quem a utiliza,
-%   seja no conteúdo exibido, seja na aparência, e essa adaptação pode
-%   partir do sistema ou do próprio usuário."
-%
-% PASSO 1. Conceito e quem personaliza
-% IDEIA: Sundar chama de personalização a adaptação feita pelo sistema e
-%   de customização a feita pelo próprio usuário, retomando o estudo em que
-%   usuários experientes preferiram customizar. Abrahão e colegas usam os
-%   termos adaptabilidade (o usuário adapta) e adaptatividade (o sistema
-%   adapta). Customizar, porém, tem custo. Alves e colegas mostram que as
-%   pessoas aproveitam pouco a personalização pelo esforço exigido e que
-%   ajuda mostrar uma prévia das mudanças. Wang e colegas observam que,
-%   quando toda a adaptação fica com o usuário, ele pode ter dificuldade e
-%   usar pouco os recursos.
-% COMO ABORDAR: definir os dois termos, situar o trabalho na customização
-%   e mostrar que ela precisa ser fácil para acontecer, o que justifica um
-%   editor visual com prévia.
-% FONTES:
-%   \cite{Sundar2020}, seção "Machine agency in mediated communication".
-%   \cite{Sundar2010}, p. 301 e 311.
-%   \cite{Abrahao2021}, seção 1, p. 1-2 do manuscrito (preprint).
-%   \cite{Alves2026}, seções 1, 2.1 e 2.2, p. 1-3 (preprint).
-%   \cite{Wang2024}, seções 2.1 e 7.2.1, p. 856 e 882.
-%   \cite{Alves2024}, p. 446:2 e 446:15 (preprint).
-% PONTE: "Se a escolha é do usuário, cabe perguntar por que ele escolhe
-%   personalizar a aparência."
-%
-% PASSO 2. Por que as pessoas personalizam a aparência
-% IDEIA: mudar a aparência tem motivo estético e de identidade. Pedersen e
-%   colegas não encontraram ganho de produtividade no modo escuro e
-%   concluíram que quem o escolhe valoriza aparência e conforto, e que a
-%   escolha expressa a identidade do usuário. Gazit e colegas e Kim e
-%   colegas registram que o modo escuro é adotado por conforto visual e
-%   apelo estético. Rheu e colegas mostram que customizar a aparência de um
-%   avatar aumentou a identificação do usuário com ele.
-% COMO ABORDAR: mostrar que personalizar a aparência não é capricho, pois
-%   expressa quem a pessoa é. Ligar a coleções, em que a aparência da
-%   coleção mostra quem a mantém e reforça a posse da Seção 2.1.
-% FONTES:
-%   \cite{Pedersen2020}, seções 4, 5 e 6, p. 7-8 do manuscrito (preprint).
-%   \cite{Gazit2025}, seção 1, p. 1-2.
-%   \cite{Kim2026}, resumo e introdução.
-%   \cite{Rheu2022}, resumo e seção 2.2, p. 1 e 3 (contexto de jogo).
-% PONTE: "Identidade e controle aparecem juntos quando se estuda por que
-%   as pessoas customizam."
-%
-% PASSO 3. Controle e identidade
-% IDEIA: na revisão de Bennett e colegas, que cobre 161 artigos de IHC,
-%   agência e autonomia aparecem ligadas a dois lados, o de controlar e
-%   decidir e o de identidade, de coerência com os próprios valores, mais
-%   forte quando há autoexpressão. Alves e colegas mostram que a
-%   customização feita pelo usuário dá mais senso de controle e de
-%   identidade, movida pelo desejo de agência. Sundar liga a customização
-%   ao controle percebido.
-% COMO ABORDAR: aprofundar o que a Justificativa citou em uma frase,
-%   explicando os dois motivos.
-% FONTES:
-%   \cite{Bennett2023}, resumo e seção 4.4.1, p. 6-7 (preprint).
-%   \cite{Alves2026}, seção 2.1, p. 3 (preprint).
-%   \cite{Sundar2020}, seção "Rise of machine agency".
-%   \cite{Rheu2022}, seção 2.2, p. 3.
-% PONTE: "Deixar a decisão com o usuário também se mostra vantajoso em
-%   termos de uso."
-%
-% PASSO 4. Adaptável e adaptativo
-% IDEIA: a adaptação automática traz riscos, como interpretar mal as
-%   necessidades, ser imprevisível e não envolver o usuário. Todi e colegas
-%   mostram que mudanças inesperadas surpreendem o usuário e o obrigam a
-%   reaprender. Alves e colegas observam que a personalização feita pelo
-%   sistema poupa esforço, mas reduz o senso de controle e rompe os modelos
-%   mentais já formados. Silva e colegas, em revisão brasileira, encontram
-%   o receio de perder o controle e o uso de adaptação manual para
-%   preservar a autonomia.
-% COMO ABORDAR: evidência a favor de deixar o controle com o usuário, em
-%   poucas frases.
-% FONTES:
-%   \cite{Abrahao2021}, seção 1, p. 1-2 do manuscrito (preprint).
-%   \cite{Todi2021}, seção 1 e Figura 1, p. 1-2 (preprint).
-%   \cite{Alves2026}, seção 2.1, p. 3 (preprint).
-%   \cite{Wang2024}, seções 2.1 e 7.2.1.
-%   \cite{Silva2025}, p. 1476 e 1483 (em português, IHC).
-% PONTE: "Além do controle, a aparência em si influencia a forma como o
-%   sistema é percebido."
-%
-% PASSO 5. Estética e emoção
-% IDEIA: Tractinsky, Katz e Ikar encontraram forte relação entre achar uma
-%   interface bonita e achá-la fácil de usar. Perrig e colegas confirmaram
-%   o efeito com 281 participantes, em que a versão estética de um
-%   aplicativo foi avaliada como bem mais usável, e apontam a cor entre os
-%   traços mais marcantes. Lima e colegas, da SBC, reforçam que a estética
-%   visual é fator essencial na usabilidade percebida. Haddad e colegas
-%   mostram que as preferências estéticas variam de pessoa para pessoa e
-%   que emoções positivas aumentam o engajamento. Morisso e Ferreira
-%   apresentam os três níveis do design emocional de Norman (visceral,
-%   comportamental e reflexivo).
-% COMO ABORDAR: os estudos mostram que a estética não é detalhe. A
-%   variação de gosto de Haddad justifica deixar a aparência com o usuário.
-%   O nível reflexivo explica por que uma coleção com a cara do dono
-%   importa.
-% FONTES:
-%   \cite{Tractinsky2000}, p. 139-140.
-%   \cite{Perrig2023}, seções 2.2.2, 2.3.1 e 5.2.
-%   \cite{Lima2024}, seção 1, p. 102 (SBC, autores brasileiros).
-%   \cite{Haddad2024}, seção 1, p. 2 do manuscrito (preprint).
-%   \cite{Morisso2021}, p. 47-49 (em português).
-% PONTE: "A liberdade de personalizar, porém, precisa preservar a
-%   legibilidade."
-%
-% PASSO 6. Liberdade com legibilidade
-% IDEIA: a heurística de flexibilidade e eficiência de uso de Nielsen pede
-%   que a interface possa ser customizada. O critério 1.4.3 da WCAG exige
-%   contraste mínimo de 4,5:1 para texto, e o documento explicativo do W3C
-%   incentiva deixar o usuário ajustar as cores, desde que exista como
-%   voltar ao contraste exigido. Problemas de contraste estão entre os mais
-%   frequentes em aplicativos, e forçar preto e branco resolve a leitura
-%   mas destrói o estilo visual, enquanto ajustar o contraste preservando o
-%   matiz mantém os dois. Chen e Muhamad mostram que a razão de contraste
-%   explica a maior parte da variação na leitura, e Kim e colegas lembram
-%   que cores pensadas para fundo claro perdem contraste no escuro.
-% COMO ABORDAR: mostrar o equilíbrio entre deixar o usuário escolher
-%   cores e garantir que o resultado continue legível. A nota do W3C e o
-%   reparo que preserva o matiz são o argumento central.
-% FONTES:
-%   \cite{Nielsen1994}, p. 152-153 e 156.
-%   \cite{campbell2024wcag}, critério 1.4.3.
-%   \cite{w3c2026contrast}, seções "Intent" e "Rationale for the Ratios
-%     Chosen".
-%   \cite{Zhang2023}, seções 1, 2.1 e 2.4, p. 2-3 (preprint).
-%   \cite{Chen2022a}, seções 5.2.1 e 5.2.3 (preprint).
-%   \cite{Chen2022b}, resumo e introdução.
-%   \cite{Kim2026}, introdução.
-%   \cite{Pedersen2020}, seção 2, p. 2-3 do manuscrito (preprint).
-% PONTE / FECHAMENTO: retomar o Problema do Cap. 1 (ferramentas de campos
-%   fixos não deixam decidir a aparência) e dizer que personalizar a
-%   aparência das fichas depende de uma forma de edição acessível ao
-%   usuário comum, tema da próxima seção.
+Personalizar uma interface é adaptá-la a quem a utiliza, seja no conteúdo exibido, seja na aparência, e essa adaptação pode partir do sistema ou do próprio
+usuário. \citeonline{Abrahao2021} chamam de adaptabilidade a capacidade de o usuário adaptar a interface e de adaptatividade a capacidade de o próprio sistema
+fazê-lo, e \citeonline{Sundar2010} distinguem, no mesmo sentido, a personalização, em que o usuário tem papel passivo e o sistema filtra o conteúdo por
+ele, da customização, em que o próprio usuário decide o que será exibido. No experimento desses autores, usuários mais experientes avaliaram melhor o conteúdo
+quando podiam customizar a interface, enquanto os demais preferiram o conteúdo personalizado pelo sistema \cite{Sundar2010}, e
+\citeonline{Sundar2020} retoma o estudo para observar que a sensação de controle aumentou na customização e diminuiu na personalização. Customizar, porém,
+exige esforço. \citeonline{Alves2026} lembram que as pessoas muitas vezes deixam de aproveitar a personalização feita por elas mesmas pela incerteza sobre o que
+precisam e pelo esforço envolvido, e \citeonline{Alves2024} observam que as soluções existentes exigem habilidades técnicas, tempo e esforço que nem
+todos podem oferecer, enquanto as interfaces costumam permitir apenas ajustes mínimos, como o esquema de cores e o tamanho da fonte. Este trabalho se situa do
+lado da customização, e por isso ela precisa ser simples o bastante para que o usuário de fato a faça.
+
+Se a escolha é do usuário, cabe perguntar por que ele escolhe personalizar a aparência. \citeonline{Alves2024} lembram que as pessoas querem que seus
+dispositivos tenham a aparência e o jeito de algo seu, e que a customização traz benefícios psicológicos ao reforçar o senso de controle, de identidade e de
+agência. O modo escuro é um exemplo cotidiano. \citeonline{Kim2026} registram que ele se tornou um recurso padrão das interfaces digitais pelo conforto visual e
+pelo apelo estético, e \citeonline{Gazit2025} reúnem entre os motivos de sua adoção a redução do cansaço visual, a usabilidade, a acessibilidade e a
+estética. A aparência também aproxima o usuário daquilo que o representa. No experimento de \citeonline{Rheu2022}, jogar com um avatar customizado aumentou a
+identificação do jogador com ele e a sensação de estar no corpo do avatar. No caso de uma coleção, a aparência das fichas mostra quem a mantém e reforça o
+sentimento de posse discutido na Seção~\ref{sec:colecionismo}.
+
+Identidade e controle aparecem juntos quando se estuda por que as pessoas customizam. Na revisão de \citeonline{Bennett2023}, que cobre 161 artigos de IHC
+publicados ao longo de 32 anos, quase todas as discussões sobre agência e autonomia tratam do controle do usuário sobre as decisões e as ações, e cerca de um
+terço trata também da identidade, isto é, da coerência dos resultados com os valores e objetivos de quem usa e do efeito sobre a forma como a pessoa se
+constrói. \citeonline{Alves2026} observam que a personalização feita pelo próprio usuário dá maior senso de controle e de identidade do que a automática, e que
+quem a prefere se envolve mais com o processo em si, muitas vezes movido pelo desejo de agência. É essa ligação entre controle e identidade, apresentada
+brevemente na Justificativa, que faz da customização da aparência mais do que um ajuste estético.
+
+Deixar a decisão com o usuário também se mostra vantajoso em termos de uso. \citeonline{Abrahao2021} apontam riscos da adaptação feita pelo sistema, como a
+imprevisibilidade, já que o usuário não sabe quando nem como a interface vai mudar, a falta de explicação sobre os motivos da mudança e a falta de envolvimento
+do usuário no processo. \citeonline{Todi2021} mostram que uma adaptação mal escolhida impõe custos ao usuário, por surpreendê-lo ou obrigá-lo a reaprender a
+interface, e \citeonline{Alves2026} observam que a personalização automática poupa esforço, mas reduz o senso de controle e aumenta a carga cognitiva ao romper
+os modelos mentais já formados. Em revisão brasileira sobre interfaces adaptativas, \citeonline{Silva2025} encontram estudos que optaram por
+adaptações semiautomáticas ou manuais justamente para preservar o controle e a autonomia do usuário, diante da sensação de perda de domínio que as mudanças
+automáticas podem gerar.
+
+Além do controle, a aparência em si influencia a forma como o sistema é percebido. \citeonline{Tractinsky2000} encontraram forte correlação entre a
+beleza percebida de uma interface e sua usabilidade percebida, e o nível de estética do sistema afetou as percepções de usabilidade depois do uso, enquanto a
+usabilidade real não teve esse efeito \cite{Tractinsky2000}. \citeonline{Perrig2023}, com 281 participantes, confirmaram que a versão mais estética de
+um aplicativo foi avaliada como significativamente mais usável após o uso, e lembram que a cor está entre os traços de design que mais chamam a atenção à
+primeira vista. \citeonline{Lima2024} reforçam que a estética visual é um dos primeiros aspectos percebidos em uma interface e contribui para sua usabilidade e
+sua credibilidade percebidas, e \citeonline{Haddad2024} observam que interfaces bem projetadas despertam experiências emocionais positivas, embora as respostas
+afetivas variem de uma pessoa para outra. Essa dimensão emocional é tratada pelo design emocional de Norman, cujos três níveis, o visceral, o comportamental e
+o reflexivo, são apresentados por \citeonline{Morisso2021}, que destacam ainda que os laços emocionais com um produto podem ser criados ao evocar
+memórias que refletem emoções e a autoimagem de quem o usa \cite{Morisso2021}. Como os gostos variam, deixar a aparência nas mãos do usuário permite que
+cada coleção agrade a quem a mantém.
+
+A liberdade de personalizar, porém, precisa preservar a legibilidade. Entre os fatores de usabilidade identificados por \citeonline{Nielsen1994}, o de
+flexibilidade e eficiência de uso reúne princípios como permitir que o usuário adapte a interface e torná-la customizável, inclusive em sua aparência
+\cite{Nielsen1994}. Por outro lado, o critério 1.4.3 das diretrizes de acessibilidade do W3C exige razão de contraste de pelo menos 4,5:1 para o texto
+\cite{campbell2024wcag}, e o documento explicativo desse critério incentiva os autores a oferecer meios de ajustar as cores de frente e de fundo, desde que
+exista um mecanismo que devolva os valores exigidos \cite{w3c2026contrast}. O cuidado é necessário porque o baixo contraste de texto está entre os três tipos de
+problema de acessibilidade mais frequentes em aplicativos, em geral causado por escolhas de cores como texto cinza sobre fundo branco \cite{Chen2022a}, e
+\citeonline{Chen2022b} mostram que a razão de contraste explica 77,4\% da variação na resolução visual quando há fundo colorido. Forçar tudo para preto e branco
+resolve a leitura, mas muda completamente o estilo visual da interface, e \citeonline{Zhang2023} mostram que é possível corrigir o contraste preservando a
+consistência desse estilo. \citeonline{Kim2026} lembram ainda que cores pensadas para fundo claro podem perder contraste e visibilidade sobre fundo escuro.
+
+Personalizar a aparência das fichas responde, assim, ao problema apresentado no Capítulo~\ref{cap:01}, em que as ferramentas de campos fixos não permitem ao
+colecionador decidir como cada registro é apresentado. Para que essa personalização esteja ao alcance do usuário comum, é preciso uma forma de edição simples e
+direta, tema da próxima seção.
 
 
 \section{Manipulação Direta e Editores Visuais}
 \label{sec:manipulacao-direta}
 
-% ABERTURA: "Uma forma de dar ao usuário comum o poder de definir a
-%   aparência de algo é permitir que ele aja diretamente sobre a
-%   representação na tela, sem precisar de comandos ou código."
-%
-% PASSO 1. O conceito
-% IDEIA: Shneiderman reúne sob o nome de manipulação direta as interfaces
-%   em que os objetos de interesse ficam visíveis, as ações são físicas,
-%   como arrastar e clicar, em vez de comandos digitados, e as operações
-%   são rápidas, reversíveis e têm efeito visível na hora. Beaudouin-Lafon,
-%   Bødker e Mackay lembram que as interfaces gráficas se baseiam nesse
-%   princípio. Satyanarayan e colegas mostram, em ferramentas de criação de
-%   gráficos, elementos arrastados para a tela e reposicionados e
-%   redimensionados por alças, com mais sensação de controle do que quando
-%   a mesma ação é feita por menu.
-% COMO ABORDAR: apresentar os três princípios com um exemplo de cada,
-%   arrastando e redimensionando um elemento numa folha.
-% FONTES:
-%   \cite{Shneiderman1983}, p. 57 e 64.
-%   \cite{BeaudouinLafon2021}, seção 5, p. 45:9-45:10 (preprint).
-%   \cite{Satyanarayan2020}, seções 3, 4.2.2 e 4.3.2, p. 462-467
-%     (preprint).
-%   \cite{Vaithilingam2024}, introdução (preprint).
-% PONTE: "Hutchins, Hollan e Norman procuraram explicar por que essas
-%   interfaces parecem tão naturais."
-%
-% PASSO 2. Por que funciona
-% IDEIA: Hutchins, Hollan e Norman explicam a sensação de interação
-%   direta pela distância pequena entre o que a pessoa quer fazer e o que
-%   precisa fazer (golfo de execução) e entre o que o sistema mostra e o
-%   que ela entende (golfo de avaliação), além da sensação de mexer no
-%   próprio objeto. Subramonyam e colegas retomam os dois golfos e mostram
-%   que, na manipulação direta, o retorno imediato é o que reduz o golfo de
-%   avaliação. Satyanarayan e colegas observam que, quando o resultado
-%   aparece na hora, o ciclo de retorno se fecha e a pessoa itera mais, e
-%   no estudo de Vaithilingam e colegas os participantes preferiram os
-%   controles visuais justamente pelo retorno instantâneo.
-% COMO ABORDAR: explicar os dois golfos com um exemplo simples (quero a
-%   imagem maior, puxo o canto, vejo ela crescer).
-% FONTES:
-%   \cite{Hutchins1985}, p. 318 e 333.
-%   \cite{Subramonyam2024}, seções 1, 2.2 e 3.2.3, p. 2, 4 e 8 (preprint).
-%   \cite{Satyanarayan2020}, seções 2.3 e 4.2.2 (preprint).
-%   \cite{Vaithilingam2024}, seção 5.4 (preprint).
-%   \cite{Masson2024}, seção 1 (preprint).
-% PONTE: "Esse estilo de interação se distingue de outras formas de
-%   interagir com o computador."
-%
-% PASSO 3. Manipular, instruir e conversar
-% IDEIA: dizer ao sistema o que fazer, por comando ou linguagem natural,
-%   reduz o esforço de especificar a ação, mas pode alargar o golfo de
-%   avaliação, porque o resultado é menos previsível. Interfaces só de
-%   linguagem natural perdem as vantagens da manipulação, como o ajuste
-%   fino, o retorno visual imediato e o desfazer, e no estudo de
-%   Vaithilingam e colegas a combinação de comando com controles visuais
-%   foi preferida. Srinivasan e colegas mostram que a precisão de arrastar
-%   e pinçar complementa a liberdade da fala, e Beaudouin-Lafon e colegas
-%   contrastam a manipulação direta com os comandos textuais.
-% COMO ABORDAR: situar o editor de layouts do lado da manipulação, em que
-%   o usuário age na folha em vez de descrever a mudança.
-% FONTES:
-%   \cite{Subramonyam2024}, seção 1, p. 2 (preprint).
-%   \cite{Vaithilingam2024}, introdução e seção 5 (preprint).
-%   \cite{Srinivasan2020}, introdução, p. 1-2 (preprint).
-%   \cite{BeaudouinLafon2021}, seção 5, p. 45:9 (preprint).
-%   \cite{Masson2024}, seção 1 (preprint).
-% PONTE: "Como a manipulação direta incentiva a experimentação, ela pede
-%   um meio de voltar atrás."
-%
-% PASSO 4. Poder desfazer
-% IDEIA: a heurística de controle e liberdade do usuário pede uma saída de
-%   emergência para ações feitas por engano e o suporte a desfazer e
-%   refazer, e a avaliação baseada nas heurísticas de Nielsen segue entre
-%   as técnicas mais usadas. Sterman e colegas mostram que poder voltar a
-%   um estado anterior dá segurança para explorar e arriscar, e Stewen e
-%   Kleppmann mostram que editores visuais como Figma, PowerPoint e Google
-%   Slides oferecem desfazer e refazer como recurso básico.
-% COMO ABORDAR: ligar reversibilidade (Shneiderman, Passo 1) e controle
-%   (Nielsen), mostrando que desfazer é o que permite experimentar.
-% FONTES:
-%   \cite{Nielsen1994}, p. 153-154 e 156.
-%   \cite{Pascual2024}, seções 1 e 2.1, p. 615-616 (SBC).
-%   \cite{Sterman2022}, seções 2.4 e 4.3, p. 336:6 e 336:13-336:14.
-%   \cite{Stewen2024}, seções 1 e 2, p. 1-2 (preprint).
-%   \cite{Vaithilingam2024}, introdução (preprint).
-% PONTE / FECHAMENTO: para quem não é designer, começar de uma folha em
-%   branco intimida, e os modelos prontos ajudam a começar, mas limitam
-%   quando não podem ser editados. Editores que deixam arrastar,
-%   redimensionar e desfazer, com retorno imediato, aplicam os princípios
-%   desta seção, e montar o layout de uma ficha é uma tarefa de
-%   manipulação direta.
-%   FONTES: \cite{Lee2020}, p. 1, 3, 6 e 8 (preprint); \cite{Hsu2023},
-%   seção 1, p. 6018 (preprint); [CONFERIR] \cite{Nouraei2024}.
+Uma forma de dar ao usuário comum o poder de definir a aparência de algo é permitir que ele aja diretamente sobre a representação na tela, sem precisar de
+comandos ou código. \citeonline{Shneiderman1983} reuniu sob o nome de manipulação direta as interfaces que despertavam entusiasmo em seus usuários, cujas
+ideias centrais eram a visibilidade do objeto de interesse, ações rápidas, reversíveis e incrementais e a substituição de comandos de sintaxe complexa pela ação
+direta sobre o objeto. O autor resume a abordagem em princípios como a representação contínua do objeto de interesse, o uso de ações físicas, como mover e
+selecionar com o mouse, no lugar de uma sintaxe complexa, e operações rápidas, incrementais e reversíveis cujo efeito sobre o objeto aparece imediatamente
+\cite{Shneiderman1983}. Num editor de layouts, isso significa ver a ficha o tempo todo, arrastar um elemento para mudá-lo de lugar e enxergar o resultado
+no mesmo instante. \citeonline{BeaudouinLafon2021} lembram que as interfaces gráficas atuais se baseiam nesse princípio, em que ações físicas sobre
+representações visuais substituem os comandos textuais, e \citeonline{Satyanarayan2020}, ao analisar ferramentas de criação de gráficos, descrevem eixos e
+legendas reposicionados com o mouse e redimensionados por alças que aparecem sobre eles, além de relatar que, ao arrastar dados diretamente para a área do
+gráfico, os participantes se sentiram com mais controle do que ao usar painéis separados.
+
+Hutchins, Hollan e Norman procuraram explicar por que essas interfaces parecem tão naturais. Para os autores, uma interface introduz distância na medida em que
+há golfos entre os objetivos da pessoa e o sistema, o golfo de execução, que diminui quando os comandos correspondem ao que o usuário pensa, e o golfo de
+avaliação, que diminui quando a saída apresenta o estado do sistema de forma fácil de perceber e interpretar \cite{Hutchins1985}. Quanto menor o esforço
+cognitivo para atravessar esses golfos, maior a sensação de interação direta, que se completa com o engajamento direto, isto é, a sensação de lidar com os
+próprios objetos e não com um intermediário, o que exige que o sistema responda sem atraso entre a ação e o resultado \cite{Hutchins1985}. Querer
+uma imagem maior, puxar seu canto e vê-la crescer é um exemplo de golfos pequenos nos dois sentidos. \citeonline{Subramonyam2024} retomam esses conceitos e
+lembram que, na manipulação direta, o retorno costuma ser imediato, de modo que o usuário vê na hora se suas ações o aproximam do objetivo, e no estudo de
+\citeonline{Vaithilingam2024}, com 24 participantes, a interface que oferecia controles visuais foi preferida pela facilidade de fazer novos ajustes e pela
+confiança trazida pelo retorno visual imediato.
+
+Esse estilo de interação se distingue de outras formas de interagir com o computador, como instruir o sistema por comandos ou conversar com ele em linguagem
+natural. \citeonline{BeaudouinLafon2021} contrastam a manipulação direta com os comandos textuais das interfaces anteriores, e \citeonline{Masson2024}
+observam que ajustar o resultado de um modelo de linguagem conversando com ele é lento, exige referências precisas aos elementos do resultado e depende de
+escolher bem as palavras. \citeonline{Vaithilingam2024} mostram que as interfaces apenas de linguagem natural perdem vantagens das interfaces gráficas, como
+explorar e repetir ajustes e ver o retorno visual na hora, e \citeonline{Srinivasan2020} propõem complementar a precisão do toque e da caneta com a liberdade de
+expressão da fala, em vez de abrir mão de uma delas. No editor de layouts, o usuário age diretamente sobre a ficha em vez de descrever a mudança desejada, o
+que o coloca do lado da manipulação.
+
+Como a manipulação direta incentiva a experimentação, ela pede um meio de voltar atrás. \citeonline{Shneiderman1983} já observava que um comando de
+desfazer, que devolve o conteúdo ao estado anterior, reduz a ansiedade do usuário quanto a errar, e que o usuário fica mais tranquilo porque as ações são
+facilmente reversíveis \cite{Shneiderman1983}. Entre os princípios reunidos por \citeonline{Nielsen1994} estão a possibilidade de desfazer o
+resultado de comandos anteriores e o suporte a desfazer e refazer, e a avaliação heurística baseada nesses princípios segue entre as técnicas de avaliação de
+usabilidade mais conhecidas e usadas \cite{Pascual2024}. \citeonline{Sterman2022} mostram, em entrevistas com profissionais de
+diversas áreas criativas, que guardar versões anteriores dá confiança para explorar alternativas, e um dos entrevistados relata que perdeu o medo de
+experimentar por saber que podia desfazer e voltar a um estado anterior. Não por acaso, desfazer e refazer são recursos onipresentes em editores visuais de
+uso corrente, como o Figma, o PowerPoint e o Google Slides, nos quais \citeonline{Stewen2024} analisaram o comportamento dessas operações.
+
+Para quem não é designer, porém, começar de uma tela em branco pode ser intimidador, pela dificuldade de conceber o desenho e harmonizá-lo com restrições como
+o layout e as cores, e no estudo de \citeonline{Lee2020} doze participantes disseram precisar de um modelo com uma estrutura pronta cujas áreas pudessem ser
+substituídas. Os modelos prontos ajudam a começar, mas, como observam \citeonline{Hsu2023}, limitam bastante a flexibilidade e a diversidade do resultado. O
+editor de layouts da plataforma aplica os princípios desta seção, pois o usuário posiciona e redimensiona os elementos da ficha diretamente sobre ela, vê o
+resultado no mesmo instante e pode desfazer e refazer cada alteração, de modo que montar o layout de uma ficha é uma tarefa de manipulação direta. Montada a
+ficha, resta mostrá-la a outras pessoas, o que leva às redes sociais.
 
 
 \section{Redes Sociais e Compartilhamento de Coleções}
 \label{sec:redes-sociais}
 
-% ABERTURA: "Exibir a coleção a outras pessoas faz parte do próprio ato de
-%   colecionar, e a internet ampliou essa exibição por meio das redes
-%   sociais."
-%
-% PASSO 1. Definição
-% IDEIA: boyd e Ellison definem site de rede social como um serviço que
-%   permite criar um perfil, montar uma lista de conexões e percorrer as
-%   conexões de outros usuários. Aichner e colegas, revisando 25 anos de
-%   definições, mostram que a conexão entre usuários está presente em
-%   todas, mas que, depois de 2010, o foco passou ao conteúdo produzido
-%   pelos próprios usuários.
-% COMO ABORDAR: apresentar os três elementos e notar que o centro passou
-%   da pessoa ao conteúdo, o que leva ao passo seguinte.
-% FONTES:
-%   \cite{boyd2007}, seção "Social Network Sites: A Definition".
-%   \cite{Aichner2021}, tabela de definições e conclusões.
-%   [CONFERIR] \cite{Bayer2020}, perfis, redes, fluxos e mensagens.
-% PONTE: "Com o tempo, o centro dessas plataformas passou a ser o fluxo de
-%   atualizações."
-%
-% PASSO 2. O fluxo de conteúdo
-% IDEIA: Ellison e boyd revisaram a definição, acrescentando consumir,
-%   produzir e interagir com fluxos de conteúdo das conexões, formados por
-%   quem a pessoa escolheu seguir. Poell, Nieborg e van Dijck descrevem as
-%   plataformas como infraestruturas que moldam interações personalizadas
-%   pela coleta e pelo processamento de dados. Huszár e colegas mostram que
-%   o feed do Twitter era cronológico, só com contas seguidas, e passou a
-%   ser ordenado por relevância. Bandy e Diakopoulos mostram que essa
-%   curadoria muda o que o usuário vê, e Lemos e Pastor descrevem a
-%   personalização do feed no Instagram.
-% COMO ABORDAR: comparar as duas definições e mostrar que o feed virou
-%   elemento central, podendo ser cronológico, só com o que a pessoa segue,
-%   ou ordenado pela plataforma.
-% FONTES:
-%   \cite{Ellison2013}, p. 158-159.
-%   \cite{Poell2020}, p. 4-6 (em português).
-%   \cite{Huszar2022}, introdução, p. 1-2 (preprint).
-%   \cite{Bandy2021}, seção 1, p. 78:1-78:2.
-%   \cite{Lemos2020}, p. 140 (em português).
-% PONTE: "Seguir alguém e ser amigo de alguém, porém, não são o mesmo tipo
-%   de ligação."
-%
-% PASSO 3. Laços e reciprocidade
-% IDEIA: Granovetter mede a força de um laço pelo tempo, pela intensidade
-%   emocional, pela intimidade e pela reciprocidade. Recuero e Zago mostram
-%   que adicionar como amigo exige que o outro concorde, enquanto seguir
-%   não exige reciprocidade. Palomares e colegas distinguem as redes
-%   simétricas, em que a conexão é confirmada pelos dois lados, das
-%   assimétricas, em que se segue sem confirmação. Rajkumar e colegas
-%   testaram a teoria em escala com dados do LinkedIn.
-% COMO ABORDAR: usar os laços de intensidades diferentes para mostrar que
-%   há formas distintas de se ligar a alguém, como ser amigo (recíproco) ou
-%   só acompanhar uma coleção (sem reciprocidade).
-% FONTES:
-%   \cite{Granovetter1973}, p. 1361.
-%   \cite{Recuero2009}, p. 82-83 (em português).
-%   \cite{Palomares2021}, seção 4.1.4, p. 26 (preprint).
-%   [CONFERIR] \cite{Rajkumar2022}.
-%   [CONFERIR] \cite{Kramer2021}, papel dos laços fortes no apoio online.
-% PONTE: "Plataformas que combinam acervo pessoal e rede social já foram
-%   objeto de estudo."
-%
-% PASSO 4. Plataformas de coleção com rede social
-% IDEIA: Thelwall e Kousha concluíram que o Goodreads é um híbrido, nem só
-%   catálogo de livros nem só rede social. Walsh e Antoniak mostram que
-%   cada livro posto na estante pessoal também alimenta o catálogo da
-%   plataforma, e Hider e Steele chamam de catalogação social os sites em
-%   que o público cria os registros. No Brasil, o Skoob reúne perfil,
-%   amigos, seguidores e uma estante com lidos, lendo e quero ler, com
-%   opção de manter livros privados. Leite e colegas descrevem o Letterboxd
-%   como espaço de catalogação e crítica de filmes em que se pode seguir
-%   outros usuários.
-% COMO ABORDAR: evidência de que juntar registro de coleção e interação
-%   social é um modelo reconhecido. Não comparar produtos aqui, porque isso
-%   é do Cap. 11.
-% FONTES:
-%   \cite{Thelwall2017}, p. 1 e 4.
-%   \cite{Walsh2021}, introdução e seção "The Classics 'Shelf'".
-%   \cite{Hider2021}, p. 113-114.
-%   \cite{Silva2022}, p. 25:5 (Goodreads no Brasil; SBC).
-%   \cite{Leite2025}, seções 1 e 3.
-%   [APOIO] \cite{Monteiro2020}, p. 65-67 (Skoob, em português).
-% FECHAMENTO DO CAPÍTULO: retomar as três práticas de Watkins (aquisição,
-%   curadoria e exibição) e mostrar que as seções cobriram a base para
-%   cada uma.
+Exibir a coleção a outras pessoas faz parte do próprio ato de colecionar, e a internet ampliou essa exibição por meio das redes sociais. \citeonline{boyd2007}
+definem os sites de redes sociais como serviços na \textit{web} que permitem ao indivíduo construir um perfil público ou semipúblico em um sistema delimitado,
+montar uma lista de outros usuários com quem tem conexão e ver e percorrer essa lista e as feitas por outros dentro do sistema, e observam que esses sites se
+organizam sobretudo em torno de pessoas, e não de interesses. Ao revisar 25 anos de definições, \citeonline{Aichner2021} mostram que o papel dessas
+plataformas como meio de interação e de conexão entre usuários foi uma constante, mas que as definições posteriores a 2010 passaram a dar mais atenção ao
+conteúdo gerado pelos próprios usuários.
+
+Com o tempo, o centro dessas plataformas passou a ser o fluxo de atualizações. \citeonline{Ellison2013} revisaram a própria definição e passaram a
+descrever o site de rede social como uma plataforma de comunicação em rede em que os participantes têm perfis identificáveis, articulam publicamente conexões
+que podem ser vistas e percorridas por outros e podem consumir, produzir ou interagir com fluxos de conteúdo gerado por suas conexões. \citeonline{Poell2020}
+definem as plataformas como infraestruturas digitais reprogramáveis que facilitam e moldam interações personalizadas, organizadas pela coleta sistemática e
+pelo processamento algorítmico de dados, e \citeonline{Lemos2020} mostram que o Instagram declara usar as conexões, as preferências e as atividades dos
+usuários para personalizar o \textit{feed}. Esse fluxo pode seguir critérios diferentes. \citeonline{Huszar2022} relatam um experimento em que parte dos
+usuários do Twitter recebeu um \textit{feed} em ordem cronológica inversa, livre da personalização algorítmica que seleciona e ordena o conteúdo para os
+demais, e \citeonline{Bandy2021} mostram que a curadoria algorítmica, comparada à cronológica, altera a diversidade de fontes e de temas a que o
+usuário é exposto. Na plataforma proposta, o \textit{feed} reúne as atualizações das coleções que o usuário acompanha, em ordem cronológica, do evento mais
+recente ao mais antigo.
+
+Seguir alguém e ser amigo de alguém, porém, não são o mesmo tipo de ligação. \citeonline{Granovetter1973} define a força de um laço como uma
+combinação do tempo dedicado, da intensidade emocional, da intimidade e dos serviços recíprocos que o caracterizam. \citeonline{Recuero2009} lembram que,
+nos sites de redes sociais tradicionais, as conexões costumam ser recíprocas e, ao adicionar alguém, é preciso que essa pessoa concorde com a conexão,
+enquanto no Twitter é possível formar uma rede de contatos em que nunca houve interação recíproca. \citeonline{Palomares2021} distinguem, nesse sentido, as
+redes simétricas, em que a conexão é bidirecional e precisa ser confirmada pelos dois lados, como no Facebook e no LinkedIn, das assimétricas, em que um
+usuário segue outro sem precisar de confirmação, como no Twitter e no Instagram. A plataforma proposta combina as duas formas, pois a amizade depende de
+solicitação e aceite, enquanto acompanhar uma coleção pública não exige amizade com quem a mantém, e as coleções restritas a amigos só podem ser acompanhadas
+por quem tem amizade confirmada.
+
+Decidir quem pode ver a coleção também faz parte do controle sobre ela. \citeonline{Odom2012} mostraram que, ao guardar algo na internet, as pessoas
+perdem a noção de quem tem acesso ao que é seu, e a própria definição de \citeonline{boyd2007} já previa perfis públicos ou semipúblicos.
+\citeonline{Charnsethikul2025}, em pesquisa com 541 usuários de seis redes sociais, verificaram que 92\% preferiam que ao menos uma das opções de
+privacidade fosse mais restrita do que o padrão da plataforma e que muitos tinham dificuldade de encontrar essas opções. Na plataforma proposta, a privacidade
+é definida em cada coleção, que pode ser pública, visível somente para amigos ou privada, de modo que o colecionador decide o que mostra e a quem.
+
+Plataformas que combinam acervo pessoal e rede social já foram objeto de estudo. \citeonline{Thelwall2017} observam que o perfil de um usuário do Goodreads
+reúne, como em outras redes sociais, uma lista de amigos, além dos livros favoritos, dos que ele está lendo e dos que quer ler, e concluem que o site não é
+principalmente um site de livros nem principalmente uma rede social, mas um híbrido genuíno. \citeonline{Walsh2021} mostram que, ao organizar seus livros em
+estantes com nomes criados por eles mesmos, os usuários do Goodreads categorizam coletivamente o acervo da própria plataforma, e \citeonline{Hider2021}
+analisam o LibraryThing, plataforma de catalogação social, e mostram que as etiquetas atribuídas pelos usuários às obras oferecem pontos de acesso além dos
+cabeçalhos usados pelas bibliotecas. No Brasil, o Skoob reúne estante de livros, listas de livros lidos, abandonados e possuídos, linha do tempo e a
+possibilidade de adicionar contatos, funcionando ao mesmo tempo como rede social e como site de catalogação social \cite{Damasceno2022}, e permite
+ainda marcar os livros que se está lendo e os que se pretende ler \cite{Monteiro2020}. O Letterboxd, por sua vez, se apresenta como uma rede social para
+discussão de filmes que funciona como diário para registrar e compartilhar opiniões, com uma lista de filmes a ver e a possibilidade de seguir amigos
+\cite{Leite2025}. Reunir o registro de uma coleção e a interação entre pessoas é, portanto, um modelo reconhecido, e as ferramentas desse tipo são analisadas
+no Capítulo~\ref{cap:11}.
+
+Reunir essas práticas em uma plataforma exige, antes de tudo, definir com precisão o que o sistema deve fazer, e é por aí que começam as seções seguintes,
+dedicadas à construção do sistema.
+
+
+\section{Engenharia de Requisitos}
+\label{sec:engenharia-requisitos}
+
+Todo sistema de software parte de uma definição do que ele deve fazer e das restrições sob as quais deve operar \cite{Valente2020}, e essa definição é
+objeto da engenharia de requisitos. \citeonline{Arora2024} a descrevem como uma fase crítica do desenvolvimento, que inclui a elicitação, a análise, a
+especificação e a validação dos requisitos, e \citeonline{Epifanio2023}, em estudo com profissionais da indústria brasileira de software, apontam como
+seus objetivos especificar, documentar, validar, negociar e gerenciar os requisitos, garantindo sua qualidade. \citeonline{Valente2020} resume essas
+atividades em descoberta, análise, especificação e manutenção, e \citeonline{Zhao2021}, ao classificar a literatura da área, também a dividem em fases como
+elicitação, análise, modelagem e validação. Os autores descrevem, portanto, o mesmo processo com mais ou menos etapas. Entre elas,
+\citeonline{Franch2023} destacam a especificação como atividade central, pois é nela que se documentam os requisitos levantados e negociados nas
+etapas iniciais.
+
+Entre os requisitos levantados, distinguem-se dois tipos. Os requisitos funcionais dizem o que o sistema deve fazer, como informar o saldo de uma conta
+bancária, e os não funcionais definem restrições ao seu funcionamento, como exigir que o sistema fique disponível 99,9\% do tempo \cite{Valente2020}.
+\citeonline{Olsson2022} explicam que os não funcionais, também chamados requisitos de qualidade, dizem respeito a quão bem o produto deve realizar a
+função pretendida, enquanto os funcionais expressam o que ele deve realizar, e citam como exemplos o tempo de inicialização, o controle de acesso e a facilidade
+de aprendizado. \citeonline{Werner2022} os definem como atributos ou restrições do sistema, como usabilidade, confiabilidade e manutenibilidade, e observam que
+eles influenciam fortemente a arquitetura do software. Além disso, um requisito não funcional pode valer para o sistema inteiro, para um componente ou para uma
+funcionalidade específica \cite{Habibullah2023}, e, segundo \citeonline{Barbosa2023}, tem efeito global, já que seu atendimento afeta
+vários componentes do sistema.
+
+Para descrever como o usuário interage com essas funções, usam-se casos de uso. Segundo a especificação da UML, os casos de uso são um meio de capturar os
+requisitos de um sistema, isto é, o que ele deve fazer, e os usuários e demais sistemas que interagem com ele são representados como atores
+\cite{OMG2017uml}. \citeonline{Wang2022} definem o caso de uso como uma lista de ações ou passos que define as interações entre um ator e o sistema para
+atingir um objetivo, sendo o ator o papel de uma entidade externa ao sistema, e destacam que sua especificação textual documenta os requisitos funcionais.
+\citeonline{Santander2022} acrescentam que o caso de uso produz um resultado observável de valor para o ator e que, por não tratar de detalhes de implementação,
+torna mais fluida a comunicação com o usuário. Escritos na perspectiva de um ator que deseja usar o sistema com um objetivo \cite{Valente2020}, os casos
+de uso descrevem o sistema do ponto de vista de quem o usa, e \citeonline{Gupta2025}, ao especificar uma aplicação \textit{web}, observam que eles indicam as
+funcionalidades oferecidas da perspectiva do usuário e descrevem de forma abrangente o funcionamento de um sistema interativo. Na prática,
+\citeonline{Franch2023} mostram que, depois das frases em linguagem natural, os casos de uso e as histórias de usuário são os artefatos mais usados na
+especificação de requisitos.
+
+Esses conceitos orientam a especificação dos requisitos e dos casos de uso da plataforma, apresentada no Capítulo~\ref{cap:05}. Definido o que o sistema faz, é
+preciso representar os conceitos sobre os quais ele opera.
+
+
+\section{Modelagem Conceitual com UML}
+\label{sec:modelagem-conceitual}
+
+Depois de definidos os requisitos, é preciso identificar os conceitos do domínio e as relações entre eles, e a UML oferece uma notação padronizada para isso.
+Segundo sua especificação, mantida pela OMG, o objetivo da UML é oferecer a arquitetos, engenheiros e desenvolvedores de software ferramentas para a análise, o
+projeto e a implementação de sistemas \cite{OMG2017uml}, e \citeonline{Valente2020} a descreve como uma notação gráfica para modelagem de
+software, usada sobretudo na forma de esboços que ajudam a comunicar ideias. \citeonline{Jolak2020} a classificam como uma linguagem de propósito
+geral, aplicável a qualquer domínio, com um conjunto de diagramas que descrevem o sistema por perspectivas diferentes, e destacam, com base em estudo anterior,
+que o diagrama de classes é usado muito mais do que os demais, o que \citeonline{Valente2020} também afirma. Na indústria, \citeonline{Franch2023}
+observam que a UML é a linguagem dominante entre quem usa modelos na especificação de requisitos, e \citeonline{WilsonJunior2022}, em pesquisa com
+profissionais brasileiros, lembram que os modelos UML servem para documentar decisões de projeto e melhorar a comunicação entre as equipes, e que a linguagem é
+ensinada nas universidades como padrão para modelar software \cite{WilsonJunior2022}. Neste trabalho, o diagrama de classes é usado para representar o
+domínio da plataforma.
+
+No uso conceitual, o artefato central é o modelo de domínio. \citeonline{Storey2023} definem a modelagem conceitual como a atividade de capturar, abstrair e
+representar aspectos relevantes da realidade para apoiar o entendimento, a comunicação, o projeto e a tomada de decisão, por meio de construtos como entidades,
+atributos e relacionamentos, e citam o diagrama de classes da UML entre as notações usadas para isso. Esses modelos estruturam a realidade omitindo aspectos
+irrelevantes para um propósito, o que reduz a complexidade do domínio representado \cite{Storey2023}. \citeonline{BenChaaben2026} definem a modelagem de domínio
+como uma representação explícita, estruturada e visual dos objetos do mundo real de um domínio e de suas ligações, e observam que as fases seguintes do projeto
+dependem fortemente desse modelo, de modo que um conceito omitido pode afetar a solução desenvolvida. \citeonline{Chou2026} acrescentam que o modelo de domínio
+captura os conceitos-chave e as relações de um espaço de problema, e \citeonline{Wang2022} mostram que ele costuma ser feito como diagrama de classes e
+complementa os casos de uso, fixando a terminologia e os conceitos compartilhados por todos os envolvidos, o que ajuda a evitar mal-entendidos. Essa função de
+comunicação também é destacada por \citeonline{Antonelli2023}, para quem especialistas e equipe de desenvolvimento pertencem a mundos diferentes e usam
+linguagens diferentes, cabendo ao modelo conceitual resumir o que foi especificado e dar a todos uma visão geral do conhecimento reunido. Como o projeto de
+bancos de dados relacionais costuma ser precedido pela modelagem conceitual \cite{Storey2023}, o modelo de domínio orienta as decisões tomadas depois dele.
+
+Quando o domínio é extenso, o diagrama precisa ser organizado. A especificação da UML trata os pacotes como o principal recurso genérico de estruturação e
+organização da linguagem \cite{OMG2017uml}, usados para agrupar elementos e lhes oferecer um espaço de nomes \cite{OMG2017uml}, e
+\citeonline{Valente2020} explica que o diagrama de pacotes serve a uma visão de mais alto nível do sistema, mostrando grupos de classes e as
+dependências entre eles. \citeonline{Gray2021} defendem que módulos, classes e pacotes com fronteiras claras contêm a complexidade de sistemas grandes e
+permitem raciocinar sobre uma parte sem conhecer todos os detalhes das demais, e \citeonline{Sarhan2022}, ao tratar da organização de sistemas em módulos,
+descrevem como objetivo decompor um sistema grande em partes menores, coesas e pouco acopladas, que reúnem elementos de características semelhantes. O modelo
+de domínio da plataforma, apresentado no Capítulo~\ref{cap:05}, é organizado em pacotes conceituais segundo esse princípio. O modelo conceitual orienta, assim,
+as decisões de arquitetura e de persistência discutidas a seguir.
+
+
+\section{Arquitetura de Aplicações \textit{Web}}
+\label{sec:arquitetura-web}
+
+Aplicações \textit{web} costumam ser organizadas em partes com responsabilidades distintas, o que facilita compreender, testar e evoluir cada uma delas.
+\citeonline{Hoppe2023} descrevem essa separação em sistemas de informação \textit{web} por meio de quatro modelos, o de entidades, com as classes do
+domínio e seu mapeamento para o banco de dados, o de persistência, com as classes que gravam e recuperam esses dados, o de aplicação, com a lógica de negócio,
+e o de navegação, que corresponde à camada de apresentação. \citeonline{Yang2020} mostram como uma requisição percorre essas partes em aplicações
+organizadas no padrão modelo-visão-controlador. O controlador recebe os parâmetros da requisição, a camada de mapeamento traduz as chamadas em consultas ao
+banco, e os resultados voltam como objetos que servem para gerar a página enviada ao usuário. Os mesmos autores observam que as regras sobre os dados aparecem
+em mais de uma camada, na interface, na aplicação e no banco, e que a maior parte delas fica no banco de dados \cite{Yang2020}.
+
+A comunicação entre a camada de apresentação e as demais segue, em muitas aplicações, o estilo REST. \citeonline{Fielding2000} o define como um
+conjunto de restrições arquiteturais, que incluem a separação entre cliente e servidor, a comunicação sem estado, o uso de \textit{cache}, a interface uniforme
+e o sistema em camadas, além do código sob demanda, que é opcional. Na comunicação sem estado, cada requisição do cliente deve conter toda a informação
+necessária para ser compreendida, e o estado da sessão fica inteiramente no cliente \cite{Fielding2000}, de modo que o servidor não guarda contexto
+entre uma requisição e outra \cite{Neumann2021}. Na interface uniforme, cada recurso é identificado por um endereço único, a URI, e manipulado por meio de
+representações \cite{Neumann2021}. \citeonline{Golmohammadi2023} lembram que o REST não é um protocolo, e sim um conjunto de diretrizes para projetar APIs que
+acessam e manipulam recursos por HTTP, protocolo cujos métodos, códigos de \textit{status} e cabeçalhos são definidos em sua especificação
+\cite{fielding2022http}. Como essas restrições descrevem o comportamento esperado em alto nível, sem instruções detalhadas de implementação, o REST deixa
+margem para interpretações diferentes \cite{Kotstein2021}, e \citeonline{Neumann2021}, ao analisar 500 APIs públicas, encontraram apenas 0,8\% delas
+seguindo rigorosamente todos os seus princípios.
+
+Como cada requisição precisa identificar quem a faz, é comum usar \textit{tokens}. O JSON Web Token (JWT) é um formato compacto para representar informações,
+chamadas de declarações, transmitidas entre duas partes e assinadas digitalmente ou protegidas por um código de autenticação, pensado para espaços restritos
+como o cabeçalho \texttt{Authorization} do HTTP \cite{Jones2015jwt}. \citeonline{Almeida2022} descrevem sua estrutura em três partes, o cabeçalho, o
+conteúdo e a assinatura, e destacam que a verificação pode ser feita diretamente pelo servidor que guarda o recurso, sem consultar o servidor de autenticação.
+Por ser assinado, quem o recebe confere sua autenticidade sem contatar quem o emitiu, o que permite a autenticação sem estado \cite{Yang2026}, e
+\citeonline{Yang2026} observam que foi a difusão das SPAs e das arquiteturas distribuídas que expôs os limites da sessão guardada no servidor.
+\citeonline{Laurindo2024} acrescentam que, como o próprio \textit{token} contém os dados relevantes, o servidor não precisa registrar as sessões dos
+usuários. Esse tipo de autenticação é, assim, uma consequência natural da ausência de estado do REST.
+
+Do lado do cliente, a interface também pode evitar recarregar a página a cada ação. Na aplicação de várias páginas, o estado fica no servidor e cada
+requisição recarrega a página, o que se torna impraticável em aplicações muito interativas \cite{Vepsalainen2024}. A SPA, ao contrário, mantém o
+estado no navegador e atualiza a interface de forma dinâmica conforme a interação do usuário, economizando banda ao custo de um carregamento inicial maior, o
+que a torna adequada a aplicações complexas e de uso prolongado \cite{Vepsalainen2024}. \citeonline{Komperla2022} explicam que a página
+inicial é carregada uma única vez, com seus recursos, e que depois só os componentes afetados são atualizados, e \citeonline{Ollila2022} mostram que,
+nos \textit{frameworks} modernos, o código apenas descreve o estado desejado da interface e o \textit{framework} gera as alterações necessárias na página.
+\citeonline{Hoppe2023} acrescentam que, na SPA, a lógica de apresentação passa do servidor para o cliente, o que permite desenvolver a interface de
+forma independente do servidor, com o qual ela se comunica em geral por uma interface REST. Telas muito interativas, como um editor visual em que o usuário
+arrasta e redimensiona elementos, são o caso típico em que esse modelo se mostra vantajoso.
+
+Do outro lado, os dados precisam ser guardados de forma consistente. \citeonline{Codd1970} propôs um modelo baseado em relações, as tabelas, para que
+os usuários de grandes bancos de dados não precisassem saber como os dados estão organizados internamente, e introduziu os conceitos de chave primária e chave
+estrangeira \cite{Codd1970}. A chave primária identifica de forma única cada linha de uma tabela, e a chave estrangeira exige que os valores de uma
+coluna correspondam aos de uma linha de outra tabela, mantendo a integridade referencial entre tabelas relacionadas \cite{PostgreSQL2025}.
+\citeonline{Jiang2020} lembram que essas são duas das restrições mais importantes dos bancos relacionais, responsáveis pela integridade de entidade e pela
+integridade referencial, e \citeonline{Dohmen2024}, ao reunir mais de 221 mil esquemas de bancos publicados no GitHub, com mais de 700 mil
+chaves estrangeiras e 7 milhões de restrições de integridade, mostram quanto essas restrições estão presentes nos bancos usados na prática.
+
+O modelo relacional pressupõe, porém, que a estrutura dos dados seja conhecida de antemão, o que nem sempre acontece. Quando cada registro pode ter atributos
+próprios, como uma coleção de livros com autor e número de páginas e outra de discos com gravadora, o esquema não pode ser fixado previamente.
+\citeonline{Huber2020} descrevem esse conflito no sistema AiiDA, em que os atributos de cada nó dependem do seu tipo e não podem ser definidos de forma
+estática, e relatam duas abordagens para ele. A primeira é o modelo entidade-atributo-valor (EAV), em que cada atributo é gravado como uma linha, solução que
+os autores consideram bem-sucedida por permitir guardar atributos arbitrários em um banco relacional, mas que, no volume de dados com que trabalhavam,
+aumentava o espaço ocupado e o custo de consultar e converter esses dados. A segunda são as colunas do tipo JSONB, que adotaram em seguida com ganho de
+desempenho \cite{Huber2020}. A documentação do PostgreSQL explica que o JSONB guarda os dados em formato binário decomposto, mais rápido de processar e passível
+de indexação, e que representar dados em JSON é mais flexível que o modelo relacional tradicional, podendo as duas abordagens coexistir e se complementar na
+mesma aplicação \cite{PostgreSQL2025json}.
+
+A plataforma proposta combina as duas abordagens. As informações de cada ficha ficam nos elementos que a compõem, cada um gravado como uma linha com seu tipo e
+seu conteúdo, de forma próxima ao EAV, e a aparência de cada elemento fica em uma coluna JSONB, já que o banco apenas a guarda e a devolve. Como a ficha é
+carregada inteira para ser exibida, com todos os seus elementos de uma vez, e não montada atributo por atributo em consultas separadas, o custo de consulta
+apontado para o EAV pesa pouco nesse uso. A ordenação dos itens pela classificação, que depende de um atributo, lê diretamente a coluna de conteúdo, como
+detalhado no Capítulo~\ref{cap:06}.
+
+Programas orientados a objetos, no entanto, não pensam em tabelas. \citeonline{ZhadkoBazilevych2025} explica que, nos bancos relacionais, os dados
+ficam em tabelas com campos definidos e as relações são feitas por chaves estrangeiras, enquanto as linguagens orientadas a objetos trabalham com objetos,
+atributos, métodos e ligações complexas entre classes, e que essa diferença dificulta a integração entre os dois modelos. As ferramentas de mapeamento
+objeto-relacional (ORM) automatizam a conversão entre os objetos do código e os registros do banco, reduzindo o tempo de desenvolvimento
+\cite{ZhadkoBazilevych2025}. Com elas, cada modelo do código é mapeado para uma tabela e as chamadas feitas no programa são traduzidas em consultas SQL
+\cite{Yang2020}, e \citeonline{Hoppe2023} incluem esse mapeamento no próprio modelo de entidades das aplicações \textit{web}. A conveniência tem
+custo no desempenho. \citeonline{Shao2020} catalogam antipadrões de acesso ao banco em aplicações \textit{web}, muitos dos quais correspondem ao uso
+inadequado das APIs de ORM, e \citeonline{ZhadkoBazilevych2025}, comparando ferramentas de ORM para Node.js com PostgreSQL, encontra diferenças de
+desempenho entre elas conforme o tipo de consulta e a carga.
+
+A plataforma proposta segue essa organização, com uma interface do tipo SPA que se comunica por uma API REST com o servidor, o qual acessa um banco de dados
+relacional por meio de uma ferramenta de ORM, e as tecnologias usadas em cada parte são apresentadas no Capítulo~\ref{cap:03}.
+
+
+\section{Considerações sobre o Capítulo}
+\label{sec:consideracoes-cap02}
+
+As três práticas que dão sentido a uma coleção, apresentadas na Seção~\ref{sec:colecionismo}, encontram sua base neste capítulo. A curadoria, que organiza e
+dá forma ao acervo, apoia-se na personalização de interfaces e na manipulação direta das Seções~\ref{sec:personalizacao} e~\ref{sec:manipulacao-direta}, e a
+exibição apoia-se nas redes sociais e no compartilhamento da Seção~\ref{sec:redes-sociais}. A aquisição, isto é, o cadastro de itens de coleções de qualquer
+natureza, apoia-se na engenharia de requisitos, na modelagem conceitual e na arquitetura das Seções~\ref{sec:engenharia-requisitos} a~\ref{sec:arquitetura-web},
+inclusive no armazenamento de atributos que variam de uma coleção para outra.
+
+Nos trabalhos revisados, porém, essas práticas aparecem separadas. As aplicações discutidas por \citeonline{Watkins2015} impõem os próprios esquemas
+de organização, a colecionadora relatada por \citeonline{Mardon2023} não conseguia organizar nem exibir a coleção digital como queria, as plataformas para
+colecionadores analisadas por \citeonline{Razali2025} costumam ser voltadas a domínios específicos, oferecem pouca personalização e deixam de lado o
+compartilhamento, e as interfaces em geral permitem apenas ajustes mínimos de aparência \cite{Alves2024}. Nenhum dos trabalhos revisados reúne, em
+uma mesma solução, coleções de qualquer natureza, aparência das fichas definida pelo próprio usuário por manipulação direta e compartilhamento em rede social,
+e é essa articulação que a plataforma proposta neste trabalho oferece. A comparação com as ferramentas existentes é retomada no Capítulo~\ref{cap:11}.
