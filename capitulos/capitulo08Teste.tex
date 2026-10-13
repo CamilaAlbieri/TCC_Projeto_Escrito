@@ -21,11 +21,11 @@ O Quadro~\ref{quad:resumoTestes} apresenta a distribuição dos testes de unidad
 \begin{tabular}{|p{3.9cm}|p{5.6cm}|p{1.9cm}|p{1.6cm}|}
 \hline
 \textbf{Módulo} & \textbf{Requisitos relacionados} & \textbf{Arquivos} & \textbf{Testes} \\ \hline
-\texttt{layout} & RF-01 (\textit{layouts} padrão), RF-14 e RF-16 & 5 & 140 \\ \hline
+\texttt{layout} & RF-01 (\textit{layouts} padrão), RF-14 e RF-16 & 5 & 154 \\ \hline
 \texttt{social} & RF-20 a RF-23 & 20 & 103 \\ \hline
 \texttt{user} & RF-01, RF-03 e RF-05 & 5 & 70 \\ \hline
 \texttt{common} & Transversal (validação de Elementos e de imagens, mescla de fichas e tratamento de erros) & 5 & 44 \\ \hline
-\texttt{item} & RF-09, RF-10, RF-12, RF-17 e RF-22 & 4 & 38 \\ \hline
+\texttt{item} & RF-09, RF-10, RF-12, RF-17 e RF-22 & 4 & 40 \\ \hline
 \texttt{category} & RF-06 e RF-13 & 4 & 24 \\ \hline
 \texttt{appearance-preset} & RF-18 e RF-19 & 3 & 23 \\ \hline
 \texttt{notification} & RF-24 & 3 & 23 \\ \hline
@@ -33,13 +33,13 @@ O Quadro~\ref{quad:resumoTestes} apresenta a distribuição dos testes de unidad
 \texttt{storage} & Transversal (armazenamento de arquivos) & 2 & 16 \\ \hline
 \texttt{collection} & RF-07, RF-08 e RF-15 & 1 & 11 \\ \hline
 \texttt{mail} & Transversal (envio de e-mail) & 1 & 6 \\ \hline
-\textbf{Total} &  & \textbf{58} & \textbf{520} \\ \hline
+\textbf{Total} &  & \textbf{58} & \textbf{536} \\ \hline
 \end{tabular}
 \fonte{Elaborada pelo autor}
 \end{quadro}
 
 O módulo \texttt{layout} concentra o maior número de testes porque a maior parte deles é parametrizada: o mesmo teste é repetido para cada \textit{layout} padrão e para cada forma desenhada que o sistema fornece, submetendo-os às mesmas regras de validação que a API aplica aos Elementos recebidos, de modo que um conteúdo padrão inválido seja detectado no teste, e não na biblioteca do usuário.
-% layout: exemplos.spec.ts tem 30 testes sobre os layouts de exemplo e 76 sobre os desenhos de formas; converter.spec.ts, 5. Em seguida vem o módulo social, que reúne as regras com mais combinações possíveis: o que cada usuário pode ver e acompanhar depende, ao mesmo tempo, do nível de privacidade da coleção e da existência de uma amizade aceita com o dono. Parte desses testes é parametrizada, isto é, um mesmo teste é executado para cada combinação de nível de acesso e privacidade, o que garante que nenhuma delas fique sem verificação.
+% layout: exemplos.spec.ts tem 44 testes sobre os layouts de exemplo (12/10/2026; eram 30 antes do teste da escala de letra) e 76 sobre os desenhos de formas; converter.spec.ts, 5. Em seguida vem o módulo social, que reúne as regras com mais combinações possíveis: o que cada usuário pode ver e acompanhar depende, ao mesmo tempo, do nível de privacidade da coleção e da existência de uma amizade aceita com o dono. Parte desses testes é parametrizada, isto é, um mesmo teste é executado para cada combinação de nível de acesso e privacidade, o que garante que nenhuma delas fique sem verificação.
 
 \section{Casos de Teste}
 \label{sec:casosDeTeste}
@@ -298,7 +298,7 @@ Os fluxos verificados estão distribuídos em quatro arquivos, apresentados no Q
 
 \section{Resultados e Limitações dos Testes Automatizados}
 
-Na execução realizada em 8 de outubro de 2026, os 58 conjuntos de testes de unidade, com 520 testes no total, foram aprovados, em aproximadamente 7 segundos. Todos os casos de teste especificados na Seção~\ref{sec:casosDeTeste} obtiveram, portanto, os resultados esperados. Na mesma data, os quatro arquivos de testes de ponta a ponta, com 26 testes, foram aprovados em aproximadamente 9 segundos, em três execuções consecutivas.
+Na execução realizada em 12 de outubro de 2026, os 58 conjuntos de testes de unidade, com 536 testes no total, foram aprovados, em aproximadamente 9 segundos. Todos os casos de teste especificados na Seção~\ref{sec:casosDeTeste} obtiveram, portanto, os resultados esperados. Na mesma data, os quatro arquivos de testes de ponta a ponta, com 26 testes, foram aprovados em aproximadamente 9 segundos; em 8 de outubro de 2026, os mesmos testes já haviam sido aprovados em três execuções consecutivas.
 % Commit bc0b2e7 do backend, o mesmo das medições do Capítulo 10 (scripts/medicoes/resultados/local-20261008T224944/notas.md, item 3).
 
 A estratégia adotada possui limitações que devem ser consideradas na interpretação desses resultados:

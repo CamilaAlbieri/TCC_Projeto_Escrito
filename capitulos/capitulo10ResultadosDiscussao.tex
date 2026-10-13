@@ -75,7 +75,10 @@ são considerados atendidos.
 
 No editor (RF-14), os testes do módulo \texttt{layout} foram aprovados, e a inspeção mostrou os seis tipos de Elemento e o mesmo componente desenhando
 a ficha no editor e no modo leitura. Os testes mostraram também que, na desassociação que antecede a exclusão de um \textit{layout} em uso (RF-14,
-restrição 13), cada Item que ainda o exibia recebe uma cópia própria dele antes que o \textit{layout} seja solto das Coleções.
+restrição 13), cada Item que ainda o exibia recebe uma cópia própria dele antes que o \textit{layout} seja solto das Coleções. O campo a preencher (RF-14,
+restrição 15) foi conferido no código do editor: a operação grava o texto de exemplo como nome do Elemento e esvazia o conteúdo do texto e da data, e a
+ficha desenha o nome esmaecido no Elemento sem conteúdo, a mesma indicação de vazio verificada no RF-11.
+% Campo a preencher: front f674adf (12/10/2026), PainelDePropriedades.tsx (MenuDoExemplo) e EditorDeFicha.tsx (placeholder do campo em edição).
 
 Na associação a Coleções (RF-15), os testes da mescla de fichas no módulo \texttt{common} mostraram que cada Elemento da ficha própria é associado ao novo
 \textit{layout} pela mesma origem, depois pelo mesmo tipo e nome e, por fim, pelo mesmo tipo na ordem de leitura. O uso mostrou a troca de \textit{layout}
