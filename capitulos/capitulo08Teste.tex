@@ -13,7 +13,7 @@ Os testes se dividem em três alvos. Os testes de serviços verificam as regras 
 
 \section{Visão Geral dos Testes}
 
-O Quadro~\ref{quad:resumoTestes} apresenta a distribuição dos testes de unidade pelos módulos do \textit{backend}, com os requisitos funcionais a que cada módulo se relaciona. Os módulos \texttt{storage}, \texttt{mail} e \texttt{common} não correspondem a um requisito específico, pois reúnem funcionalidades transversais: o armazenamento de arquivos, o envio de e-mail, a validação dos Elementos e das imagens enviadas, a regra de mescla de fichas e o tratamento global de erros.
+O Quadro~\ref{quad:resumoTestes} apresenta a distribuição dos testes de unidade pelos módulos do \textit{backend}, com os requisitos funcionais a que cada módulo se relaciona. Os módulos \texttt{storage}, \texttt{mail} e \texttt{common} não correspondem a um requisito específico, pois reúnem funcionalidades transversais: o armazenamento de arquivos, o envio de e-mail, a validação dos Elementos e das imagens enviadas, a regra de mescla de fichas (RF-15) e o tratamento global de erros. O módulo \texttt{tag}, que apenas lê o vocabulário de \textit{tags} para as sugestões do formulário de coleção, não tem testes de unidade e por isso não aparece no quadro; a gravação das \textit{tags}, que liga as existentes e cria as novas, é verificada nos testes do módulo \texttt{collection}.
 
 \begin{quadro}[h!]
 \caption{Distribuição dos testes de unidade por módulo}

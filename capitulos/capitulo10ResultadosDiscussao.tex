@@ -26,7 +26,10 @@ As subseções seguem os grupos de requisitos do Capítulo~\ref{cap:05}.
 \subsection{Acesso ao Sistema}
 
 No cadastro (RF-01), o CT06 mostrou que a conta nova recebe as paletas predefinidas com exatamente uma em uso, correspondente ao tema do sistema operacional
-informado. No uso em produção, o código de confirmação chegou ao e-mail cadastrado e liberou o acesso à conta.
+informado. Os testes do serviço de confirmação de e-mail, no módulo \texttt{user}, mostraram que apenas o \textit{hash} do código de 6 dígitos é guardado,
+que um código novo aposenta os anteriores e que os pedidos respeitam o intervalo de um minuto e o limite por hora; os testes de ponta a ponta mostraram o
+acesso negado antes da confirmação e o código errado recusado (Quadro~\ref{quad:testesPontaAPonta}). No uso em produção, o código de confirmação chegou ao
+e-mail cadastrado e liberou o acesso à conta.
 
 No \textit{login} e no \textit{logout} (RF-02), o CT01 mostrou que o \textit{logout} encerra somente a sessão atual, que o \textit{token} de uma sessão ativa
 é aceito e que o \textit{token} de uma sessão encerrada é recusado como acesso não autorizado.
@@ -38,8 +41,9 @@ Na recuperação de senha (RF-04), o CT02 mostrou que a plataforma responde com 
 \textit{token} apenas como \textit{hash}, com data de expiração, aceita o \textit{token} uma única vez e encerra todas as sessões após a redefinição.
 No uso em produção, o e-mail com o \textit{link} de redefinição chegou ao destinatário.
 
-Na edição do perfil (RF-05), os testes do módulo \texttt{user} e o uso mostraram a foto e a capa gravadas com o enquadramento escolhido e com a imagem
-original guardada para um novo enquadramento.
+Na edição do perfil (RF-05), os testes do módulo \texttt{user} mostraram que a edição altera apenas os campos do perfil, sem tocar no e-mail nem no código
+de usuário, que a foto e a capa são gravadas com o recorte e o original juntos e que o reenquadramento reaproveita o original guardado; o uso mostrou o
+nome, a descrição, a foto e a capa alterados e exibidos no perfil.
 
 Com esses resultados, o usuário acessa a conta somente depois de confirmar o e-mail, e uma sessão encerrada ou uma senha redefinida deixa de dar acesso.
 Os cinco requisitos do grupo são considerados atendidos.
@@ -57,10 +61,12 @@ que, quando a Coleção se torna privada, todos os acompanhamentos são encerrad
 são encerrados apenas os acompanhamentos de quem não é amigo do dono.
 
 Na movimentação de Itens (RF-10), os testes do módulo \texttt{item} mostraram que o Item com ficha própria a mantém ao mudar de Coleção, e o uso mostrou
-a movimentação concluída em três passos, com a opção de desfazer durante trinta segundos.
+a movimentação concluída em três passos, abrir, escolher o destino e confirmar, com o botão de desfazer disponível durante trinta segundos.
 
 Na ficha em modo leitura (RF-11), o uso mostrou a ficha aberta sobre a listagem, em modo somente leitura para o visitante. Na listagem de Itens (RF-12),
-os testes do módulo \texttt{item} e o uso mostraram a busca pelo nome e pelo subtítulo e a ordenação por nome e por data.
+os testes do módulo \texttt{item} mostraram as quatro ordenações por nome e por data, com a mais recente primeiro quando nenhuma é pedida, e o uso mostrou
+a busca pelo nome e pelo subtítulo, feita na própria interface. A ordenação pela classificação e os filtros pelos Elementos não fazem parte do requisito
+nesta versão (Subseção~\ref{subsec:requisitos_adiados}).
 
 Com esses resultados, cada Coleção é vista apenas por quem a privacidade permite, e a plataforma aceita somente imagens reais. Os oito requisitos do grupo
 são considerados atendidos.
@@ -68,16 +74,17 @@ são considerados atendidos.
 \subsection{Editor de \textit{Layout}}
 
 No editor (RF-14), os testes do módulo \texttt{layout} foram aprovados, e a inspeção mostrou os seis tipos de Elemento e o mesmo componente desenhando
-a ficha no editor e no modo leitura. Os testes mostraram também que, antes da exclusão de um \textit{layout} em uso, cada Item recebe uma cópia própria dele.
+a ficha no editor e no modo leitura. Os testes mostraram também que, na desassociação que antecede a exclusão de um \textit{layout} em uso (RF-14,
+restrição 13), cada Item que ainda o exibia recebe uma cópia própria dele antes que o \textit{layout} seja solto das Coleções.
 
 Na associação a Coleções (RF-15), os testes da mescla de fichas no módulo \texttt{common} mostraram que cada Elemento da ficha própria é associado ao novo
 \textit{layout} pela mesma origem, depois pelo mesmo tipo e nome e, por fim, pelo mesmo tipo na ordem de leitura. O uso mostrou a troca de \textit{layout}
-precedida de confirmação.
+precedida da prévia das fichas próprias e da escolha dos Itens a mesclar; os não escolhidos mantiveram sua ficha.
 
 No compartilhamento (RF-16), os testes do módulo \texttt{layout} mostraram que o \textit{layout} importado pelo identificador se torna uma cópia independente
 e que a importação de um \textit{layout} da própria biblioteca é recusada.
 
-Na personalização de um Item (RF-17), o CT05 mostrou que a primeira edição cria um \textit{layout} exclusivo do Item, copiado do \textit{layout} da Coleção
+Na personalização de um Item (RF-17), o CT05 mostrou que a primeira abertura do editor da ficha cria um \textit{layout} exclusivo do Item, copiado do \textit{layout} da Coleção
 ou vazio quando a Coleção está sem \textit{layout}. As alterações seguintes ficam somente nessa cópia, e uma edição enviada antes da cópia é recusada por conflito.
 
 Com esses resultados, personalizar um Item altera somente a ficha dele, e um \textit{layout} importado é independente do original. Os quatro requisitos
@@ -104,7 +111,8 @@ No acompanhamento de Coleções (RF-21), o CT04 mostrou que qualquer usuário po
 amigos e que seguir uma Coleção própria é recusado.
 
 No \textit{feed} de atualizações (RF-22), os testes do módulo \texttt{social} mostraram os eventos das Coleções seguidas, entregues em páginas, com as
-Coleções somente para amigos incluídas apenas enquanto a amizade estiver aceita e as Coleções privadas excluídas.
+Coleções somente para amigos incluídas apenas enquanto a amizade estiver aceita e as Coleções privadas excluídas. A inspeção da interface mostrou a
+atualização automática das novidades por consulta à API a cada minuto e ao voltar à janela, sem recarregar a página.
 
 Na visita a outros usuários (RF-23), o CT04 mostrou a mesma resposta para a Coleção invisível e para a inexistente, e o uso mostrou o perfil, a Categoria
 e a Coleção visitados em modo somente leitura.
@@ -115,8 +123,8 @@ são considerados atendidos.
 \subsection{Notificação}
 
 Nas notificações (RF-24), os testes do módulo \texttt{notification} mostraram a contagem das não lidas, a marcação de uma ou de todas as notificações como
-lidas e a limpeza da área, sempre restritas ao usuário autenticado. O uso mostrou o sino do cabeçalho com a quantidade de notificações não lidas e a
-abertura de uma notificação levando ao que a originou.
+lidas e a limpeza da área, sempre restritas ao usuário autenticado. O uso mostrou o sino do cabeçalho com a quantidade de notificações não lidas, atualizada a cada
+minuto, e a abertura de uma notificação levando ao que a originou.
 
 Com esses resultados, cada usuário vê e altera apenas as próprias notificações. O requisito é considerado atendido.
 
@@ -131,28 +139,28 @@ O Quadro~\ref{quad:sinteseRF} reúne o instrumento, o resultado e a situação d
 \begin{tabular}{|p{1.3cm}|p{4.6cm}|p{5.6cm}|p{2.2cm}|}
 \hline
 \textbf{Req.} & \textbf{Instrumento} & \textbf{Resultado} & \textbf{Situação} \\ \hline
-RF-01 & CT06; módulo \texttt{user}; uso & Paletas iniciais com uma em uso; e-mail confirmado por código & Atendido \\ \hline
+RF-01 & CT06; módulo \texttt{user}; ponta a ponta; uso & Paletas iniciais com uma em uso; acesso só depois do e-mail confirmado por código & Atendido \\ \hline
 RF-02 & CT01; módulo \texttt{auth} & \textit{Logout} encerra a sessão atual; sessão encerrada recusada & Atendido \\ \hline
 RF-03 & Módulo \texttt{user}; inspeção & Senha atual exigida; demais sessões encerradas & Atendido \\ \hline
 RF-04 & CT02; módulo \texttt{auth}; uso & \textit{Token} de uso único; \textit{link} entregue por e-mail & Atendido \\ \hline
-RF-05 & Módulo \texttt{user}; uso & Foto e capa enquadradas, com original guardado & Atendido \\ \hline
+RF-05 & Módulo \texttt{user}; uso & Só campos do perfil alterados; foto e capa enquadradas, com original guardado & Atendido \\ \hline
 RF-06 & Módulo \texttt{category}; uso & Categorias criadas, editadas e excluídas & Atendido \\ \hline
 RF-07 & Módulo \texttt{collection}; uso & Coleções criadas, editadas e excluídas & Atendido \\ \hline
 RF-08 & CT03; CT04 & Acesso e acompanhamento conforme a privacidade & Atendido \\ \hline
 RF-09 & CT08; módulo \texttt{item}; uso & Imagem reconhecida pelo conteúdo do arquivo & Atendido \\ \hline
 RF-10 & Módulo \texttt{item}; uso & Ficha própria mantida; desfazer por 30~s & Atendido \\ \hline
 RF-11 & Inspeção; uso & Ficha sobre a listagem, somente leitura ao visitante & Atendido \\ \hline
-RF-12 & Módulo \texttt{item}; uso & Busca e ordenação dos Itens & Atendido \\ \hline
+RF-12 & Módulo \texttt{item}; uso & Quatro ordenações; busca por nome e subtítulo & Atendido \\ \hline
 RF-13 & Módulo \texttt{category}; uso & Contagens, grade e lista, ordenações & Atendido \\ \hline
 RF-14 & Módulo \texttt{layout}; inspeção & Seis tipos de Elemento; prévia igual à ficha & Atendido \\ \hline
-RF-15 & Módulos \texttt{collection} e \texttt{common}; uso & Troca com confirmação e mescla das fichas & Atendido \\ \hline
+RF-15 & Módulos \texttt{collection} e \texttt{common}; uso & Troca com prévia e mescla das fichas escolhidas & Atendido \\ \hline
 RF-16 & Módulo \texttt{layout} & Cópia independente; importação da própria biblioteca recusada & Atendido \\ \hline
-RF-17 & CT05 & Ficha própria criada na primeira edição & Atendido \\ \hline
+RF-17 & CT05 & Ficha própria criada na primeira abertura do editor & Atendido \\ \hline
 RF-18 & CT06; módulo \texttt{appearance-preset}; uso & Troca em uma transação; paleta em uso protegida & Atendido \\ \hline
 RF-19 & Módulo \texttt{appearance-preset} & Tipografia nas faixas do requisito & Atendido \\ \hline
 RF-20 & CT07 & Um único vínculo; solicitante notificado & Atendido \\ \hline
 RF-21 & CT03; CT04; módulo \texttt{social} & Acompanhamento conforme a privacidade & Atendido \\ \hline
-RF-22 & Módulo \texttt{social}; inspeção & Eventos das Coleções seguidas, em páginas & Atendido \\ \hline
+RF-22 & Módulo \texttt{social}; inspeção & Eventos das Coleções seguidas, em páginas, com atualização periódica & Atendido \\ \hline
 RF-23 & CT04; módulo \texttt{social}; uso & Perfis e Coleções em modo somente leitura & Atendido \\ \hline
 RF-24 & Módulo \texttt{notification}; uso & Notificações restritas ao usuário; sino com contador & Atendido \\ \hline
 \end{tabular}
@@ -160,16 +168,18 @@ RF-24 & Módulo \texttt{notification}; uso & Notificações restritas ao usuári
 \end{quadro}
 
 
-Os vinte e quatro requisitos funcionais são, portanto, considerados atendidos.
+Os vinte e quatro requisitos funcionais são, portanto, considerados atendidos, tal como especificados no Capítulo~\ref{cap:05}. O juízo não alcança
+os comportamentos retirados da especificação desta versão e registrados entre os requisitos adiados (Subseção~\ref{subsec:requisitos_adiados}): a
+alteração do e-mail cadastrado, a entrega imediata de eventos pelo servidor e a ordenação dos Itens pela classificação, que permanecem como trabalho futuro.
 
 \section{Validação dos Requisitos Não Funcionais}
 \label{sec:validacaoRNF}
 
-Os requisitos não funcionais do Capítulo~\ref{cap:05} não são o eixo deste trabalho, cuja contribuição está nas funcionalidades verificadas na seção anterior, mas cada um deles merece um juízo explícito sobre o seu atendimento. A situação de cada requisito assume um de quatro valores: \textbf{atendido}; \textbf{atendido com ressalva}, quando a métrica foi cumprida, mas alguma restrição do requisito comprovadamente não foi; \textbf{não verificado}, quando faltou o instrumento ou a medição; e \textbf{não atendido}, quando o resultado contraria a métrica. A situação é determinada pela métrica, e uma restrição não cumprida impede que o requisito seja considerado plenamente atendido, ainda que a métrica o seja.
+Os requisitos não funcionais do Capítulo~\ref{cap:05} não são o eixo deste trabalho, cuja contribuição está nas funcionalidades verificadas na seção anterior, mas cada um deles merece um juízo explícito sobre o seu atendimento. A situação de cada requisito assume um de quatro valores: \textbf{atendido}; \textbf{atendido com ressalva}, quando a métrica foi cumprida, mas alguma restrição do requisito comprovadamente não foi; \textbf{não verificado}, quando faltou o instrumento ou a medição; e \textbf{não atendido}, quando o resultado contraria a métrica. A situação é determinada pela métrica, e uma restrição não cumprida impede que o requisito seja considerado plenamente atendido, ainda que a métrica o seja. Uma restrição que não pôde ser verificada não é contada como descumprida, mas é apontada no juízo do requisito. A posição secundária dos requisitos não funcionais refere-se à contribuição do trabalho, e não à sua importância: vários deles têm prioridade essencial no Capítulo~\ref{cap:05}, e por isso os que ficaram não verificados ou não atendidos são registrados como lacunas, e não descartados.
 
 \subsection{Resultados das Medições}
 
-As medições de desempenho seguiram o método descrito na Seção~\ref{sec:medicoes}, em 8 de outubro de 2026. Nenhuma das 441 requisições da medição da API terminou em erro. O Quadro~\ref{quad:latenciaApi} apresenta os tempos de resposta da API.
+As medições de desempenho seguiram o método descrito na Seção~\ref{sec:medicoes}, em 8 de outubro de 2026. Nenhuma das 441 requisições da medição da API terminou em erro: as 55 de cada uma das oito rotas, contadas as cinco de aquecimento, e uma requisição de ajuste ao final do \textit{script}, fora das amostras. O Quadro~\ref{quad:latenciaApi} apresenta os tempos de resposta da API.
 % Dados brutos em scripts/medicoes/resultados/local-20261008T224944 (API e editor) e local-20261009T000939 (telas e movimentação a 10 Mbps); backend bc0b2e7.
 % A execução de 07/10 (local-20261007T235528, backend b3aaa96) foi substituída pela de 08/10, para que API e navegador sejam da mesma versão.
 
@@ -215,16 +225,16 @@ Ficha própria com 15 Elementos, com cache & 128 & 256 & 296 & 226 & 275 \\ \hli
 
 \subsection{Requisitos Mensuráveis}
 
-\textbf{RNF-02 (desempenho de carregamento).} O requisito fixa três limites: três segundos para o carregamento de uma tela principal, dois segundos para as respostas de leitura da API e três segundos para as operações de escrita. Para a tela, adota-se o maior elemento de conteúdo pintado (LCP), no percentil 75 dos carregamentos, convenção que acompanha a recomendação do web.dev, para o qual um LCP de até 2,5 segundos caracteriza um bom carregamento \cite{walton2019lcp}. Para a API, adota-se o percentil 95, que afirma o limite para a quase totalidade das requisições, e não apenas para a típica. O maior percentil 95 entre as rotas de leitura foi de 160,2 milissegundos (lista de 50 Itens), e o maior entre as de escrita, de 371,9 milissegundos (cadastro de Item), valores cerca de doze e de oito vezes menores que os respectivos limites. No navegador, a 10 Mbps e sem cache, o caso mais desfavorável, o LCP no percentil 75 foi de 364 milissegundos na lista de Itens e de 476 milissegundos na ficha; com cache, caiu para 188 e 256 milissegundos. Na ficha, o maior elemento pintado é o texto de um Elemento, desenhado depois da chegada dos dados. Na lista, o LCP coincidiu com a primeira pintura em todos os carregamentos e ocorreu antes da chegada dos dados, porque o maior elemento pintado é a estrutura da tela, desenhada enquanto as respostas da API são aguardadas. Por isso, registra-se também o instante em que chegou a última resposta da API, a partir do qual os dados podem ser exibidos: na lista sem cache, 743 milissegundos no percentil 75, com máximo de 752. O maior valor observado em todas as medições foi o LCP de 1,1 segundo em um carregamento da ficha sem cache, quase três vezes abaixo do limite de três segundos. A métrica é, portanto, cumprida. Duas restrições do requisito, no entanto, não são atendidas: as imagens não são otimizadas pelo servidor, e as listagens de Categorias, Coleções e Itens não são paginadas, sendo devolvidas por inteiro em uma única resposta. O requisito é considerado \textbf{atendido com ressalva}.
+\textbf{RNF-02 (desempenho de carregamento).} O requisito fixa três limites: três segundos para o carregamento de uma tela principal, dois segundos para as respostas de leitura da API e três segundos para as operações de escrita. Para a tela, adota-se o maior elemento de conteúdo pintado (LCP), no percentil 75 dos carregamentos, convenção que acompanha a recomendação do web.dev, para o qual um LCP de até 2,5 segundos caracteriza um bom carregamento \cite{walton2019lcp}. Para a API, adota-se o percentil 95, que afirma o limite para a quase totalidade das requisições, e não apenas para a típica. O maior percentil 95 entre as rotas de leitura foi de 160,2 milissegundos (lista de 50 Itens), e o maior entre as de escrita, de 371,9 milissegundos (cadastro de Item), valores cerca de doze e de oito vezes menores que os respectivos limites. No navegador, a 10 Mbps e sem cache, o caso mais desfavorável, o LCP no percentil 75 foi de 364 milissegundos na lista de Itens e de 476 milissegundos na ficha; com cache, caiu para 188 e 256 milissegundos. Na ficha, o maior elemento pintado é o texto de um Elemento, desenhado depois da chegada dos dados. Na lista, o LCP coincidiu com a primeira pintura em todos os carregamentos e ocorreu antes da chegada dos dados, porque o maior elemento pintado é a estrutura da tela, desenhada enquanto as respostas da API são aguardadas. Por isso, registra-se também o instante em que chegou a última resposta da API, a partir do qual os dados podem ser exibidos: na lista sem cache, 743 milissegundos no percentil 75, com máximo de 752. O maior valor observado em todas as medições foi o LCP de 1,1 segundo em um carregamento da ficha sem cache, quase três vezes abaixo do limite de três segundos. No navegador, foram medidas a lista de Itens e a ficha; as telas de Categorias e de Coleções, também citadas pelo requisito, foram medidas apenas pelas respostas da API, as mais rápidas do Quadro~\ref{quad:latenciaApi}. Com essa ressalva de alcance, e nas condições do ambiente local descritas na Seção~\ref{sec:medicoes}, a métrica é cumprida. Duas restrições do requisito, no entanto, não são atendidas: as imagens não são otimizadas pelo servidor, e as listagens de Categorias, Coleções e Itens não são paginadas, sendo devolvidas por inteiro em uma única resposta. O requisito é considerado \textbf{atendido com ressalva}.
 % Telas: local-20261009T000939/navegador/medicoes-tela-*-10mbps-*.json. A 1ª rodada, sem limitação de rede (local-20261008T224944/navegador), deu LCP p75 de 320 ms (lista) e 204 ms (ficha).
 
-\textbf{RNF-06 (movimentação de Itens).} O requisito exige que a mudança de Coleção se reflita na interface em até 500 milissegundos, que a interface a aplique de forma otimista, antes da confirmação do servidor, e que, em caso de falha, a reverta e informe o usuário. A interface aplica a movimentação de forma otimista: ao confirmar, o Item sai da lista da Coleção de origem e a janela de escolha do destino se fecha antes da resposta da API; se o servidor recusar a movimentação, a lista volta ao estado anterior e a falha é informada na própria tela. Nas dez movimentações medidas a 10 Mbps, o quadro sem o Item foi pintado entre 41 e 57 milissegundos depois do clique, enquanto a resposta do servidor chegou entre 355 e 477 milissegundos; em todas, a tela mudou antes da resposta. O tempo percebido fica, assim, quase nove vezes abaixo do limite e deixa de depender da gravação, que é a mais lenta das rotas medidas. Essa lentidão se explica pelo número de operações executadas em sequência, cada uma atravessando a internet até o banco: a verificação da sessão, a confirmação de que o Item e a Coleção de destino pertencem ao usuário e a verificação de unicidade do nome, seguidas de uma transação que atualiza o Item, registra o evento e consulta quem acompanha a Coleção. Sem a atualização otimista, a interface teria de aguardar a gravação e reler a lista, e a soma das duas rotas, medida no mesmo dia, foi de 513,1 milissegundos na mediana e de 542,3 no percentil 95, acima do limite. A reversão em caso de falha não foi exercitada na medição, pois nenhuma movimentação falhou. A restrição de desfazer foi atendida de forma diferente da especificada: a interface oferece, por 30 segundos, um botão que devolve o Item à Coleção de origem, e não o atalho \texttt{Ctrl+Z}. O requisito é considerado \textbf{atendido com ressalva}.
+\textbf{RNF-06 (movimentação de Itens).} O requisito exige que a mudança de Coleção se reflita na interface em até 500 milissegundos, que a interface a aplique de forma otimista, antes da confirmação do servidor, e que, em caso de falha, a reverta e informe o usuário. A interface aplica a movimentação de forma otimista: ao confirmar, o Item sai da lista da Coleção de origem e a janela de escolha do destino se fecha antes da resposta da API; se o servidor recusar a movimentação, a lista volta ao estado anterior e a falha é informada na própria tela. Nas dez movimentações medidas a 10 Mbps, o quadro sem o Item foi pintado entre 41 e 57 milissegundos depois do clique, enquanto a resposta do servidor chegou entre 355 e 477 milissegundos; em todas, a tela mudou antes da resposta. O tempo percebido fica, assim, quase nove vezes abaixo do limite e deixa de depender da gravação, que é a mais lenta das rotas medidas. Essa lentidão se explica pelo número de operações executadas em sequência, cada uma atravessando a internet até o banco: a verificação da sessão, a confirmação de que o Item e a Coleção de destino pertencem ao usuário e a verificação de unicidade do nome, seguidas de uma transação que atualiza o Item, registra o evento e consulta quem acompanha a Coleção. Sem a atualização otimista, a interface teria de aguardar a gravação e reler a lista, e a soma das duas rotas, medida no mesmo dia, foi de 513,1 milissegundos na mediana e de 542,3 no percentil 95, acima do limite. A reversão em caso de falha não foi exercitada na medição, pois nenhuma movimentação falhou, e foi conferida apenas no código. A restrição de desfazer é atendida pelo botão que, por 30 segundos, devolve o Item à Coleção de origem. A medição foi feita sobre a versão da interface que introduziu a atualização otimista, incorporada ao repositório do \textit{frontend} em 10 de outubro de 2026. O requisito é considerado \textbf{atendido}.
 % Movimentação: local-20261009T000939/navegador/medicoes-movimentacao-10mbps.json (scripts/medicoes/movimentacao.js). Front 0fc8072 + diff em navegador/front-itens-otimista.diff.
 
-\textbf{RNF-07 (desempenho do editor).} O requisito limita a 200 milissegundos o tempo entre uma operação no editor e sua exibição. Esse valor coincide com o limite que o web.dev adota para uma boa responsividade na métrica INP, avaliada no percentil 75 das interações \cite{wagner2022inp}, que é, por isso, a medida adotada. Nas 30 interações registradas no editor, o tempo até a pintura do quadro seguinte foi de 32 milissegundos no percentil 75 e de 48 milissegundos no percentil 98, que, com essa quantidade de interações, coincide com o máximo; o gesto que não foi registrado ficou abaixo do piso de 16 milissegundos. O maior tempo medido ficou, portanto, cerca de quatro vezes abaixo do limite, com o editor exibindo entre 15 e 19 Elementos, o que atende também à restrição de suportar quinze Elementos sem degradação perceptível. A gravação no servidor não compõe esse tempo, pois ocorre de forma assíncrona, depois de uma pausa de 400 milissegundos, sem bloquear a edição, o que atende à restrição de salvamento assíncrono; ainda assim, registra-se que ela levou 139,2 milissegundos no percentil 95. A medição foi feita em um único computador de mesa, sem limitação do processador, e não representa aparelhos de menor desempenho. Como a métrica foi cumprida e nenhuma restrição foi comprovadamente descumprida, o requisito é considerado \textbf{atendido}.
+\textbf{RNF-07 (desempenho do editor).} O requisito limita a 200 milissegundos o tempo entre uma operação no editor e sua exibição. Esse valor coincide com o limite que o web.dev adota para uma boa responsividade na métrica INP, avaliada no percentil 75 das interações \cite{wagner2022inp}, que é, por isso, a medida adotada. Nas 30 interações registradas no editor, o tempo até a pintura do quadro seguinte foi de 32 milissegundos no percentil 75 e de 48 milissegundos no percentil 98, que, com essa quantidade de interações, coincide com o máximo; o gesto que não foi registrado ficou abaixo do piso de 16 milissegundos. O maior tempo medido ficou, portanto, cerca de quatro vezes abaixo do limite, com o editor exibindo entre 15 e 19 Elementos, o que atende também à restrição de suportar quinze Elementos sem degradação perceptível. A gravação no servidor não compõe esse tempo, pois ocorre de forma assíncrona, depois de uma pausa de 400 milissegundos, sem bloquear a edição, o que atende à restrição de salvamento assíncrono; ainda assim, registra-se que ela levou 139,2 milissegundos no percentil 95. A restrição de fidelidade da prévia é sustentada pela inspeção que mostrou o mesmo componente desenhando a ficha no editor e no modo leitura (RF-14); a de renderização parcial não foi medida. A medição foi feita em um único computador de mesa, sem limitação do processador, e não representa aparelhos de menor desempenho. Como a métrica foi cumprida e nenhuma restrição foi comprovadamente descumprida, o requisito é considerado \textbf{atendido}, nos limites dessa máquina.
 % Editor: navegador/medicoes-editor.json (30 interações, p75 32, p98 = máx 48; durações em múltiplos de 8 ms, arredondamento da Event Timing API).
 
-\textbf{RNF-08 (disponibilidade).} A disponibilidade de 99\% só pode ser aferida por um serviço externo que consulte periodicamente a plataforma publicada, e esse acompanhamento não foi feito; o requisito permanece \textbf{não verificado}. A restrição de recuperação automática é atendida pela política de reinício do contêiner e pelos serviços habilitados na inicialização da máquina virtual, descritos no Capítulo~\ref{cap:09}. Duas restrições não são atendidas independentemente da medição: não há cópia local para uso sem conexão, e a interface não reenvia automaticamente operações feitas enquanto a conexão estava interrompida, com exceção das alterações do editor, cuja sincronização reenvia o que ficou pendente na tentativa seguinte.
+\textbf{RNF-08 (disponibilidade).} A disponibilidade de 99\% só pode ser aferida por um serviço externo que consulte periodicamente a plataforma publicada, e esse acompanhamento não foi feito; o requisito permanece \textbf{não verificado}. A restrição de recuperação automática é atendida apenas em parte: a política de reinício do contêiner e os serviços habilitados na inicialização da máquina virtual, descritos no Capítulo~\ref{cap:09}, recuperam a API quando o processo ou a máquina param, mas não há verificação de saúde que detecte uma API em execução sem acesso ao banco, e um projeto do Supabase pausado por inatividade só volta por ação manual no painel. Três restrições não são atendidas independentemente da medição: as publicações da API interrompem o serviço por alguns instantes sem aviso prévio, ao contrário das manutenções comunicadas que a restrição exige; não há cópia local para uso sem conexão, e a interface não reenvia automaticamente operações feitas enquanto a conexão estava interrompida, com exceção das alterações do editor, cuja sincronização reenvia o que ficou pendente na tentativa seguinte.
 
 \subsection{Síntese da Validação}
 
@@ -242,10 +252,10 @@ RNF-01 Usabilidade & Teste com usuários iniciantes (não realizado) & Nenhuma m
 RNF-02 Carregamento & \textit{Script} de latência; carregamento das telas no navegador a 10 Mbps & API: p95 máximo de 160,2\,ms na leitura e de 371,9\,ms na escrita. Telas sem cache: LCP p75 de até 476\,ms e máximo de 1,1\,s. Sem paginação e sem otimização de imagens & Atendido com ressalva \\ \hline
 RNF-03 Segurança de senhas e dados & Inspeção do código; testes automatizados (Capítulo~\ref{cap:08}) & bcrypt, mensagem genérica no \textit{login}, sessões revogáveis, HTTPS em produção e limite de cinco \textit{logins} por minuto. Registro de erros inesperados com o objeto completo da exceção & Atendido com ressalva \\ \hline
 RNF-04 Compatibilidade & Teste em navegadores e larguras de tela (não realizado) & Interface escrita para telas a partir de 320\,px; matriz de navegadores não testada & Não verificado \\ \hline
-RNF-05 Personalização & Inspeção do código e da interface & Variáveis CSS, alerta de contraste, aplicação imediata e persistência no perfil; combinações não testadas sistematicamente & Atendido com ressalva \\ \hline
-RNF-06 Movimentação de Itens & Movimentação pela tela no navegador a 10 Mbps; \textit{script} de latência & Atualização otimista: tela muda em até 57\,ms, antes da resposta do servidor (até 477\,ms); desfazer por 30\,s via botão, e não por \texttt{Ctrl+Z} & Atendido com ressalva \\ \hline
+RNF-05 Personalização & Inspeção do código e da interface & Variáveis CSS, alerta de contraste, aplicação imediata e persistência no perfil; métrica de qualquer combinação sem quebras não testada sistematicamente & Não verificado \\ \hline
+RNF-06 Movimentação de Itens & Movimentação pela tela no navegador a 10 Mbps; \textit{script} de latência & Atualização otimista: tela muda em até 57\,ms, antes da resposta do servidor (até 477\,ms); desfazer por 30\,s via botão & Atendido \\ \hline
 RNF-07 Editor & \textit{Script} de latência; temporização de eventos no navegador & 30 interações: p75 de 32\,ms e máximo de 48\,ms, com 15 a 19 Elementos; gravação assíncrona com p95 de 139,2\,ms & Atendido \\ \hline
-RNF-08 Disponibilidade & Monitoramento externo (não realizado) & Reinício automático configurado; sem medição; sem cópia local para uso sem conexão & Não verificado \\ \hline
+RNF-08 Disponibilidade & Monitoramento externo (não realizado) & Reinício automático do processo e da máquina; sem verificação de saúde; publicações sem aviso; sem cópia local para uso sem conexão & Não verificado \\ \hline
 RNF-09 Acessibilidade & Inspeção do código e registros do projeto & Contraste das paletas padrão verificado e alerta de contraste; navegação do editor por teclado não implementada & Não atendido \\ \hline
 RNF-10 Integridade & Inspeção do código; configuração do banco & Transações atômicas e confirmação antes de excluir; sem cópia de segurança automática no plano gratuito; sem registro de auditoria das exclusões & Não atendido \\ \hline
 \end{tabular}
@@ -253,12 +263,11 @@ RNF-10 Integridade & Inspeção do código; configuração do banco & Transaçõ
 \end{quadro}
 \FloatBarrier
 
-Três situações merecem comentário. O RNF-03 é considerado atendido com ressalva porque os mecanismos que a métrica exige existem e estão verificados, mas a restrição de não expor dados sensíveis em registros do sistema não é cumprida por inteiro: os erros inesperados são registrados com o objeto completo da exceção, que pode conter valores de campos, e a falha no envio de um código de confirmação registra o e-mail do destinatário. O limite de tentativas de \textit{login} por endereço, por sua vez, depende, atrás do Caddy, da configuração de confiança no intermediário descrita no Capítulo~\ref{cap:09}.
-% [DEPENDE DE CORREÇÃO: app.set('trust proxy', 1) no main.ts; correcoes_sistema.md, itens 2 e 10]
+Quatro situações merecem comentário. O RNF-05 é considerado não verificado porque a sua métrica exige que qualquer combinação de tema e tipografia mantenha as telas sem quebras, e as combinações não foram testadas de forma sistemática; os mecanismos das restrições existem e foram inspecionados, mas não substituem a verificação da métrica. O RNF-03 é considerado atendido com ressalva porque os mecanismos que a métrica exige existem e estão verificados, mas a restrição de não expor dados sensíveis em registros do sistema não é cumprida por inteiro: os erros inesperados são registrados com o objeto completo da exceção, que pode conter valores de campos, e a falha no envio de um código de confirmação registra o e-mail do destinatário. O limite de tentativas de \textit{login} por endereço, por sua vez, depende, atrás do Caddy, da configuração de confiança em um único intermediário descrita no Capítulo~\ref{cap:09}.
 O RNF-09 é considerado não atendido porque o requisito exige conformidade com o nível AA das WCAG e que todos os elementos interativos sejam acessíveis por teclado, enquanto a navegação do editor por teclado não foi implementada, de modo que posicionar um Elemento depende de um dispositivo apontador ou dos campos numéricos de posição; o critério de operação por teclado é de nível A, abaixo do AA exigido \cite{campbell2024wcag}. As demais partes da interface não foram auditadas. Por fim, o RNF-10 é considerado não atendido porque a sua métrica principal, a de cópias de segurança diárias com retenção de 30 dias, não é cumprida no plano gratuito do Supabase, que não faz cópia automática e deixa a exportação dos dados a cargo do responsável pelo projeto \cite{supabase2026backups}, e porque o registro em auditoria de toda exclusão também não é atendido: apenas as alterações de Itens em Coleções não privadas geram registro de evento.
-% [VERIFICAR com a autora: se houver rotina de db dump na VM (cap. 9), rever o RNF-10]
+% Conferido na VM em 12/10/2026: não há rotina de db dump; o RNF-10 permanece não atendido.
 
-O resultado de conjunto é coerente com a posição secundária desses requisitos no trabalho. Os tempos de resposta da API e os medidos no navegador, no carregamento das telas, na movimentação de Itens e nas interações do editor, ficaram com folga dentro dos limites; as ressalvas vêm de restrições, como a paginação das listagens e o atalho de desfazer, e não das métricas. Os requisitos que exigem avaliação com pessoas, como usabilidade e acessibilidade, ou acompanhamento da plataforma publicada, como a disponibilidade, permanecem em aberto, e são essas as lacunas que a avaliação deixa.
+O resultado de conjunto é coerente com a posição secundária desses requisitos no trabalho. Os tempos de resposta da API e os medidos no navegador, no carregamento das telas, na movimentação de Itens e nas interações do editor, ficaram com folga dentro dos limites no ambiente local em que foram medidos; as ressalvas vêm de restrições, como a paginação das listagens e a otimização das imagens, e não das métricas. Os requisitos que exigem avaliação com pessoas, como usabilidade e acessibilidade, testes sistemáticos de combinações, como a personalização, ou acompanhamento da plataforma publicada, como a disponibilidade, permanecem em aberto, e são essas as lacunas que a avaliação deixa.
 
 \section{Validação em Uso}
 \label{sec:validacaoUso}
@@ -268,8 +277,9 @@ Além da autora, duas pessoas que não participaram do desenvolvimento usaram a 
 Uma dessas pessoas pediu um guia de primeiros passos, porque esperava uma ferramenta de listas, parecida com uma planilha. O pedido mostrou que a relação
 entre o \textit{layout}, a Coleção e as fichas dos Itens fica mais clara com uma apresentação inicial.
 
-A plataforma oferece esse guia. No primeiro acesso, uma apresentação mostra um diagrama que relaciona o \textit{layout}, a Coleção e as fichas. Uma lista
-de primeiros passos, com dicas em cada tela, acompanha o usuário, e uma página explica o funcionamento da plataforma.
+A plataforma oferece esse guia, especificado no RNF-01 e descrito na Seção~\ref{sec:aplicacaoCliente}. A página inicial pública explica o funcionamento
+com um diagrama que relaciona o \textit{layout}, a Coleção e as fichas; no primeiro acesso, um tour apresenta a área autenticada, e uma lista de primeiros
+passos, com dicas em cada tela, acompanha o usuário. O efeito do guia sobre o uso não foi medido: a observação registrou apenas o pedido que o motivou.
 
 \section{Discussão e Implicações}
 \label{sec:discussao}
@@ -285,7 +295,8 @@ definir a estrutura e a aparência de cada registro e compartilhar essas coleç�
     definida em cada Coleção (RF-08 e RF-20 a RF-24).
 \end{itemize}
 
-Esses resultados mostram que a proposta foi construída e está em operação, com os vinte e quatro requisitos funcionais atendidos.
+Esses resultados mostram que a proposta foi construída e está em operação, com os vinte e quatro requisitos funcionais atendidos tal como especificados,
+e com três comportamentos deixados para versões futuras (Subseção~\ref{subsec:requisitos_adiados}).
 
 O uso relatado na Seção~\ref{sec:validacaoUso} mostra uma característica desse tipo de ferramenta. Como o próprio usuário define a estrutura de cada registro,
 ele precisa entender primeiro a relação entre o \textit{layout} e as fichas, o que uma planilha, de estrutura fixa, dispensa. Por isso, o guia de primeiros
@@ -295,7 +306,8 @@ Duas decisões de projeto do editor trazem vantagens e custos. A primeira é a �
 no Capítulo~\ref{cap:06}. A prévia é igual à ficha final, e para isso toda a ficha é medida em relação à largura da folha, por meio de consultas de contêiner,
 um recurso recente do CSS que depende do suporte do navegador. A segunda é a cópia própria do \textit{layout} criada quando um Item é personalizado.
 Personalizar um Item nunca altera os demais, mas a cópia deixa de acompanhar as mudanças feitas depois no \textit{layout} da Coleção. Para aproximar as duas,
-a plataforma mescla a ficha com o \textit{layout} novo e mantém na ficha os Elementos que não encontram correspondência.
+a plataforma oferece a mescla da ficha com o \textit{layout} novo, feita apenas nos Itens que o usuário escolhe, que mantém na ficha os Elementos com valor
+que não encontram correspondência (RF-15).
 
 A privacidade também tem um custo de manutenção. A regra de visibilidade é aplicada em cada rota que recebe o identificador de uma Coleção, de um Item
 ou de um perfil, e a resposta 404 esconde até a existência do recurso. Toda rota nova precisa aplicar a mesma regra, de modo que o esforço de manutenção

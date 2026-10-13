@@ -11,7 +11,7 @@ Nesse contexto, este trabalho apresenta uma plataforma \textit{web} personalizá
 
 A ideia deste trabalho surgiu de uma prática pessoal de registro de leituras. Ao concluir cada livro, anotavam-se detalhes como a data de término e as impressões sobre a história, com o objetivo de consultá-los depois, ao reler a obra ou simplesmente ao relembrar o que já havia sido lido. Voltar a esses registros permitia comparar a opinião de uma leitura anterior com a percepção atual sobre o enredo e os personagens.
 
-Ao longo dos anos, diferentes meios foram experimentados para manter esse registro, sem que nenhum atendesse plenamente à necessidade. Modelos de acompanhamento de leituras encontrados na internet precisavam ser copiados à mão para o papel, o que dava trabalho e raramente alcançava o visual desejado. As planilhas eletrônicas resolviam o armazenamento, mas ofereciam poucas possibilidades de personalização, reduzindo cada registro a uma linha de tabela. Tampouco se encontrou um aplicativo dedicado que unisse o registro organizado à liberdade de definir sua aparência.
+Ao longo dos anos, diferentes meios foram experimentados para manter esse registro, sem que nenhum atendesse plenamente à necessidade. Modelos de acompanhamento de leituras encontrados na internet precisavam ser copiados à mão para o papel, o que dava trabalho e raramente alcançava o visual desejado. As planilhas eletrônicas resolviam o armazenamento, mas ofereciam poucas possibilidades de personalização, reduzindo cada registro a uma linha de tabela. Tampouco se encontrou, entre os aplicativos experimentados, um que unisse o registro organizado à liberdade de definir sua aparência.
 
 A mesma necessidade apareceu, em seguida, em outros tipos de coleção: filmes, séries, jogos e \textit{hobbies} em geral. Cada um deles pede informações diferentes (um filme pode ter diretor e data em que foi assistido; um carro de coleção, fabricante, escala e ano), e as ferramentas de campos fixos não se adaptam bem a essa variedade. Faltava, portanto, um espaço em que o colecionador pudesse decidir não apenas \textit{o que} registrar, mas \textit{como} cada registro seria apresentado, expressando sua personalidade por meio de cores, fontes e do layout das fichas.
 
@@ -29,7 +29,7 @@ Desenvolver uma plataforma \textit{web} que permita ao usuário criar e organiza
 \label{subsec:objetivosEspecificos}
 \begin{itemize}
 	\item Levantar e especificar os requisitos funcionais e não funcionais da plataforma, bem como seus casos de uso;
-	\item Elaborar o modelo de domínio do sistema e, a partir dele, o projeto de interface e o projeto de dados;
+	\item Elaborar o modelo de domínio do sistema e, a partir dele, o projeto de dados, além do projeto de interface;
 	\item Implementar a organização do acervo em categorias, coleções e itens, com controle de privacidade no nível da coleção;
 	\item Construir um editor visual de layouts baseado em Elementos de seis tipos, que permita associar layouts a coleções e personalizar a ficha de itens individualmente;
 	\item Oferecer a personalização global da interface por meio de paletas de cores e tipografia;
@@ -41,11 +41,11 @@ Desenvolver uma plataforma \textit{web} que permita ao usuário criar e organiza
 
 As ferramentas usualmente empregadas para registrar coleções pessoais, como planilhas eletrônicas, aplicativos de listas e cadernos, tratam cada registro como um conjunto de campos fixos com aparência padronizada. Essa rigidez dificulta a adaptação a acervos de naturezas distintas, que exigem informações diferentes, e não permite ao colecionador decidir como cada registro é apresentado. Em consequência, quem deseja manter coleções variadas precisa recorrer a várias ferramentas ou aceitar registros que não refletem a forma como gostaria de ver seu acervo.
 
-O problema que este trabalho se propõe a resolver é, portanto, a ausência de uma plataforma que reúna, em um só lugar, a organização de coleções de qualquer tipo, a liberdade de definir a estrutura e a aparência de cada registro e a possibilidade de compartilhar essas coleções com outras pessoas.
+O problema que este trabalho se propõe a resolver é, portanto, a falta, entre as ferramentas usuais de registro e nos trabalhos revisados no Capítulo~\ref{cap:02}, de uma plataforma que reúna, em um só lugar, a organização de coleções de qualquer tipo, a liberdade de definir a estrutura e a aparência de cada registro e a possibilidade de compartilhar essas coleções com outras pessoas.
 
 \section{Organização Deste Trabalho}
 
-Este texto está organizado em doze capítulos. O Capítulo~\ref{cap:02} reúne a fundamentação teórica que sustenta o trabalho, abordando o colecionismo
+Este texto está organizado em onze capítulos. O Capítulo~\ref{cap:02} reúne a fundamentação teórica que sustenta o trabalho, abordando o colecionismo
 digital, a personalização de interfaces, a manipulação direta, as redes sociais, a engenharia de requisitos, a modelagem conceitual e a arquitetura de
 aplicações \textit{web}. O Capítulo~\ref{cap:03} descreve os materiais e os métodos empregados, da pesquisa bibliográfica à estratégia de testes, e apresenta
 o equipamento e as ferramentas utilizados no desenvolvimento. O Capítulo~\ref{cap:04} traz a visão panorâmica do produto, com sua perspectiva, suas funções,
@@ -54,5 +54,5 @@ uso e o modelo de domínio, e é nele que se definem os quatro conceitos centrai
 projeto de interface e o projeto de dados, detalhando o mapeamento objeto-relacional e a estrutura das tabelas do banco. O Capítulo~\ref{cap:07} descreve a
 implementação, incluindo o ambiente de desenvolvimento, a organização do código e as decisões tomadas durante a construção do sistema. O
 Capítulo~\ref{cap:08} apresenta os testes realizados, com seus resultados, e o método das medições de desempenho. O Capítulo~\ref{cap:09} trata da implantação da aplicação. O Capítulo~\ref{cap:10}
-discute os resultados obtidos à luz dos objetivos estabelecidos. O Capítulo~\ref{cap:11} analisa os trabalhos e as ferramentas relacionados à proposta. Por fim, o Capítulo~\ref{cap:12} apresenta as conclusões e aponta possibilidades de
+discute os resultados obtidos à luz dos objetivos estabelecidos. Por fim, o Capítulo~\ref{cap:12} apresenta as conclusões e aponta possibilidades de
 trabalhos futuros.

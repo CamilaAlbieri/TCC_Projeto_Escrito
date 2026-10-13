@@ -4,6 +4,7 @@
 Este capítulo apresenta a arquitetura técnica e as especificações de projeto que fundamentam o sistema de gerenciamento de coleções. Nele, detalham-se as interfaces, a modelagem de dados e as regras de persistência utilizadas no desenvolvimento da aplicação.
 
 \section{Projeto de Interface}
+\label{sec:projetoInterface}
 As interfaces do sistema foram projetadas na ferramenta \textbf{Figma} e adotam um partido visual deliberadamente simples, construído sobre poucos componentes reutilizáveis, uma tipografia única e uma paleta reduzida, ancorada em um tom de roxo. A escolha é coerente com a proposta do produto: como o conteúdo das fichas é inteiramente definido pelo usuário no editor de \textit{layouts}, a interface que o cerca deve permanecer discreta, para não competir visualmente com aquilo que o próprio usuário compôs. Convém registrar que os protótipos aqui descritos foram elaborados na fase de concepção, antes da implementação, e representam a intenção de projeto: definem a organização e o comportamento pretendidos para as telas, e não seu resultado final, que pode incorporar ajustes decorrentes do desenvolvimento.
 
 Os esquemas de tela elaborados nessa fase são apresentados nas Figuras~\ref{fig:telaInicial} a~\ref{fig:telaConfiguracoes}. Eles registram a organização pretendida para cada tela e serviram de base para o desenvolvimento, sem a pretensão de corresponder ponto a ponto à interface final.
@@ -137,11 +138,11 @@ O mapeamento entre o modelo de domínio (TypeScript) e o modelo relacional (Post
 \begin{itemize}
     \item \textbf{Idioma dos identificadores:} Os nomes conceituais empregados no texto desta monografia estão em português (Elemento, EstiloDeElemento, TipoElemento, Categoria, Coleção), ao passo que os identificadores do código e do banco permanecem em inglês (\texttt{Element}, \texttt{ElementStyle}, \texttt{ElementType}, \texttt{categories}, \texttt{collections}). A correspondência entre uns e outros é direta, e adotou-se essa separação para que o texto permaneça legível em português sem divergir dos nomes efetivamente encontrados no código-fonte;
     \item \textbf{Nomenclatura:} As entidades em \textit{camelCase} no código são mapeadas para tabelas em \textit{snake\_case} no banco de dados através da diretiva \texttt{@@map};
-    \item \textbf{Tipos Físicos:} Os atributos do tipo \texttt{String} no Prisma são explicitamente mapeados para os tipos físicos \texttt{VARCHAR(n)} ou \texttt{TEXT} no PostgreSQL através das diretivas \texttt{@db.VarChar(n)} e \texttt{@db.Text}, conforme o tamanho esperado do conteúdo;
+    \item \textbf{Tipos Físicos:} Os atributos do tipo \texttt{String} no Prisma são explicitamente mapeados para os tipos físicos \texttt{VARCHAR(n)} ou \texttt{TEXT} no PostgreSQL através das diretivas \texttt{@db.VarChar(n)} e \texttt{@db.Text}, conforme o tamanho esperado do conteúdo. Esses tamanhos são tetos físicos, por vezes mais largos que os limites dos requisitos; os limites de cada requisito, como os 100 caracteres do nome de uma categoria (RF-06), são aplicados pela validação dos dados na API (Seção~\ref{sec:servidorAplicacao});
     \item \textbf{Chaves Primárias:} Todos os modelos possuem um identificador único do tipo UUID gerado automaticamente;
-    \item \textbf{Relações 1:N:} Implementadas via chaves estrangeiras (\textit{foreign keys}) obrigatórias, com integridade referencial garantida por regras de \textit{cascade} ou \textit{set null} conforme a semântica da relação;
+    \item \textbf{Relações 1:N:} Implementadas via chaves estrangeiras (\textit{foreign keys}), obrigatórias quando o registro não existe sem o pai, como o item sem a coleção, e opcionais quando a ligação pode faltar, como o \textit{layout} de uma coleção; a integridade referencial é garantida por regras de \textit{cascade} ou de \textit{set null}, conforme a semântica da relação, e o \textit{set null} só se aplica às opcionais;
     \item \textbf{Relações N:N:} Implementadas via tabela associativa, como \texttt{collection\_follows}, que vincula usuários às coleções que acompanham e é protegida por chave única composta, impedindo a duplicação do par, e \texttt{\_CollectionToTag}, que liga as coleções às suas tags;
-    \item \textbf{Relações Reflexivas:} Aparecem em dois contextos. Nas interações sociais, a amizade é mapeada como relação nomeada, para distinguir os papéis de remetente e destinatário. No editor de \textit{layouts}, tanto \texttt{layouts} quanto \texttt{elements} referenciam a própria tabela para registrar de qual registro a cópia se originou, com regra \textit{set null}, de modo que excluir o original apenas zera a referência e preserva a cópia;
+    \item \textbf{Relações Reflexivas:} Aparecem em dois contextos. Nas interações sociais, a amizade é mapeada como relação nomeada, para distinguir os papéis de remetente e destinatário. No editor de \textit{layouts}, tanto \texttt{layouts} quanto \texttt{elements} referenciam a própria tabela para registrar de qual registro a cópia se originou, com regra \textit{set null}, de modo que a cópia nunca depende do original para existir;
     \item \textbf{Índices:} Foram criados índices secundários sobre as chaves estrangeiras de maior frequência de consulta, visando a otimização das operações de leitura.
 \end{itemize}
 
@@ -170,7 +171,7 @@ Nesta seção, descreve-se o padrão adotado para a nomenclatura dos objetos do 
 \end{table}
 \FloatBarrier
 
-Para melhor compreensão da arquitetura de dados, as 13 tabelas propostas neste trabalho estão consolidadas na Tabela~\ref{tab:tabelasIdentificadas}, que serve como índice para o detalhamento físico apresentado na subseção seguinte. A ordem de apresentação acompanha os pacotes do modelo de domínio definidos no Capítulo~\ref{cap:05}.
+Para melhor compreensão da arquitetura de dados, as 15 tabelas declaradas no esquema estão consolidadas na Tabela~\ref{tab:tabelasIdentificadas}, ao lado da tabela associativa \texttt{\_CollectionToTag}, gerada pelo próprio Prisma e descrita junto à tabela \texttt{tags}. A Tabela~\ref{tab:tabelasIdentificadas} serve como índice para o detalhamento físico apresentado na subseção seguinte. A ordem de apresentação acompanha os pacotes do modelo de domínio definidos no Capítulo~\ref{cap:05}.
 
 \FloatBarrier
 \begin{table}[!htbp]
@@ -181,11 +182,12 @@ Para melhor compreensão da arquitetura de dados, as 13 tabelas propostas neste 
         \textbf{Tabela do Banco de Dados} & \textbf{Referência no Documento} \\ \hline
         users & Tabela~\ref{tab:tabelaUserDetalhado} \\ \hline
         user\_sessions & Tabela~\ref{tab:tabelaUserSessionDetalhado} \\ \hline
+        email\_verification\_codes & Tabela~\ref{tab:tabelaEmailVerificationCodeDetalhado} \\ \hline
         password\_reset\_tokens & Tabela~\ref{tab:tabelaPasswordResetTokenDetalhado} \\ \hline
         categories & Tabela~\ref{tab:tabelaCategoryDetalhado} \\ \hline
         layouts & Tabela~\ref{tab:tabelaLayoutDetalhado} \\ \hline
         collections & Tabela~\ref{tab:tabelaCollectionDetalhado} \\ \hline
-        tags & Tabela~\ref{tab:tabelaTagDetalhado} \\ \hline
+        tags e \_CollectionToTag & Tabela~\ref{tab:tabelaTagDetalhado} \\ \hline
         elements & Tabela~\ref{tab:tabelaElementDetalhado} \\ \hline
         items & Tabela~\ref{tab:tabelaItemDetalhado} \\ \hline
         notifications & Tabela~\ref{tab:tabelaNotificationDetalhado} \\ \hline
@@ -202,7 +204,7 @@ Para melhor compreensão da arquitetura de dados, as 13 tabelas propostas neste 
 
 \subsubsection{Detalhamento da Estrutura das Tabelas}
 
-Nesta subseção, apresenta-se o detalhamento físico das 13 tabelas que compõem o banco de dados do sistema, especificando tipos de dados, chaves e restrições. Para a leitura das tabelas de detalhamento, foram adotadas as seguintes convenções de cabeçalho:
+Nesta subseção, apresenta-se o detalhamento físico das 15 tabelas declaradas no esquema do banco de dados do sistema, especificando tipos de dados, chaves e restrições. Para a leitura das tabelas de detalhamento, foram adotadas as seguintes convenções de cabeçalho:
 
 \begin{itemize}
     \item \textbf{Campo:} Nome técnico do atributo mapeado na tabela do banco de dados;
@@ -231,10 +233,21 @@ Nesta subseção, apresenta-se o detalhamento físico das 13 tabelas que compõe
         user\_code & Varch.(110) & X & & & & UK\_01 & 1 \\ \hline
         email & Varch.(150) & X & & & & UK\_02 & 1 \\ \hline
         password & Varch.(255) & X & & & & & \\ \hline
-        profile\_photo & Varch.(500) & & & & & & \\ \hline
         bio & Varch.(500) & & & & & & \\ \hline
+        profile\_photo & Varch.(500) & & & & & & \\ \hline
+        profile\_photo\_original & Varch.(500) & & & & & & \\ \hline
+        profile\_photo\_crop\_x, \_y, \_width, \_height & Int & & & & & & \\ \hline
+        profile\_photo\_color & Varch.(7) & & & & & & \\ \hline
+        cover\_image & Varch.(500) & & & & & & \\ \hline
+        cover\_original & Varch.(500) & & & & & & \\ \hline
+        cover\_crop\_x, \_y, \_width, \_height & Int & & & & & & \\ \hline
+        cover\_color & Varch.(7) & & & & & & \\ \hline
         registered\_at & Time. & X & & & & & \\ \hline
-        default\_layouts\_at & Time. & & & & & & \\ \hline
+        email\_verified\_at & Time. & & & & & & \\ \hline
+        default\_layouts\_version & Int & X & & & & & \\ \hline
+        onboarding\_tour\_at & Time. & & & & & & \\ \hline
+        onboarding\_checklist\_hidden\_at & Time. & & & & & & \\ \hline
+        onboarding\_tips\_seen & Text[] & X & & & & & \\ \hline
     \end{tabularx}
 
     \vspace{0.2cm}
@@ -243,7 +256,34 @@ Nesta subseção, apresenta-se o detalhamento físico das 13 tabelas que compõe
 
 O campo \texttt{user\_code} merece destaque: trata-se do identificador público do usuário, gerado automaticamente no cadastro (RF-01) e imutável, utilizado nas buscas e nas solicitações de amizade (RF-20). Sua unicidade é garantida em toda a plataforma, de modo independente da unicidade do endereço de e-mail.
 
-Já o \texttt{default\_layouts\_at} registra o momento em que o usuário recebeu os \textit{layouts} padrão oferecidos pelo sistema (RF-01), e não é registro histórico: existe para que a entrega aconteça uma única vez. Contas criadas antes dessa funcionalidade recebem os modelos na primeira abertura da biblioteca, e a marca impede que um \textit{layout} padrão excluído de propósito reapareça na listagem seguinte --- o que aconteceria caso a verificação se apoiasse na simples presença dos modelos pelo nome.
+A foto e a capa do perfil seguem o mesmo arranjo das imagens da categoria (RF-05 e RF-06): a coluna principal guarda o recorte exibido, a coluna \texttt{\_original} guarda o arquivo enviado, e as quatro colunas \texttt{\_crop\_*} registram a área recortada, o que permite refazer o enquadramento sem novo envio. As colunas \texttt{\_color} guardam a cor usada enquanto a imagem não existe.
+
+O \texttt{email\_verified\_at} registra quando o usuário confirmou o e-mail digitando o código recebido (RF-01). Enquanto é nulo, a conta não recebe sessão no login. Guardar a data, e não apenas um indicador, informa também quando a confirmação ocorreu; as contas que já existiam quando a confirmação foi introduzida receberam, na migração, a data do próprio cadastro.
+
+Já o \texttt{default\_layouts\_version} registra até que versão do conjunto de \textit{layouts} padrão (RF-01) a conta já recebeu. Cada \textit{layout} padrão declara a versão em que passou a existir, e a conta recebe, na abertura da biblioteca, os que forem mais novos que o seu número. Como a versão só aumenta, um \textit{layout} padrão excluído de propósito não reaparece, o que aconteceria caso a verificação se apoiasse na simples presença dos modelos pelo nome. As três colunas \texttt{onboarding\_*} guardam o estado do guia de primeiros passos (Seção~\ref{sec:aplicacaoCliente}): quando o tour inicial foi concluído ou pulado, quando a lista de primeiros passos foi escondida e quais dicas de tela já foram vistas.
+
+% 1b. EMAIL_VERIFICATION_CODES
+\FloatBarrier
+\begin{table}[!htbp]
+\centering
+\caption{Código de Confirmação de E-mail (email\_verification\_codes)}
+\footnotesize
+\begin{tabularx}{\textwidth}{ | X | c | c | c | c | c | c | c | }
+    \hline
+    \textbf{Campo} & \textbf{Tipo} & \textbf{Obr.?} & \textbf{PK?} & \textbf{Tab.} & \textbf{Cmp.} & \textbf{Grp.} & \textbf{Ord.}\\ \hline
+    id\_email\_verification\_code & UUID & X & X &  &  &  &  \\ \hline
+    code\_hash & Varch.(64) & X &  &  &  &  &  \\ \hline
+    attempts & Int & X &  &  &  &  &  \\ \hline
+    created\_at & Time. & X &  &  &  &  &  \\ \hline
+    expires\_at & Time. & X &  &  &  &  &  \\ \hline
+    used\_at & Time. &  &  &  &  &  &  \\ \hline
+    user\_id & UUID & X &  & users & id\_user &  &  \\ \hline
+\end{tabularx}
+\vspace{0.1cm} \\ \textbf{Fonte:} Elaborada pelo autor
+\label{tab:tabelaEmailVerificationCodeDetalhado}
+\end{table}
+
+Sustenta a confirmação do e-mail no cadastro (RF-01). Como no \textit{token} de redefinição de senha, guarda-se apenas o \textit{hash} do código de 6 dígitos. O campo \texttt{attempts} conta as tentativas erradas, que se esgotam em cinco; \texttt{expires\_at} fixa a validade de 15 minutos; e \texttt{used\_at} marca o código consumido ou substituído, pois emitir um código novo aposenta os anteriores, de modo que exista apenas um válido por vez.
 
 % 2. USER_SESSIONS
 \FloatBarrier
@@ -356,7 +396,7 @@ qualquer fundo (RNF-05), sem desenhar uma faixa sobre a imagem.
 \label{tab:tabelaLayoutDetalhado}
 \end{table}
 
-Três campos desta tabela sustentam requisitos do Editor de Layout. O \texttt{purpose} distingue as três finalidades que um \textit{layout} pode ter: \textit{template} reutilizável, criado pelo próprio usuário; \textit{template} importado, resultante do compartilhamento (RF-16); e cópia individual de item, gerada quando o usuário personaliza a ficha de um item específico (RF-17). Já o \texttt{source\_layout\_id} registra de qual \textit{layout} a cópia se originou, tanto na duplicação (RF-14) quanto na importação, sem criar dependência entre os dois: a regra \textit{set null} faz com que excluir o original apenas zere a referência.
+Três campos desta tabela sustentam requisitos do Editor de Layout. O \texttt{purpose} distingue as três finalidades que um \textit{layout} pode ter: \textit{template} reutilizável, criado pelo próprio usuário; \textit{template} importado, resultante do compartilhamento (RF-16); e cópia individual de item, gerada quando o usuário personaliza a ficha de um item específico (RF-17). Já o \texttt{source\_layout\_id} registra de qual \textit{layout} a cópia se originou, na duplicação (RF-14), na importação (RF-16) e na ficha própria de um item (RF-17). Nas duas primeiras, a regra \textit{set null} faz com que excluir o original apenas zere a referência e preserve a cópia. Com as fichas próprias, a aplicação é mais estrita: recusa a exclusão de um \textit{layout} enquanto ele estiver associado a coleções ou tiver originado fichas de item, e a desassociação prevista no RF-14 é que zera antes essas referências, depois de dar uma ficha própria a cada item que ainda exibia o \textit{layout}.
 
 Por fim, o \texttt{background} guarda o fundo da ficha (RF-14): uma cor hexadecimal ou um degradê de duas cores com ângulo e ponto de início, gravado em formato compacto e validado, e nunca como CSS livre, o que abriria espaço para injeção de estilo na página de quem visita a ficha. É coluna do \textit{layout}, e não propriedade de um Elemento, porque não pertence a nenhum deles: é a superfície sobre a qual todos são desenhados. Como a ficha própria de um item também é um registro desta tabela (RF-17), a mesma coluna atende aos dois casos, e o valor nulo corresponde ao fundo branco padrão.
 
@@ -461,7 +501,7 @@ Esta é a tabela central do diferencial da plataforma. Nela residem a geometria 
 
 A coluna \texttt{style} corresponde ao \textbf{EstiloDeElemento} do modelo de domínio, apresentado na Seção~\ref{sec:modelo_dominio}. Ali ele aparece como uma classe de valor composta no Elemento, com uma propriedade visual por atributo, o que torna visível o que o editor oferece; aqui ele é gravado como um único documento \texttt{JSONB}. A correspondência é direta, e os nomes das propriedades no documento são os mesmos atributos da classe.
 
-A divisão entre coluna e \texttt{JSONB} obedece a um critério: é coluna aquilo que o banco precisa consultar, ordenar ou indexar, e é \texttt{JSONB} aquilo que ele apenas guarda e devolve, cabendo ao navegador interpretar. Por esse critério, \texttt{content} é coluna, pois a ordenação de itens por classificação (RF-12) lê o valor dali, ao passo que a cor de fundo de um Elemento não é: nenhuma consulta pergunta quais Elementos são azuis. Uma coluna por propriedade traria o inconveniente oposto: o editor cresce em propriedades visuais, e cada nova opção exigiria alterar o esquema do banco. Ser \texttt{JSONB} não afrouxa a validação: o objeto é validado atributo a atributo na camada de aplicação, e uma chave desconhecida faz a requisição ser rejeitada como qualquer outra.
+A divisão entre coluna e \texttt{JSONB} obedece a um critério: é coluna aquilo que o banco precisa consultar, ordenar ou indexar, e é \texttt{JSONB} aquilo que ele apenas guarda e devolve, cabendo ao navegador interpretar. Por esse critério, \texttt{content} é coluna, pois é o valor do item, e não sua aparência: é o que muda de um item para outro, o que a mescla de fichas transfere para o \textit{layout} novo (RF-15) e o que a ordenação pela classificação, registrada entre os requisitos adiados (Subseção~\ref{subsec:requisitos_adiados}), precisará ler no banco. A cor de fundo de um Elemento, ao contrário, não é coluna: nenhuma consulta pergunta quais Elementos são azuis. Uma coluna por propriedade traria o inconveniente oposto: o editor cresce em propriedades visuais, e cada nova opção exigiria alterar o esquema do banco. Ser \texttt{JSONB} não afrouxa a validação: o objeto é validado atributo a atributo na camada de aplicação, e uma chave desconhecida faz a requisição ser rejeitada como qualquer outra.
 
 A geometria é expressa em inteiros porque a unidade não é o \textit{pixel}, e sim a milésima parte da largura do quadro da ficha. Como a ficha ocupa a largura disponível e escala junto com ela, uma medida absoluta significaria coisas diferentes em cada tela; com a unidade relativa, mudar a largura disponível altera apenas a escala, e nenhum Elemento se reposiciona.
 
@@ -478,8 +518,11 @@ O campo \texttt{layer} não acompanha \texttt{pos\_x} e \texttt{pos\_y} como uma
     \textbf{Campo} & \textbf{Tipo} & \textbf{Obr.?} & \textbf{PK?} & \textbf{Tab.} & \textbf{Cmp.} & \textbf{Grp.} & \textbf{Ord.}\\ \hline
     id\_item & UUID & X & X &  &  &  &  \\ \hline
     name & Varch.(255) & X &  &  &  &  &  \\ \hline
+    subtitle & Varch.(150) &  &  &  &  &  &  \\ \hline
     thumbnail & Varch.(500) &  &  &  &  &  &  \\ \hline
     cover\_image & Varch.(500) &  &  &  &  &  &  \\ \hline
+    cover\_original & Varch.(500) &  &  &  &  &  &  \\ \hline
+    cover\_crop\_x, \_y, \_width, \_height & Int &  &  &  &  &  &  \\ \hline
     background\_color & Varch.(7) &  &  &  &  &  &  \\ \hline
     notes & Text &  &  &  &  &  &  \\ \hline
     created\_at & Time. & X &  &  &  &  &  \\ \hline
@@ -493,7 +536,7 @@ O campo \texttt{layer} não acompanha \texttt{pos\_x} e \texttt{pos\_y} como uma
 O item é a única das três entidades que recebe cor de fundo sem receber \texttt{icon}: já dispõe
 de \texttt{thumbnail} e \texttt{cover\_image} para imagem, e um terceiro campo de imagem seria
 repetição. A cor atende justamente ao item sem miniatura, que de outro modo apareceria como um
-retângulo vazio na listagem da coleção.
+retângulo vazio na listagem da coleção. A capa do cartão segue o arranjo de recorte da capa da categoria, com o original e a área guardados, e o \texttt{subtitle} é a linha exibida sob o nome no cartão, que a busca da listagem também consulta (RF-12).
 
 % 9. NOTIFICATIONS
 \FloatBarrier

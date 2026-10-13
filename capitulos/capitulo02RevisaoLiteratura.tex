@@ -290,8 +290,8 @@ cabeçalhos usados pelas bibliotecas. No Brasil, o Skoob reúne estante de livro
 possibilidade de adicionar contatos, funcionando ao mesmo tempo como rede social e como site de catalogação social \cite{Damasceno2022}, e permite
 ainda marcar os livros que se está lendo e os que se pretende ler \cite{Monteiro2020}. O Letterboxd, por sua vez, se apresenta como uma rede social para
 discussão de filmes que funciona como diário para registrar e compartilhar opiniões, com uma lista de filmes a ver e a possibilidade de seguir amigos
-\cite{Leite2025}. Reunir o registro de uma coleção e a interação entre pessoas é, portanto, um modelo reconhecido, e as ferramentas desse tipo são analisadas
-no Capítulo~\ref{cap:11}.
+\cite{Leite2025}. Reunir o registro de uma coleção e a interação entre pessoas é, portanto, um modelo reconhecido. Nos trabalhos citados, porém, essas plataformas
+aparecem dedicadas a um único tipo de acervo, livros ou filmes, e nenhum deles trata da definição, pelo próprio usuário, da aparência de cada registro.
 
 Reunir essas práticas em uma plataforma exige, antes de tudo, definir com precisão o que o sistema deve fazer, e é por aí que começam as seções seguintes,
 dedicadas à construção do sistema.
@@ -398,7 +398,9 @@ conteúdo e a assinatura, e destacam que a verificação pode ser feita diretame
 \citeonline{Yang2026} explicam que, por ser assinado, quem o recebe confere sua autenticidade sem contatar quem o emitiu, o que permite a autenticação sem
 estado, e observam que foi a difusão das SPAs e das arquiteturas distribuídas que expôs os limites da sessão guardada no servidor.
 \citeonline{Laurindo2024} acrescentam que, como o próprio \textit{token} contém os dados relevantes, o servidor não precisa registrar as sessões dos
-usuários. Esse tipo de autenticação é, assim, uma consequência natural da ausência de estado do REST.
+usuários. Esse tipo de autenticação é, assim, uma consequência natural da ausência de estado do REST. A plataforma proposta usa o JWT, mas não
+dispensa por completo o registro no servidor: como o encerramento da sessão precisa ter efeito imediato, a API guarda cada sessão e confere, a cada
+requisição, se ela não foi revogada, abrindo mão de parte da ausência de estado em troca dessa garantia, como detalhado no Capítulo~\ref{cap:07}.
 
 Do lado do cliente, a interface também pode evitar recarregar a página a cada ação. Na aplicação de várias páginas, o estado fica no servidor e cada
 requisição recarrega a página, o que se torna impraticável em aplicações muito interativas \cite{Vepsalainen2024}. A SPA, ao contrário, mantém o
@@ -431,8 +433,8 @@ mesma aplicação \cite{PostgreSQL2025json}.
 A plataforma proposta combina as duas abordagens. As informações de cada ficha ficam nos elementos que a compõem, cada um gravado como uma linha com seu tipo e
 seu conteúdo, de forma próxima ao EAV, e a aparência de cada elemento fica em uma coluna JSONB, já que o banco apenas a guarda e a devolve. Como a ficha é
 carregada inteira para ser exibida, com todos os seus elementos de uma vez, e não montada atributo por atributo em consultas separadas, o custo de consulta
-apontado para o EAV pesa pouco nesse uso. A ordenação dos itens pela classificação, que depende de um atributo, lê diretamente a coluna de conteúdo, como
-detalhado no Capítulo~\ref{cap:06}.
+apontado para o EAV pesa pouco nesse uso. O custo reaparece quando uma consulta depende de um atributo, como ordenar os itens pela classificação, e por isso
+o conteúdo de cada elemento fica em uma coluna própria, que o banco pode ler, como detalhado no Capítulo~\ref{cap:06}.
 
 Programas orientados a objetos, no entanto, não pensam em tabelas. \citeonline{ZhadkoBazilevych2025} explica que, nos bancos relacionais, os dados
 ficam em tabelas com campos definidos e as relações são feitas por chaves estrangeiras, enquanto as linguagens orientadas a objetos trabalham com objetos,
@@ -462,4 +464,4 @@ de organização, a colecionadora relatada por \citeonline{Mardon2023} não cons
 colecionadores analisadas por \citeonline{Razali2025} costumam ser voltadas a domínios específicos, oferecem pouca personalização e deixam de lado o
 compartilhamento, e as interfaces em geral permitem apenas ajustes mínimos de aparência \cite{Alves2024}. Nenhum dos trabalhos revisados reúne, em
 uma mesma solução, coleções de qualquer natureza, aparência das fichas definida pelo próprio usuário por manipulação direta e compartilhamento em rede social,
-e é essa articulação que a plataforma proposta neste trabalho oferece. A comparação com as ferramentas existentes é retomada no Capítulo~\ref{cap:11}.
+e é essa articulação que a plataforma proposta neste trabalho oferece.
