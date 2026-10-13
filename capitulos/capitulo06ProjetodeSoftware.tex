@@ -118,7 +118,7 @@ Completam o conjunto as telas de conta e de aparência. O perfil do próprio usu
 \FloatBarrier
 
 \section{Projeto de Dados}
-A persistência de informações utiliza o Sistema Gerenciador de Banco de Dados (SGBD) \textbf{PostgreSQL 16}, executado em ambiente isolado através de \textbf{Docker}. A manipulação e a administração dos dados são realizadas por meio do \textbf{DBeaver}, cliente gráfico de administração de bancos de dados relacionais.
+A persistência de informações utiliza o Sistema Gerenciador de Banco de Dados (SGBD) \textbf{PostgreSQL}, fornecido pelo serviço gerenciado do Supabase (Capítulo~\ref{cap:09}). A manipulação e a administração dos dados são realizadas por meio do \textbf{DBeaver}, cliente gráfico de administração de bancos de dados relacionais.
 
 O banco de dados foi estruturado para suportar tipos de dados modernos e performáticos, incluindo:
 \begin{itemize}
@@ -533,10 +533,10 @@ O campo \texttt{layer} não acompanha \texttt{pos\_x} e \texttt{pos\_y} como uma
 \label{tab:tabelaItemDetalhado}
 \end{table}
 
-O item é a única das três entidades que recebe cor de fundo sem receber \texttt{icon}: já dispõe
-de \texttt{thumbnail} e \texttt{cover\_image} para imagem, e um terceiro campo de imagem seria
-repetição. A cor atende justamente ao item sem miniatura, que de outro modo apareceria como um
-retângulo vazio na listagem da coleção. A capa do cartão segue o arranjo de recorte da capa da categoria, com o original e a área guardados, e o \texttt{subtitle} é a linha exibida sob o nome no cartão, que a busca da listagem também consulta (RF-12).
+O item é a única das três entidades que recebe cor de fundo sem receber \texttt{icon}: a imagem do
+cartão é a \texttt{cover\_image}, e um campo a mais de imagem seria repetição. A cor atende
+justamente ao item sem capa, que de outro modo apareceria como um retângulo vazio na listagem da
+coleção. A capa do cartão segue o arranjo de recorte da capa da categoria, com o original e a área guardados, e o \texttt{subtitle} é a linha exibida sob o nome no cartão, que a busca da listagem também consulta (RF-12). A coluna \texttt{thumbnail} está reservada para uma versão reduzida da capa, gerada pelo servidor, e permanece vazia porque o sistema não processa as imagens enviadas (RNF-02, Seção~\ref{sec:validacaoRNF}). Já \texttt{notes} guarda as notas do item (RF-09), texto livre exibido na ficha enquanto ela não tem Elementos.
 
 % 9. NOTIFICATIONS
 \FloatBarrier

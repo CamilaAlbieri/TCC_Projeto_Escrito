@@ -35,7 +35,7 @@ No \textit{login} e no \textit{logout} (RF-02), o CT01 mostrou que o \textit{log
 é aceito e que o \textit{token} de uma sessão encerrada é recusado como acesso não autorizado.
 
 Na alteração de senha (RF-03), os testes do módulo \texttt{user} mostraram que a API exige a senha atual, recusa uma nova senha igual à atual e encerra
-as demais sessões do usuário.
+as demais sessões do usuário. A tela correspondente consta dos requisitos adiados (Subseção~\ref{subsec:requisitos_adiados}).
 
 Na recuperação de senha (RF-04), o CT02 mostrou que a plataforma responde com a mesma mensagem para e-mails cadastrados e não cadastrados, guarda o
 \textit{token} apenas como \textit{hash}, com data de expiração, aceita o \textit{token} uma única vez e encerra todas as sessões após a redefinição.
@@ -52,8 +52,15 @@ Os cinco requisitos do grupo são considerados atendidos.
 
 Nas Categorias, Coleções e Itens (RF-06, RF-07 e RF-09), os testes dos módulos \texttt{category}, \texttt{collection} e \texttt{item} foram aprovados,
 e o uso mostrou a criação, a edição e a exclusão em cada nível. O CT08 mostrou que a plataforma reconhece JPEG e PNG pela assinatura no início do arquivo
-e recusa um arquivo de texto renomeado como imagem, sem gravar nada no armazenamento. Na tela principal de Categorias (RF-13), o uso mostrou a quantidade
-de Coleções e de Itens de cada Categoria, a alternância entre grade e lista e as quatro ordenações.
+e recusa um arquivo de texto renomeado como imagem, sem gravar nada no armazenamento. Nas tags da Coleção (RF-07), a inspeção mostrou o limite de dez tags
+de até 30 caracteres, gravadas na forma canônica em um vocabulário único do sistema, e a tela Explorar, que devolve no máximo 60 Coleções de outras pessoas,
+com ao menos um Item, marcadas com todas as tags escolhidas e filtradas pela mesma regra de privacidade do perfil visitado; mostrou também o filtro das
+Coleções por privacidade, guardado no navegador junto com a ordenação. Na tela principal de Categorias (RF-13), o uso mostrou a quantidade
+de Coleções e de Itens de cada Categoria, a alternância entre grade e lista e as quatro ordenações, e a inspeção mostrou o filtro por tema, também guardado
+no navegador.
+% Inspeção (13/10/2026): backend social-discovery.service.ts (TETO_DE_RESULTADOS = 60, items: some),
+% create-collection.dto.ts (ArrayMaxSize 10, MaxLength 30, normalizarLista); front lib/preferencias.ts
+% (PREFERENCIA_DE_PRIVACIDADE, PREFERENCIA_DE_FILTRO_DE_TEMA, em localStorage).
 
 Na privacidade da Coleção (RF-08), o CT04 mostrou que o dono vê as Coleções das três privacidades, o amigo vê as públicas e as somente para amigos e
 os demais usuários veem apenas as públicas. Para uma Coleção que o visitante não pode ver, a resposta é a mesma de uma Coleção inexistente. O CT03 mostrou
@@ -61,9 +68,11 @@ que, quando a Coleção se torna privada, todos os acompanhamentos são encerrad
 são encerrados apenas os acompanhamentos de quem não é amigo do dono.
 
 Na movimentação de Itens (RF-10), os testes do módulo \texttt{item} mostraram que o Item com ficha própria a mantém ao mudar de Coleção, e o uso mostrou
-a movimentação concluída em três passos, abrir, escolher o destino e confirmar, com o botão de desfazer disponível durante trinta segundos.
+a movimentação concluída em três passos, abrir, escolher na mesma janela a categoria e a Coleção de destino e confirmar, com o botão de desfazer disponível
+durante trinta segundos. A inspeção mostrou as contagens das duas Coleções relidas assim que o servidor confirma a movimentação.
 
-Na ficha em modo leitura (RF-11), o uso mostrou a ficha aberta sobre a listagem, em modo somente leitura para o visitante. Na listagem de Itens (RF-12),
+Na ficha em modo leitura (RF-11), o uso mostrou a ficha aberta sobre a listagem, em modo somente leitura para o visitante, e a inspeção mostrou que ela é desenhada
+com o fundo e as cores do próprio \textit{layout}, iguais para o dono e para quem visita. Na listagem de Itens (RF-12),
 os testes do módulo \texttt{item} mostraram as quatro ordenações por nome e por data, com a mais recente primeiro quando nenhuma é pedida, e o uso mostrou
 a busca pelo nome e pelo subtítulo, feita na própria interface. A ordenação pela classificação e os filtros pelos Elementos não fazem parte do requisito
 nesta versão (Subseção~\ref{subsec:requisitos_adiados}).
@@ -77,7 +86,13 @@ No editor (RF-14), os testes do módulo \texttt{layout} foram aprovados, e a ins
 a ficha no editor e no modo leitura. Os testes mostraram também que, na desassociação que antecede a exclusão de um \textit{layout} em uso (RF-14,
 restrição 13), cada Item que ainda o exibia recebe uma cópia própria dele antes que o \textit{layout} seja solto das Coleções. O campo a preencher (RF-14,
 restrição 15) foi conferido no código do editor: a operação grava o texto de exemplo como nome do Elemento e esvazia o conteúdo do texto e da data, e a
-ficha desenha o nome esmaecido no Elemento sem conteúdo, a mesma indicação de vazio verificada no RF-11.
+ficha desenha o nome esmaecido no Elemento sem conteúdo, a mesma indicação de vazio verificada no RF-11. A inspeção mostrou ainda o fundo da ficha em cor
+única ou em degradê de duas cores, validado pela API como cores e ângulo, e nunca como CSS livre, a tinta padrão calculada pelo contraste com esse fundo
+(restrições 7 e 8), o painel de ilustrações do acervo, com categorias e busca que ignora acentos, o agrupamento e o desagrupamento de Elementos selecionados
+e o desfoque de qualquer Elemento, aceito pela API entre 0 e 200 unidades da folha (restrições 16 a 18).
+% Inspeção (13/10/2026): backend layout/dto/create-layout.dto.ts e update-layout.dto.ts (background),
+% common/dto/element.dto.ts (blur 0..200); front EditorDeFicha.tsx (degradê, agrupar/desagrupar),
+% PainelDeIlustracoes.tsx e lib/acervo.ts (categorias e busca com normalize NFD), styles/ficha.css (tinta).
 % Campo a preencher: front f674adf (12/10/2026), PainelDePropriedades.tsx (MenuDoExemplo) e EditorDeFicha.tsx (placeholder do campo em edição).
 
 Na associação a Coleções (RF-15), os testes da mescla de fichas no módulo \texttt{common} mostraram que cada Elemento da ficha própria é associado ao novo
@@ -85,7 +100,7 @@ Na associação a Coleções (RF-15), os testes da mescla de fichas no módulo \
 precedida da prévia das fichas próprias e da escolha dos Itens a mesclar; os não escolhidos mantiveram sua ficha.
 
 No compartilhamento (RF-16), os testes do módulo \texttt{layout} mostraram que o \textit{layout} importado pelo identificador se torna uma cópia independente
-e que a importação de um \textit{layout} da própria biblioteca é recusada.
+e que a importação de um \textit{layout} da própria biblioteca é recusada, e a inspeção mostrou a prévia exibida antes de confirmar a importação.
 
 Na personalização de um Item (RF-17), o CT05 mostrou que a primeira abertura do editor da ficha cria um \textit{layout} exclusivo do Item, copiado do \textit{layout} da Coleção
 ou vazio quando a Coleção está sem \textit{layout}. As alterações seguintes ficam somente nessa cópia, e uma edição enviada antes da cópia é recusada por conflito.
@@ -98,7 +113,7 @@ do grupo são considerados atendidos.
 Nas paletas (RF-18), o CT06 mostrou que a troca de paleta desativa a anterior e ativa a nova em uma única transação e que a exclusão da paleta em uso
 é recusada. Os testes do módulo \texttt{appearance-preset} mostraram cada paleta com a cor primária e as doze subcores preenchidas. O uso mostrou a paleta
 aplicada a toda a interface no momento da escolha e mantida entre sessões e dispositivos, e o aviso do editor de paletas quando o contraste entre texto e
-fundo fica abaixo de 4,5:1.
+fundo fica abaixo de 4,5:1. A inspeção mostrou a biblioteca de paletas em grade ou em lista e o filtro por paletas claras ou escuras.
 
 Na tipografia (RF-19), os testes do módulo \texttt{appearance-preset} mostraram o tamanho, o espaçamento entre linhas e o peso da fonte aceitos somente
 dentro das faixas do requisito.
@@ -108,10 +123,12 @@ Com esses resultados, a conta tem sempre exatamente uma paleta em uso. Os dois r
 \subsection{Interação Social}
 
 Na amizade (RF-20), o CT07 mostrou que o aceite altera a solicitação somente enquanto ela está pendente e cria, na mesma transação, a notificação para
-quem fez o pedido. Quando duas respostas chegam ao mesmo tempo, apenas a primeira é registrada, e a segunda é recusada por conflito.
+quem fez o pedido. A alteração é condicional ao estado pendente: quando o banco informa que nenhum registro foi alterado, porque outra resposta já
+chegou, a operação é recusada por conflito e nenhuma notificação é criada.
 
 No acompanhamento de Coleções (RF-21), o CT04 mostrou que qualquer usuário pode seguir Coleções públicas, que o amigo pode seguir também as somente para
-amigos e que seguir uma Coleção própria é recusado.
+amigos e que seguir uma Coleção própria é recusado. A inspeção mostrou que desfazer uma amizade encerra os acompanhamentos de Coleções somente para
+amigos entre as duas pessoas e mantém os de Coleções públicas.
 
 No \textit{feed} de atualizações (RF-22), os testes do módulo \texttt{social} mostraram os eventos das Coleções seguidas, entregues em páginas, com as
 Coleções somente para amigos incluídas apenas enquanto a amizade estiver aceita e as Coleções privadas excluídas. A inspeção da interface mostrou a
@@ -127,7 +144,11 @@ são considerados atendidos.
 
 Nas notificações (RF-24), os testes do módulo \texttt{notification} mostraram a contagem das não lidas, a marcação de uma ou de todas as notificações como
 lidas e a limpeza da área, sempre restritas ao usuário autenticado. O uso mostrou o sino do cabeçalho com a quantidade de notificações não lidas, atualizada a cada
-minuto, e a abertura de uma notificação levando ao que a originou.
+minuto, e a abertura de uma notificação levando ao que a originou. A inspeção mostrou que as notificações de atualização só são listadas enquanto a
+Coleção é pública ou, para amigos, somente para amigos, de modo que as de uma Coleção tornada privada deixam de aparecer.
+% Inspeção (13/10/2026): backend social/service/friendship.service.ts (encerra follows FRIENDS_ONLY ao desfazer),
+% notification/service/notification.service.ts (filtro PUBLIC ou FRIENDS_ONLY); front pages/Layouts.tsx (prévia da importação),
+% pages/Aparencia.tsx (grade/lista e PREFERENCIA_DE_FILTRO_DE_LADO).
 
 Com esses resultados, cada usuário vê e altera apenas as próprias notificações. O requisito é considerado atendido.
 
@@ -135,45 +156,56 @@ Com esses resultados, cada usuário vê e altera apenas as próprias notificaç�
 
 O Quadro~\ref{quad:sinteseRF} reúne o instrumento, o resultado e a situação de cada requisito funcional.
 
-\begin{quadro}[h!]
-\caption{Síntese da validação dos requisitos funcionais}
-\label{quad:sinteseRF}
+\begingroup
+% Longtable numerada como Quadro (mesmo recurso do ambiente quadrolongo), para que a
+% síntese continue na página seguinte em vez de passar do rodapé.
+\renewcommand{\LTcaptype}{quadro}
 \footnotesize
-\begin{tabular}{|p{1.3cm}|p{4.6cm}|p{5.6cm}|p{2.2cm}|}
+\begin{longtable}{|p{1.3cm}|p{4.6cm}|p{5.6cm}|p{2.2cm}|}
+\caption{Síntese da validação dos requisitos funcionais} \label{quad:sinteseRF} \\
 \hline
 \textbf{Req.} & \textbf{Instrumento} & \textbf{Resultado} & \textbf{Situação} \\ \hline
+\endfirsthead
+\multicolumn{4}{c}{\quadroname\ \thequadro\ -- Continuação da página anterior} \\
+\hline
+\textbf{Req.} & \textbf{Instrumento} & \textbf{Resultado} & \textbf{Situação} \\ \hline
+\endhead
+\multicolumn{4}{r}{Continua na próxima página} \\
+\endfoot
+\multicolumn{4}{c}{\ABNTEXfontereduzida\fontename: Elaborado pelo autor} \\
+\endlastfoot
 RF-01 & CT06; módulo \texttt{user}; ponta a ponta; uso & Paletas iniciais com uma em uso; acesso só depois do e-mail confirmado por código & Atendido \\ \hline
 RF-02 & CT01; módulo \texttt{auth} & \textit{Logout} encerra a sessão atual; sessão encerrada recusada & Atendido \\ \hline
-RF-03 & Módulo \texttt{user}; inspeção & Senha atual exigida; demais sessões encerradas & Atendido \\ \hline
+RF-03 & Módulo \texttt{user}; inspeção & Na API, senha atual exigida e demais sessões encerradas; tela adiada & Atendido \\ \hline
 RF-04 & CT02; módulo \texttt{auth}; uso & \textit{Token} de uso único; \textit{link} entregue por e-mail & Atendido \\ \hline
 RF-05 & Módulo \texttt{user}; uso & Só campos do perfil alterados; foto e capa enquadradas, com original guardado & Atendido \\ \hline
 RF-06 & Módulo \texttt{category}; uso & Categorias criadas, editadas e excluídas & Atendido \\ \hline
-RF-07 & Módulo \texttt{collection}; uso & Coleções criadas, editadas e excluídas & Atendido \\ \hline
+RF-07 & Módulo \texttt{collection}; inspeção; uso & Coleções criadas, editadas e excluídas; tags e Explorar; filtro por privacidade & Atendido \\ \hline
 RF-08 & CT03; CT04 & Acesso e acompanhamento conforme a privacidade & Atendido \\ \hline
 RF-09 & CT08; módulo \texttt{item}; uso & Imagem reconhecida pelo conteúdo do arquivo & Atendido \\ \hline
 RF-10 & Módulo \texttt{item}; uso & Ficha própria mantida; desfazer por 30~s & Atendido \\ \hline
 RF-11 & Inspeção; uso & Ficha sobre a listagem, somente leitura ao visitante & Atendido \\ \hline
 RF-12 & Módulo \texttt{item}; uso & Quatro ordenações; busca por nome e subtítulo & Atendido \\ \hline
-RF-13 & Módulo \texttt{category}; uso & Contagens, grade e lista, ordenações & Atendido \\ \hline
-RF-14 & Módulo \texttt{layout}; inspeção & Seis tipos de Elemento; prévia igual à ficha & Atendido \\ \hline
+RF-13 & Módulo \texttt{category}; inspeção; uso & Contagens, grade e lista, ordenações, filtro por tema & Atendido \\ \hline
+RF-14 & Módulo \texttt{layout}; inspeção & Seis tipos de Elemento; prévia igual à ficha; degradê, ilustrações, grupos e desfoque & Atendido \\ \hline
 RF-15 & Módulos \texttt{collection} e \texttt{common}; uso & Troca com prévia e mescla das fichas escolhidas & Atendido \\ \hline
-RF-16 & Módulo \texttt{layout} & Cópia independente; importação da própria biblioteca recusada & Atendido \\ \hline
+RF-16 & Módulo \texttt{layout}; inspeção & Cópia independente; prévia antes de importar; importação da própria biblioteca recusada & Atendido \\ \hline
 RF-17 & CT05 & Ficha própria criada na primeira abertura do editor & Atendido \\ \hline
 RF-18 & CT06; módulo \texttt{appearance-preset}; uso & Troca em uma transação; paleta em uso protegida & Atendido \\ \hline
 RF-19 & Módulo \texttt{appearance-preset} & Tipografia nas faixas do requisito & Atendido \\ \hline
 RF-20 & CT07 & Um único vínculo; solicitante notificado & Atendido \\ \hline
-RF-21 & CT03; CT04; módulo \texttt{social} & Acompanhamento conforme a privacidade & Atendido \\ \hline
+RF-21 & CT03; CT04; módulo \texttt{social}; inspeção & Acompanhamento conforme a privacidade e a amizade & Atendido \\ \hline
 RF-22 & Módulo \texttt{social}; inspeção & Eventos das Coleções seguidas, em páginas, com atualização periódica & Atendido \\ \hline
 RF-23 & CT04; módulo \texttt{social}; uso & Perfis e Coleções em modo somente leitura & Atendido \\ \hline
-RF-24 & Módulo \texttt{notification}; uso & Notificações restritas ao usuário; sino com contador & Atendido \\ \hline
-\end{tabular}
-\fonte{Elaborado pelo autor}
-\end{quadro}
+RF-24 & Módulo \texttt{notification}; inspeção; uso & Notificações restritas ao usuário; sino com contador; ocultas as de Coleção privada & Atendido \\ \hline
+\end{longtable}
+\endgroup
 
 
 Os vinte e quatro requisitos funcionais são, portanto, considerados atendidos, tal como especificados no Capítulo~\ref{cap:05}. O juízo não alcança
 os comportamentos retirados da especificação desta versão e registrados entre os requisitos adiados (Subseção~\ref{subsec:requisitos_adiados}): a
-alteração do e-mail cadastrado, a entrega imediata de eventos pelo servidor e a ordenação dos Itens pela classificação, que permanecem como trabalho futuro.
+tela de alteração de senha na área restrita, a alteração do e-mail cadastrado, a entrega imediata de eventos pelo servidor e a ordenação dos Itens pela
+classificação, que permanecem como trabalho futuro.
 
 \section{Validação dos Requisitos Não Funcionais}
 \label{sec:validacaoRNF}
@@ -207,7 +239,7 @@ Gravação de Elemento no editor (\texttt{PATCH /layout/:id/elements/:id}) & RNF
 \end{quadro}
 \FloatBarrier
 
-Como a medição não foi repetida no ambiente de produção, esses tempos caracterizam a API e o banco de dados, e não a rede de quem usa a plataforma publicada. O Quadro~\ref{quad:telasNavegador} apresenta o carregamento das telas no navegador, a 10 Mbps.
+Como a medição não foi repetida no ambiente de produção, esses tempos caracterizam a API e o banco de dados acessados a partir do computador de medição, e não a máquina virtual de produção, de capacidade muito menor (Seção~\ref{sec:infraestrutura}), nem a rede de quem usa a plataforma publicada. O Quadro~\ref{quad:telasNavegador} apresenta o carregamento das telas no navegador, a 10 Mbps.
 
 \FloatBarrier
 \begin{quadro}[h!]
@@ -228,10 +260,10 @@ Ficha própria com 15 Elementos, com cache & 128 & 256 & 296 & 226 & 275 \\ \hli
 
 \subsection{Requisitos Mensuráveis}
 
-\textbf{RNF-02 (desempenho de carregamento).} O requisito fixa três limites: três segundos para o carregamento de uma tela principal, dois segundos para as respostas de leitura da API e três segundos para as operações de escrita. Para a tela, adota-se o maior elemento de conteúdo pintado (LCP), no percentil 75 dos carregamentos, convenção que acompanha a recomendação do web.dev, para o qual um LCP de até 2,5 segundos caracteriza um bom carregamento \cite{walton2019lcp}. Para a API, adota-se o percentil 95, que afirma o limite para a quase totalidade das requisições, e não apenas para a típica. O maior percentil 95 entre as rotas de leitura foi de 160,2 milissegundos (lista de 50 Itens), e o maior entre as de escrita, de 371,9 milissegundos (cadastro de Item), valores cerca de doze e de oito vezes menores que os respectivos limites. No navegador, a 10 Mbps e sem cache, o caso mais desfavorável, o LCP no percentil 75 foi de 364 milissegundos na lista de Itens e de 476 milissegundos na ficha; com cache, caiu para 188 e 256 milissegundos. Na ficha, o maior elemento pintado é o texto de um Elemento, desenhado depois da chegada dos dados. Na lista, o LCP coincidiu com a primeira pintura em todos os carregamentos e ocorreu antes da chegada dos dados, porque o maior elemento pintado é a estrutura da tela, desenhada enquanto as respostas da API são aguardadas. Por isso, registra-se também o instante em que chegou a última resposta da API, a partir do qual os dados podem ser exibidos: na lista sem cache, 743 milissegundos no percentil 75, com máximo de 752. O maior valor observado em todas as medições foi o LCP de 1,1 segundo em um carregamento da ficha sem cache, quase três vezes abaixo do limite de três segundos. No navegador, foram medidas a lista de Itens e a ficha; as telas de Categorias e de Coleções, também citadas pelo requisito, foram medidas apenas pelas respostas da API, as mais rápidas do Quadro~\ref{quad:latenciaApi}. Com essa ressalva de alcance, e nas condições do ambiente local descritas na Seção~\ref{sec:medicoes}, a métrica é cumprida. Duas restrições do requisito, no entanto, não são atendidas: as imagens não são otimizadas pelo servidor, e as listagens de Categorias, Coleções e Itens não são paginadas, sendo devolvidas por inteiro em uma única resposta. O requisito é considerado \textbf{atendido com ressalva}.
+\textbf{RNF-02 (desempenho de carregamento).} O requisito fixa três limites: três segundos para o carregamento de uma tela principal, dois segundos para as respostas de leitura da API e três segundos para as operações de escrita. Para a tela, adota-se o maior elemento de conteúdo pintado (LCP), no percentil 75 dos carregamentos, convenção que acompanha a recomendação do web.dev, para o qual um LCP de até 2,5 segundos caracteriza um bom carregamento \cite{walton2019lcp}. Para a API, adota-se o percentil 95, que afirma o limite para a quase totalidade das requisições, e não apenas para a típica. O maior percentil 95 entre as rotas de leitura foi de 160,2 milissegundos (lista de 50 Itens), e o maior entre as de escrita, de 382,2 milissegundos (movimentação de Item), valores cerca de doze e de oito vezes menores que os respectivos limites. No navegador, a 10 Mbps e sem cache, o caso mais desfavorável, o LCP no percentil 75 foi de 364 milissegundos na lista de Itens e de 476 milissegundos na ficha; com cache, caiu para 188 e 256 milissegundos. Na ficha, o maior elemento pintado é o texto de um Elemento, desenhado depois da chegada dos dados. Na lista, o LCP coincidiu com a primeira pintura em todos os carregamentos e ocorreu antes da chegada dos dados, porque o maior elemento pintado é a estrutura da tela, desenhada enquanto as respostas da API são aguardadas. Por isso, registra-se também o instante em que chegou a última resposta da API, a partir do qual os dados podem ser exibidos: na lista sem cache, 743 milissegundos no percentil 75, com máximo de 752. O maior valor observado em todas as medições foi o LCP de 1,1 segundo em um carregamento da ficha sem cache, quase três vezes abaixo do limite de três segundos. No navegador, foram medidas a lista de Itens e a ficha; as telas de Categorias e de Coleções, também citadas pelo requisito, foram medidas apenas pelas respostas da API, as mais rápidas do Quadro~\ref{quad:latenciaApi}. Com essa ressalva de alcance, e nas condições do ambiente local descritas na Seção~\ref{sec:medicoes}, a métrica é cumprida. Duas restrições do requisito, no entanto, não são atendidas: as imagens não são otimizadas pelo servidor, e as listagens de Categorias, Coleções e Itens não são paginadas, sendo devolvidas por inteiro em uma única resposta. O requisito é considerado \textbf{atendido com ressalva}.
 % Telas: local-20261009T000939/navegador/medicoes-tela-*-10mbps-*.json. A 1ª rodada, sem limitação de rede (local-20261008T224944/navegador), deu LCP p75 de 320 ms (lista) e 204 ms (ficha).
 
-\textbf{RNF-06 (movimentação de Itens).} O requisito exige que a mudança de Coleção se reflita na interface em até 500 milissegundos, que a interface a aplique de forma otimista, antes da confirmação do servidor, e que, em caso de falha, a reverta e informe o usuário. A interface aplica a movimentação de forma otimista: ao confirmar, o Item sai da lista da Coleção de origem e a janela de escolha do destino se fecha antes da resposta da API; se o servidor recusar a movimentação, a lista volta ao estado anterior e a falha é informada na própria tela. Nas dez movimentações medidas a 10 Mbps, o quadro sem o Item foi pintado entre 41 e 57 milissegundos depois do clique, enquanto a resposta do servidor chegou entre 355 e 477 milissegundos; em todas, a tela mudou antes da resposta. O tempo percebido fica, assim, quase nove vezes abaixo do limite e deixa de depender da gravação, que é a mais lenta das rotas medidas. Essa lentidão se explica pelo número de operações executadas em sequência, cada uma atravessando a internet até o banco: a verificação da sessão, a confirmação de que o Item e a Coleção de destino pertencem ao usuário e a verificação de unicidade do nome, seguidas de uma transação que atualiza o Item, registra o evento e consulta quem acompanha a Coleção. Sem a atualização otimista, a interface teria de aguardar a gravação e reler a lista, e a soma das duas rotas, medida no mesmo dia, foi de 513,1 milissegundos na mediana e de 542,3 no percentil 95, acima do limite. A reversão em caso de falha não foi exercitada na medição, pois nenhuma movimentação falhou, e foi conferida apenas no código. A restrição de desfazer é atendida pelo botão que, por 30 segundos, devolve o Item à Coleção de origem. A medição foi feita sobre a versão da interface que introduziu a atualização otimista, incorporada ao repositório do \textit{frontend} em 10 de outubro de 2026. O requisito é considerado \textbf{atendido}.
+\textbf{RNF-06 (movimentação de Itens).} O requisito exige que a mudança de Coleção se reflita na interface em até 500 milissegundos, que a interface a aplique de forma otimista, antes da confirmação do servidor, e que, em caso de falha, a reverta e informe o usuário. A interface aplica a movimentação de forma otimista: ao confirmar, o Item sai da lista da Coleção de origem e a janela de escolha do destino se fecha antes da resposta da API; se o servidor recusar a movimentação, a lista volta ao estado anterior e a falha é informada na própria tela. Nas dez movimentações medidas a 10 Mbps, o quadro sem o Item foi pintado entre 41 e 57 milissegundos depois do clique, enquanto a resposta do servidor chegou entre 355 e 477 milissegundos; em todas, a tela mudou antes da resposta. O tempo percebido fica, assim, quase nove vezes abaixo do limite e deixa de depender da gravação, que é a mais lenta das rotas medidas. Essa lentidão se explica pelo número de operações executadas em sequência, cada uma atravessando a internet até o banco: a verificação da sessão, a confirmação de que o Item e a Coleção de destino pertencem ao usuário e a verificação de unicidade do nome, seguidas de uma transação que atualiza o Item, registra o evento e consulta quem acompanha a Coleção. Sem a atualização otimista, a interface teria de aguardar a gravação e reler a lista, e a soma das duas rotas, medida no mesmo dia, foi de 513,1 milissegundos na mediana e de 542,3 no percentil 95, acima do limite. A reversão em caso de falha não foi exercitada na medição, pois nenhuma movimentação falhou, e foi conferida apenas no código. A restrição de desfazer é atendida pelo botão que, por 30 segundos, devolve o Item à Coleção de origem. A medição foi feita, em 8 de outubro, sobre a versão da interface com a atualização otimista, incorporada ao repositório do \textit{frontend} em 10 de outubro de 2026. O requisito é considerado \textbf{atendido}.
 % Movimentação: local-20261009T000939/navegador/medicoes-movimentacao-10mbps.json (scripts/medicoes/movimentacao.js). Front 0fc8072 + diff em navegador/front-itens-otimista.diff.
 
 \textbf{RNF-07 (desempenho do editor).} O requisito limita a 200 milissegundos o tempo entre uma operação no editor e sua exibição. Esse valor coincide com o limite que o web.dev adota para uma boa responsividade na métrica INP, avaliada no percentil 75 das interações \cite{wagner2022inp}, que é, por isso, a medida adotada. Nas 30 interações registradas no editor, o tempo até a pintura do quadro seguinte foi de 32 milissegundos no percentil 75 e de 48 milissegundos no percentil 98, que, com essa quantidade de interações, coincide com o máximo; o gesto que não foi registrado ficou abaixo do piso de 16 milissegundos. O maior tempo medido ficou, portanto, cerca de quatro vezes abaixo do limite, com o editor exibindo entre 15 e 19 Elementos, o que atende também à restrição de suportar quinze Elementos sem degradação perceptível. A gravação no servidor não compõe esse tempo, pois ocorre de forma assíncrona, depois de uma pausa de 400 milissegundos, sem bloquear a edição, o que atende à restrição de salvamento assíncrono; ainda assim, registra-se que ela levou 139,2 milissegundos no percentil 95. A restrição de fidelidade da prévia é sustentada pela inspeção que mostrou o mesmo componente desenhando a ficha no editor e no modo leitura (RF-14); a de renderização parcial não foi medida. A medição foi feita em um único computador de mesa, sem limitação do processador, e não representa aparelhos de menor desempenho. Como a métrica foi cumprida e nenhuma restrição foi comprovadamente descumprida, o requisito é considerado \textbf{atendido}, nos limites dessa máquina.
@@ -252,7 +284,7 @@ O Quadro~\ref{quad:sinteseRNF} reúne a situação de todos os requisitos não f
 \hline
 \textbf{Requisito} & \textbf{Instrumento} & \textbf{Resultado} & \textbf{Situação} \\ \hline
 RNF-01 Usabilidade & Teste com usuários iniciantes (não realizado) & Nenhuma medição do tempo para criar uma Coleção e um Item & Não verificado \\ \hline
-RNF-02 Carregamento & \textit{Script} de latência; carregamento das telas no navegador a 10 Mbps & API: p95 máximo de 160,2\,ms na leitura e de 371,9\,ms na escrita. Telas sem cache: LCP p75 de até 476\,ms e máximo de 1,1\,s. Sem paginação e sem otimização de imagens & Atendido com ressalva \\ \hline
+RNF-02 Carregamento & \textit{Script} de latência; carregamento das telas no navegador a 10 Mbps & API: p95 máximo de 160,2\,ms na leitura e de 382,2\,ms na escrita. Telas sem cache: LCP p75 de até 476\,ms e máximo de 1,1\,s. Categorias e Coleções medidas só pela API. Sem paginação e sem otimização de imagens & Atendido com ressalva \\ \hline
 RNF-03 Segurança de senhas e dados & Inspeção do código; testes automatizados (Capítulo~\ref{cap:08}) & bcrypt, mensagem genérica no \textit{login}, sessões revogáveis, HTTPS em produção e limite de cinco \textit{logins} por minuto. Registro de erros inesperados com o objeto completo da exceção & Atendido com ressalva \\ \hline
 RNF-04 Compatibilidade & Teste em navegadores e larguras de tela (não realizado) & Interface escrita para telas a partir de 320\,px; matriz de navegadores não testada & Não verificado \\ \hline
 RNF-05 Personalização & Inspeção do código e da interface & Variáveis CSS, alerta de contraste, aplicação imediata e persistência no perfil; métrica de qualquer combinação sem quebras não testada sistematicamente & Não verificado \\ \hline
@@ -270,15 +302,15 @@ Quatro situações merecem comentário. O RNF-05 é considerado não verificado 
 O RNF-09 é considerado não atendido porque o requisito exige conformidade com o nível AA das WCAG e que todos os elementos interativos sejam acessíveis por teclado, enquanto a navegação do editor por teclado não foi implementada, de modo que posicionar um Elemento depende de um dispositivo apontador ou dos campos numéricos de posição; o critério de operação por teclado é de nível A, abaixo do AA exigido \cite{campbell2024wcag}. As demais partes da interface não foram auditadas. Por fim, o RNF-10 é considerado não atendido porque a sua métrica principal, a de cópias de segurança diárias com retenção de 30 dias, não é cumprida no plano gratuito do Supabase, que não faz cópia automática e deixa a exportação dos dados a cargo do responsável pelo projeto \cite{supabase2026backups}, e porque o registro em auditoria de toda exclusão também não é atendido: apenas as alterações de Itens em Coleções não privadas geram registro de evento.
 % Conferido na VM em 12/10/2026: não há rotina de db dump; o RNF-10 permanece não atendido.
 
-O resultado de conjunto é coerente com a posição secundária desses requisitos no trabalho. Os tempos de resposta da API e os medidos no navegador, no carregamento das telas, na movimentação de Itens e nas interações do editor, ficaram com folga dentro dos limites no ambiente local em que foram medidos; as ressalvas vêm de restrições, como a paginação das listagens e a otimização das imagens, e não das métricas. Os requisitos que exigem avaliação com pessoas, como usabilidade e acessibilidade, testes sistemáticos de combinações, como a personalização, ou acompanhamento da plataforma publicada, como a disponibilidade, permanecem em aberto, e são essas as lacunas que a avaliação deixa.
+O resultado de conjunto é coerente com a posição secundária desses requisitos no trabalho. Os tempos de resposta da API e os medidos no navegador, no carregamento das telas, na movimentação de Itens e nas interações do editor, ficaram com folga dentro dos limites no ambiente local em que foram medidos; as ressalvas vêm de restrições, como a paginação das listagens e a otimização das imagens, e do alcance da medição no navegador, que não incluiu as telas de Categorias e de Coleções. Os requisitos que exigem avaliação com pessoas, como usabilidade e acessibilidade, testes sistemáticos de combinações, como a personalização, ou acompanhamento da plataforma publicada, como a disponibilidade, permanecem em aberto, e são essas as lacunas que a avaliação deixa.
 
 \section{Validação em Uso}
 \label{sec:validacaoUso}
 
 Além da autora, duas pessoas que não participaram do desenvolvimento usaram a versão publicada da plataforma, e o uso foi acompanhado por observação.
 
-Uma dessas pessoas pediu um guia de primeiros passos, porque esperava uma ferramenta de listas, parecida com uma planilha. O pedido mostrou que a relação
-entre o \textit{layout}, a Coleção e as fichas dos Itens fica mais clara com uma apresentação inicial.
+Uma dessas pessoas pediu um guia de primeiros passos, porque esperava uma ferramenta de listas, parecida com uma planilha. O pedido indicou que, para essa pessoa,
+a relação entre o \textit{layout}, a Coleção e as fichas dos Itens não era evidente sem uma apresentação inicial.
 
 A plataforma oferece esse guia, especificado no RNF-01 e descrito na Seção~\ref{sec:aplicacaoCliente}. A página inicial pública explica o funcionamento
 com um diagrama que relaciona o \textit{layout}, a Coleção e as fichas; no primeiro acesso, um tour apresenta a área autenticada, e uma lista de primeiros
@@ -299,9 +331,9 @@ definir a estrutura e a aparência de cada registro e compartilhar essas coleç�
 \end{itemize}
 
 Esses resultados mostram que a proposta foi construída e está em operação, com os vinte e quatro requisitos funcionais atendidos tal como especificados,
-e com três comportamentos deixados para versões futuras (Subseção~\ref{subsec:requisitos_adiados}).
+e com quatro comportamentos deixados para versões futuras (Subseção~\ref{subsec:requisitos_adiados}).
 
-O uso relatado na Seção~\ref{sec:validacaoUso} mostra uma característica desse tipo de ferramenta. Como o próprio usuário define a estrutura de cada registro,
+O uso relatado na Seção~\ref{sec:validacaoUso} sugere uma característica desse tipo de ferramenta. Como o próprio usuário define a estrutura de cada registro,
 ele precisa entender primeiro a relação entre o \textit{layout} e as fichas, o que uma planilha, de estrutura fixa, dispensa. Por isso, o guia de primeiros
 passos faz parte do produto.
 
@@ -317,5 +349,5 @@ ou de um perfil, e a resposta 404 esconde até a existência do recurso. Toda ro
 cresce com o número de rotas.
 
 A movimentação de Itens também combina uma vantagem e um custo. A interface retira o Item movido da Coleção de origem antes da confirmação do servidor,
-e por isso o tempo percebido deixa de somar as idas e voltas até o banco, que, como mostrou a Seção~\ref{sec:validacaoRNF}, ultrapassariam o limite do
+como exige o RNF-06, e por isso o tempo percebido deixa de somar as idas e voltas até o banco, que, como mostrou a Seção~\ref{sec:validacaoRNF}, ultrapassariam o limite do
 RNF-06. Em troca, a tela mostra por alguns instantes um estado que o banco ainda não confirmou, e precisa ser revertida quando a gravação falha.
