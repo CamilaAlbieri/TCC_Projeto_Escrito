@@ -1414,6 +1414,8 @@ A "Ficha simples" deixou de ser o layout padrão. Toda conta nova recebe três l
 
 ### [AJUSTAR] RF-25 (novo) — Inserir Ilustração do Acervo (08/10/2026)
 
+> **Aplicado em 12/10/2026, e não como requisito novo.** As ilustrações entraram como as regras 16 a 18 do RF-14 (acervo de ilustrações, agrupar e desfoque), com um exemplo e os atributos no próprio RF-14, o "desfoque e grupo" no glossário do EstiloDeElemento e a inserção no passo 6 do caso de uso "Criar Layout". Um RF-25 mudaria a contagem de requisitos nos capítulos 5 e 10 e pediria um caso de uso que os diagramas, que são imagens, não mostram; inserir uma ilustração é, afinal, um jeito de pôr peças no layout. O parágrafo de implementação (item 7 abaixo) entrou no Capítulo 7, na subseção do editor. O texto abaixo fica como registro da proposta.
+
 **Funcionalidade nova, e por isso um requisito próprio.** O editor ganhou um acervo de ilustrações: desenhos prontos (objetos, bichos, natureza, enfeites, cantos de moldura, sombras e brilhos) que o usuário insere na ficha e personaliza. Nenhum requisito existente cobre isso: o RF-14 trata das peças avulsas, e uma ilustração é um conjunto delas com comportamento próprio (seleção em grupo, troca de cores do conjunto). A numeração segue a sequência (RF-25), sem renumerar os demais; no índice, ele entra no grupo **Editor de Layout**.
 
 Com ele vêm duas capacidades do editor que valem para qualquer peça e por isso vão para o RF-14: **agrupar** elementos e o **desfoque**.
@@ -1500,12 +1502,16 @@ Com ele vêm duas capacidades do editor que valem para qualquer peça e por isso
 
 ### [AJUSTAR] RF-12 — a lista de itens traz só o que o cartão mostra (09/10/2026)
 
+> **Aplicado em 12/10/2026** como a regra 8 do RF-12, e com uma frase no Capítulo 7, junto da memória de consultas do front-end.
+
 A listagem dos itens de uma coleção deixou de trazer a ficha completa de cada item. Ela vinha com o layout da coleção inteiro repetido em cada item e com todos os elementos da ficha própria, e numa coleção grande, com layouts de mais de cem peças, isso pesava. Agora a lista traz a capa, o nome, o subtítulo e, da ficha própria, apenas os elementos de Classificação, que dão a avaliação do cartão (regra 8). A ficha inteira é carregada quando a prévia de um item é aberta, e a do item seguinte e a do anterior já são buscadas antes, para a navegação pelas setas não esperar. As capas são baixadas à medida que se aproximam da área visível da tela.
 
 - **RF-12, regras — acrescentar:** "11. A listagem carrega apenas os dados exibidos nos cartões; a ficha completa de um item é carregada ao abrir a sua visualização. As imagens de capa são carregadas conforme se aproximam da área visível, para que coleções com muitos itens abram rapidamente."
 - **Para o capítulo de implementação (se o texto tratar de desempenho):** a rota `GET /item` devolve o item sem o layout da coleção e com os elementos da ficha própria filtrados pelo tipo Classificação; a rota `GET /item/:id` continua devolvendo a ficha completa. A troca do layout de uma coleção, que mescla a ficha de cada item com o layout novo, pede a lista com as fichas completas por um parâmetro próprio. A visualização de um item por imagem pronta foi considerada e descartada: ficaria desatualizada quando o layout muda, perderia nitidez no zoom, não seria lida por leitores de tela e não acompanharia o tema.
 
 ### [AJUSTAR] RF-14 e RF-11 — campo a preencher com texto de exemplo, e os layouts padrão na escala do editor (12/10/2026)
+
+> **Aplicado em 12/10/2026** como a regra 15 do RF-14, e não 16 como sugerido abaixo, com um exemplo no mesmo requisito.
 
 O editor passou a criar o que os layouts padrão já tinham: um campo vazio que mostra, esmaecido, o que vai nele ("Título do livro", "Autor"). Um texto, uma data ou uma imagem vira campo a preencher pelo botão "Placeholder" da barra do elemento: o texto de exemplo digitado passa a ser o nome do elemento, e o conteúdo fica vazio. É a mesma indicação de vazio do RF-11, regra 2, agora escolhida pelo usuário.
 
