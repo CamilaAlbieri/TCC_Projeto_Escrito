@@ -1533,3 +1533,10 @@ O acervo ganhou uma categoria nova, **Personagens**: retratos de busto, no mesmo
 O terceiro layout padrão, o de música, chamava-se "Lado A", um nome que não dizia o que ele guarda. Passou a se chamar **Minhas músicas**, no padrão dos outros dois (Diário de leitura, Sessão de cinema), e o cabeçalho escrito na ficha acompanha o nome. As cópias que as contas já tinham foram renomeadas por uma migration, junto com o cabeçalho, desde que ainda estivessem com o desenho original e que a conta não tivesse outro layout com o nome novo. As fichas próprias dos itens não foram alteradas.
 
 - **Onde o texto citar os layouts padrão pelo nome:** trocar "Lado A" por "Minhas músicas".
+
+### [AJUSTAR] Cap. 9 — os e-mails saem pelo Resend, e não mais pelo Gmail (14/10/2026)
+
+O código de confirmação do cadastro e o link de recuperação de senha passaram a sair pelo SMTP do **Resend**, um serviço de envio de e-mail transacional, com remetente `nao-responda@mail.camilamattos.com.br`. Antes saíam pelo SMTP do Gmail, que obrigava o remetente a ser a conta pessoal e não registrava as entregas. O subdomínio de envio foi verificado no DNS (DKIM, SPF e DMARC), o que reduz a chance de o e-mail cair no spam. O código da API não mudou: só as variáveis `SMTP_*` do servidor.
+
+- **Cap. 9, onde o texto citar o "SMTP do Gmail":** trocar por **"SMTP do Resend, com remetente num subdomínio próprio verificado por DKIM, SPF e DMARC"**.
+- **Diagrama de arquitetura (se rotular o SMTP):** "SMTP (Resend)".
