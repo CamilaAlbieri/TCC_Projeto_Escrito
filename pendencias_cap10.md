@@ -77,7 +77,7 @@ Total: 17 marcadores `[PREENCHER...]` (2 sem deploy, 15 após o deploy) e 6 come
 |---|---|---|
 | **Tela do feed (RF-22)** | A API tem `GET /social/feed` (paginação por cursor, só coleções acompanhadas e visíveis). O front-end não tem rota nem tela; o CHECKLIST marca o RF-22 como o único dos 24 não entregue. | Objetivo específico 6 (cap. 1), RF-22 (cap. 5), cap. 7 ("o *feed* de atualizações e as notificações são obtidos quando a interface os solicita") |
 | **Troca de e-mail com verificação (RF-05)** | Não há rota nem modelo; `UpdateProfileDto` não aceita `email`. | Cap. 5 já lista como adiado |
-| **Tempo real (RF-22/RF-24)** | Só REST; o sino consulta a cada 60 s. | Cap. 5, linha 192 ("atualização do feed em tempo real") |
+| ~~**Tempo real (RF-22/RF-24)**~~ | ~~Só REST; o sino consulta a cada 60 s.~~ **Resolvido em 14/10/2026:** a API avisa por SSE (`GET /notifications/stream`), e a consulta a cada 60 s ficou só como reserva. | O cap. 5, linha 192, pode manter "atualização do feed em tempo real"; o texto do RF-24 §7 e §9 está no anexo do `contexto_sistema.md` |
 | **Notificação do tipo `SYSTEM`** | O enum existe, mas nenhum serviço cria esse tipo. | Não citado no cap. 10 |
 | ~~**Envio de e-mail (SMTP)**~~ | ~~O CHECKLIST registra que o e-mail de redefinição foi testado em 26/08/2026 e não chegou.~~ **Resolvido em 14/10/2026:** os e-mails saem pelo SMTP do Resend, e o fluxo de redefinição foi testado até o fim. | O cap. 10 pode manter o link de redefinição como funcionando; o cap. 9 troca "SMTP do Gmail" por Resend (anexo do `contexto_sistema.md`) |
 | **Encaixe em grade e *zoom* do editor** | Cortados de propósito (DECISOES §36 do front). | Não citados no cap. 10 |

@@ -1540,3 +1540,12 @@ O código de confirmação do cadastro e o link de recuperação de senha passar
 
 - **Cap. 9, onde o texto citar o "SMTP do Gmail":** trocar por **"SMTP do Resend, com remetente num subdomínio próprio verificado por DKIM, SPF e DMARC"**.
 - **Diagrama de arquitetura (se rotular o SMTP):** "SMTP (Resend)".
+
+### [AJUSTAR] RF-22 e RF-24 — sino e feed em tempo real por SSE (14/10/2026)
+
+O sino e a aba Novidades deixaram de perguntar à API de minuto em minuto. A API mantém um canal aberto com o navegador por **SSE** (Server-Sent Events) e avisa no instante em que nasce uma notificação, um evento em coleção seguida ou uma mudança de amizade. A interface então busca de novo pelas rotas de sempre. O aviso não carrega conteúdo, então as regras de visibilidade continuam valendo só nas consultas. Se o canal cair, a consulta volta a ser periódica até a reconexão, que é automática. Com isso, o RF-22 §3 ("atualizado automaticamente em tempo real") passa a ser atendido, e o RF-24 §7 deixa de adiar o SSE.
+
+- **RF-24, regra 7 — trocar por:** "7. As notificações in-app são persistidas e consultadas pela API. A API avisa o navegador, por SSE, quando uma notificação é gerada ou quando uma coleção seguida recebe evento, e a interface então as consulta; se o canal for interrompido, a consulta passa a ser periódica até a reconexão, que é automática."
+- **RF-24, regra 9 — trocar** "como não há atualização em tempo real (§7), a quantidade é consultada periodicamente e ao retornar à janela" **por** "a quantidade é atualizada no instante em que muda (§7) e ao retornar à janela".
+- **RF-22, regra 3:** sem mudança no texto; passa a ser atendida.
+- **Para o capítulo de implementação (se o texto tratar das notificações):** a rota é `GET /notifications/stream`, autenticada pelo mesmo token das demais. O aviso só é enviado depois que a transação que grava a notificação é confirmada, e os canais abertos ficam na memória da API, o que vale para uma instância só.
