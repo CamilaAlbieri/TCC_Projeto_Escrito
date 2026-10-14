@@ -79,7 +79,7 @@ Total: 17 marcadores `[PREENCHER...]` (2 sem deploy, 15 após o deploy) e 6 come
 | **Troca de e-mail com verificação (RF-05)** | Não há rota nem modelo; `UpdateProfileDto` não aceita `email`. | Cap. 5 já lista como adiado |
 | **Tempo real (RF-22/RF-24)** | Só REST; o sino consulta a cada 60 s. | Cap. 5, linha 192 ("atualização do feed em tempo real") |
 | **Notificação do tipo `SYSTEM`** | O enum existe, mas nenhum serviço cria esse tipo. | Não citado no cap. 10 |
-| **Envio de e-mail (SMTP)** | O CHECKLIST registra que o e-mail de redefinição foi testado em 26/08/2026 e não chegou. Sem `SMTP_*`, o envio falha em silêncio. | Cap. 10 cita o link de redefinição como funcionando: **confirmar que o e-mail chega antes da entrega** |
+| ~~**Envio de e-mail (SMTP)**~~ | ~~O CHECKLIST registra que o e-mail de redefinição foi testado em 26/08/2026 e não chegou.~~ **Resolvido em 14/10/2026:** os e-mails saem pelo SMTP do Resend, e o fluxo de redefinição foi testado até o fim. | O cap. 10 pode manter o link de redefinição como funcionando; o cap. 9 troca "SMTP do Gmail" por Resend (anexo do `contexto_sistema.md`) |
 | **Encaixe em grade e *zoom* do editor** | Cortados de propósito (DECISOES §36 do front). | Não citados no cap. 10 |
 | **Testes do front-end** | Nenhum teste automatizado. | Cap. 10 (10.7 e 10.8) registra isso |
 | **Seed e teste e2e** | O `prisma/seed.ts` cria um usuário sem `userCode` e com senha sem hash; o `test/app.e2e-spec.ts` é o modelo gerado pelo Nest, importa um caminho que não existe e falharia. | Não citados no cap. 10 |
