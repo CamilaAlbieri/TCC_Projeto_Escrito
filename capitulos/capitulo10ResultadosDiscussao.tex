@@ -131,8 +131,9 @@ amigos e que seguir uma Coleção própria é recusado. A inspeção mostrou que
 amigos entre as duas pessoas e mantém os de Coleções públicas.
 
 No \textit{feed} de atualizações (RF-22), os testes do módulo \texttt{social} mostraram os eventos das Coleções seguidas, entregues em páginas, com as
-Coleções somente para amigos incluídas apenas enquanto a amizade estiver aceita e as Coleções privadas excluídas. A inspeção da interface mostrou a
-atualização automática das novidades por consulta à API a cada minuto e ao voltar à janela, sem recarregar a página.
+Coleções somente para amigos incluídas apenas enquanto a amizade estiver aceita e as Coleções privadas excluídas. Os testes do módulo \texttt{realtime}
+mostraram que o aviso de novidade chega somente ao usuário a que se destina, uma vez em cada aba aberta, e deixa de ser enviado quando o navegador se
+desconecta. A inspeção da interface mostrou as novidades buscadas de novo a cada aviso e ao voltar à janela, sem recarregar a página.
 
 Na visita a outros usuários (RF-23), o CT04 mostrou a mesma resposta para a Coleção invisível e para a inexistente, e o uso mostrou o perfil, a Categoria
 e a Coleção visitados em modo somente leitura.
@@ -143,8 +144,8 @@ são considerados atendidos.
 \subsection{Notificação}
 
 Nas notificações (RF-24), os testes do módulo \texttt{notification} mostraram a contagem das não lidas, a marcação de uma ou de todas as notificações como
-lidas e a limpeza da área, sempre restritas ao usuário autenticado. O uso mostrou o sino do cabeçalho com a quantidade de notificações não lidas, atualizada a cada
-minuto, e a abertura de uma notificação levando ao que a originou. A inspeção mostrou que as notificações de atualização só são listadas enquanto a
+lidas e a limpeza da área, sempre restritas ao usuário autenticado. O uso mostrou o sino do cabeçalho com a quantidade de notificações não lidas e a abertura de uma
+notificação levando ao que a originou, e a inspeção mostrou essa quantidade atualizada no instante em que uma notificação é gerada. A inspeção mostrou que as notificações de atualização só são listadas enquanto a
 Coleção é pública ou, para amigos, somente para amigos, de modo que as de uma Coleção tornada privada deixam de aparecer.
 % Inspeção (13/10/2026): backend social/service/friendship.service.ts (encerra follows FRIENDS_ONLY ao desfazer),
 % notification/service/notification.service.ts (filtro PUBLIC ou FRIENDS_ONLY); front pages/Layouts.tsx (prévia da importação),
@@ -195,7 +196,7 @@ RF-18 & CT06; módulo \texttt{appearance-preset}; uso & Troca em uma transação
 RF-19 & Módulo \texttt{appearance-preset} & Tipografia nas faixas do requisito & Atendido \\ \hline
 RF-20 & CT07 & Um único vínculo; solicitante notificado & Atendido \\ \hline
 RF-21 & CT03; CT04; módulo \texttt{social}; inspeção & Acompanhamento conforme a privacidade e a amizade & Atendido \\ \hline
-RF-22 & Módulo \texttt{social}; inspeção & Eventos das Coleções seguidas, em páginas, com atualização periódica & Atendido \\ \hline
+RF-22 & Módulos \texttt{social} e \texttt{realtime}; inspeção & Eventos das Coleções seguidas, em páginas, atualizados no instante do aviso & Atendido \\ \hline
 RF-23 & CT04; módulo \texttt{social}; uso & Perfis e Coleções em modo somente leitura & Atendido \\ \hline
 RF-24 & Módulo \texttt{notification}; inspeção; uso & Notificações restritas ao usuário; sino com contador; ocultas as de Coleção privada & Atendido \\ \hline
 \end{longtable}
@@ -204,8 +205,8 @@ RF-24 & Módulo \texttt{notification}; inspeção; uso & Notificações restrita
 
 Os vinte e quatro requisitos funcionais são, portanto, considerados atendidos, tal como especificados no Capítulo~\ref{cap:05}. O juízo não alcança
 os comportamentos retirados da especificação desta versão e registrados entre os requisitos adiados (Subseção~\ref{subsec:requisitos_adiados}): a
-tela de alteração de senha na área restrita, a alteração do e-mail cadastrado, a entrega imediata de eventos pelo servidor e a ordenação dos Itens pela
-classificação, que permanecem como trabalho futuro.
+tela de alteração de senha na área restrita, a alteração do e-mail cadastrado e a ordenação dos Itens pela classificação, que permanecem como trabalho
+futuro.
 
 \section{Validação dos Requisitos Não Funcionais}
 \label{sec:validacaoRNF}
@@ -331,7 +332,7 @@ definir a estrutura e a aparência de cada registro e compartilhar essas coleç�
 \end{itemize}
 
 Esses resultados mostram que a proposta foi construída e está em operação, com os vinte e quatro requisitos funcionais atendidos tal como especificados,
-e com quatro comportamentos deixados para versões futuras (Subseção~\ref{subsec:requisitos_adiados}).
+e com três comportamentos deixados para versões futuras (Subseção~\ref{subsec:requisitos_adiados}).
 
 O uso relatado na Seção~\ref{sec:validacaoUso} sugere uma característica desse tipo de ferramenta. Como o próprio usuário define a estrutura de cada registro,
 ele precisa entender primeiro a relação entre o \textit{layout} e as fichas, o que uma planilha, de estrutura fixa, dispensa. Por isso, o guia de primeiros
