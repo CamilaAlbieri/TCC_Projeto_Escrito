@@ -1405,7 +1405,7 @@ O checklist do primeiro acesso passou de seis para dez passos. Os quatro novos c
 
 ### [AJUSTAR] RF-01 e RF-14 — layouts padrão ilustrados, entregues por versão (07/10/2026)
 
-A "Ficha simples" deixou de ser o layout padrão. Toda conta nova recebe três layouts ilustrados — Diário de leitura, Sessão de cinema e Lado A —, desenhados só com as peças do editor e já na folha de criação (1070 de largura). Quem já tinha a "Ficha simples" continua com ela. A entrega passou a ser **por versão**: um layout padrão acrescentado depois chega também às contas que já existem, e um padrão apagado de propósito não volta. Um nome que a pessoa já usa na biblioteca fica de fora da entrega.
+A "Ficha simples" deixou de ser o layout padrão. Toda conta nova recebe três layouts ilustrados — Diário de leitura, Sessão de cinema e Minhas músicas (chamado "Lado A" até 14/10/2026) —, desenhados só com as peças do editor e já na folha de criação (1070 de largura). Quem já tinha a "Ficha simples" continua com ela. A entrega passou a ser **por versão**: um layout padrão acrescentado depois chega também às contas que já existem, e um padrão apagado de propósito não volta. Um nome que a pessoa já usa na biblioteca fica de fora da entrega.
 
 - **RF-01, regra 9 — trocar por:** "9. Ao concluir o cadastro, o sistema disponibiliza na biblioteca de layouts do usuário os layouts padrão que oferece, prontos para serem associados a coleções, editados ou duplicados (RF-14 e RF-15). Quando o sistema passa a oferecer um layout padrão novo, ele é acrescentado também à biblioteca das contas existentes, uma única vez; um layout padrão excluído pelo usuário não é entregue de novo."
 - **Modelo de dados (se o texto descrever as tabelas):** o usuário guarda a versão dos layouts padrão que já recebeu (`default_layouts_version`), no lugar da data da entrega (`default_layouts_at`). A folha de uma ficha criada sem tamanho nasce com 1070 × 600.
@@ -1521,3 +1521,15 @@ Os layouts padrão e os de exemplo foram redesenhados na escala de letra do edit
 - **RF-14, regra 2 — complemento opcional:** "Os layouts padrão usam a mesma escala de letra do editor, e cada um traz uma descrição curta, escrita como se fosse do próprio usuário."
 - **Para o capítulo de implementação (se o texto tratar dos layouts padrão):** as cópias que as contas já tinham recebido foram trocadas pelo desenho novo por um *script* de manutenção (`pnpm trocar-padrao`), somente quando não estavam associadas a coleção, a item nem a ficha própria de item; as que estavam em uso mantiveram o desenho e receberam só a descrição nova. A versão dos layouts padrão (RF-01, regra 9) não mudou: ela entrega layouts novos, e não redesenhos.
 
+
+### [AJUSTAR] RF-14 — a categoria Personagens no acervo de ilustrações (14/10/2026)
+
+O acervo ganhou uma categoria nova, **Personagens**: retratos de busto, no mesmo formato da ficha de exemplo da página inicial, de personagens de uma escola de magia, desenhados só com formas chapadas — sem rosto, cada um reconhecível pelo cabelo, pela roupa e pelos objetos — e com nomes genéricos ("Personagem 1" a "Personagem 10", e "Coruja"). Entraram também objetos do mesmo universo na categoria Objetos: varinha, poção, livro de feitiços, caldeirão, chapéu pontudo, a bolinha dourada alada e três cachecóis nas cores das casas. Os retratos foram desenhados em SVG e trazidos pela importação de SVG; os objetos, montados com as formas do editor.
+
+- **RF-14, regra das categorias do acervo — trocar a lista por:** "(Objetos; Personagens; Cinema, música e jogos; Natureza; Bichos; Enfeites; Cantos e molduras; Sombras e brilhos)".
+
+### [AJUSTAR] RF-01 e RF-14 — o layout padrão de música passa a se chamar "Minhas músicas" (14/10/2026)
+
+O terceiro layout padrão, o de música, chamava-se "Lado A", um nome que não dizia o que ele guarda. Passou a se chamar **Minhas músicas**, no padrão dos outros dois (Diário de leitura, Sessão de cinema), e o cabeçalho escrito na ficha acompanha o nome. As cópias que as contas já tinham foram renomeadas por uma migration, junto com o cabeçalho, desde que ainda estivessem com o desenho original e que a conta não tivesse outro layout com o nome novo. As fichas próprias dos itens não foram alteradas.
+
+- **Onde o texto citar os layouts padrão pelo nome:** trocar "Lado A" por "Minhas músicas".
