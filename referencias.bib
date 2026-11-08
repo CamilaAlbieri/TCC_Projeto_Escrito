@@ -306,6 +306,8 @@
 % Localização na fonte: seção "Headers", parágrafo "Defaults".
 % Acesso em: 02 out. 2026
 % Observações: li a seção citada. Documentação oficial, sem autor individual nem data.
+% Também usada no cap. 9 para o SSE (14/10/2026): seção "Streaming", opção flush_interval, "This option is ignored and responses are flushed
+% immediately to the client" quando a resposta tem Content-Type: text/event-stream.
 % ---------------------------------------------------------------
 @misc{caddy2026proxy,
   author        = {{Caddy Web Server}},
@@ -313,6 +315,101 @@
   howpublished  = {Documentação do Caddy},
   url           = {https://caddyserver.com/docs/caddyfile/directives/reverse_proxy},
   urlaccessdate = {02 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% Encontrado em: https://html.spec.whatwg.org/multipage/server-sent-events.html
+% Ideia usada (cap. 7): o EventSource permite ao servidor enviar dados à página por HTTP, numa resposta text/event-stream mantida aberta; o cliente
+% reconecta sozinho; a especificação sugere uma linha de comentário "every 15 seconds or so" contra proxies que derrubam conexões paradas; o
+% construtor aceita apenas a opção withCredentials, sem cabeçalhos próprios.
+% Localização na fonte: Seção 9.2 (Server-sent events), subseções 9.2.1, 9.2.2 e 9.2.7 (Authoring notes).
+% Acesso em: 14 out. 2026
+% Observações: li a seção completa. Norma viva do WHATWG, sem autor individual nem data fixa.
+% ---------------------------------------------------------------
+@misc{whatwg2026sse,
+  author        = {{WHATWG}},
+  title         = {{HTML} Living Standard: Server-sent events},
+  howpublished  = {Web Hypertext Application Technology Working Group},
+  url           = {https://html.spec.whatwg.org/multipage/server-sent-events.html},
+  urlaccessdate = {14 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% Encontrado em: https://www.rfc-editor.org/rfc/rfc6455
+% Ideia usada (cap. 7): o WebSocket é um protocolo de comunicação nos dois sentidos, formado por um aperto de mão de abertura seguido de quadros
+% de mensagens sobre o TCP, e não uma resposta HTTP comum.
+% Localização na fonte: Seção 1.2 (Protocol Overview) e Seção 1.7 (Relationship to TCP and HTTP).
+% Acesso em: 14 out. 2026
+% Observações: norma de origem do protocolo (2011), mantida por ser a definição do conceito, ao lado das referências recentes do mesmo trecho.
+% ---------------------------------------------------------------
+@techreport{rfc6455,
+  author      = {Fette, Ian and Melnikov, Alexey},
+  title       = {The {WebSocket} Protocol},
+  institution = {Internet Engineering Task Force},
+  type        = {RFC},
+  number      = {6455},
+  year        = {2011},
+  doi         = {10.17487/RFC6455},
+  url         = {https://www.rfc-editor.org/rfc/rfc6455}
+}
+
+% ---------------------------------------------------------------
+% Encontrado em: https://resend.com/docs/send-with-smtp
+% Ideia usada (cap. 9): o SMTP do Resend fica em smtp.resend.com, com a porta 465 para SMTPS, o usuário "resend" e uma chave de API como senha;
+% "Emails sent with SMTP will show in your emails table".
+% Acesso em: 14 out. 2026
+% Observações: li a página completa. Documentação oficial, sem autor individual nem data.
+% ---------------------------------------------------------------
+@misc{resend2026smtp,
+  author        = {{Resend}},
+  title         = {Send emails with {SMTP}},
+  howpublished  = {Documentação do Resend},
+  url           = {https://resend.com/docs/send-with-smtp},
+  urlaccessdate = {14 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% Encontrado em: https://resend.com/docs/dashboard/domains/introduction
+% Ideia usada (cap. 9): o envio exige um domínio verificado ("You must add and verify at least one domain"), e o Resend recomenda enviar de
+% subdomínios "to isolate your sending reputation".
+% Acesso em: 14 out. 2026
+% Observações: li a página completa. Documentação oficial, sem autor individual nem data.
+% ---------------------------------------------------------------
+@misc{resend2026domains,
+  author        = {{Resend}},
+  title         = {Verified Domains},
+  howpublished  = {Documentação do Resend},
+  url           = {https://resend.com/docs/dashboard/domains/introduction},
+  urlaccessdate = {14 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% Encontrado em: https://resend.com/pricing
+% Ideia usada (cap. 9): o plano gratuito oferece 3.000 e-mails por mês, e "The Free plan is limited to 100 emails per day".
+% Acesso em: 14 out. 2026
+% Observações: página de preços do serviço; os valores podem mudar, por isso a data de acesso.
+% ---------------------------------------------------------------
+@misc{resend2026pricing,
+  author        = {{Resend}},
+  title         = {Pricing},
+  howpublished  = {Resend},
+  url           = {https://resend.com/pricing},
+  urlaccessdate = {14 out. 2026}
+}
+
+% ---------------------------------------------------------------
+% Encontrado em: https://support.google.com/a/answer/81126
+% Ideia usada (cap. 9): "Starting February 1, 2024, all email senders who send email to Gmail accounts must meet the requirements in this
+% section", entre eles "Set up SPF or DKIM email authentication for your sending domains"; o Google recomenda "always set up SPF, DKIM, and DMARC".
+% Acesso em: 14 out. 2026
+% Observações: li a página completa. Central de ajuda do Google Workspace, sem autor individual.
+% ---------------------------------------------------------------
+@misc{google2026senders,
+  author        = {{Google}},
+  title         = {Email sender guidelines},
+  howpublished  = {Ajuda do Google Workspace},
+  url           = {https://support.google.com/a/answer/81126},
+  urlaccessdate = {14 out. 2026}
 }
 
 % ---------------------------------------------------------------

@@ -84,7 +84,11 @@ Prioridades:
   erro de CORS.
 - **No TCC:** 4º item dos ajustes.
 
-## 🔴 5. E-mail de redefinição de senha não confirmado
+## ✅ 5. ~~E-mail de redefinição de senha não confirmado~~
+
+**Resolvido em 14/10/2026:** a produção manda os e-mails pelo SMTP do Resend, com remetente
+`nao-responda@mail.camilamattos.com.br` (subdomínio verificado por DKIM, SPF e DMARC). O fluxo foi
+testado até redefinir a senha. O texto do cap. 9 está no anexo do `contexto_sistema.md`.
 
 - **Onde:** `TCC-backend/.env` (`SMTP_HOST` vazio nesta máquina); o CHECKLIST do front registra que o
   e-mail de 26/08/2026 não chegou.

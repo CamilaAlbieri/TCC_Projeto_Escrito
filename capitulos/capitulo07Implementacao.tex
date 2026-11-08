@@ -35,14 +35,14 @@ A configuração do \textit{backend} é feita por variáveis de ambiente, lidas 
 
 O banco é o PostgreSQL gerenciado pelo Supabase, descrito no Capítulo~\ref{cap:09}, ao qual a API se conecta pela cadeia de conexão informada na variável \texttt{DATABASE\_URL}.
 
-O esquema do banco é definido com o Prisma e fica dividido em oito arquivos no diretório \texttt{prisma/schema}: um arquivo principal, com a configuração, e sete arquivos por assunto (usuário, coleções, \textit{tags}, \textit{layout}, aparência, interação social e notificações). A divisão aproxima-se dos pacotes do modelo de domínio apresentados no Capítulo~\ref{cap:05}, com duas diferenças: as tabelas do pacote Sistema, de sessões, de redefinição de senha e de confirmação de e-mail, ficam no arquivo de usuário, ao qual se ligam, e as \textit{tags} ganharam arquivo próprio por formarem um vocabulário compartilhado entre todas as contas. Cada alteração no esquema gera uma migração versionada, contendo o SQL correspondente; no momento da redação deste trabalho, o histórico reúne 54 migrações, que reconstroem o banco do zero de forma determinística. Quando uma mudança de modelo afetava dados já existentes, a migração foi escrita para convertê-los em vez de descartá-los. Foi o caso da redução dos tipos de Elemento: como o PostgreSQL não permite remover valores de um tipo enumerado, a migração cria o novo tipo, converte a coluna e só então descarta o tipo antigo, preservando o conteúdo de todos os Elementos.
+O esquema do banco é definido com o Prisma e fica dividido em oito arquivos no diretório \texttt{prisma/schema}: um arquivo principal, com a configuração, e sete arquivos por assunto (usuário, coleções, \textit{tags}, \textit{layout}, aparência, interação social e notificações). A divisão aproxima-se dos pacotes do modelo de domínio apresentados no Capítulo~\ref{cap:05}, com duas diferenças: as tabelas do pacote Sistema, de sessões, de redefinição de senha e de confirmação de e-mail, ficam no arquivo de usuário, ao qual se ligam, e as \textit{tags} ganharam arquivo próprio por formarem um vocabulário compartilhado entre todas as contas. Cada alteração no esquema gera uma migração versionada, contendo o SQL correspondente; no momento da redação deste trabalho, o histórico reúne 55 migrações, que reconstroem o banco do zero de forma determinística. Quando uma mudança de modelo afetava dados já existentes, a migração foi escrita para convertê-los em vez de descartá-los. Foi o caso da redução dos tipos de Elemento: como o PostgreSQL não permite remover valores de um tipo enumerado, a migração cria o novo tipo, converte a coluna e só então descarta o tipo antigo, preservando o conteúdo de todos os Elementos.
 
 O cliente do Prisma, que oferece acesso tipado às tabelas, é gerado automaticamente a cada instalação de dependências, por meio do \textit{script} \texttt{postinstall}. Na aplicação, ele é encapsulado em um serviço do NestJS (\texttt{PrismaService}), injetado nos módulos que acessam o banco. As operações que precisam gravar vários registros de forma indivisível são executadas em transações. É o caso da criação da ficha própria de um item (RF-17), que copia o \textit{layout} de origem e todos os seus Elementos: ou a cópia é criada por inteiro, ou nada é gravado. O mapeamento entre o modelo de objetos e as tabelas está detalhado no Capítulo~\ref{cap:06}.
 
 \section{Servidor de Aplicação}
 \label{sec:servidorAplicacao}
 
-A API é uma aplicação NestJS que atende na porta 3000, sem prefixo de rota. No momento da redação, ela é composta por 19 controladores, que expõem 100 rotas: 36 de consulta (GET), 31 de criação ou de ação (POST), 16 de alteração parcial (PATCH), uma de substituição (PUT) e 16 de exclusão (DELETE). Toda requisição percorre uma sequência fixa de etapas antes de alcançar a regra de negócio, configurada nos arquivos \texttt{main.ts} e \texttt{app.module.ts}:
+A API é uma aplicação NestJS que atende na porta 3000, sem prefixo de rota. No momento da redação, ela é composta por 19 controladores, que expõem 101 rotas: 37 de consulta (GET), 31 de criação ou de ação (POST), 16 de alteração parcial (PATCH), uma de substituição (PUT) e 16 de exclusão (DELETE). Toda requisição percorre uma sequência fixa de etapas antes de alcançar a regra de negócio, configurada nos arquivos \texttt{main.ts} e \texttt{app.module.ts}:
 
 \begin{enumerate}
     \item \textbf{CORS:} somente a origem informada em \texttt{FRONTEND\_URL} é autorizada a chamar a API pelo navegador.
@@ -61,10 +61,34 @@ As imagens enviadas pelos usuários não são gravadas no banco de dados: o banc
 
 O formato das imagens é verificado a partir do conteúdo do arquivo, e não da declaração enviada pelo cliente. O cabeçalho \texttt{Content-Type} de um envio é informado pelo próprio navegador ou por quem monta a requisição, e pode ser falsificado trivialmente. Por isso, a aplicação lê a assinatura presente nos primeiros \textit{bytes} do arquivo, que identifica os formatos JPEG e PNG exigidos pelos requisitos, e é essa assinatura que decide se o arquivo é aceito e qual extensão ele recebe. O nome do arquivo gravado é sempre gerado pelo servidor, o que impede que um nome malicioso enviado pelo cliente direcione a gravação para fora do diretório previsto.
 
+\subsection{Avisos em Tempo Real}
+\label{subsec:avisosTempoReal}
+
+O sino de notificações e as novidades do \textit{feed} são atualizados no instante em que algo muda, por meio de \textit{Server-Sent Events} (SSE). Nesse
+mecanismo, definido na especificação do HTML, o navegador abre uma requisição HTTP comum, e o servidor mantém a resposta aberta para enviar por ela, no
+formato \texttt{text/event-stream}, uma sequência de eventos ao longo do tempo \cite{whatwg2026sse}. A API oferece essa resposta na rota
+\texttt{GET /notifications/stream}, protegida pelo mesmo \textit{token} das demais rotas e, por isso, sujeita às mesmas etapas de limitação de requisições,
+autenticação e validação da sessão descritas acima.
+
+O SSE foi adotado porque a comunicação necessária é de mão única, da API para o navegador, que só precisa saber que há novidade. O WebSocket permitiria a
+troca nos dois sentidos, mas é um protocolo independente, em que um aperto de mão inicial dá lugar à troca de quadros próprios sobre o TCP \cite{rfc6455},
+o que exigiria um tratamento à parte para a autenticação e para o \textit{proxy} reverso. O SSE, ao contrário, é uma resposta HTTP como outra qualquer e
+passa pelo Caddy e pelos \textit{guards} da API sem nenhum componente novo no caminho. Em relação à consulta periódica, a vantagem é dupla, pois o aviso
+chega sem o atraso de até um intervalo inteiro de espera, e a API só é procurada quando há de fato algo novo, em vez de receber uma pergunta a cada minuto
+por aba aberta, cada uma delas levando a uma consulta ao banco.
+
+O canal transporta apenas avisos, e não conteúdo. Cada evento informa somente o que mudou, isto é, as notificações, o \textit{feed} ou as amizades, e a
+interface, ao recebê-lo, busca os dados pelas mesmas rotas REST que já utiliza. Dessa forma, as regras de visibilidade das Coleções continuam aplicadas em
+um único lugar, nas consultas, e não precisam ser repetidas no momento do envio. O aviso também só é enviado depois que a transação que grava a
+notificação ou o evento é confirmada no banco, porque, enviado antes, ele levaria o navegador a buscar um registro que ainda não existe ou que a reversão
+da transação desfez. Os canais abertos ficam na memória da API, agrupados por usuário, com até cinco conexões por conta, uma para cada aba, e a mais
+antiga é encerrada quando uma sexta é aberta. Enquanto não há aviso, a API envia a cada 25 segundos um evento vazio, que impede que intermediários
+encerrem a resposta por inatividade, cuidado recomendado pela própria especificação \cite{whatwg2026sse}.
+
 \section{Organização do Código do \textit{Backend}}
 \label{sec:organizacaoBackend}
 
-O código do \textit{backend} segue a organização modular do NestJS, conforme o Quadro~\ref{quad:estruturaBackend}. Cada funcionalidade do domínio corresponde a um módulo, e os módulos de domínio adotam a mesma estrutura interna: um diretório \texttt{controller}, que recebe as requisições HTTP; um diretório \texttt{service}, que concentra as regras de negócio; e um diretório \texttt{dto}, que define e valida os formatos de entrada. Os módulos de infraestrutura fogem desse molde: \texttt{mail} e \texttt{infra} não têm controlador, por não receberem requisições, e \texttt{storage} reúne seus poucos arquivos na raiz do módulo.
+O código do \textit{backend} segue a organização modular do NestJS, conforme o Quadro~\ref{quad:estruturaBackend}. Cada funcionalidade do domínio corresponde a um módulo, e os módulos de domínio adotam a mesma estrutura interna: um diretório \texttt{controller}, que recebe as requisições HTTP; um diretório \texttt{service}, que concentra as regras de negócio; e um diretório \texttt{dto}, que define e valida os formatos de entrada. Os módulos de infraestrutura fogem desse molde: \texttt{mail}, \texttt{realtime} e \texttt{infra} não têm controlador, por não receberem requisições, e \texttt{storage} reúne seus poucos arquivos na raiz do módulo.
 
 \FloatBarrier
 \begin{quadro}[h!]
@@ -92,6 +116,7 @@ src/
     tag/
     notification/
     mail/
+    realtime/
     storage/
     infra/database/prisma/
 prisma/
@@ -103,7 +128,7 @@ prisma/
 \end{quadro}
 \FloatBarrier
 
-Os módulos espelham os pacotes do modelo de domínio descritos na Subseção~\ref{subsec:pacotes_dominio}: o pacote Usuário corresponde ao módulo \texttt{user}; o pacote Sistema, ao módulo \texttt{auth}, que trata de \textit{login}, \textit{logout}, sessões e redefinição de senha, com exceção da confirmação do e-mail, que fica no módulo \texttt{user}, junto do cadastro que a exige; o pacote Coleções, aos módulos \texttt{category}, \texttt{collection} e \texttt{item}; o pacote Editor de Layout, ao módulo \texttt{layout}; o pacote Aparência, ao módulo \texttt{appearance-preset}; o pacote Interação Social, ao módulo \texttt{social}; e o pacote Notificações, ao módulo \texttt{notification}. O módulo \texttt{tag}, que consulta o vocabulário de \textit{tags} para as sugestões do formulário de coleção (RF-07), pertence ao pacote Coleções. Os módulos \texttt{mail}, \texttt{storage} e \texttt{infra} não têm correspondente no domínio, pois oferecem infraestrutura, respectivamente o envio de e-mail, o armazenamento de arquivos e o acesso ao banco, a todos os demais. Os arquivos de teste ficam ao lado do código que verificam, identificados pelo sufixo \texttt{.spec.ts}.
+Os módulos espelham os pacotes do modelo de domínio descritos na Subseção~\ref{subsec:pacotes_dominio}: o pacote Usuário corresponde ao módulo \texttt{user}; o pacote Sistema, ao módulo \texttt{auth}, que trata de \textit{login}, \textit{logout}, sessões e redefinição de senha, com exceção da confirmação do e-mail, que fica no módulo \texttt{user}, junto do cadastro que a exige; o pacote Coleções, aos módulos \texttt{category}, \texttt{collection} e \texttt{item}; o pacote Editor de Layout, ao módulo \texttt{layout}; o pacote Aparência, ao módulo \texttt{appearance-preset}; o pacote Interação Social, ao módulo \texttt{social}; e o pacote Notificações, ao módulo \texttt{notification}. O módulo \texttt{tag}, que consulta o vocabulário de \textit{tags} para as sugestões do formulário de coleção (RF-07), pertence ao pacote Coleções. Os módulos \texttt{mail}, \texttt{realtime}, \texttt{storage} e \texttt{infra} não têm correspondente no domínio, pois oferecem infraestrutura, respectivamente o envio de e-mail, o aviso de novidades ao navegador, o armazenamento de arquivos e o acesso ao banco, a todos os demais. Os arquivos de teste ficam ao lado do código que verificam, identificados pelo sufixo \texttt{.spec.ts}.
 
 Três decisões de implementação merecem registro por não serem visíveis no esquema do banco. A primeira diz respeito à ficha própria de um item (RF-17). Na primeira abertura do editor da ficha, que a interface faz logo após o cadastro do item, o serviço responsável cria um novo \textit{layout}, de finalidade exclusiva daquele item, e copia para ele os Elementos do \textit{layout} da coleção, guardando em cada cópia a referência ao original. Quando a coleção não possui \textit{layout}, a cópia é criada vazia, e o usuário monta a ficha a partir do zero. A partir desse momento, qualquer alteração afeta apenas a cópia. A criação é idempotente: abrir o editor de novo devolve a ficha que já existe.
 
@@ -149,6 +174,16 @@ Toda a comunicação com o \textit{backend} passa por uma única instância do A
 
 As leituras de dados são gerenciadas pelo TanStack Query, que guarda em memória as respostas já obtidas, identificadas por uma chave que inclui os parâmetros da consulta. Como a API recebe a ordenação e os filtros como parâmetros, cada combinação corresponde a uma requisição distinta; com a memória por chave, voltar a uma combinação já consultada exibe o resultado imediatamente. As operações de gravação, por sua vez, sinalizam quais consultas ficaram desatualizadas, e as listagens se atualizam sem que a tela precise solicitar os dados novamente. A listagem dos Itens de uma Coleção traz apenas o que os cartões exibem, isto é, a capa, o nome, o subtítulo e os Elementos de classificação, e a ficha completa de um Item é buscada quando sua visualização é aberta, junto com as do Item anterior e do seguinte, para que a navegação entre eles não espere pela rede. A movimentação de Itens entre Coleções vai além e é aplicada de forma otimista, como exige o RNF-06: o Item sai da lista da Coleção de origem antes da resposta da API, a lista é restaurada se o servidor recusar a operação, e, ao final, as listagens são relidas do servidor. No \textit{logout}, essa memória é esvaziada junto com o \textit{token}, para que nenhum dado da sessão encerrada fique disponível a quem utilizar o mesmo navegador em seguida.
 
+O canal de avisos em tempo real (Subseção~\ref{subsec:avisosTempoReal}) é aberto pela aplicação cliente assim que o usuário entra, junto com o sino do
+cabeçalho. A leitura é feita com o \texttt{fetch}, e não com o \texttt{EventSource}, interface do navegador própria para o SSE, porque esta não permite
+acrescentar cabeçalhos à requisição \cite{whatwg2026sse}, e o \textit{token} de acesso segue no cabeçalho \texttt{Authorization}, como nas demais chamadas.
+Colocá-lo no endereço, a alternativa que o \texttt{EventSource} deixaria, faria o \textit{token} ficar registrado nos \textit{logs} do \textit{proxy}
+reverso. Cada aviso recebido marca como desatualizadas as consultas correspondentes do TanStack Query, isto é, a contagem e a lista de notificações, as
+novidades do \textit{feed} ou os dados da área social, que são então buscadas de novo. Quando a conexão cai, a interface volta a abri-la automaticamente,
+com uma espera que começa em um segundo e cresce até 30 segundos, e, ao reconectar, busca outra vez as notificações e a área social, pois um aviso perdido
+durante a queda não é reenviado. Enquanto o canal está fechado, o sino e as novidades passam a ser consultados a cada minuto, e ambos são consultados
+também sempre que a janela volta a ter foco.
+
 \subsection{Editor de Layouts}
 
 O editor de \textit{layouts} é a parte mais extensa da aplicação cliente, e três decisões de implementação sustentam seu funcionamento. A primeira é a gravação automática. O editor não possui botão de salvar: cada alteração concluída, como soltar um Elemento após arrastá-lo ou terminar de editar um texto, é enviada à API após uma pausa de 400 milissegundos, intervalo que agrupa movimentos feitos em sequência em uma única requisição. A gravação automática só é segura porque vem acompanhada do desfazer e do refazer, acionados pelos atalhos \texttt{Ctrl+Z} e \texttt{Ctrl+Shift+Z} e apoiados em um histórico de 50 passos; sem eles, um movimento equivocado se tornaria permanente no instante em que fosse feito. Enquanto houver alteração ainda não gravada, o navegador avisa o usuário caso ele tente fechar a página.
@@ -169,7 +204,7 @@ As fontes tipográficas oferecidas além das do sistema operacional são servida
 
 \section{Verificação Durante a Implementação}
 
-A implementação foi acompanhada por testes automatizados no \textit{backend}, escritos com o Jest. Na execução de 12 de outubro de 2026, relatada no Capítulo~\ref{cap:08}, o projeto contava com 58 conjuntos de testes, que somavam 536 casos, todos aprovados. Os testes verificam serviços, controladores e DTOs dos módulos, substituindo o acesso ao banco e ao armazenamento por objetos simulados, de modo que cada regra de negócio seja exercitada de forma isolada e sem depender de um banco em execução. No \textit{frontend}, a etapa de construção executa a verificação de tipos do TypeScript antes de gerar o pacote de produção, o que impede que uma divergência entre os tipos da interface e os formatos da API passe despercebida. Complementarmente, cada funcionalidade concluída foi verificada manualmente na interface, com apoio do DBeaver para inspecionar o estado do banco. Os procedimentos e os resultados dos testes são detalhados no capítulo dedicado aos testes.
+A implementação foi acompanhada por testes automatizados no \textit{backend}, escritos com o Jest. Na execução de 14 de outubro de 2026, relatada no Capítulo~\ref{cap:08}, o projeto contava com 59 conjuntos de testes, que somavam 564 casos, todos aprovados. Os testes verificam serviços, controladores e DTOs dos módulos, substituindo o acesso ao banco e ao armazenamento por objetos simulados, de modo que cada regra de negócio seja exercitada de forma isolada e sem depender de um banco em execução. No \textit{frontend}, a etapa de construção executa a verificação de tipos do TypeScript antes de gerar o pacote de produção, o que impede que uma divergência entre os tipos da interface e os formatos da API passe despercebida. Complementarmente, cada funcionalidade concluída foi verificada manualmente na interface, com apoio do DBeaver para inspecionar o estado do banco. Os procedimentos e os resultados dos testes são detalhados no capítulo dedicado aos testes.
 
 \section{Limitações da Implementação}
 
@@ -177,7 +212,9 @@ A versão atual do sistema possui limitações conhecidas, registradas a seguir:
 
 \begin{itemize}
     \item \textbf{Limitação de requisições em memória:} os contadores de requisições são mantidos na memória do processo da API. Reiniciar o servidor os zera, e várias instâncias da aplicação não compartilhariam esses contadores. Em uma implantação com múltiplas instâncias, seria necessário um armazenamento compartilhado.
-    \item \textbf{Ausência de comunicação em tempo real:} a API é exclusivamente REST, sem canal de comunicação contínua com o navegador. O \textit{feed} de atualizações e as notificações são obtidos quando a interface os solicita, a cada minuto e sempre que a janela volta a ter foco, e não enviados pelo servidor no momento em que os eventos ocorrem (Subseção~\ref{subsec:requisitos_adiados}).
+    \item \textbf{Canais de aviso em memória:} os canais abertos de SSE ficam na memória do processo da API, o que atende à instância única descrita no
+    Capítulo~\ref{cap:09}. Com várias instâncias, um aviso gerado em uma delas não chegaria aos navegadores ligados às outras, e seria necessário um
+    intermediário compartilhado entre elas para distribuir os avisos.
     \item \textbf{Ausência de documentação automática da API:} não há documentação no padrão OpenAPI; a referência das rotas é mantida manualmente no repositório do \textit{backend}.
     \item \textbf{Armazenamento em disco sem credenciais de nuvem:} na ausência das credenciais do R2, os arquivos enviados ficam no disco da máquina que executa a API e não estão disponíveis em outra máquina, perdendo-se em ambientes de hospedagem cujo sistema de arquivos é recriado a cada publicação.
 \end{itemize}

@@ -1405,7 +1405,7 @@ O checklist do primeiro acesso passou de seis para dez passos. Os quatro novos c
 
 ### [AJUSTAR] RF-01 e RF-14 — layouts padrão ilustrados, entregues por versão (07/10/2026)
 
-A "Ficha simples" deixou de ser o layout padrão. Toda conta nova recebe três layouts ilustrados — Diário de leitura, Sessão de cinema e Lado A —, desenhados só com as peças do editor e já na folha de criação (1070 de largura). Quem já tinha a "Ficha simples" continua com ela. A entrega passou a ser **por versão**: um layout padrão acrescentado depois chega também às contas que já existem, e um padrão apagado de propósito não volta. Um nome que a pessoa já usa na biblioteca fica de fora da entrega.
+A "Ficha simples" deixou de ser o layout padrão. Toda conta nova recebe três layouts ilustrados — Diário de leitura, Sessão de cinema e Minhas músicas (chamado "Lado A" até 14/10/2026) —, desenhados só com as peças do editor e já na folha de criação (1070 de largura). Quem já tinha a "Ficha simples" continua com ela. A entrega passou a ser **por versão**: um layout padrão acrescentado depois chega também às contas que já existem, e um padrão apagado de propósito não volta. Um nome que a pessoa já usa na biblioteca fica de fora da entrega.
 
 - **RF-01, regra 9 — trocar por:** "9. Ao concluir o cadastro, o sistema disponibiliza na biblioteca de layouts do usuário os layouts padrão que oferece, prontos para serem associados a coleções, editados ou duplicados (RF-14 e RF-15). Quando o sistema passa a oferecer um layout padrão novo, ele é acrescentado também à biblioteca das contas existentes, uma única vez; um layout padrão excluído pelo usuário não é entregue de novo."
 - **Modelo de dados (se o texto descrever as tabelas):** o usuário guarda a versão dos layouts padrão que já recebeu (`default_layouts_version`), no lugar da data da entrega (`default_layouts_at`). A folha de uma ficha criada sem tamanho nasce com 1070 × 600.
@@ -1521,3 +1521,35 @@ Os layouts padrão e os de exemplo foram redesenhados na escala de letra do edit
 - **RF-14, regra 2 — complemento opcional:** "Os layouts padrão usam a mesma escala de letra do editor, e cada um traz uma descrição curta, escrita como se fosse do próprio usuário."
 - **Para o capítulo de implementação (se o texto tratar dos layouts padrão):** as cópias que as contas já tinham recebido foram trocadas pelo desenho novo por um *script* de manutenção (`pnpm trocar-padrao`), somente quando não estavam associadas a coleção, a item nem a ficha própria de item; as que estavam em uso mantiveram o desenho e receberam só a descrição nova. A versão dos layouts padrão (RF-01, regra 9) não mudou: ela entrega layouts novos, e não redesenhos.
 
+
+### [AJUSTAR] RF-14 — a categoria Personagens no acervo de ilustrações (14/10/2026)
+
+O acervo ganhou uma categoria nova, **Personagens**: retratos de busto, no mesmo formato da ficha de exemplo da página inicial, de personagens de uma escola de magia, desenhados só com formas chapadas — sem rosto, cada um reconhecível pelo cabelo, pela roupa e pelos objetos — e com nomes genéricos ("Personagem 1" a "Personagem 10", e "Coruja"). Entraram também objetos do mesmo universo na categoria Objetos: varinha, poção, livro de feitiços, caldeirão, chapéu pontudo, a bolinha dourada alada e três cachecóis nas cores das casas. Os retratos foram desenhados em SVG e trazidos pela importação de SVG; os objetos, montados com as formas do editor.
+
+- **RF-14, regra das categorias do acervo — trocar a lista por:** "(Objetos; Personagens; Cinema, música e jogos; Natureza; Bichos; Enfeites; Cantos e molduras; Sombras e brilhos)".
+
+### [AJUSTAR] RF-01 e RF-14 — o layout padrão de música passa a se chamar "Minhas músicas" (14/10/2026)
+
+O terceiro layout padrão, o de música, chamava-se "Lado A", um nome que não dizia o que ele guarda. Passou a se chamar **Minhas músicas**, no padrão dos outros dois (Diário de leitura, Sessão de cinema), e o cabeçalho escrito na ficha acompanha o nome. As cópias que as contas já tinham foram renomeadas por uma migration, junto com o cabeçalho, desde que ainda estivessem com o desenho original e que a conta não tivesse outro layout com o nome novo. As fichas próprias dos itens não foram alteradas.
+
+- **Onde o texto citar os layouts padrão pelo nome:** trocar "Lado A" por "Minhas músicas".
+
+### [AJUSTAR] Cap. 9 — os e-mails saem pelo Resend, e não mais pelo Gmail (14/10/2026)
+
+> **Aplicado em 14/10/2026.** No Cap. 9, o parágrafo "Envio de e-mail" foi reescrito com o porquê (remetente em subdomínio verificado, exigência de SPF ou DKIM do Gmail desde 2024, reputação isolada no subdomínio, registro das entregas no painel, SMTP para trocar de provedor só pelo `.env`), com quatro referências novas (`resend2026smtp`, `resend2026domains`, `resend2026pricing`, `google2026senders`). Também mudaram o diagrama de implantação ("Resend"), o parágrafo do domínio (terceiro subdomínio, `mail.camilamattos.com.br`), os quadros de alvos e de variáveis e os passos 1 e 5 do provisionamento. DKIM, DMARC e SPF entraram na lista de siglas.
+
+O código de confirmação do cadastro e o link de recuperação de senha passaram a sair pelo SMTP do **Resend**, um serviço de envio de e-mail transacional, com remetente `nao-responda@mail.camilamattos.com.br`. Antes saíam pelo SMTP do Gmail, que obrigava o remetente a ser a conta pessoal e não registrava as entregas. O subdomínio de envio foi verificado no DNS (DKIM, SPF e DMARC), o que reduz a chance de o e-mail cair no spam. O código da API não mudou: só as variáveis `SMTP_*` do servidor.
+
+- **Cap. 9, onde o texto citar o "SMTP do Gmail":** trocar por **"SMTP do Resend, com remetente num subdomínio próprio verificado por DKIM, SPF e DMARC"**.
+- **Diagrama de arquitetura (se rotular o SMTP):** "SMTP (Resend)".
+
+### [AJUSTAR] RF-22 e RF-24 — sino e feed em tempo real por SSE (14/10/2026)
+
+> **Aplicado em 14/10/2026, com texto próprio**, porque o Cap. 5 já não tinha as frases citadas abaixo. O RF-22 §3 diz que o feed é atualizado no instante em que uma coleção seguida recebe evento e ao voltar à janela, com consulta periódica só se a comunicação cair; o RF-24 §7 diz que as notificações são atualizadas no instante em que são geradas, pelo mesmo aviso. A entrega imediata saiu dos requisitos adiados (agora são três comportamentos, também nos Caps. 10 e 12). O Cap. 7 ganhou a subseção "Avisos em Tempo Real" (o que é o SSE, por que não WebSocket nem só consulta periódica, aviso sem conteúdo, envio depois do commit, canais em memória, ping de 25 s) e um parágrafo do lado do cliente (`fetch` em vez de `EventSource`, reconexão de 1 a 30 s, consulta por minuto só com o canal fechado); a limitação "Ausência de comunicação em tempo real" virou "Canais de aviso em memória". O Cap. 9 registra que o Caddy repassa o `text/event-stream` sem configuração e que os canais caem e voltam na troca do contêiner. O Cap. 8 ganhou a linha do módulo `realtime` (1 arquivo, 7 testes; total de 59 arquivos e 564 testes em 14/10/2026). Referências novas: `whatwg2026sse` e `rfc6455`.
+
+O sino e a aba Novidades deixaram de perguntar à API de minuto em minuto. A API mantém um canal aberto com o navegador por **SSE** (Server-Sent Events) e avisa no instante em que nasce uma notificação, um evento em coleção seguida ou uma mudança de amizade. A interface então busca de novo pelas rotas de sempre. O aviso não carrega conteúdo, então as regras de visibilidade continuam valendo só nas consultas. Se o canal cair, a consulta volta a ser periódica até a reconexão, que é automática. Com isso, o RF-22 §3 ("atualizado automaticamente em tempo real") passa a ser atendido, e o RF-24 §7 deixa de adiar o SSE.
+
+- **RF-24, regra 7 — trocar por:** "7. As notificações in-app são persistidas e consultadas pela API. A API avisa o navegador, por SSE, quando uma notificação é gerada ou quando uma coleção seguida recebe evento, e a interface então as consulta; se o canal for interrompido, a consulta passa a ser periódica até a reconexão, que é automática."
+- **RF-24, regra 9 — trocar** "como não há atualização em tempo real (§7), a quantidade é consultada periodicamente e ao retornar à janela" **por** "a quantidade é atualizada no instante em que muda (§7) e ao retornar à janela".
+- **RF-22, regra 3:** sem mudança no texto; passa a ser atendida.
+- **Para o capítulo de implementação (se o texto tratar das notificações):** a rota é `GET /notifications/stream`, autenticada pelo mesmo token das demais. O aviso só é enviado depois que a transação que grava a notificação é confirmada, e os canais abertos ficam na memória da API, o que vale para uma instância só.

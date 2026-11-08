@@ -866,7 +866,7 @@ Camila rola o feed e carrega eventos mais antigos progressivamente. \\
 & \textbf{Restrições:} \\*
 & \itemrf{1}O feed deve exibir apenas eventos de coleções que o usuário segue ativamente (RF-21). \\
 & \itemrf{2}Os eventos devem ser ordenados cronologicamente, do mais recente ao mais antigo. \\
-& \itemrf{3}O feed deve ser atualizado automaticamente, sem necessidade de recarregar a página, por consulta periódica à API a cada minuto e sempre que a janela volta a ter foco; a entrega imediata pelo servidor consta dos requisitos adiados (Subseção~\ref{subsec:requisitos_adiados}). \\
+& \itemrf{3}O feed deve ser atualizado automaticamente, sem necessidade de recarregar a página, no instante em que uma coleção seguida recebe um evento e sempre que a janela volta a ter foco; se a comunicação com o servidor for interrompida, a atualização passa a ser feita por consulta periódica à API até que ela se restabeleça. \\
 & \itemrf{4}Se a privacidade de uma coleção seguida for alterada para `privada', os eventos anteriores dessa coleção não devem mais ser exibidos, e o acompanhamento é encerrado automaticamente (RF-21). \\
 & \itemrf{5}Eventos de criação ou exclusão de coleção em si não são exibidos no feed; a descoberta de novas coleções ocorre por meio da visita a perfis de usuários (RF-23). \\
 & \itemrf{6}O feed deve suportar carregamento progressivo (paginação) para históricos longos. \\
@@ -920,7 +920,7 @@ Camila solicita recuperação de senha; o sistema envia notificação via e-mail
 & \itemrf{4}O usuário pode marcar uma notificação como lida, marcar todas como lidas ou limpar sua área de notificações sem excluir os registros do sistema: um campo indica o estado atual de leitura, outro registra quando a leitura ocorreu, e a limpeza apenas oculta as notificações da listagem do usuário. \\
 & \itemrf{5}A confirmação do cadastro (RF-01) e a recuperação de senha (RF-04) são comunicadas por e-mail, com um código ou um link de uso único e prazo de expiração, e não geram notificação in-app. \\
 & \itemrf{6}Notificações referentes a coleções cuja privacidade tenha sido alterada para `privada' devem ser ocultadas automaticamente do destinatário (RF-08). \\
-& \itemrf{7}As notificações in-app devem ser atualizadas automaticamente, sem necessidade de recarregar a página, pela mesma consulta periódica do feed (RF-22). \\
+& \itemrf{7}As notificações in-app devem ser atualizadas automaticamente, sem necessidade de recarregar a página, no instante em que são geradas, pelo mesmo aviso do servidor que atualiza o feed (RF-22). \\
 & \itemrf{8}Notificações lidas devem ser mantidas por no mínimo 30 dias antes de qualquer limpeza automática. \\ \hline
 \textbf{Prioridade}  & Importante \\ \hline
 \textbf{Operação}    & Saída \\ \hline
@@ -1260,7 +1260,7 @@ Alguns requisitos foram identificados durante a elicitação, porém não serão
 \item Mecanismos avançados de descoberta pública, como ranking e tendências. A descoberta simples, que reúne coleções de outras pessoas pelas tags, faz parte do RF-07.
 \end{itemize}
 
-Outros quatro comportamentos chegaram a ser especificados, mas foram retirados dos requisitos
+Outros três comportamentos chegaram a ser especificados, mas foram retirados dos requisitos
 desta versão e ficam registrados aqui, para que os requisitos funcionais descrevam o comportamento
 da versão entregue:
 
@@ -1273,10 +1273,6 @@ descreve a interação prevista para ela.
 de verificação ao novo e-mail e manutenção do antigo até a confirmação, não está disponível. O
 envio de mensagens já existe na plataforma, pois é usado na confirmação do cadastro (RF-01) e na
 recuperação de senha (RF-04), e seria o ponto de partida desse fluxo.
-\item \textbf{Entrega imediata de eventos ao navegador} (RF-22 e RF-24). O \textit{feed} e as
-notificações são atualizados por consulta periódica à API, sem recarregar a página. A entrega
-iniciada pelo servidor no instante em que o evento ocorre, por um canal contínuo de comunicação,
-fica para uma etapa posterior.
 \item \textbf{Ordenação dos Itens pela classificação e filtros pelo conteúdo dos Elementos}
 (RF-12). Como a classificação é um Elemento da ficha, e não um campo do Item, ordenar e filtrar
 por ela exige consultar o conteúdo das fichas, o que não foi implementado; a listagem oferece as
@@ -2984,7 +2980,7 @@ Fluxo Básico & \mbox{}
     \item O sistema recupera os eventos de atualização associados a essas coleções (adição/edição/remoção de itens), ordenados do mais recente ao mais antigo.
     \item O sistema verifica a privacidade atual de cada coleção antes de exibir seus eventos (RF-08).
     \item O sistema exibe o feed com os eventos, contendo: nome do autor da ação, tipo de evento, nome do item afetado, nome da coleção, nome da categoria pai e data/hora relativa do evento.
-    \item O feed é atualizado automaticamente, sem necessidade de recarregar a página, por consulta periódica à API (RF-22).
+    \item O feed é atualizado automaticamente, sem necessidade de recarregar a página, no instante em que uma coleção seguida recebe um evento (RF-22).
     \item O usuário pode rolar o feed para carregar eventos mais antigos progressivamente (paginação).
 \end{enumerate}
 \mbox{} \\ \hline
@@ -3020,7 +3016,7 @@ Requisitos Especiais & RNF-02 - O carregamento inicial do feed deve ocorrer em a
 
 Condições Prévias & O usuário deve estar autenticado. \\ \hline
 
-Pós-Condições & O usuário visualiza os eventos recentes das coleções que segue. O feed é atualizado periodicamente durante a navegação (RF-22). Coleções tornadas privadas são removidas do feed imediatamente, com seu acompanhamento encerrado. \\ \hline
+Pós-Condições & O usuário visualiza os eventos recentes das coleções que segue. O feed é atualizado durante a navegação, assim que as coleções seguidas recebem eventos (RF-22). Coleções tornadas privadas são removidas do feed imediatamente, com seu acompanhamento encerrado. \\ \hline
 
 Pontos de Extensão & Nenhum ponto de extensão identificado para este caso de uso. \\
 \end{longtable}

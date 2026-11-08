@@ -54,12 +54,12 @@ A alocação dos componentes segue um critério simples: cada parte do sistema �
 		% Coluna da direita: serviços gerenciados
 		\node[no, text width=3.6cm] (supa) at (13.0,4.4) {\guillemotleft cloud service\guillemotright\\\textbf{Supabase}\\[2pt]PostgreSQL gerenciado\\(gratuito, São Paulo)};
 		\node[no, text width=3.6cm] (r2) at (13.0,1.2) {\guillemotleft cloud service\guillemotright\\\textbf{Cloudflare R2}\\[2pt]imagens enviadas};
-		\node[no, text width=3.6cm] (smtp) at (13.0,-1.9) {\guillemotleft cloud service\guillemotright\\\textbf{SMTP do Gmail}\\[2pt]e-mails de confirmação e de recuperação};
+		\node[no, text width=3.6cm] (smtp) at (13.0,-1.9) {\guillemotleft cloud service\guillemotright\\\textbf{Resend}\\[2pt]SMTP, e-mails de confirmação e de recuperação};
 
 		% Ligações
 		\draw[ligacao] (nav.south) -- node[rotulo, right] {HTTPS\\arquivos estáticos} (vercel.north);
 		\draw[ligacao] (nav.west) -- ++(-0.6,0) |- node[rotulo, pos=0.25, left] {DNS} (dns.west);
-		\draw[ligacao] (nav.east) -- node[rotulo, above] {HTTPS (443)\\API REST} (caddy.west);
+		\draw[ligacao] (nav.east) -- node[rotulo, above] {HTTPS (443)\\API REST e SSE} (caddy.west);
 		\draw[ligacao] (caddy.south) -- node[rotulo, right] {HTTP\\127.0.0.1:3000} (docker.north);
 		\draw[ligacao] (docker.east |- 0,2.0) -- (9.9,2.0) |- (supa.west);
 		\node[rotulo, anchor=west] at (10.0,3.0) {PostgreSQL (5432)\\\textit{pooler} de sessão};
@@ -84,9 +84,19 @@ O plano gratuito impõe três limites que convém registrar. O banco é limitado
 
 \textbf{Arquivos enviados.} As imagens enviadas pelos usuários (capas, ícones, fotos de perfil e imagens dos Elementos) são gravadas no Cloudflare R2, acessado pela API S3 por meio do SDK da AWS, conforme o Capítulo~\ref{cap:07}. A consequência prática é que a máquina virtual não guarda estado: o banco está no Supabase e os arquivos estão no R2, de modo que perder a máquina exige apenas reinstalar a API, sem perda de Coleções, Itens ou imagens. Essa propriedade depende das credenciais do R2 estarem configuradas; sem elas, a API gravaria os arquivos no disco do contêiner, limitação já registrada no Capítulo~\ref{cap:07}, e eles se perderiam a cada nova construção da imagem.
 
-\textbf{Envio de e-mail.} Os e-mails com o código de confirmação do cadastro e com o link de recuperação de senha são enviados pelo servidor SMTP do Gmail, com conexão cifrada na porta 465 e autenticação por senha de aplicativo da conta Google. Não há serviço de e-mail próprio: o envio depende apenas das variáveis de configuração descritas na Seção~\ref{sec:configuracao_servicos}.
+\textbf{Envio de e-mail.} Os e-mails com o código de confirmação do cadastro e com o link de recuperação de senha são enviados pelo Resend, serviço
+de envio de e-mail transacional, no plano gratuito, que admite até 100 mensagens por dia \cite{resend2026pricing}, volume suficiente para mensagens que só
+saem no cadastro e na recuperação de senha. A API conecta-se ao servidor SMTP do serviço com conexão cifrada na porta 465, autenticada por uma chave de API
+restrita ao envio \cite{resend2026smtp}. O remetente, \texttt{nao-responda@mail.camilamattos.com.br}, pertence a um subdomínio próprio, verificado no
+serviço pelos registros DKIM, SPF e DMARC publicados no DNS da Hostinger. Essa verificação é o que justifica um serviço dedicado em vez de uma caixa de
+e-mail pessoal. Desde fevereiro de 2024, o Gmail exige que todo remetente autentique o seu domínio por SPF ou DKIM e recomenda configurar também o DMARC
+\cite{google2026senders}, de modo que uma mensagem assinada pelo domínio da plataforma tem menos chance de ser tratada como \textit{spam} do que uma
+enviada por uma conta pessoal, que ainda obrigaria o remetente a ser um endereço pessoal. O uso de um subdomínio, recomendado pelo próprio Resend, separa a
+reputação de envio da plataforma da reputação do domínio principal \cite{resend2026domains}, e o painel do serviço registra cada mensagem enviada
+\cite{resend2026smtp}, o que permite conferir se um código foi entregue. A integração é feita por SMTP, e não pela API própria do serviço, para que a troca
+de provedor exija apenas alterar as variáveis de configuração descritas na Seção~\ref{sec:configuracao_servicos}, sem mudança no código.
 
-\textbf{Nome de domínio.} O domínio \texttt{camilamattos.com.br} foi registrado na Hostinger, que também mantém os seus registros DNS. Dois subdomínios atendem à plataforma: \texttt{tcc.camilamattos.com.br}, que aponta para a Vercel e serve a aplicação cliente, e \texttt{api.camilamattos.com.br}, cujo registro do tipo A aponta para o endereço público da máquina virtual. A necessidade de um nome para a API decorre de uma cadeia de exigências. A aplicação cliente é servida pela Vercel em HTTPS, e requisições \texttt{fetch()} ou \texttt{XMLHttpRequest} feitas por uma página segura a um endereço HTTP são conteúdo misto bloqueável, recusado pelo navegador \cite{mdn2026mixed}; a API precisa, portanto, responder em HTTPS. Para isso, o Caddy obtém e renova automaticamente certificados TLS para nomes de domínio públicos \cite{caddy2026https}, o que pressupõe um nome que resolva para a máquina, e o subdomínio da API atende a essa exigência. Reunir a aplicação e a API sob o mesmo domínio também dá à plataforma um endereço estável, que não depende do provedor de hospedagem. A contrapartida é a dependência do serviço de DNS do registrador: uma falha na resolução do nome tornaria a plataforma inacessível, ainda que a máquina estivesse em funcionamento, e o registro precisa ser renovado para que o domínio continue ativo.
+\textbf{Nome de domínio.} O domínio \texttt{camilamattos.com.br} foi registrado na Hostinger, que também mantém os seus registros DNS. Três subdomínios atendem à plataforma: \texttt{tcc.camilamattos.com.br}, que aponta para a Vercel e serve a aplicação cliente; \texttt{api.camilamattos.com.br}, cujo registro do tipo A aponta para o endereço público da máquina virtual; e \texttt{mail.camilamattos.com.br}, que não serve conteúdo e guarda os registros de verificação do Resend usados no envio de e-mail. A necessidade de um nome para a API decorre de uma cadeia de exigências. A aplicação cliente é servida pela Vercel em HTTPS, e requisições \texttt{fetch()} ou \texttt{XMLHttpRequest} feitas por uma página segura a um endereço HTTP são conteúdo misto bloqueável, recusado pelo navegador \cite{mdn2026mixed}; a API precisa, portanto, responder em HTTPS. Para isso, o Caddy obtém e renova automaticamente certificados TLS para nomes de domínio públicos \cite{caddy2026https}, o que pressupõe um nome que resolva para a máquina, e o subdomínio da API atende a essa exigência. Reunir a aplicação e a API sob o mesmo domínio também dá à plataforma um endereço estável, que não depende do provedor de hospedagem. A contrapartida é a dependência do serviço de DNS do registrador: uma falha na resolução do nome tornaria a plataforma inacessível, ainda que a máquina estivesse em funcionamento, e o registro precisa ser renovado para que o domínio continue ativo.
 
 O Quadro~\ref{quad:alvosImplantacao} sintetiza os alvos de implantação e o motivo da alocação de cada um.
 
@@ -102,7 +112,7 @@ Aplicação cliente (React) & Vercel & Hobby (gratuito) & Arquivos estáticos se
 API (NestJS) & Máquina virtual Oracle Cloud, em contêiner Docker, atrás do Caddy & \textit{Always Free} & Processo de longa duração; um único contêiner, por ser um monólito \\ \hline
 Banco de dados (PostgreSQL) & Supabase, região de São Paulo & Gratuito & Operação do banco delegada ao provedor; dados fora da máquina virtual \\ \hline
 Arquivos enviados & Cloudflare R2 & Gratuito & Mantém a máquina virtual sem estado \\ \hline
-E-mail & SMTP do Gmail & Conta Google & Envio dos e-mails de confirmação de cadastro e de recuperação de senha sem servidor próprio \\ \hline
+E-mail & Resend (SMTP) & Gratuito & Envio dos e-mails de confirmação de cadastro e de recuperação de senha, com remetente em subdomínio verificado \\ \hline
 Nome de domínio & Hostinger & Pago (registro do domínio) & Endereços públicos da aplicação e da API; nome necessário para o certificado TLS emitido pelo Caddy \\ \hline
 \end{tabular}
 \fonte{Elaborada pelo autor}
@@ -126,7 +136,7 @@ A configuração segue um princípio único: o código é o mesmo em todos os am
 \texttt{JWT\_SECRET} & Máquina virtual & Segredo de assinatura dos \textit{tokens} de sessão \\ \hline
 \texttt{FRONTEND\_URL} & Máquina virtual & Endereço publicado da aplicação cliente; única origem autorizada pelo CORS \\ \hline
 \texttt{PORT} & Máquina virtual & Porta em que a API escuta dentro do contêiner \\ \hline
-\texttt{SMTP\_*} & Máquina virtual & Servidor, porta, cifra, usuário, senha de aplicativo e remetente do Gmail \\ \hline
+\texttt{SMTP\_*} & Máquina virtual & Servidor, porta, cifra, usuário e chave de API do Resend, e remetente no subdomínio verificado \\ \hline
 \texttt{R2\_*} & Máquina virtual & Conta, chaves de acesso, balde e endereço público do Cloudflare R2 \\ \hline
 \texttt{API\_URL} & Vercel & Endereço HTTPS da API, embutido nos arquivos estáticos durante a construção \\ \hline
 \end{tabular}
@@ -214,6 +224,10 @@ api.camilamattos.com.br {
 
 O bloco do Caddyfile é suficiente para o arranjo inteiro: por se tratar de um nome de domínio público, o Caddy obtém e renova o certificado TLS e redireciona o tráfego HTTP para HTTPS sem configuração adicional \cite{caddy2026https}. A superfície de rede da máquina reduz-se, assim, a três portas, liberadas tanto nas regras de entrada da rede virtual da Oracle quanto no UFW: a 22, para administração por SSH com autenticação por chave; a 443, atendida pelo Caddy; e a 80, que não serve conteúdo algum e responde apenas pelo redirecionamento para HTTPS e pela validação dos certificados.
 
+O mesmo bloco atende ao canal de avisos em tempo real da API, descrito no Capítulo~\ref{cap:07}. Esse canal é uma resposta HTTP do tipo
+\texttt{text/event-stream} mantida aberta, e o Caddy repassa ao navegador cada trecho dessas respostas no momento em que o recebe, sem acumulá-los
+\cite{caddy2026proxy}, de modo que o SSE não exige configuração própria no \textit{proxy}.
+
 Ao repassar uma requisição, o Caddy acrescenta o cabeçalho \texttt{X-Forwarded-For} com o endereço do cliente \cite{caddy2026proxy}. A informação é necessária para a limitação de requisições descrita no Capítulo~\ref{cap:07}, que identifica o cliente pelo endereço IP: sem ela, todas as requisições chegariam à API vindas do próprio Caddy, e o limite de cinco tentativas de \textit{login} por minuto passaria a valer para a plataforma inteira, e não para cada cliente. A API é, por isso, configurada para confiar em exatamente um intermediário, o Caddy. Confiar em qualquer valor do cabeçalho, em vez de em um único salto, permitiria a um cliente forjar o próprio endereço e escapar do limite. Pela mesma razão de restringir o que é aceito, o CORS da API autoriza uma única origem, a da aplicação cliente publicada, lida da variável \texttt{FRONTEND\_URL}.
 % trust proxy (1 salto) e CORS restrito a FRONTEND_URL corrigidos no src/main.ts do backend em 12/10/2026.
 
@@ -234,11 +248,11 @@ A implantação envolve duas atividades distintas: o provisionamento inicial do 
 O ambiente foi preparado na seguinte ordem:
 
 \begin{enumerate}
-	\item \textbf{Serviços de dados:} criação do projeto no Supabase, na região de São Paulo, e do balde no Cloudflare R2, com acesso público de leitura para a exibição das imagens; geração da senha de aplicativo da conta Google usada no envio de e-mails.
+	\item \textbf{Serviços de dados:} criação do projeto no Supabase, na região de São Paulo, e do balde no Cloudflare R2, com acesso público de leitura para a exibição das imagens; criação da conta no Resend, cadastro do subdomínio \texttt{mail.camilamattos.com.br} e geração de uma chave de API restrita ao envio.
 	\item \textbf{Máquina virtual:} criação da instância na Oracle Cloud, com acesso por SSH autenticado por chave; liberação das portas 80 e 443 nas regras de entrada da rede virtual; atualização dos pacotes do sistema e ativação do UFW, permitindo apenas as portas 22, 80 e 443.
 	\item \textbf{Área de troca:} criação de um arquivo de \textit{swap}, necessário para que a construção da imagem caiba na memória da máquina.
 	\item \textbf{Docker e Caddy:} instalação do Docker pelo \textit{script} oficial do projeto e do Caddy pelo seu repositório de pacotes, habilitado como serviço do \texttt{systemd}.
-	\item \textbf{Nomes de domínio:} no painel de DNS da Hostinger, criação do registro do tipo A de \texttt{api.camilamattos.com.br}, apontando para o endereço público da máquina, e do registro do tipo CNAME de \texttt{tcc.camilamattos.com.br}, indicado pela Vercel ao adicionar o domínio ao projeto.
+	\item \textbf{Nomes de domínio:} no painel de DNS da Hostinger, criação do registro do tipo A de \texttt{api.camilamattos.com.br}, apontando para o endereço público da máquina, e do registro do tipo CNAME de \texttt{tcc.camilamattos.com.br}, indicado pela Vercel ao adicionar o domínio ao projeto; publicação, no subdomínio \texttt{mail.camilamattos.com.br}, dos registros DKIM, SPF e DMARC indicados pelo Resend, que verifica o subdomínio a partir deles.
 	\item \textbf{Código:} geração de uma chave SSH na máquina, cadastrada como chave de implantação (\textit{deploy key}) no repositório do \textit{backend} no GitHub, e clonagem do repositório no diretório \texttt{/opt/apps}.
 	\item \textbf{Configuração:} redação do \texttt{.env} a partir do modelo \texttt{.env.example} e do \texttt{Caddyfile} com o nome da API.
 	\item \textbf{Primeira execução:} construção e início do contêiner com \texttt{docker compose up -d -{}-build}, que aplica todas as migrações ao banco vazio, e recarga do Caddy, que obtém o certificado.
@@ -314,7 +328,8 @@ A publicação de uma nova versão segue caminhos diferentes para as duas partes
 
 A diferença de tratamento entre as duas partes decorre do que cada uma exige. A publicação da aplicação cliente não toca em nenhum recurso da máquina virtual nem em dados, e a plataforma que a recebe já oferece a construção automática; automatizá-la não teve custo. A publicação da API, ao contrário, reconstrói a imagem na mesma máquina que atende à produção e aplica migrações ao banco, e foi mantida manual para que cada publicação seja acompanhada por quem a disparou. A automação por uma esteira de integração contínua, que se conectaria à máquina e executaria os mesmos comandos, é um acréscimo possível que não altera nenhum dos passos descritos.
 
-Duas consequências da publicação da API precisam ser registradas. A primeira é a degradação durante a construção: instalar dependências e compilar o código em uma máquina de 1~GB, com parte da memória em disco, disputa recursos com o contêiner em execução, e as respostas da API tornam-se mais lentas enquanto a construção ocorre. A segunda é a indisponibilidade breve no momento da substituição do contêiner, durante a qual o Caddy não encontra o processo na porta local e a aplicação cliente recebe erro nas requisições. Para a escala de uso do trabalho, ambas são aceitáveis; deixariam de ser em uma operação com compromisso formal de disponibilidade.
+Duas consequências da publicação da API precisam ser registradas. A primeira é a degradação durante a construção: instalar dependências e compilar o código em uma máquina de 1~GB, com parte da memória em disco, disputa recursos com o contêiner em execução, e as respostas da API tornam-se mais lentas enquanto a construção ocorre. A segunda é a indisponibilidade breve no momento da substituição do contêiner, durante a qual o Caddy não encontra o processo na porta local e a aplicação cliente recebe erro nas requisições. Os canais de aviso em tempo real abertos também
+são encerrados nesse momento, e a aplicação cliente os reabre sozinha quando a API volta a responder, buscando de novo as notificações e as novidades. Para a escala de uso do trabalho, ambas são aceitáveis; deixariam de ser em uma operação com compromisso formal de disponibilidade.
 
 \subsection{Reversão}
 
